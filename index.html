@@ -1,0 +1,341 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Feihong Guo — Hardware-aware AI Systems Engineer</title>
+    <meta name="description" content="Feihong Guo builds reliable, high-throughput LLM inference systems across SGLang, NVIDIA B300 and Huawei Ascend." />
+    <meta name="theme-color" content="#fbfdff" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Feihong Guo — AI Systems" />
+    <meta property="og:description" content="LLM serving, runtime correctness and accelerator performance." />
+    <meta property="og:image" content="https://phoenix3334.github.io/og.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Feihong Guo — AI Systems" />
+    <meta name="twitter:description" content="LLM serving, runtime correctness and accelerator performance." />
+    <meta name="twitter:image" content="https://phoenix3334.github.io/og.jpg" />
+    <style>:root {
+  --ink: #10223f;
+  --ink-soft: #4c607d;
+  --blue: #246bfd;
+  --blue-deep: #1554d1;
+  --blue-soft: #eaf3ff;
+  --blue-pale: #f5f9ff;
+  --line: #d8e5f5;
+  --white: #ffffff;
+  --page: #fbfdff;
+  --shadow: 0 24px 70px rgba(38, 94, 166, 0.12);
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  background: var(--page);
+  color: var(--ink);
+  font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+a { color: inherit; text-decoration: none; }
+main { min-height: 100vh; overflow: hidden; position: relative; }
+.shell { width: min(1180px, calc(100% - 48px)); margin: 0 auto; }
+
+.ambient {
+  position: absolute;
+  border-radius: 999px;
+  filter: blur(2px);
+  pointer-events: none;
+  z-index: -1;
+}
+.ambient-one {
+  width: 630px;
+  height: 630px;
+  top: -260px;
+  right: -180px;
+  background: radial-gradient(circle, rgba(87, 163, 255, 0.25) 0, rgba(87, 163, 255, 0) 70%);
+}
+.ambient-two {
+  width: 520px;
+  height: 520px;
+  top: 520px;
+  left: -330px;
+  background: radial-gradient(circle, rgba(77, 137, 255, 0.13) 0, rgba(77, 137, 255, 0) 72%);
+}
+
+.site-nav {
+  width: min(1180px, calc(100% - 48px));
+  min-height: 84px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(192, 212, 238, 0.76);
+}
+.brand { display: flex; align-items: center; gap: 12px; }
+.brand-mark {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  color: var(--white);
+  background: linear-gradient(145deg, #62aaff, var(--blue));
+  box-shadow: 0 10px 28px rgba(36, 107, 253, 0.25);
+  font-weight: 800;
+  letter-spacing: -0.04em;
+}
+.brand-copy { display: flex; flex-direction: column; line-height: 1.15; }
+.brand-copy strong { font-size: 14px; letter-spacing: -0.01em; }
+.brand-copy small { color: #7a8ca8; font-size: 11px; margin-top: 4px; }
+.nav-links { display: flex; align-items: center; gap: 34px; font-size: 13px; color: #5a6d88; }
+.nav-links a, .nav-github { transition: color .2s ease; }
+.nav-links a:hover, .nav-github:hover { color: var(--blue); }
+.nav-github { font-size: 13px; font-weight: 700; color: var(--blue-deep); display: flex; gap: 6px; }
+
+.hero {
+  min-height: 650px;
+  padding: 84px 0 80px;
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(320px, .65fr);
+  gap: 76px;
+  align-items: center;
+}
+.kicker, .section-index {
+  margin: 0;
+  color: var(--blue-deep);
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: .14em;
+}
+.kicker { display: flex; align-items: center; gap: 10px; }
+.kicker span { width: 7px; height: 7px; border-radius: 50%; background: #43a2ff; box-shadow: 0 0 0 6px rgba(67, 162, 255, .12); }
+.hero h1 {
+  max-width: 760px;
+  margin: 22px 0 24px;
+  font-size: clamp(46px, 6vw, 76px);
+  line-height: .99;
+  letter-spacing: -0.055em;
+  font-weight: 760;
+}
+.hero h1 span {
+  background: linear-gradient(100deg, #2f75f6 0%, #60aaff 86%);
+  background-clip: text;
+  color: transparent;
+}
+.hero-lede { max-width: 670px; margin: 0; color: var(--ink-soft); font-size: 18px; line-height: 1.75; }
+.hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 34px; }
+.button {
+  min-height: 48px;
+  padding: 0 20px;
+  border-radius: 13px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 750;
+  transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+}
+.button:hover { transform: translateY(-2px); }
+.button-primary { color: var(--white); background: var(--blue); box-shadow: 0 14px 30px rgba(36, 107, 253, .22); }
+.button-primary:hover { box-shadow: 0 18px 38px rgba(36, 107, 253, .28); }
+.button-secondary { color: #345170; background: rgba(255,255,255,.76); border: 1px solid var(--line); }
+.button-secondary:hover { border-color: #9fc1ee; }
+.hero-meta { margin-top: 38px; display: flex; flex-wrap: wrap; gap: 12px 28px; color: #7285a0; font-size: 12px; }
+.hero-meta span { position: relative; }
+.hero-meta span + span::before { content: ""; width: 3px; height: 3px; border-radius: 50%; background: #9eb1ca; position: absolute; left: -16px; top: 7px; }
+
+.profile-card {
+  min-height: 420px;
+  padding: 22px;
+  border: 1px solid rgba(181, 209, 242, .8);
+  border-radius: 32px;
+  background: linear-gradient(160deg, rgba(255,255,255,.94), rgba(235,245,255,.92));
+  box-shadow: var(--shadow);
+  position: relative;
+  overflow: hidden;
+}
+.profile-card::before {
+  content: "";
+  position: absolute;
+  width: 230px;
+  height: 230px;
+  border-radius: 50%;
+  top: 84px;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 1px dashed rgba(67, 131, 219, .26);
+}
+.profile-topline { position: relative; z-index: 1; display: flex; justify-content: space-between; align-items: center; font-size: 10px; color: #7a8daa; }
+.availability { display: flex; align-items: center; gap: 7px; font-weight: 750; color: #3e668e; }
+.availability i { width: 7px; height: 7px; border-radius: 50%; background: #2dd28b; box-shadow: 0 0 0 4px rgba(45,210,139,.12); }
+.profile-id { letter-spacing: .12em; font-weight: 800; }
+.avatar-wrap { width: 184px; height: 184px; margin: 38px auto 22px; border-radius: 50%; position: relative; display: grid; place-items: center; }
+.avatar-wrap img { width: 158px; height: 158px; object-fit: cover; border-radius: 50%; border: 7px solid #fff; box-shadow: 0 18px 45px rgba(35, 86, 148, .22); position: relative; z-index: 2; }
+.avatar-orbit { position: absolute; inset: 0; border: 1px solid rgba(51, 119, 215, .35); border-radius: 50%; }
+.avatar-orbit::after { content: ""; position: absolute; right: 11px; top: 28px; width: 11px; height: 11px; border-radius: 50%; background: #5aa6ff; border: 3px solid #f4f9ff; }
+.profile-copy { position: relative; z-index: 1; text-align: center; }
+.profile-copy > p { margin: 0 0 6px; color: #7890ac; font-size: 10px; text-transform: uppercase; letter-spacing: .14em; font-weight: 800; }
+.profile-copy h2 { margin: 0; font-size: 20px; letter-spacing: -.03em; }
+.focus-list { display: flex; flex-wrap: wrap; justify-content: center; gap: 7px; margin-top: 17px; }
+.focus-list span { padding: 7px 10px; border-radius: 999px; background: rgba(255,255,255,.72); border: 1px solid #d5e5f7; color: #536f8f; font-size: 10px; font-weight: 700; }
+
+.metrics {
+  min-height: 128px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  background: rgba(255,255,255,.76);
+  box-shadow: 0 18px 50px rgba(44, 98, 162, .06);
+}
+.metrics article { padding: 28px 30px; display: flex; flex-direction: column; justify-content: center; border-right: 1px solid var(--line); }
+.metrics article:last-child { border-right: 0; }
+.metrics strong { font-size: 26px; letter-spacing: -.04em; color: #194f9e; }
+.metrics span { margin-top: 7px; color: #71839c; font-size: 11px; line-height: 1.45; }
+
+.section { padding: 126px 0; }
+.section-heading { display: grid; grid-template-columns: minmax(0, 1fr) 390px; gap: 80px; align-items: end; margin-bottom: 48px; }
+.section-heading h2, .notes-intro h2 { margin: 14px 0 0; max-width: 650px; font-size: clamp(34px, 4vw, 52px); line-height: 1.06; letter-spacing: -.045em; }
+.section-heading > p, .notes-intro > p { margin: 0; color: var(--ink-soft); font-size: 14px; line-height: 1.75; }
+
+.project-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; }
+.project-card { min-height: 390px; padding: 34px; border-radius: 28px; border: 1px solid var(--line); background: var(--white); display: flex; flex-direction: column; transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease; }
+.project-card:hover { transform: translateY(-5px); border-color: #afd0f5; box-shadow: 0 22px 54px rgba(39, 92, 155, .10); }
+.project-featured { background: linear-gradient(145deg, #185bd9, #3187ff); color: var(--white); border-color: transparent; box-shadow: 0 20px 54px rgba(24, 91, 217, .19); }
+.project-eyebrow { margin: 0; color: #2d6ab4; font-size: 10px; text-transform: uppercase; letter-spacing: .14em; font-weight: 850; }
+.project-featured .project-eyebrow { color: #cde5ff; }
+.project-card h3 { max-width: 510px; margin: 22px 0 16px; font-size: 28px; line-height: 1.16; letter-spacing: -.035em; }
+.project-description { margin: 0; color: #5c6f88; font-size: 13px; line-height: 1.78; }
+.project-featured .project-description { color: rgba(255,255,255,.78); }
+.project-tags { margin-top: 24px; display: flex; flex-wrap: wrap; gap: 8px; }
+.project-tags span { padding: 7px 10px; border-radius: 999px; background: var(--blue-pale); border: 1px solid #deebf9; color: #486886; font-size: 10px; font-weight: 700; }
+.project-featured .project-tags span { color: #e5f2ff; background: rgba(255,255,255,.10); border-color: rgba(255,255,255,.2); }
+.project-card > a { margin-top: auto; padding-top: 26px; display: inline-flex; align-items: center; gap: 7px; color: var(--blue-deep); font-size: 12px; font-weight: 800; }
+.project-featured > a { color: var(--white); }
+
+.section-tinted { background: linear-gradient(180deg, #f2f8ff 0%, #f7fbff 100%); border-top: 1px solid #dfebf9; border-bottom: 1px solid #dfebf9; }
+.compact-heading { margin-bottom: 36px; }
+.subsection-label { margin: 0 0 14px; color: #7890aa; font-size: 10px; text-transform: uppercase; letter-spacing: .14em; font-weight: 850; }
+.contribution-list { border-top: 1px solid #cfdff1; }
+.contribution { min-height: 114px; display: grid; grid-template-columns: 100px 1fr 30px; gap: 20px; align-items: center; border-bottom: 1px solid #cfdff1; transition: background .2s ease, padding .2s ease; }
+.contribution:hover { background: rgba(255,255,255,.62); padding: 0 16px; }
+.contribution-number { color: var(--blue); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px; font-weight: 800; }
+.contribution-title-row { display: flex; align-items: center; gap: 12px; }
+.contribution h3 { margin: 0; font-size: 17px; letter-spacing: -.02em; }
+.contribution p { margin: 8px 0 0; color: #7487a0; font-size: 11px; }
+.status { padding: 5px 8px; border-radius: 999px; background: #e1f8ee; color: #16865a; font-size: 9px; text-transform: uppercase; letter-spacing: .08em; font-weight: 850; white-space: nowrap; }
+.status-draft { background: #e7ecf4; color: #697a90; }
+.contribution-arrow { color: #5c85b8; justify-self: end; }
+
+.investigation-heading { margin: 64px 0 18px; display: flex; align-items: end; justify-content: space-between; gap: 24px; }
+.investigation-heading .subsection-label { margin: 0; }
+.investigation-heading > p:last-child { margin: 0; color: #7a8ea6; font-size: 11px; }
+.investigation-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+.investigation-grid > a {
+  min-height: 210px;
+  padding: 24px;
+  border: 1px solid #cfdef1;
+  border-radius: 18px;
+  background: rgba(255,255,255,.7);
+  display: flex;
+  flex-direction: column;
+  transition: transform .2s ease, border-color .2s ease, background .2s ease;
+}
+.investigation-grid > a:hover { transform: translateY(-3px); border-color: #9fc4ef; background: #fff; }
+.investigation-grid > a > div { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.investigation-grid span { color: var(--blue); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 11px; font-weight: 800; }
+.investigation-grid small { color: #8094ae; font-size: 9px; text-transform: uppercase; letter-spacing: .1em; font-weight: 800; }
+.investigation-grid h3 { margin: 28px 0 0; font-size: 17px; line-height: 1.35; letter-spacing: -.025em; }
+.investigation-grid a > p { margin: auto 0 0; color: #5d7da4; font-size: 10px; font-weight: 750; }
+
+.method-strip { margin-top: 72px; display: grid; grid-template-columns: repeat(4, 1fr); border: 1px solid #cfdef1; border-radius: 20px; background: rgba(255,255,255,.62); overflow: hidden; }
+.method-strip > div { min-height: 170px; padding: 24px; border-right: 1px solid #cfdef1; }
+.method-strip > div:last-child { border-right: 0; }
+.method-strip span { color: #8ca2bc; font-size: 10px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+.method-strip strong { display: block; margin-top: 24px; font-size: 17px; }
+.method-strip p { margin: 9px 0 0; color: #6c809a; font-size: 11px; line-height: 1.6; }
+
+.notes-layout { display: grid; grid-template-columns: .85fr 1.15fr; gap: 100px; align-items: start; }
+.notes-intro { position: sticky; top: 40px; }
+.notes-intro h2 { font-size: 44px; }
+.notes-intro > p { margin-top: 22px; }
+.notes-intro > a { margin-top: 26px; display: inline-flex; gap: 7px; align-items: center; color: var(--blue-deep); font-size: 12px; font-weight: 800; }
+.upcoming-list { border-top: 1px solid var(--line); }
+.upcoming-list article { min-height: 150px; display: grid; grid-template-columns: 48px 1fr auto; gap: 20px; align-items: center; border-bottom: 1px solid var(--line); }
+.upcoming-list article > span { color: #8aa1bd; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 10px; }
+.upcoming-list h3 { margin: 0; font-size: 20px; letter-spacing: -.025em; }
+.upcoming-list p { margin: 9px 0 0; color: #73859c; font-size: 12px; line-height: 1.6; }
+.upcoming-list small { padding: 6px 9px; border-radius: 999px; background: var(--blue-soft); color: #3b70ac; font-size: 9px; font-weight: 800; white-space: nowrap; }
+
+.closing { margin-top: 20px; padding: 78px; border-radius: 34px; background: radial-gradient(circle at 85% 20%, rgba(117,183,255,.35), transparent 34%), linear-gradient(135deg, #0e3a80, #1465df); color: var(--white); }
+.closing > p { margin: 0; color: #bcdcff; font-size: 10px; text-transform: uppercase; letter-spacing: .14em; font-weight: 850; }
+.closing h2 { max-width: 800px; margin: 20px 0 32px; font-size: clamp(34px, 4vw, 53px); line-height: 1.08; letter-spacing: -.045em; }
+.closing .button-primary { color: #174b91; background: var(--white); box-shadow: none; }
+.footer { min-height: 140px; display: grid; grid-template-columns: 1fr 1fr 1fr; align-items: center; color: #71849d; font-size: 11px; }
+.footer > div { display: flex; gap: 10px; align-items: baseline; }
+.footer strong { color: var(--ink); font-size: 13px; }
+.footer p { text-align: center; }
+.footer > a { justify-self: end; color: #46698e; font-weight: 750; }
+
+@media (max-width: 900px) {
+  .nav-links { display: none; }
+  .hero { grid-template-columns: 1fr; gap: 38px; padding-top: 64px; }
+  .hero-copy { max-width: 760px; }
+  .profile-card { width: 100%; min-height: 390px; }
+  .metrics { grid-template-columns: repeat(2, 1fr); }
+  .metrics article:nth-child(2) { border-right: 0; }
+  .metrics article:nth-child(-n+2) { border-bottom: 1px solid var(--line); }
+  .section-heading { grid-template-columns: 1fr; gap: 24px; }
+  .section-heading > p { max-width: 620px; }
+  .investigation-grid { grid-template-columns: repeat(2, 1fr); }
+  .notes-layout { grid-template-columns: 1fr; gap: 54px; }
+  .notes-intro { position: static; }
+}
+
+@media (max-width: 680px) {
+  .shell, .site-nav { width: min(100% - 28px, 1180px); }
+  .site-nav { min-height: 72px; }
+  .brand-copy { display: none; }
+  .nav-github { font-size: 12px; }
+  .hero { min-height: auto; padding: 58px 0 56px; }
+  .hero h1 { font-size: 47px; }
+  .hero-lede { font-size: 16px; }
+  .hero-actions { flex-direction: column; }
+  .button { width: 100%; }
+  .hero-meta { flex-direction: column; gap: 8px; }
+  .hero-meta span + span::before { display: none; }
+  .profile-card { padding: 20px; }
+  .metrics { grid-template-columns: 1fr; }
+  .metrics article { border-right: 0; border-bottom: 1px solid var(--line); }
+  .metrics article:nth-child(3) { border-bottom: 1px solid var(--line); }
+  .metrics article:last-child { border-bottom: 0; }
+  .section { padding: 88px 0; }
+  .section-heading h2, .notes-intro h2 { font-size: 37px; }
+  .project-grid { grid-template-columns: 1fr; }
+  .project-card { min-height: 360px; padding: 28px; }
+  .contribution { grid-template-columns: 72px 1fr; padding: 22px 0; }
+  .contribution:hover { padding: 22px 10px; }
+  .contribution-arrow { display: none; }
+  .contribution-title-row { align-items: flex-start; flex-direction: column; gap: 8px; }
+  .investigation-heading { align-items: flex-start; flex-direction: column; }
+  .investigation-grid { grid-template-columns: 1fr; }
+  .investigation-grid > a { min-height: 190px; }
+  .method-strip { grid-template-columns: repeat(2, 1fr); }
+  .method-strip > div:nth-child(2) { border-right: 0; }
+  .method-strip > div:nth-child(-n+2) { border-bottom: 1px solid #cfdef1; }
+  .upcoming-list article { grid-template-columns: 36px 1fr; padding: 24px 0; }
+  .upcoming-list small { grid-column: 2; justify-self: start; }
+  .closing { width: min(100% - 28px, 1180px); padding: 48px 28px; }
+  .footer { grid-template-columns: 1fr auto; }
+  .footer p { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { transition-duration: .01ms !important; }
+}</style>
+  </head>
+  <body><link rel="preload" as="image" href="https://avatars.githubusercontent.com/u/174691475?v=4"/><main><div class="ambient ambient-one" aria-hidden="true"></div><div class="ambient ambient-two" aria-hidden="true"></div><nav class="site-nav" aria-label="Primary navigation"><a class="brand" href="#top" aria-label="Feihong Guo, home"><span class="brand-mark">FG</span><span class="brand-copy"><strong>Feihong Guo</strong><small>AI Systems</small></span></a><div class="nav-links"><a href="#work">Work</a><a href="#open-source">Open source</a><a href="#notes">Notes</a></div><a class="nav-github" href="https://github.com/Phoenix3334" target="_blank" rel="noreferrer">GitHub <span aria-hidden="true">↗</span></a></nav><section class="hero shell" id="top"><div class="hero-copy"><p class="kicker"><span></span> Hardware-aware AI Systems Engineer</p><h1>I build LLM inference systems that hold up on<span> real hardware.</span></h1><p class="hero-lede">My work sits where distributed serving, runtime correctness and accelerator performance meet — from SGLang on B300 to xLLM and custom kernels on Ascend.</p><div class="hero-actions"><a class="button button-primary" href="#work">Explore selected work</a><a class="button button-secondary" href="https://github.com/Phoenix3334" target="_blank" rel="noreferrer">github.com/Phoenix3334 <span aria-hidden="true">↗</span></a></div><div class="hero-meta"><span>Zhengzhou University · IoT Engineering</span><span>LLM Infra · Accelerators · HPC</span></div></div><aside class="profile-card" aria-label="Profile summary"><div class="profile-topline"><span class="availability"><i></i> Building in public</span><span class="profile-id">PHX / 3334</span></div><div class="avatar-wrap"><img src="https://avatars.githubusercontent.com/u/174691475?v=4" alt="Feihong Guo&#x27;s GitHub avatar"/><span class="avatar-orbit" aria-hidden="true"></span></div><div class="profile-copy"><p>Current focus</p><h2>Reliable, high-throughput inference</h2><div class="focus-list"><span>SGLang</span><span>CUDA Graph</span><span>Ascend</span><span>Triton</span></div></div></aside></section><section class="metrics shell" aria-label="Selected metrics"><article><strong>8× B300</strong><span>DeepSeek serving validation</span></article><article><strong>+55.0%</strong><span>input TPS in a tested prefill setup</span></article><article><strong>28.9×</strong><span>Ascend operator speedup</span></article><article><strong>128K+</strong><span>single-card long-context inference</span></article></section><section class="section shell" id="work"><div class="section-heading"><div><p class="section-index">01 / Selected work</p><h2>Systems work, with the bottleneck made explicit.</h2></div><p>I prefer evidence chains over feature lists: a measurable failure, an isolated producer, a minimal change and an end-to-end regression.</p></div><div class="project-grid"><article class="project-card project-featured"><p class="project-eyebrow">SGLang · DeepSeek · B300</p><h3>Production LLM serving, from symptom to runtime contract</h3><p class="project-description">Diagnosed DP-Attention, PrefillDelayer and DSpark/CUDA-Graph failure chains on 8× B300. The work spans workload design, distributed traces, kernel-level root cause isolation and upstream regression coverage.</p><div class="project-tags"><span>SGLang</span><span>DP Attention</span><span>DSpark</span><span>CUDA Graph</span></div><a href="https://github.com/sgl-project/sglang/pulls?q=is%3Apr+author%3APhoenix3334" target="_blank" rel="noreferrer">View upstream work <span aria-hidden="true">↗</span></a></article><article class="project-card "><p class="project-eyebrow">Ascend 910B · xLLM · Qwen3.5 Hybrid</p><h3>Hardware-aware long-context inference</h3><p class="project-description">Optimized hybrid-attention inference with operator fusion, TileLang/Triton NPU kernels, MTP speculative decoding, ACL Graph capture and separated KV/SSM/Conv cache management.</p><div class="project-tags"><span>xLLM</span><span>TileLang</span><span>Triton</span><span>MTP</span></div><a href="https://github.com/jd-opensource/xllm/tree/ict_final/xllm" target="_blank" rel="noreferrer">Explore xLLM <span aria-hidden="true">↗</span></a></article><article class="project-card "><p class="project-eyebrow">Ascend 910C · Full-modal inference</p><h3>MiniCPM-o systems profiling and accelerator bring-up</h3><p class="project-description">Built and profiled the end-to-end multimodal inference path, then used CANN traces to separate host-side orchestration, device kernels and first-speech-token latency before choosing an optimization target.</p><div class="project-tags"><span>MiniCPM-o</span><span>CANN</span><span>msprof</span><span>Multimodal</span></div><a href="https://github.com/Phoenix3334/MiniCPM--ascend910C" target="_blank" rel="noreferrer">View working fork <span aria-hidden="true">↗</span></a></article><article class="project-card "><p class="project-eyebrow">Kunpeng · Ascend C · HPC</p><h3>Operator and FFT optimization by measurement</h3><p class="project-description">Used profiling, memory-layout changes, tiling, double buffering and vector-operator substitution for a 28.9× operator speedup; also tuned FFTW with SVE, NUMA placement, OpenMP affinity and HPCKit.</p><div class="project-tags"><span>Ascend C</span><span>FFTW</span><span>SVE</span><span>NUMA</span></div><a href="https://github.com/Phoenix3334/fftw3" target="_blank" rel="noreferrer">View FFT workspace <span aria-hidden="true">↗</span></a></article></div></section><section class="section section-tinted" id="open-source"><div class="shell"><div class="section-heading compact-heading"><div><p class="section-index">02 / Open source</p><h2>Recent upstream traces</h2></div><p>Current GitHub state as of August 2026. Open work is labeled as open; diagnostic work stays labeled as draft.</p></div><p class="subsection-label">Pull requests</p><div class="contribution-list"><a href="https://github.com/sgl-project/sglang/pull/35721" target="_blank" rel="noreferrer" class="contribution"><div class="contribution-number">#35721</div><div class="contribution-main"><div class="contribution-title-row"><h3>Prevent generation health checks from perturbing DP user routing</h3><span class="status ">Open</span></div><p>154 additions · 23 CPU tests passed · 4/4 B300 runtime validations</p></div><span class="contribution-arrow" aria-hidden="true">↗</span></a><a href="https://github.com/sgl-project/sglang/pull/34286" target="_blank" rel="noreferrer" class="contribution"><div class="contribution-number">#34286</div><div class="contribution-main"><div class="contribution-title-row"><h3>Synchronize Breakable CUDA Graph after final warmup</h3><span class="status ">Open</span></div><p>Pins synchronize → TP barrier → graph construction ordering</p></div><span class="contribution-arrow" aria-hidden="true">↗</span></a><a href="https://github.com/sgl-project/sglang/pull/34410" target="_blank" rel="noreferrer" class="contribution"><div class="contribution-number">#34410</div><div class="contribution-main"><div class="contribution-title-row"><h3>Pin the DSpark PD-decode draft-input handoff contract</h3><span class="status ">Open</span></div><p>CPU regression coverage for a production integration boundary</p></div><span class="contribution-arrow" aria-hidden="true">↗</span></a><a href="https://github.com/sgl-project/sglang/pull/31455" target="_blank" rel="noreferrer" class="contribution"><div class="contribution-number">#31455</div><div class="contribution-main"><div class="contribution-title-row"><h3>Bisect target-verify CUDA Graph replay synchronization</h3><span class="status status-draft">Draft</span></div><p>Diagnostic instrumentation with an explicit non-production scope</p></div><span class="contribution-arrow" aria-hidden="true">↗</span></a></div><div class="investigation-heading"><p class="subsection-label">Issues · investigations</p><p>Problem statements, evidence maps and explicit interpretation boundaries.</p></div><div class="investigation-grid"><a href="https://github.com/sgl-project/sglang/issues/35241" target="_blank" rel="noreferrer"><div><span>#35241</span><small>Scheduler</small></div><h3>PrefillDelayer mixed-state feedback loop under DP Attention</h3><p>Read investigation <span aria-hidden="true">↗</span></p></a><a href="https://github.com/sgl-project/sglang/issues/34297" target="_blank" rel="noreferrer"><div><span>#34297</span><small>Roadmap</small></div><h3>DSpark CUDA Graph correctness and robustness</h3><p>Read investigation <span aria-hidden="true">↗</span></p></a><a href="https://github.com/sgl-project/sglang/issues/32432" target="_blank" rel="noreferrer"><div><span>#32432</span><small>RFC</small></div><h3>Runtime contracts for dynamic CUDA Graph replay</h3><p>Read investigation <span aria-hidden="true">↗</span></p></a><a href="https://github.com/sgl-project/sglang/issues/33356" target="_blank" rel="noreferrer"><div><span>#33356</span><small>B300 / TP8</small></div><h3>Non-deterministic illegal memory during large graph capture</h3><p>Read investigation <span aria-hidden="true">↗</span></p></a><a href="https://github.com/sgl-project/sglang/issues/31023" target="_blank" rel="noreferrer"><div><span>#31023</span><small>DSpark</small></div><h3>Timing-sensitive compact target-verify CUDA Graph failure</h3><p>Read investigation <span aria-hidden="true">↗</span></p></a></div><div class="method-strip" aria-label="Performance engineering method"><div><span>01</span><strong>Profile</strong><p>Find where time and bytes actually go.</p></div><div><span>02</span><strong>Isolate</strong><p>Separate scheduler, runtime and kernel contracts.</p></div><div><span>03</span><strong>Patch</strong><p>Change the smallest causal boundary.</p></div><div><span>04</span><strong>Regress</strong><p>Re-run realistic hardware matrices.</p></div></div></div></section><section class="section shell" id="notes"><div class="notes-layout"><div class="notes-intro"><p class="section-index">03 / Next to publish</p><h2>Public artifacts, without leaking private implementation.</h2><p>Some accelerator and competition work cannot be released verbatim. I publish sanitized design notes, reproducible methodology and safe code extracts instead.</p><a href="https://github.com/Phoenix3334/ai-infra-learning" target="_blank" rel="noreferrer">Browse AI Infra notes <span aria-hidden="true">↗</span></a></div><div class="upcoming-list"><article><span>01</span><div><h3>Medical AI training pipeline</h3><p>CPT → SFT recipes, data contracts and reproducible evaluation scripts.</p></div><small>Coming soon</small></article><article><span>02</span><div><h3>Ascend operator notes</h3><p>Sanitized ICT case studies for Ascend C, xLLM, TileLang and Triton.</p></div><small>Coming soon</small></article><article><span>03</span><div><h3>FPGA systems code</h3><p>Reusable modules, testbenches and hardware/software co-design notes.</p></div><small>Coming soon</small></article></div></div></section><section class="closing shell"><p>AI Systems · LLM Serving · Accelerator Optimization</p><h2>Build the system. Measure the boundary. Keep the claim honest.</h2><div><a class="button button-primary" href="https://github.com/Phoenix3334" target="_blank" rel="noreferrer">Follow the work on GitHub <span aria-hidden="true">↗</span></a></div></section><footer class="footer shell"><div><strong>Feihong Guo</strong><span>郭飞鸿</span></div><p>Designed for clarity. Built around evidence.</p><a href="#top">Back to top ↑</a></footer></main></body>
+</html>
