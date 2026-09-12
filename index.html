@@ -1,3 +1,4 @@
+mobile True reduced-motion True
 <!doctype html>
 <html lang="en">
 <head>
@@ -134,6 +135,34 @@
       color: var(--muted);
       font-size: 12px;
     }
+    .affiliations {
+      margin-top: 30px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .affiliations::-webkit-scrollbar { display: none; }
+    .affiliation {
+      min-width: max-content;
+      height: 42px;
+      padding: 0 14px;
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      border: 1px solid var(--line);
+      color: var(--muted);
+      background: rgba(255,255,255,.45);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: .04em;
+      transition: color .2s ease, border-color .2s ease, transform .2s ease;
+    }
+    .affiliation:hover { color: var(--ink); border-color: #a9a49b; transform: translateY(-2px); }
+    .affiliation img { width: 20px; height: 20px; object-fit: contain; filter: grayscale(1); opacity: .68; transition: filter .2s ease, opacity .2s ease; }
+    .affiliation:hover img { filter: none; opacity: 1; }
+    .logo-type { width: 22px; height: 22px; display: grid; place-items: center; color: var(--white); background: var(--ink); font: 700 9px/1 var(--sans); }
     .portrait { align-self: stretch; display: flex; flex-direction: column; justify-content: center; }
     .portrait img {
       width: 100%;
@@ -204,6 +233,8 @@
     .open-project + .open-project { border-top: 1px solid var(--line); }
     .open-project-index { color: var(--rust); font-size: 11px; font-weight: 700; letter-spacing: .1em; }
     .open-project h3 { margin: 0; font-size: 30px; line-height: 1.15; }
+    .project-title { display: flex; align-items: flex-start; gap: 16px; }
+    .project-logo { width: 44px; height: 44px; flex: 0 0 44px; object-fit: contain; border: 1px solid var(--line); background: var(--white); padding: 6px; }
     .open-project h3 a:hover { color: var(--blue); }
     .open-project-copy > p { margin: 14px 0 0; color: #46525c; font-size: 13px; line-height: 1.72; }
     .open-project-proof { padding-left: 24px; border-left: 3px solid var(--teal); }
@@ -314,6 +345,7 @@
       .portrait { margin: 0; }
       .portrait img { max-height: 420px; object-position: center 28%; }
       .hero-line { flex-direction: column; gap: 8px; }
+      .affiliations { width: calc(100vw - 32px); padding-bottom: 4px; }
       section { padding: 78px 0; }
       .trajectory { grid-template-columns: repeat(2, 1fr); }
       .trajectory article:nth-child(3) { border-right: 1px solid var(--line); }
@@ -359,6 +391,13 @@
           <span>AI Infrastructure</span>
           <span>Hardware-aware Inference</span>
           <span>Edge and Physical Systems</span>
+        </div>
+        <div class="affiliations" aria-label="Selected platforms and communities">
+          <span class="affiliation"><span class="logo-type">ZZU</span>Zhengzhou University</span>
+          <span class="affiliation"><img src="https://cdn.simpleicons.org/baidu/2932E1" alt="">Baidu AI Cloud</span>
+          <span class="affiliation"><img src="https://github.com/sgl-project.png?size=64" alt="">SGLang</span>
+          <span class="affiliation"><img src="https://cdn.simpleicons.org/nvidia/76B900" alt="">NVIDIA</span>
+          <span class="affiliation"><img src="https://cdn.simpleicons.org/huawei/CF0A2C" alt="">Huawei Ascend</span>
         </div>
       </div>
       <figure class="portrait">
@@ -422,7 +461,7 @@
         <article class="open-project">
           <div class="open-project-index">01 · MAIN PROJECT</div>
           <div class="open-project-copy">
-            <h3><a href="https://github.com/Phoenix3334/minicpmo45-ascend/tree/competition/final-ascend-track-a" target="_blank" rel="noreferrer">MiniCPM-o 4.5 on NVIDIA B300 and Ascend 910C ↗</a></h3>
+            <div class="project-title"><img class="project-logo" src="https://github.com/OpenBMB.png?size=88" alt="OpenBMB"><h3><a href="https://github.com/Phoenix3334/minicpmo45-ascend/tree/competition/final-ascend-track-a" target="_blank" rel="noreferrer">MiniCPM-o 4.5 on NVIDIA B300 and Ascend 910C ↗</a></h3></div>
             <p>Built the cross-platform path for real-time full-modal inference: B300 draft-model training, DSpark draft execution with real multimodal samples, draft-aware safetensors-to-GGUF conversion, CANN and llama.cpp-omni profiling, kernel and graph optimization, and full-duplex validation on Ascend 910C.</p>
           </div>
           <div class="open-project-proof"><strong>3.4923 → 3.8620</strong><span>accepted length</span><strong>18,214 → 1,301</strong><span>host launches</span></div>
@@ -430,7 +469,7 @@
         <article class="open-project">
           <div class="open-project-index">02 · DPC</div>
           <div class="open-project-copy">
-            <h3><a href="https://github.com/sgl-project/sglang/pull/35721" target="_blank" rel="noreferrer">Generation health and user routing isolation ↗</a></h3>
+            <div class="project-title"><img class="project-logo" src="https://github.com/sgl-project.png?size=88" alt="SGLang"><h3><a href="https://github.com/sgl-project/sglang/pull/35721" target="_blank" rel="noreferrer">Generation health and user routing isolation ↗</a></h3></div>
             <p>Identified that generation health requests advanced the same Data Parallel Controller routing state used by user traffic. PR #35721 gives health traffic independent routing state and preserves balanced user dispatch.</p>
           </div>
           <div class="open-project-proof"><strong>23 / 23</strong><span>CPU regression tests</span><strong>4 / 4</strong><span>B300 patched runs stable</span></div>
@@ -438,7 +477,7 @@
         <article class="open-project">
           <div class="open-project-index">03 · DCP</div>
           <div class="open-project-copy">
-            <h3><a href="https://github.com/sgl-project/sglang/pull/38790" target="_blank" rel="noreferrer">MLA KV index localization during decode retraction ↗</a></h3>
+            <div class="project-title"><img class="project-logo" src="https://github.com/sgl-project.png?size=88" alt="SGLang"><h3><a href="https://github.com/sgl-project/sglang/pull/38790" target="_blank" rel="noreferrer">MLA KV index localization during decode retraction ↗</a></h3></div>
             <p>Localized DCP-widened logical KV indices before CPU backup and restore touches the rank-local MLA buffer. The fix keeps KDA and Mamba recurrent-state indexing separate and restores into newly allocated logical locations after re-admission.</p>
           </div>
           <div class="open-project-proof"><strong>2,048 / 2,048</strong><span>requests completed with 8 real retractions</span><strong>6 / 6</strong><span>CPU correctness tests</span></div>
@@ -446,7 +485,7 @@
         <article class="open-project">
           <div class="open-project-index">04 · DSPARK</div>
           <div class="open-project-copy">
-            <h3><a href="https://github.com/sgl-project/sglang/issues/34297" target="_blank" rel="noreferrer">CUDA Graph and P/D runtime correctness ↗</a></h3>
+            <div class="project-title"><img class="project-logo" src="https://github.com/sgl-project.png?size=88" alt="SGLang"><h3><a href="https://github.com/sgl-project/sglang/issues/34297" target="_blank" rel="noreferrer">CUDA Graph and P/D runtime correctness ↗</a></h3></div>
             <p>Maintained a connected investigation across compact target-verify replay, capture ordering, P/D decode handoff, concurrency scaling, and regression design. Authored diagnostic and regression work while keeping collaborative validation separate from code authorship.</p>
           </div>
           <div class="open-project-proof"><strong>18,560 / 18,560</strong><span>sustained decode requests completed</span><strong>30,000</strong><span>calls in correctness validation</span></div>
