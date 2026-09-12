@@ -146,6 +146,23 @@
     .experience-row strong { color: var(--ink); }
 
     .evidence-grid { display: grid; grid-template-columns: 1.15fr .85fr; gap: 72px; }
+    .open-project {
+      display: grid;
+      grid-template-columns: 160px minmax(0, 1fr) 250px;
+      gap: 42px;
+      padding: 34px 0 40px;
+      border-top: 2px solid var(--ink);
+    }
+    .open-project + .open-project { border-top: 1px solid var(--line); }
+    .open-project-index { color: var(--rust); font-size: 11px; font-weight: 700; letter-spacing: .1em; }
+    .open-project h3 { margin: 0; font-size: 30px; line-height: 1.15; }
+    .open-project h3 a:hover { color: var(--blue); }
+    .open-project-copy > p { margin: 14px 0 0; color: #46525c; font-size: 13px; line-height: 1.72; }
+    .open-project-proof { padding-left: 24px; border-left: 3px solid var(--teal); }
+    .open-project-proof strong { display: block; font: 700 25px/1.1 var(--serif); }
+    .open-project-proof span { display: block; margin-top: 8px; color: var(--muted); font-size: 10px; line-height: 1.5; }
+    .open-project-proof strong + strong { margin-top: 20px; }
+    .group-label { margin: 66px 0 18px; color: var(--muted); font-size: 10px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; }
     .evidence-main { border-top: 5px solid var(--blue); padding-top: 28px; }
     .evidence-main h3 { margin: 0; font-size: 36px; line-height: 1.1; }
     .evidence-main > p { margin: 18px 0 34px; color: var(--muted); font-size: 14px; line-height: 1.7; }
@@ -195,6 +212,8 @@
       .trajectory article:nth-child(3) { border-right: 0; }
       .section-head { grid-template-columns: 1fr; gap: 24px; }
       .evidence-grid { grid-template-columns: 1fr; }
+      .open-project { grid-template-columns: 120px 1fr; }
+      .open-project-proof { grid-column: 2; }
     }
     @media (max-width: 680px) {
       .wrap { width: min(100% - 32px, 1180px); }
@@ -209,6 +228,8 @@
       .trajectory article:nth-child(3) { border-right: 1px solid var(--line); }
       .trajectory article:nth-child(even) { border-right: 0; }
       .experience-row { grid-template-columns: 1fr; gap: 14px; }
+      .open-project { grid-template-columns: 1fr; gap: 14px; }
+      .open-project-proof { grid-column: auto; margin-top: 10px; }
       .method, .metrics-band, .research-steps { grid-template-columns: repeat(2, 1fr); }
       .metrics-band div:nth-child(2) { border-right: 0; }
       .metrics-band div:nth-child(-n+2) { border-bottom: 1px solid var(--line); }
@@ -296,13 +317,46 @@
     <section id="opensource">
       <div class="wrap">
         <div class="section-head">
-          <div><p class="eyebrow">Open-source systems research</p><h2>DSpark and runtime correctness</h2></div>
-          <p>I use upstream issues and pull requests as concise evidence of how I work. Each record links a reproducible symptom to a bounded systems claim.</p>
+          <div><p class="eyebrow">Open-source systems work</p><h2>Model, runtime, and accelerator co-design</h2></div>
+          <p>My public work spans full-modal inference, distributed serving, cache correctness, CUDA Graph execution, and accelerator optimization.</p>
         </div>
+        <article class="open-project">
+          <div class="open-project-index">01 · MAIN PROJECT</div>
+          <div class="open-project-copy">
+            <h3><a href="https://github.com/Phoenix3334/minicpmo45-ascend/tree/competition/final-ascend-track-a" target="_blank" rel="noreferrer">MiniCPM-o 4.5 on NVIDIA B300 and Ascend 910C ↗</a></h3>
+            <p>Built the cross-platform path for real-time full-modal inference: B300 draft-model training, DSpark draft execution with real multimodal samples, draft-aware safetensors-to-GGUF conversion, CANN and llama.cpp-omni profiling, kernel and graph optimization, and full-duplex validation on Ascend 910C.</p>
+          </div>
+          <div class="open-project-proof"><strong>3.4923 → 3.8620</strong><span>accepted length</span><strong>18,214 → 1,301</strong><span>host launches</span></div>
+        </article>
+        <article class="open-project">
+          <div class="open-project-index">02 · DPC</div>
+          <div class="open-project-copy">
+            <h3><a href="https://github.com/sgl-project/sglang/pull/35721" target="_blank" rel="noreferrer">Generation health and user routing isolation ↗</a></h3>
+            <p>Identified that generation health requests advanced the same Data Parallel Controller routing state used by user traffic. PR #35721 gives health traffic independent routing state and preserves balanced user dispatch.</p>
+          </div>
+          <div class="open-project-proof"><strong>23 / 23</strong><span>CPU regression tests</span><strong>4 / 4</strong><span>B300 patched runs stable</span></div>
+        </article>
+        <article class="open-project">
+          <div class="open-project-index">03 · DCP</div>
+          <div class="open-project-copy">
+            <h3><a href="https://github.com/sgl-project/sglang/pull/38790" target="_blank" rel="noreferrer">MLA KV index localization during decode retraction ↗</a></h3>
+            <p>Localized DCP-widened logical KV indices before CPU backup and restore touches the rank-local MLA buffer. The fix keeps KDA and Mamba recurrent-state indexing separate and restores into newly allocated logical locations after re-admission.</p>
+          </div>
+          <div class="open-project-proof"><strong>2,048 / 2,048</strong><span>requests completed with 8 real retractions</span><strong>6 / 6</strong><span>CPU correctness tests</span></div>
+        </article>
+        <article class="open-project">
+          <div class="open-project-index">04 · DSPARK</div>
+          <div class="open-project-copy">
+            <h3><a href="https://github.com/sgl-project/sglang/issues/34297" target="_blank" rel="noreferrer">CUDA Graph and P/D runtime correctness ↗</a></h3>
+            <p>Maintained a connected investigation across compact target-verify replay, capture ordering, P/D decode handoff, concurrency scaling, and regression design. Authored diagnostic and regression work while keeping collaborative validation separate from code authorship.</p>
+          </div>
+          <div class="open-project-proof"><strong>18,560 / 18,560</strong><span>sustained decode requests completed</span><strong>30,000</strong><span>calls in correctness validation</span></div>
+        </article>
+        <p class="group-label">Selected upstream records</p>
         <div class="evidence-grid">
           <div class="evidence-main">
-            <h3>From anomaly to a runtime contract</h3>
-            <p>A generation health request perturbed shared DPC routing state. The fix isolated health traffic from user round-robin state, restoring balanced user dispatch without disabling health generation.</p>
+            <h3>Reproduce, isolate, validate, upstream</h3>
+            <p>The public record includes production fixes, regression tests, diagnostic work, roadmaps, and RFCs. Each item states its evidence boundary and distinguishes authored changes from collaborative validation.</p>
             <div class="method">
               <div><span>01</span><strong>Reproduce</strong></div>
               <div><span>02</span><strong>Isolate</strong></div>
@@ -311,15 +365,17 @@
             </div>
           </div>
           <div class="contributions">
-            <a class="contribution" href="https://github.com/sgl-project/sglang/pull/35721" target="_blank" rel="noreferrer"><div class="contribution-meta"><span>PR #35721</span><span>Runtime correctness</span></div><h3>Isolate generation health checks from DP user routing state</h3></a>
-            <a class="contribution" href="https://github.com/sgl-project/sglang/issues/35241" target="_blank" rel="noreferrer"><div class="contribution-meta"><span>Issue #35241</span><span>Scheduler diagnosis</span></div><h3>PrefillDelayer behavior under DP Attention</h3></a>
-            <a class="contribution" href="https://github.com/sgl-project/sglang/issues/34297" target="_blank" rel="noreferrer"><div class="contribution-meta"><span>Issue #34297</span><span>Systems roadmap</span></div><h3>DSpark CUDA Graph correctness and robustness</h3></a>
-            <a class="contribution" href="https://github.com/sgl-project/sglang/issues/32432" target="_blank" rel="noreferrer"><div class="contribution-meta"><span>RFC #32432</span><span>Runtime design</span></div><h3>Contracts for dynamic CUDA Graph replay</h3></a>
+            <a class="contribution" href="https://github.com/sgl-project/sglang/pull/38790" target="_blank" rel="noreferrer"><div class="contribution-meta"><span>PR #38790</span><span>DCP · KV correctness</span></div><h3>Localize MLA KV indices for retraction backup and restore</h3></a>
+            <a class="contribution" href="https://github.com/sgl-project/sglang/pull/35721" target="_blank" rel="noreferrer"><div class="contribution-meta"><span>PR #35721</span><span>DPC · Routing correctness</span></div><h3>Separate generation health state from user dispatch</h3></a>
+            <a class="contribution" href="https://github.com/sgl-project/sglang/pull/34410" target="_blank" rel="noreferrer"><div class="contribution-meta"><span>PR #34410</span><span>DSpark · Regression</span></div><h3>Pin the P/D decode draft-input handoff contract</h3></a>
+            <a class="contribution" href="https://github.com/sgl-project/sglang/pull/34286" target="_blank" rel="noreferrer"><div class="contribution-meta"><span>PR #34286</span><span>CUDA Graph · Ordering</span></div><h3>Synchronize graph construction after final warmup</h3></a>
+            <a class="contribution" href="https://github.com/sgl-project/sglang/pull/31455" target="_blank" rel="noreferrer"><div class="contribution-meta"><span>PR #31455</span><span>DSpark · Diagnosis</span></div><h3>Bisect target-verify CUDA Graph replay synchronization</h3></a>
+            <a class="contribution" href="https://github.com/deepseek-ai/DeepGEMM/pull/316" target="_blank" rel="noreferrer"><div class="contribution-meta"><span>PR #316</span><span>DeepGEMM · Validation</span></div><h3>MegaMoE benchmarks and communication-path analysis</h3></a>
           </div>
         </div>
         <div class="metrics-band" aria-label="Selected results">
-          <div><strong>30,000</strong><span>calls in DSpark correctness validation</span></div>
-          <div><strong>4 / 4</strong><span>patched B300 validation runs stayed stable</span></div>
+          <div><strong>0.6754 → 0.4829</strong><span>MiniCPM-o Core RTF</span></div>
+          <div><strong>4 / 4</strong><span>MiniCPM-o accuracy gates passed</span></div>
           <div><strong>+55%</strong><span>prefill throughput in the tested DP Attention setup</span></div>
           <div><strong>13.2×</strong><span>Ascend serving throughput at 960 concurrency</span></div>
         </div>
