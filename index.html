@@ -410,6 +410,7 @@
         </div>
         <div class="affiliations" aria-label="Selected platforms and communities">
           <span class="affiliation"><span class="logo-type">ZZU</span>Zhengzhou University</span>
+          <span class="affiliation"><span class="logo-type">HPC</span>ZZU Supercomputing Team</span>
           <span class="affiliation"><img src="https://cdn.simpleicons.org/baidu/2932E1" alt="">Baidu AI Cloud</span>
           <span class="affiliation"><img src="https://github.com/sgl-project.png?size=64" alt="">SGLang</span>
           <span class="affiliation"><img src="https://cdn.simpleicons.org/nvidia/76B900" alt="">NVIDIA</span>
@@ -452,17 +453,17 @@
           <article class="experience-row">
             <div class="year">2026 · CURRENT</div>
             <h3>Baidu AI Cloud<small>AI Infrastructure Research Intern</small></h3>
-            <p>Researching long-context DeepSeek serving on NVIDIA B300 with SGLang. Work covers <strong>DP Attention, P/D disaggregation, PrefillDelayer, KV cache behavior, CUDA Graph correctness, and performance diagnosis</strong>.</p>
+            <p>Researching long-context DeepSeek serving on NVIDIA B300 with SGLang. The work covers <strong>DP Attention, P/D disaggregation, PrefillDelayer, KV cache behavior, CUDA Graph correctness, and performance diagnosis</strong>. A tested 8k-effective Prefill point reached about <strong>94.6k input tok/s</strong>; the selected Decode operating knee reached <strong>40,651 generated tok/s at C3072</strong>.</p>
           </article>
           <article class="experience-row">
             <div class="year">2025–2026</div>
-            <h3>Huawei ICT Academy<small>Team Lead · Accelerator Systems</small></h3>
-            <p>Optimized inference on Ascend 910B and Kunpeng. Improved peak throughput from <strong>2,301 to 30,451 tokens/s at 960 concurrency</strong>, with work across EAGLE, MoE communication, operator tuning, and system profiling.</p>
+            <h3>Huawei ICT Academy<small>Project Lead, ICT Academy Laboratory · Technical Support, ZZU Supercomputing Team</small></h3>
+            <p>Led accelerator and HPC work across Ascend NPU and Kunpeng CPU. On Ascend 910B, improved Qwen3.5-9B serving from <strong>2,301 to 30,451 tok/s at 960 concurrency</strong> through speculative decoding, runtime cleanup, MegaMoE tuning, and communication-path selection. Additional work includes a <strong>28.9× Cholesky operator</strong>, FlashSampling memory-traffic reduction, and Kunpeng FFTW optimization from about <strong>80.9 to 312 GFLOP/s</strong>. Huawei ICT Competition National Third Prize.</p>
           </article>
           <article class="experience-row">
             <div class="year">REAL-WORLD AI</div>
-            <h3>ZZU and Hanwei<small>Edge AI · Smart Healthcare</small></h3>
-            <p>Built systems spanning wearable multimodal sensing, ROS2 synchronization, temporal action modelling, autonomous inspection, microfluidics, and medical thermal imaging. ThermoPulse is a separate Zhengzhou University innovation project.</p>
+            <h3>ZZU–Hanwei IoT Research Institute<small>Edge AI · Intelligent Sensing · Hardware–Software Integration</small></h3>
+            <p>Built systems spanning wearable multimodal sensing, multi-node IMUs, ROS2 synchronization, temporal action modelling, RK3588 edge inference, autonomous inspection, and PMMA microfluidic detection. ThermoPulse remains a separate Zhengzhou University innovation project covering thermal sensing, AI diagnosis, accelerated inference, and medical-LLM reporting.</p>
           </article>
         </div>
       </div>
@@ -478,7 +479,7 @@
           <div class="open-project-index">01 · MAIN PROJECT</div>
           <div class="open-project-copy">
             <div class="project-title"><img class="project-logo" src="https://github.com/OpenBMB.png?size=88" alt="OpenBMB"><h3><a href="https://github.com/Phoenix3334/minicpmo45-ascend/tree/competition/final-ascend-track-a" target="_blank" rel="noreferrer">MiniCPM-o 4.5 on NVIDIA B300 and Ascend 910C ↗</a></h3></div>
-            <p>Built the cross-platform path for real-time full-modal inference: B300 draft-model training, DSpark draft execution with real multimodal samples, draft-aware safetensors-to-GGUF conversion, CANN and llama.cpp-omni profiling, kernel and graph optimization, and full-duplex validation on Ascend 910C.</p>
+            <p>Built the training-to-runtime path for real-time full-modal inference: B300 draft-model training, DSpark draft execution with real multimodal samples, draft-aware safetensors-to-GGUF conversion, and deployment on Ascend 910C. CANN and llama.cpp-omni profiling guided kernel and graph optimization; the final full-duplex path passed all four accuracy gates while Core RTF improved from 0.6754 to 0.4829.</p>
           </div>
           <div class="open-project-proof"><strong>3.4923 → 3.8620</strong><span>accepted length</span><strong>18,214 → 1,301</strong><span>host launches</span></div>
         </article>
@@ -581,6 +582,8 @@
       '.hero-line span:nth-child(1)': 'AI 基础设施',
       '.hero-line span:nth-child(2)': '硬件感知推理',
       '.hero-line span:nth-child(3)': '边缘与物理系统',
+      '.affiliations .affiliation:nth-child(1)': '<span class="logo-type">ZZU</span>郑州大学',
+      '.affiliations .affiliation:nth-child(2)': '<span class="logo-type">HPC</span>郑州大学超算团队',
       '.portrait figcaption': '物联网工程<br>郑州大学 · 2027 届',
       '#trajectory .eyebrow': '研究轨迹',
       '#trajectory .section-head h2': '贯穿完整 AI 技术栈的系统视角',
@@ -602,18 +605,18 @@
       '#experience .section-head > p': '这些工作的共同点是可测量的系统行为：观察真实负载，定位限制性能或正确性的边界，再在实际硬件上验证改动。',
       '.experience-row:nth-child(1) .year': '2026 · 至今',
       '.experience-row:nth-child(1) h3': '百度智能云<small>AI Infra 科研实习生</small>',
-      '.experience-row:nth-child(1) p': '在 NVIDIA B300 上研究基于 SGLang 的 DeepSeek 长上下文推理，涵盖 <strong>DP Attention、P/D 分离、PrefillDelayer、KV Cache、CUDA Graph 正确性与性能诊断</strong>。',
-      '.experience-row:nth-child(2) h3': '华为 ICT 学院<small>队长 · 异构加速系统</small>',
-      '.experience-row:nth-child(2) p': '面向昇腾 910B 与鲲鹏平台优化推理系统。在 960 并发下将峰值吞吐从 <strong>2,301 提升至 30,451 tokens/s</strong>，工作覆盖 EAGLE、MoE 通信、算子调优与系统分析。',
+      '.experience-row:nth-child(1) p': '在 NVIDIA B300 上研究基于 SGLang 的 DeepSeek 长上下文推理，涵盖 <strong>DP Attention、P/D 分离、PrefillDelayer、KV Cache、CUDA Graph 正确性与性能诊断</strong>。测试中的 8k effective Prefill 点达到约 <strong>94.6k input tok/s</strong>；Decode 选择 C3072 作为 operating knee，达到 <strong>40,651 generated tok/s</strong>。',
+      '.experience-row:nth-child(2) h3': '华为 ICT 学院<small>ICT Academy 实验室项目负责人 · 郑州大学超算团队技术支持</small>',
+      '.experience-row:nth-child(2) p': '负责昇腾 NPU 与鲲鹏 CPU 上的推理和 HPC 优化。在昇腾 910B 上通过推测解码、运行时清理、MegaMoE 调优和通信路径选择，将 Qwen3.5-9B 从 <strong>2,301 提升至 30,451 tok/s（960 并发）</strong>；另完成 <strong>28.9× Cholesky 算子</strong>、FlashSampling 内存流量优化，以及鲲鹏 FFTW 从约 <strong>80.9 提升至 312 GFLOP/s</strong>。获华为 ICT 大赛全国三等奖。',
       '.experience-row:nth-child(3) .year': '真实世界 AI',
-      '.experience-row:nth-child(3) h3': '郑州大学与汉威<small>边缘 AI · 智慧医疗</small>',
-      '.experience-row:nth-child(3) p': '构建了可穿戴多模态传感、ROS2 同步、时序动作建模、自主巡检、微流控和医学热成像系统。ThermoPulse 为独立的郑州大学创新项目。',
+      '.experience-row:nth-child(3) h3': '郑州大学–汉威物联网研究院<small>边缘 AI · 智能感知 · 软硬件协同</small>',
+      '.experience-row:nth-child(3) p': '构建了可穿戴多模态传感、多节点 IMU、ROS2 同步、时序动作建模、RK3588 边缘推理、自主巡检和 PMMA 微流控检测系统。ThermoPulse 仍作为独立的郑州大学创新项目，覆盖热成像采集、AI 辅助诊断、加速推理与医疗大模型报告。',
       '#opensource .eyebrow': '开源系统工作',
       '#opensource .section-head h2': '模型、运行时与加速器协同设计',
       '#opensource .section-head > p': '我的公开工作覆盖全模态推理、分布式服务、缓存正确性、CUDA Graph 执行与异构加速优化。',
       '.open-project:nth-of-type(1) .open-project-index': '01 · 核心项目',
       '.open-project:nth-of-type(1) h3 a': 'MiniCPM-o 4.5：NVIDIA B300 与昇腾 910C ↗',
-      '.open-project:nth-of-type(1) .open-project-copy > p': '完成实时全模态推理的跨平台链路：B300 Draft 模型训练、真实多模态样本下的 DSpark 推测执行、draft-aware safetensors 到 GGUF 转换、CANN 与 llama.cpp-omni 性能分析、kernel/graph 优化，以及昇腾 910C 全双工验证。',
+      '.open-project:nth-of-type(1) .open-project-copy > p': '完成实时全模态推理从训练到运行时的完整链路：B300 Draft 模型训练、真实多模态样本下的 DSpark 推测执行、draft-aware safetensors 到 GGUF 转换，以及昇腾 910C 部署。基于 CANN 与 llama.cpp-omni profiling 进行 kernel/graph 优化；最终全双工链路通过 4/4 精度门禁，Core RTF 从 0.6754 降至 0.4829。',
       '.open-project:nth-of-type(1) .open-project-proof span:nth-of-type(1)': '平均接受长度',
       '.open-project:nth-of-type(1) .open-project-proof span:nth-of-type(2)': 'Host Launch 次数',
       '.open-project:nth-of-type(2) .open-project-index': '02 · DPC',
@@ -672,7 +675,7 @@
       localStorage.setItem('portfolio-language', language);
     };
     const savedLanguage = localStorage.getItem('portfolio-language');
-    let currentLanguage = savedLanguage || (navigator.language.toLowerCase().startsWith('zh') ? 'zh' : 'en');
+    let currentLanguage = savedLanguage || 'en';
     setLanguage(currentLanguage);
     langButton.addEventListener('click', () => {
       currentLanguage = currentLanguage === 'zh' ? 'en' : 'zh';
