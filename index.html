@@ -88,6 +88,19 @@
     nav a:hover, nav a.active { color: var(--ink); }
     nav a:hover::after, nav a.active::after { transform: scaleX(1); transform-origin: left; }
     .github-link { color: var(--blue); font-weight: 700; }
+    .header-actions { display: flex; align-items: center; gap: 12px; }
+    .lang-button {
+      height: 34px;
+      padding: 0 11px;
+      border: 1px solid var(--line);
+      color: var(--ink);
+      background: rgba(255,255,255,.45);
+      font: 700 10px/1 var(--sans);
+      letter-spacing: .08em;
+      cursor: pointer;
+      transition: color .2s ease, border-color .2s ease, background .2s ease;
+    }
+    .lang-button:hover { color: var(--white); border-color: var(--ink); background: var(--ink); }
     .menu-button {
       display: none;
       width: 40px;
@@ -377,7 +390,10 @@
         <a href="#opensource">Open source</a>
         <a class="github-link" href="https://github.com/Phoenix3334" target="_blank" rel="noreferrer">GitHub ↗</a>
       </nav>
-      <button class="menu-button" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="site-nav">☰</button>
+      <div class="header-actions">
+        <button class="lang-button" type="button" aria-label="Switch language">中文</button>
+        <button class="menu-button" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="site-nav">☰</button>
+      </div>
     </header>
   </div>
 
@@ -549,11 +565,119 @@
   <a class="back-top" href="#top" aria-label="Back to top">↑</a>
   <script>
     const menuButton = document.querySelector('.menu-button');
+    const langButton = document.querySelector('.lang-button');
     const nav = document.querySelector('#site-nav');
     const progress = document.querySelector('.progress');
     const backTop = document.querySelector('.back-top');
     const navLinks = [...nav.querySelectorAll('a[href^="#"]')];
     const sections = navLinks.map(link => document.querySelector(link.getAttribute('href'))).filter(Boolean);
+    const zh = {
+      'nav a[href="#trajectory"]': '研究轨迹',
+      'nav a[href="#experience"]': '经历',
+      'nav a[href="#opensource"]': '开源工作',
+      '.hero .eyebrow': 'AI 系统 · 郑州大学',
+      '.hero h1': '面向<em>智能工业化</em>的 AI 系统',
+      '.hero-lede': '我关注智能工作负载如何从真实世界的边缘设备延伸到大规模 AI 基础设施，并在不同硬件和运行时上保持高效与可靠。',
+      '.hero-line span:nth-child(1)': 'AI 基础设施',
+      '.hero-line span:nth-child(2)': '硬件感知推理',
+      '.hero-line span:nth-child(3)': '边缘与物理系统',
+      '.portrait figcaption': '物联网工程<br>郑州大学 · 2027 届',
+      '#trajectory .eyebrow': '研究轨迹',
+      '#trajectory .section-head h2': '贯穿完整 AI 技术栈的系统视角',
+      '#trajectory .section-head > p': '我的工作从传感与边缘设备开始，逐步深入到异构加速器、推理运行时和分布式服务。',
+      '.trajectory article:nth-child(1) h3': '物理系统',
+      '.trajectory article:nth-child(1) p': '传感器、设备与真实环境约束',
+      '.trajectory article:nth-child(2) h3': '边缘智能',
+      '.trajectory article:nth-child(2) p': '端侧感知与时序模型',
+      '.trajectory article:nth-child(3) h3': '领域 AI',
+      '.trajectory article:nth-child(3) p': '医疗、巡检与多模态系统',
+      '.trajectory article:nth-child(4) h3': '硬件感知 AI',
+      '.trajectory article:nth-child(4) p': '昇腾、鲲鹏、算子与内存局部性',
+      '.trajectory article:nth-child(5) h3': 'AI 运行时',
+      '.trajectory article:nth-child(5) p': '图捕获、缓存管理与正确性',
+      '.trajectory article:nth-child(6) h3': '分布式基础设施',
+      '.trajectory article:nth-child(6) p': '推理服务、调度与阶段隔离',
+      '#experience .eyebrow': '核心经历',
+      '#experience .section-head h2': '跨越不同层级的系统工作',
+      '#experience .section-head > p': '这些工作的共同点是可测量的系统行为：观察真实负载，定位限制性能或正确性的边界，再在实际硬件上验证改动。',
+      '.experience-row:nth-child(1) .year': '2026 · 至今',
+      '.experience-row:nth-child(1) h3': '百度智能云<small>AI Infra 科研实习生</small>',
+      '.experience-row:nth-child(1) p': '在 NVIDIA B300 上研究基于 SGLang 的 DeepSeek 长上下文推理，涵盖 <strong>DP Attention、P/D 分离、PrefillDelayer、KV Cache、CUDA Graph 正确性与性能诊断</strong>。',
+      '.experience-row:nth-child(2) h3': '华为 ICT 学院<small>队长 · 异构加速系统</small>',
+      '.experience-row:nth-child(2) p': '面向昇腾 910B 与鲲鹏平台优化推理系统。在 960 并发下将峰值吞吐从 <strong>2,301 提升至 30,451 tokens/s</strong>，工作覆盖 EAGLE、MoE 通信、算子调优与系统分析。',
+      '.experience-row:nth-child(3) .year': '真实世界 AI',
+      '.experience-row:nth-child(3) h3': '郑州大学与汉威<small>边缘 AI · 智慧医疗</small>',
+      '.experience-row:nth-child(3) p': '构建了可穿戴多模态传感、ROS2 同步、时序动作建模、自主巡检、微流控和医学热成像系统。ThermoPulse 为独立的郑州大学创新项目。',
+      '#opensource .eyebrow': '开源系统工作',
+      '#opensource .section-head h2': '模型、运行时与加速器协同设计',
+      '#opensource .section-head > p': '我的公开工作覆盖全模态推理、分布式服务、缓存正确性、CUDA Graph 执行与异构加速优化。',
+      '.open-project:nth-of-type(1) .open-project-index': '01 · 核心项目',
+      '.open-project:nth-of-type(1) h3 a': 'MiniCPM-o 4.5：NVIDIA B300 与昇腾 910C ↗',
+      '.open-project:nth-of-type(1) .open-project-copy > p': '完成实时全模态推理的跨平台链路：B300 Draft 模型训练、真实多模态样本下的 DSpark 推测执行、draft-aware safetensors 到 GGUF 转换、CANN 与 llama.cpp-omni 性能分析、kernel/graph 优化，以及昇腾 910C 全双工验证。',
+      '.open-project:nth-of-type(1) .open-project-proof span:nth-of-type(1)': '平均接受长度',
+      '.open-project:nth-of-type(1) .open-project-proof span:nth-of-type(2)': 'Host Launch 次数',
+      '.open-project:nth-of-type(2) .open-project-index': '02 · DPC',
+      '.open-project:nth-of-type(2) h3 a': 'Generation Health 与用户路由状态隔离 ↗',
+      '.open-project:nth-of-type(2) .open-project-copy > p': '定位到 generation health request 会推进用户请求共用的 Data Parallel Controller 路由状态。PR #35721 为 health traffic 建立独立状态，使用户请求重新保持均衡分发。',
+      '.open-project:nth-of-type(2) .open-project-proof span:nth-of-type(1)': 'CPU 回归测试',
+      '.open-project:nth-of-type(2) .open-project-proof span:nth-of-type(2)': 'B300 补丁验证稳定',
+      '.open-project:nth-of-type(3) .open-project-index': '03 · DCP',
+      '.open-project:nth-of-type(3) h3 a': 'Decode Retract 中的 MLA KV 索引本地化 ↗',
+      '.open-project:nth-of-type(3) .open-project-copy > p': '在 CPU backup/restore 访问 rank-local MLA KV buffer 前，将 DCP 扩展后的逻辑 KV 索引转换为本地物理行；同时保持 KDA/Mamba 循环状态索引独立，并在重新准入后恢复到新分配的位置。',
+      '.open-project:nth-of-type(3) .open-project-proof span:nth-of-type(1)': '请求完成，经历 8 次真实 retract',
+      '.open-project:nth-of-type(3) .open-project-proof span:nth-of-type(2)': 'CPU 正确性测试',
+      '.open-project:nth-of-type(4) .open-project-index': '04 · DSPARK',
+      '.open-project:nth-of-type(4) h3 a': 'CUDA Graph 与 P/D 运行时正确性 ↗',
+      '.open-project:nth-of-type(4) .open-project-copy > p': '围绕 compact target-verify replay、capture ordering、P/D decode handoff、并发扩展与回归设计形成连续调查链，并明确区分本人代码、诊断工作与协作验证。',
+      '.open-project:nth-of-type(4) .open-project-proof span:nth-of-type(1)': '持续 Decode 请求全部完成',
+      '.open-project:nth-of-type(4) .open-project-proof span:nth-of-type(2)': '正确性验证调用',
+      '.group-label': '部分上游记录',
+      '.evidence-main h3': '复现、隔离、验证、上游',
+      '.evidence-main > p': '公开记录包括生产修复、回归测试、诊断工具、路线图与 RFC。每项工作都明确证据边界，并区分代码贡献与协作验证。',
+      '.method div:nth-child(1) strong': '复现',
+      '.method div:nth-child(2) strong': '隔离',
+      '.method div:nth-child(3) strong': '验证',
+      '.method div:nth-child(4) strong': '上游',
+      '.metrics-band div:nth-child(1) span': 'MiniCPM-o Core RTF',
+      '.metrics-band div:nth-child(2) span': 'MiniCPM-o 精度门禁全部通过',
+      '.metrics-band div:nth-child(3) span': '测试配置下的 Prefill 吞吐提升',
+      '.metrics-band div:nth-child(4) span': '昇腾推理吞吐，960 并发',
+      '.research .eyebrow': '当前研究方向',
+      '.research .section-head h2': '自适应推理系统',
+      '.research .section-head > p': '真实工作负载会随阶段、模态、序列长度、硬件和服务目标变化。固定运行时策略无法持续兼顾性能与可靠性。',
+      '.research-question': '推理层如何在<em>工作负载与硬件持续变化</em>时，自适应地保持效率与正确性？',
+      '.research-steps div:nth-child(1) h3': '观测',
+      '.research-steps div:nth-child(1) p': '负载阶段、模态与服务目标',
+      '.research-steps div:nth-child(2) h3': '建模',
+      '.research-steps div:nth-child(2) p': '不同运行时和硬件选择下的性能',
+      '.research-steps div:nth-child(3) h3': '自适应',
+      '.research-steps div:nth-child(3) p': '调度、并行、缓存与执行策略',
+      '.research-steps div:nth-child(4) h3': '验证',
+      '.research-steps div:nth-child(4) p': '物理测试平台上的正确性与性能',
+      'footer h2': '从真实世界感知到可靠的 AI 基础设施',
+      '.copyright': '© 2026 郭飞鸿 · Feihong Guo'
+    };
+    const bilingual = Object.entries(zh).map(([selector, value]) => {
+      const element = document.querySelector(selector);
+      if (!element) return null;
+      return { element, en: element.innerHTML, zh: value };
+    }).filter(Boolean);
+
+    const setLanguage = language => {
+      bilingual.forEach(item => { item.element.innerHTML = item[language]; });
+      document.documentElement.lang = language === 'zh' ? 'zh-CN' : 'en';
+      document.title = language === 'zh' ? '郭飞鸿 | AI 系统与基础设施' : 'Feihong Guo | AI Systems';
+      langButton.textContent = language === 'zh' ? 'EN' : '中文';
+      langButton.setAttribute('aria-label', language === 'zh' ? 'Switch to English' : '切换至中文');
+      localStorage.setItem('portfolio-language', language);
+    };
+    const savedLanguage = localStorage.getItem('portfolio-language');
+    let currentLanguage = savedLanguage || (navigator.language.toLowerCase().startsWith('zh') ? 'zh' : 'en');
+    setLanguage(currentLanguage);
+    langButton.addEventListener('click', () => {
+      currentLanguage = currentLanguage === 'zh' ? 'en' : 'zh';
+      setLanguage(currentLanguage);
+    });
 
     menuButton.addEventListener('click', () => {
       const open = nav.classList.toggle('open');
