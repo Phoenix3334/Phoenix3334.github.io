@@ -540,14 +540,14 @@
       <div class="wrap">
         <div class="section-head">
           <div><p class="eyebrow">Current research direction</p><h2>Adaptive inference systems</h2></div>
-          <p>Real workloads change across phase, modality, sequence length, hardware, and service objectives. Static runtime choices leave performance and reliability on the table.</p>
+          <p>Roofline analysis estimates the software–hardware ceiling. Runtime signals then locate whether the active limit comes from compute, memory, communication, scheduling, or capacity.</p>
         </div>
         <p class="research-question">How can the inference layer <em>adapt to changing workloads and hardware</em> while preserving efficiency and correctness?</p>
         <div class="research-steps">
-          <div><span>01</span><h3>Observe</h3><p>Workload phase, modality, and service objective</p></div>
-          <div><span>02</span><h3>Model</h3><p>Performance across runtime and hardware choices</p></div>
-          <div><span>03</span><h3>Adapt</h3><p>Scheduling, parallelism, cache, and execution policy</p></div>
-          <div><span>04</span><h3>Verify</h3><p>Correctness and performance on physical testbeds</p></div>
+          <div><span>01</span><h3>Observe</h3><p>Prefill/decode phase, batch shape, OI, GPU utilization, HBM traffic, and per-rank work supply</p></div>
+          <div><span>02</span><h3>Classify</h3><p>Compute, memory, communication, scheduler fragmentation, rank imbalance, or KV-capacity limit</p></div>
+          <div><span>03</span><h3>Adapt</h3><p>Chunk size, prefill admission timing, batching, DP/TP/EP layout, kernels, cache, and graph policy</p></div>
+          <div><span>04</span><h3>Verify</h3><p>Controlled A/B runs using TPS, TTFT, dispatch balance, traces, correctness gates, and long-run stability</p></div>
         </div>
       </div>
     </section>
@@ -644,16 +644,16 @@
       '.metrics-band div:nth-child(4) span': '昇腾推理吞吐，960 并发',
       '.research .eyebrow': '当前研究方向',
       '.research .section-head h2': '自适应推理系统',
-      '.research .section-head > p': '真实工作负载会随阶段、模态、序列长度、硬件和服务目标变化。固定运行时策略无法持续兼顾性能与可靠性。',
+      '.research .section-head > p': 'Roofline 分析用于估计软硬件吞吐上限，运行时信号进一步判断当前瓶颈来自计算、访存、通信、调度还是容量。',
       '.research-question': '推理层如何在<em>工作负载与硬件持续变化</em>时，自适应地保持效率与正确性？',
       '.research-steps div:nth-child(1) h3': '观测',
-      '.research-steps div:nth-child(1) p': '负载阶段、模态与服务目标',
-      '.research-steps div:nth-child(2) h3': '建模',
-      '.research-steps div:nth-child(2) p': '不同运行时和硬件选择下的性能',
+      '.research-steps div:nth-child(1) p': '观测 Prefill/Decode 阶段、batch shape、算术强度、GPU 利用率、HBM 流量与各 Rank 工作供给',
+      '.research-steps div:nth-child(2) h3': '分类',
+      '.research-steps div:nth-child(2) p': '识别计算、显存带宽、通信、调度碎片、Rank 不均衡或 KV 容量瓶颈',
       '.research-steps div:nth-child(3) h3': '自适应',
-      '.research-steps div:nth-child(3) p': '调度、并行、缓存与执行策略',
+      '.research-steps div:nth-child(3) p': '调整 chunk size、Prefill 准入、批处理、DP/TP/EP、kernel、cache 与 CUDA Graph 策略',
       '.research-steps div:nth-child(4) h3': '验证',
-      '.research-steps div:nth-child(4) p': '物理测试平台上的正确性与性能',
+      '.research-steps div:nth-child(4) p': '通过受控 A/B 的 TPS、TTFT、dispatch 均衡、Nsight traces、正确性门禁与长稳测试闭环验证',
       'footer h2': '从真实世界感知到可靠的 AI 基础设施',
       '.copyright': '© 2026 郭飞鸿 · Feihong Guo'
     };
