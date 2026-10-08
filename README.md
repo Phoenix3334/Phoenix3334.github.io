@@ -15,6 +15,14 @@ the preference when browser storage is available.
   diagnostic work, and collaborative validation.
 - Research: adaptive inference as an open AI Systems / MLSys direction.
 
+## Project visuals
+
+Five project photographs/output images and the xLLM / vLLM-Ascend marks
+were extracted from the supplied interview presentation. The WebP assets
+preserve the source pixel dimensions, alpha channel, and decoded pixels.
+Project figures link to their full image and load lazily. They illustrate
+project prototypes; the nearby text defines contribution and validation scope.
+
 ## Publish
 
 GitHub Pages deploys this existing repository from `main`, repository root.
