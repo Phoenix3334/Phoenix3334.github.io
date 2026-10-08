@@ -272,8 +272,8 @@
         <article class="open-project">
           <div class="open-project-index">03 · KV STATE</div>
           <div class="open-project-copy">
-            <div class="project-title"><img class="project-logo" src="https://github.com/sgl-project.png?size=88" alt="SGLang"><h3><a href="https://github.com/sgl-project/sglang/pull/38790" target="_blank" rel="noreferrer">MLA KV index localization during decode retraction ↗</a></h3></div>
-            <p>Authored a proposed repair for the mismatch between <strong>DCP-widened logical KV indices and rank-local MLA storage</strong> during CPU backup/restore. The unpatched v0.5.17 arm failed at the first retraction; the patched arm completed 2,048 requests with eight real retractions. Local correctness validation is evidence for the repair; PR #38790 is closed and unmerged.</p>
+            <div class="project-title"><img class="project-logo" src="https://github.com/sgl-project.png?size=88" alt="SGLang"><h3><a href="https://github.com/sgl-project/sglang/issues/38645" target="_blank" rel="noreferrer">DCP decode retraction: bug report and index-space diagnosis ↗</a></h3></div>
+            <p>Reported and documented <strong>Issue #38645</strong>, tracing a decode-retraction crash to the mismatch between DCP-widened logical KV indices and rank-local MLA storage during CPU backup/restore. Built a v0.5.17 DCP8 patched/unpatched comparison: the original path failed at the first retraction; the locally repaired path completed <strong>2,048 requests with eight real retractions</strong>. Six CPU tests checked owner filtering, local-row mapping, and restore into newly allocated locations. The issue is closed; these are local validation results.</p>
           </div>
           <div class="open-project-proof"><strong>2,048 / 2,048</strong><span>v0.5.17 patched requests · 8 real retractions</span><strong>6 / 6</strong><span>CPU correctness tests</span></div>
         </article>
@@ -281,10 +281,10 @@
         <article class="open-project">
           <div class="open-project-index">04 · CUDA GRAPH / P-D</div>
           <div class="open-project-copy">
-            <div class="project-title"><img class="project-logo" src="https://github.com/sgl-project.png?size=88" alt="SGLang"><h3><a href="https://github.com/sgl-project/sglang/issues/34297" target="_blank" rel="noreferrer">CUDA Graph and P/D runtime correctness ↗</a></h3></div>
-            <p>Investigated <strong>target-verify replay, warmup/capture ordering, P/D draft-input handoff, and ragged planning</strong>. I authored diagnosis and regression work and contributed collaborative validation. The ragged-plan fix merged as PR #32467 was authored by another contributor; my evidence supports reproduction and validation, not ownership of that merged patch.</p>
+            <div class="project-title"><img class="project-logo" src="https://github.com/sgl-project.png?size=88" alt="SGLang"><h3><a href="https://github.com/sgl-project/sglang/issues/31023" target="_blank" rel="noreferrer">DSpark correctness: issue discovery and controlled evidence ↗</a></h3></div>
+            <p>Opened and maintained <strong>Issues #31023 and #33356</strong>, organized Roadmap #34297, and proposed runtime contracts in RFC #32432. Designed a same-session A/B/C ragged-plan regression: the original emitted <strong>13,111 out-of-bounds plans in 30,000 calls</strong>; the barrier and reviewer-proposed no-initialization variants each emitted <strong>0 in 30,000</strong>. A sustained TP8/DP8 Decode sweep completed 18,560/18,560 requests. My contribution was failure discovery, reproduction, candidate validation, and regression evidence; the final upstream patch was authored by another contributor.</p>
           </div>
-          <div class="open-project-proof"><strong>18,560 / 18,560</strong><span>requests completed in the sustained decode test</span><strong>30,000</strong><span>calls in collaborative ragged-plan validation</span></div>
+          <div class="open-project-proof"><strong>18,560 / 18,560</strong><span>requests completed in the sustained decode test</span><strong>13,111 → 0</strong><span>OOB plans · 30,000 calls per A/B/C variant</span></div>
         </article>
 
         <p class="group-label">Selected upstream records · status checked 8 October 2026</p>
@@ -295,12 +295,14 @@
             <div class="method"><div><span>01</span><strong>Reproduce</strong></div><div><span>02</span><strong>Isolate</strong></div><div><span>03</span><strong>Validate</strong></div><div><span>04</span><strong>Upstream</strong></div></div>
           </div>
           <div class="contributions">
-            <a class="contribution" href="https://github.com/sgl-project/sglang/pull/38790" target="_blank" rel="noreferrer"><div class="contribution-meta"><span>PR #38790</span><span data-i18n="status-38790">Authored · closed, unmerged</span></div><h3>Localize MLA KV indices for retraction backup and restore</h3></a>
-            <a class="contribution" href="https://github.com/sgl-project/sglang/pull/35721" target="_blank" rel="noreferrer"><div class="contribution-meta"><span>PR #35721</span><span data-i18n="status-35721">Authored · open</span></div><h3>Separate generation health state from user dispatch</h3></a>
-            <a class="contribution" href="https://github.com/sgl-project/sglang/pull/34410" target="_blank" rel="noreferrer"><div class="contribution-meta"><span>PR #34410</span><span data-i18n="status-34410">Authored tests · open</span></div><h3>Pin the P/D decode draft-input handoff contract</h3></a>
-            <a class="contribution" href="https://github.com/sgl-project/sglang/pull/34286" target="_blank" rel="noreferrer"><div class="contribution-meta"><span>PR #34286</span><span data-i18n="status-34286">Authored patch · open</span></div><h3>Synchronize graph construction after final warmup</h3></a>
-            <a class="contribution" href="https://github.com/sgl-project/sglang/pull/31455" target="_blank" rel="noreferrer"><div class="contribution-meta"><span>PR #31455</span><span data-i18n="status-31455">Diagnosis · closed, unmerged</span></div><h3>Bisect target-verify CUDA Graph replay synchronization</h3></a>
-            <a class="contribution" href="https://github.com/deepseek-ai/DeepGEMM/pull/316" target="_blank" rel="noreferrer"><div class="contribution-meta"><span>PR #316</span><span data-i18n="status-316">Collaborative validation · merged by another author</span></div><h3>MegaMoE benchmarks and communication-path analysis</h3></a>
+            <a class="contribution" data-record="issue-31023" href="https://github.com/sgl-project/sglang/issues/31023" target="_blank" rel="noreferrer"><div class="contribution-meta"><span>Issue #31023</span><span data-i18n="status-issue-31023">Authored report & evidence · open</span></div><h3>Isolate DSpark target-verify replay failures on TP8</h3></a>
+            <a class="contribution" data-record="issue-33356" href="https://github.com/sgl-project/sglang/issues/33356" target="_blank" rel="noreferrer"><div class="contribution-meta"><span>Issue #33356</span><span data-i18n="status-issue-33356">Authored report & validation · open</span></div><h3>Separate plan-kernel corruption from graph capture ordering</h3></a>
+            <a class="contribution" data-record="issue-34297" href="https://github.com/sgl-project/sglang/issues/34297" target="_blank" rel="noreferrer"><div class="contribution-meta"><span>Roadmap #34297</span><span data-i18n="status-issue-34297">Authored investigation roadmap · open</span></div><h3>Organize DSpark correctness contracts and validation gates</h3></a>
+            <a class="contribution" data-record="issue-32432" href="https://github.com/sgl-project/sglang/issues/32432" target="_blank" rel="noreferrer"><div class="contribution-meta"><span>RFC #32432</span><span data-i18n="status-issue-32432">Authored design proposal · open</span></div><h3>Propose metadata, workspace, and stream-ownership contracts</h3></a>
+            <a class="contribution" data-record="issue-38645" href="https://github.com/sgl-project/sglang/issues/38645" target="_blank" rel="noreferrer"><div class="contribution-meta"><span>Issue #38645</span><span data-i18n="status-issue-38645">Authored report & root-cause analysis · closed</span></div><h3>Trace the DCP retraction logical-to-local KV index mismatch</h3></a>
+            <a class="contribution" data-record="pr-35721" href="https://github.com/sgl-project/sglang/pull/35721" target="_blank" rel="noreferrer"><div class="contribution-meta"><span>PR #35721</span><span data-i18n="status-35721">Authored · open</span></div><h3>Separate generation health state from user dispatch</h3></a>
+            <a class="contribution" data-record="pr-34410" href="https://github.com/sgl-project/sglang/pull/34410" target="_blank" rel="noreferrer"><div class="contribution-meta"><span>PR #34410</span><span data-i18n="status-34410">Authored tests · open</span></div><h3>Pin the P/D decode draft-input handoff contract</h3></a>
+            <a class="contribution" data-record="pr-34286" href="https://github.com/sgl-project/sglang/pull/34286" target="_blank" rel="noreferrer"><div class="contribution-meta"><span>PR #34286</span><span data-i18n="status-34286">Authored patch · open</span></div><h3>Synchronize graph construction after final warmup</h3></a>
           </div>
         </div>
 
@@ -353,6 +355,19 @@
     const sections=navLinks.map(link=>document.querySelector(link.getAttribute('href'))).filter(Boolean);
 
     const zh={
+      "[data-i18n=\"status-issue-31023\"]":"本人问题报告与证据 · 开放",
+      "[data-i18n=\"status-issue-33356\"]":"本人问题报告与验证 · 开放",
+      "[data-i18n=\"status-issue-34297\"]":"本人调查路线图 · 开放",
+      "[data-i18n=\"status-issue-32432\"]":"本人设计提案 · 开放",
+      "[data-i18n=\"status-issue-38645\"]":"本人问题报告与根因分析 · 已关闭",
+      ".contribution[data-record=\"issue-31023\"] h3":"隔离 TP8 上的 DSpark target-verify replay 故障",
+      ".contribution[data-record=\"issue-33356\"] h3":"区分 plan-kernel 越界与图捕获顺序问题",
+      ".contribution[data-record=\"issue-34297\"] h3":"组织 DSpark 正确性契约与验证闸门",
+      ".contribution[data-record=\"issue-32432\"] h3":"提出 metadata、workspace 与 stream 所有权契约",
+      ".contribution[data-record=\"issue-38645\"] h3":"追踪 DCP retract 的逻辑 KV 索引到本地行映射缺失",
+      ".contribution[data-record=\"pr-35721\"] h3":"将 generation-health 状态从用户调度中隔离",
+      ".contribution[data-record=\"pr-34410\"] h3":"固定 P/D Decode draft-input 交接契约",
+      ".contribution[data-record=\"pr-34286\"] h3":"最后一次 warmup 后、capture 前同步图构建",
       'nav a[href="#internship"]':'实习记录',
       "[data-i18n=\"ascend-summary\"]":"两条推理路线，分别解释基线",
       "[data-i18n=\"qwen-detail\"]":"<strong>xLLM / Qwen3.5-9B：</strong>模型适配、运行时配置与执行路径优化形成 C960 的组合结果。13.2× 仅对应该负载与起始配置，不是单项优化消融，也不代表硬件上限。",
@@ -388,24 +403,15 @@
       "[data-i18n=\"minicpm-summary\"]":"最终全双工配置究竟改了什么？",
       "[data-i18n=\"minicpm-detail\"]":"最终组合还将视觉输入从 overview + slice 减为仅 overview，并将首段 TTS chunk 从 5 调为 10 tokens。后者以约 +100 ms 首次响应延迟换取更少的重复边界工作。通过四项有限提交检查，不能直接推出广泛的视觉质量等价。",
       "[data-i18n=\"minicpm-rejected\"]":"最终短 chunk 全双工配置禁用了 thinker 推测解码，因为其开销使 RTF 变差。draft 模型接受长度与独立文本负载加速仍是单独产出，不用来解释最终全双工收益。",
-      "[data-i18n=\"status-38790\"]":"本人拟议修复 · 已关闭，未合并",
       "[data-i18n=\"status-35721\"]":"本人修复 PR · 开放",
       "[data-i18n=\"status-34410\"]":"本人回归测试 · 开放",
       "[data-i18n=\"status-34286\"]":"本人修复 PR · 开放",
-      "[data-i18n=\"status-31455\"]":"诊断记录 · 已关闭，未合并",
-      "[data-i18n=\"status-316\"]":"协作验证 · 其他作者合并",
       ".open-project:nth-of-type(2) .open-project-proof span:nth-of-type(1)":"CPU 回归测试",
       ".open-project:nth-of-type(2) .open-project-proof span:nth-of-type(2)":"B300 patched health-on 重复实验 · 指定负载",
       ".open-project:nth-of-type(3) .open-project-proof span:nth-of-type(1)":"v0.5.17 修复组请求 · 8 次真实 retract",
       ".open-project:nth-of-type(3) .open-project-proof span:nth-of-type(2)":"CPU 正确性测试",
       ".open-project:nth-of-type(4) .open-project-proof span:nth-of-type(1)":"持续 Decode 测试完成请求数",
-      ".open-project:nth-of-type(4) .open-project-proof span:nth-of-type(2)":"ragged-plan 协作验证调用数",
-      ".contribution:nth-child(1) h3":"Retract backup/restore 中的 MLA KV 索引本地化",
-      ".contribution:nth-child(2) h3":"将 generation-health 状态从用户调度中隔离",
-      ".contribution:nth-child(3) h3":"固定 P/D Decode draft-input 交接契约",
-      ".contribution:nth-child(4) h3":"最后一次 warmup 后、capture 前同步图构建",
-      ".contribution:nth-child(5) h3":"定位 target-verify CUDA Graph replay 同步问题",
-      ".contribution:nth-child(6) h3":"MegaMoE benchmark 与通信路径分析",
+      ".open-project:nth-of-type(4) .open-project-proof span:nth-of-type(2)":"越界计划 · A/B/C 每个方案各 30,000 次调用",
       'nav a[href="#lens"]':'系统视角',
       'nav a[href="#experience"]':'经历',
       'nav a[href="#opensource"]':'开源工作',
@@ -467,11 +473,11 @@
       '.open-project:nth-of-type(2) h3 a':'Generation Health 与用户路由状态隔离 ↗',
       '.open-project:nth-of-type(2) .open-project-copy > p':'定位 generation-health 流量对用户路由的扰动后，编写<strong>PR #35721</strong>。拟议修复将 health 的轮转状态与负载预算记账从用户调度中隔离。受控 B300 对照中，patched health-on 重复实验恢复预期吞吐区间；PR 目前仍开放。',
       '.open-project:nth-of-type(3) .open-project-index':'03 · KV 状态',
-      '.open-project:nth-of-type(3) h3 a':'Decode Retract 中的 MLA KV 索引本地化 ↗',
-      '.open-project:nth-of-type(3) .open-project-copy > p':'为 CPU backup/restore 中<strong>DCP 扩展逻辑 KV 索引与 rank-local MLA 存储</strong>不匹配编写拟议修复。v0.5.17 未修复组在首次 retract 失败；修复组经过 8 次真实 retract 完成 2,048 个请求。本地正确性验证支持该修复，但 PR #38790 已关闭且未合并。',
+      '.open-project:nth-of-type(3) h3 a':'DCP Decode retract：问题报告与索引空间诊断 ↗',
+      '.open-project:nth-of-type(3) .open-project-copy > p':'发布并维护<strong>Issue #38645</strong>，将 Decode retract 崩溃追踪到 CPU backup/restore 中 DCP 扩展逻辑 KV 索引与 rank-local MLA 存储不匹配。建立 v0.5.17 DCP8 的修复/未修复对照：原路径在首次 retract 失败，本地修复路径经<strong>8 次真实 retract 完成 2,048 个请求</strong>。6 项 CPU 测试检查 owner filtering、本地行映射与新分配位置上的恢复。Issue 已关闭；这里记录的是本地验证结果。',
       '.open-project:nth-of-type(4) .open-project-index':'04 · CUDA Graph / P-D',
-      '.open-project:nth-of-type(4) h3 a':'CUDA Graph 与 P/D 运行时正确性 ↗',
-      '.open-project:nth-of-type(4) .open-project-copy > p':'调查<strong>target-verify replay、warmup/capture 顺序、P/D draft-input 交接与 ragged planning</strong>，编写诊断和回归代码，并参与协作验证。最终 ragged-plan 修复 PR #32467 由其他贡献者编写并合并；我的证据对应复现与验证，不等于该合并补丁的所有权。',
+      '.open-project:nth-of-type(4) h3 a':'DSpark 正确性：问题发现与受控证据 ↗',
+      '.open-project:nth-of-type(4) .open-project-copy > p':'发布并维护<strong>Issues #31023、#33356</strong>，组织 Roadmap #34297，并在 RFC #32432 提出运行时契约。设计同一 session 的 A/B/C ragged-plan 回归：原实现在<strong>30,000 次调用中产生 13,111 次越界计划</strong>；加 barrier 与审查者提出的移除初始化方案各为<strong>0/30,000</strong>。持续 TP8/DP8 Decode 扫描完成 18,560/18,560 请求。我的贡献是问题发现、复现、候选验证与回归证据；最终上游补丁由其他贡献者编写。',
       '.group-label':'部分上游记录 · 状态核对于 2026 年 10 月 8 日',
       '.evidence-main h3':'复现、隔离、验证、上游',
       '.evidence-main p':'框架会变，但研究方法不应变。公开 issue、PR、回归与 RFC 构成可复现证据链，用来区分症状、因果机制、修复和验证。',

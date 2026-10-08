@@ -30,9 +30,14 @@ package installation is required.
   independent measurements.
 - MiniCPM training acceptance, profiled launches, and duplex RTF are separate
   endpoints. The final workload and latency trade-offs are stated explicitly.
-- Link public records and distinguish authored open/closed PRs, diagnosis,
-  collaborative validation, and patches merged by another author.
-- PR status is a dated snapshot, checked on 8 October 2026; public GitHub
+- Feature authored issue reports, investigation roadmaps, RFCs, and open PRs.
+  Closed PRs are not listed as featured contributions. Distinguish problem
+  discovery, controlled evidence, proposed contracts, and authored patches.
+- DSpark A/B/C validation uses 30,000 calls per variant; candidate validation
+  and sustained runtime regression are separate evidence endpoints.
+- The DCP issue is a closed public investigation record with local validation;
+  its closed status is not presented as proof of a merged upstream fix.
+- Issue and PR status is a dated snapshot, checked on 8 October 2026; public GitHub
   records are authoritative for later changes.
 - Physical and medical systems are prototypes; project evaluations do not
   establish field reliability or clinical effectiveness.
