@@ -21,7 +21,10 @@ Five project photographs/output images and the xLLM / vLLM-Ascend marks
 were extracted from the supplied interview presentation. The WebP assets
 preserve the source pixel dimensions, alpha channel, and decoded pixels.
 Cutout figures sit directly on the page background without white containers
-or decorative frames. Project figures link to their full image and load lazily. They illustrate
+or decorative frames. Figure groups and captions are centered within the
+content width. The inspection robot uses the original PPT right-crop viewport
+(27.632%); the linked full image stays unchanged. Project figures link to
+their full image and load lazily. They illustrate
 project prototypes; the nearby text defines contribution and validation scope.
 
 ## Publish
