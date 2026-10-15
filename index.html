@@ -174,7 +174,7 @@
           <article class="experience-row">
             <div class="year">2026 · CURRENT</div>
             <h3>Baidu AI Cloud<small>AI Infrastructure Research Intern</small></h3>
-            <p>Investigating long-context DeepSeek serving on NVIDIA B300 with SGLang: <strong>phase-isolated Prefill/Decode measurements, software–hardware capacity estimation, DP Attention, CUDA Graph, and P/D correctness</strong>. I connect workload sweeps and per-rank telemetry to source-level hypotheses, controlled interventions, and regression tests. <a class="inline-link" href="#internship">Read the internship notes ↓</a></p>
+            <p>Working in the AI communications group on <strong>distributed inference performance and correctness</strong> with SGLang and NVIDIA B300. My work connects phase-isolated Prefill/Decode evaluation and capacity estimation with DP routing, DCP cache recovery, DSpark, and CUDA Graph investigation. I turn runtime observations into source-level explanations, controlled experiments, and upstream fixes. <a class="inline-link" href="#internship">Read the internship notes ↓</a></p>
           </article>
           <article class="experience-row">
             <div class="year">COMPUTE FOUNDATION</div>
@@ -261,7 +261,7 @@
       <div class="wrap">
         <div class="section-head">
           <div><p class="eyebrow">Open-source systems work</p><h2>Model, runtime, and accelerator co-design</h2></div>
-          <p>Public evidence matters because systems claims should survive reproduction, causal isolation, correctness checks, and sustained regression — not just a single benchmark.</p>
+          <p>My SGLang contributions span three connected problems: DP request routing, DCP cache recovery, and DSpark runtime correctness. They combine independently authored fixes with collaborative upstream investigation.</p>
         </div>
 
         <article class="open-project">
@@ -277,17 +277,18 @@
         <article class="open-project">
           <div class="open-project-index">02 · ROUTING STATE</div>
           <div class="open-project-copy">
-            <div class="project-title"><img class="project-logo" src="https://github.com/sgl-project.png?size=88" alt="SGLang"><h3><a href="https://github.com/sgl-project/sglang/pull/35721" target="_blank" rel="noreferrer">Generation health and user routing isolation ↗</a></h3></div>
-            <p>Authored <strong>PR #35721</strong> after isolating generation-health traffic as a cause of user-routing perturbation. The fix separates health round-robin state and load-budget bookkeeping from user dispatch and was merged into SGLang main on <strong>11 October 2026</strong>. Controlled B300 comparisons showed patched health-on runs recovering the expected throughput envelope; the rebased CPU test file passes 30 tests. GPU performance was not re-measured during the rebase.</p>
-          </div>
-          <div class="open-project-proof"><strong>30 / 30</strong><span>targeted CPU tests · rebased tree</span><strong>4 / 4</strong><span>B300 patched health-on repeats · tested workload</span></div>
+            <div class="project-title"><img class="project-logo" src="https://github.com/sgl-project.png?size=88" alt="SGLang"><h3><a href="https://github.com/sgl-project/sglang/pull/35721" target="_blank" rel="noreferrer">DP health checks: independent routing-state repair ↗</a></h3></div>
+            <p>Independently traced intermittent Prefill throughput drops to generation-health requests changing shared user-routing state. Designed the patched/unpatched × health-on/off comparison, implemented separate health routing and load-budget handling, and added regression tests. My <strong>PR #35721 merged into SGLang main</strong>. On the tested eight-GPU B300 workload, all four patched health-on runs recovered the expected throughput range.</p>
+            <details class="work-detail"><summary data-i18n="dp-detail-title">Mechanism, validation, and contribution</summary><div class="detail-body"><p data-i18n="dp-detail-copy">A health request could mutate DPC dispatch state before being skipped by a busy scheduler. I isolated health round-robin and user load-budget state while preserving explicit rank and PD routing semantics. The work added 23 CPU tests initially; the rebased test file passed 30 tests. B300 performance evidence predates the rebase.</p><a class="inline-link" href="https://github.com/sgl-project/sglang/issues/35241" target="_blank" rel="noreferrer" data-i18n="dp-record-link">Root-cause investigation · #35241 ↗</a></div></details>
+          </div><div class="open-project-proof"><strong>30 / 30</strong><span>targeted CPU tests · rebased tree</span><strong>4 / 4</strong><span>B300 patched health-on repeats · tested workload</span></div>
         </article>
 
         <article class="open-project">
           <div class="open-project-index">03 · KV STATE</div>
           <div class="open-project-copy">
-            <div class="project-title"><img class="project-logo" src="https://github.com/sgl-project.png?size=88" alt="SGLang"><h3><a href="https://github.com/sgl-project/sglang/issues/38645" target="_blank" rel="noreferrer">DCP decode retraction: bug report and index-space diagnosis ↗</a></h3></div>
-            <p>Reported and documented <strong>Issue #38645</strong>, tracing a decode-retraction crash to the mismatch between DCP-widened logical KV indices and rank-local MLA storage during CPU backup/restore. Built a v0.5.17 DCP8 patched/unpatched comparison: the original path failed at the first retraction; the locally repaired path completed <strong>2,048 requests with eight real retractions</strong>. Six CPU tests checked owner filtering, local-row mapping, and restore into newly allocated locations. The issue is closed; these are local validation results.</p>
+            <div class="project-title"><img class="project-logo" src="https://github.com/sgl-project.png?size=88" alt="SGLang"><h3><a href="https://github.com/sgl-project/sglang/issues/38645" target="_blank" rel="noreferrer">DCP cache recovery: diagnosis to collaborative upstream fix ↗</a></h3></div>
+            <p>Reported <strong>Issue #38645</strong>, localized the logical-to-physical KV index mismatch in DCP retraction backup/restore, and implemented and validated draft fix <strong>#38790</strong>. Unpatched DCP8 failed at its first retraction; my patched B300 run completed <strong>2,048/2,048 requests with eight retractions</strong>. Maintainer kpham-sgl integrated the fix through a shared DCP layout helper, added compatibility and runtime checks, and merged <strong>#39487</strong>; I closed my superseded draft.</p>
+            <details class="work-detail"><summary data-i18n="dcp-detail-title">My repair and the maintainer’s integration</summary><div class="detail-body"><p data-i18n="dcp-detail-copy">My implementation and six CPU tests covered rank ownership, local-row mapping, and restoration into newly allocated KV locations; four KDA/Mamba GPU regressions checked the separate recurrent-state path. The maintainer reused a shared layout helper, handled already-resolved physical indices and partial-page prefixes, and added B200 forced-retraction and logprob checks. My B300 evidence validates the documented local patch stack.</p><a class="inline-link" href="https://github.com/sgl-project/sglang/pull/38790" target="_blank" rel="noreferrer" data-i18n="dcp-draft-link">My validated draft · #38790 ↗</a> · <a class="inline-link" href="https://github.com/sgl-project/sglang/pull/39487" target="_blank" rel="noreferrer" data-i18n="dcp-merged-link">Maintainer integration · merged #39487 ↗</a></div></details>
           </div>
           <div class="open-project-proof"><strong>2,048 / 2,048</strong><span>v0.5.17 patched requests · 8 real retractions</span><strong>6 / 6</strong><span>CPU correctness tests</span></div>
         </article>
@@ -295,13 +296,14 @@
         <article class="open-project">
           <div class="open-project-index">04 · CUDA GRAPH / P-D</div>
           <div class="open-project-copy">
-            <div class="project-title"><img class="project-logo" src="https://github.com/sgl-project.png?size=88" alt="SGLang"><h3><a href="https://github.com/sgl-project/sglang/issues/31023" target="_blank" rel="noreferrer">DSpark correctness: issue discovery and controlled evidence ↗</a></h3></div>
-            <p>Opened and maintained <strong>Issues #31023 and #33356</strong>, organized Roadmap #34297, and proposed runtime contracts in RFC #32432. Designed a same-session A/B/C ragged-plan regression: the original emitted <strong>13,111 out-of-bounds plans in 30,000 calls</strong>; the barrier and reviewer-proposed no-initialization variants each emitted <strong>0 in 30,000</strong>. A sustained TP8/DP8 Decode sweep completed 18,560/18,560 requests. My contribution was failure discovery, reproduction, candidate validation, and regression evidence; the final upstream patch was authored by another contributor.</p>
+            <div class="project-title"><img class="project-logo" src="https://github.com/sgl-project.png?size=88" alt="SGLang"><h3><a href="https://github.com/sgl-project/sglang/issues/31023" target="_blank" rel="noreferrer">DSpark correctness: sustained investigation and upstream review ↗</a></h3></div>
+            <p>Opened the B300/TP8 failure investigation in <strong>#31023</strong> and built runtime, startup, and single-GPU producer reproductions. Independently validated TP planning and plan-kernel fixes, then tested the reviewer-proposed no-init simplification with same-session A/B/C evidence: <strong>13,111/30,000 OOB plans → 0/30,000</strong>. This supported the final implementation in merged <strong>#32467</strong>, authored by EanWang211123. I also authored diagnostic PR #31455, RFC #32432, Roadmap #34297, and follow-up PRs #34286 and #34410.</p>
+            <details class="work-detail"><summary data-i18n="dspark-detail-title">From the failure report to final implementation evidence</summary><div class="detail-body"><p data-i18n="dspark-detail-copy">TP budget disagreement, producer-side plan corruption, capture ordering, and PD draft handoff were tracked as separate problems. I validated #31195 in a 120/120 TP8 matrix, compared #32467 and #33795 in four startup arms, and answered DarkSharpness’s no-init review proposal with a direct kernel experiment and launch-geometry reasoning. The 18,560-request sweep used a disclosed v0.5.16 backport stack; forced-ragged coverage was a separate check. #34286 and #34410 remain open; #31455 is closed without merge.</p><a class="inline-link" href="https://github.com/sgl-project/sglang/pull/32467#discussion_r3749014153" target="_blank" rel="noreferrer" data-i18n="dspark-review-link">My A/B/C reply in upstream review ↗</a> · <a class="inline-link" href="https://github.com/sgl-project/sglang/issues/34297#issuecomment-6159498069" target="_blank" rel="noreferrer" data-i18n="dspark-roadmap-link">Roadmap status update ↗</a></div></details>
           </div>
           <div class="open-project-proof"><strong>18,560 / 18,560</strong><span>requests completed in the sustained decode test</span><strong>13,111 → 0</strong><span>OOB plans · 30,000 calls per A/B/C variant</span></div>
         </article>
 
-        <p class="group-label">Selected upstream records · status checked 11 October 2026</p>
+        <p class="group-label">Selected upstream records · status checked 15 October 2026</p>
         <div class="evidence-grid">
           <div class="evidence-main">
             <h3>Reproduce, isolate, validate, upstream</h3>
@@ -315,6 +317,8 @@
             <a class="contribution" data-record="issue-32432" href="https://github.com/sgl-project/sglang/issues/32432" target="_blank" rel="noreferrer"><div class="contribution-meta"><span>RFC #32432</span><span data-i18n="status-issue-32432">Authored design proposal · closed</span></div><h3>Propose metadata, workspace, and stream-ownership contracts</h3></a>
             <a class="contribution" data-record="issue-38645" href="https://github.com/sgl-project/sglang/issues/38645" target="_blank" rel="noreferrer"><div class="contribution-meta"><span>Issue #38645</span><span data-i18n="status-issue-38645">Authored report & root-cause analysis · closed</span></div><h3>Trace the DCP retraction logical-to-local KV index mismatch</h3></a>
             <a class="contribution" data-record="pr-35721" href="https://github.com/sgl-project/sglang/pull/35721" target="_blank" rel="noreferrer"><div class="contribution-meta"><span>PR #35721</span><span data-i18n="status-35721" class="status-merged">Authored · merged 11 Oct 2026</span></div><h3>Separate generation health state from user dispatch</h3></a>
+            <a class="contribution" data-record="pr-39487" href="https://github.com/sgl-project/sglang/pull/39487" target="_blank" rel="noreferrer"><div class="contribution-meta"><span>PR #39487</span><span data-i18n="status-39487" class="status-merged">Collaborative fix · maintainer-authored · merged</span></div><h3>Land the DCP retraction fix following my report and draft</h3></a>
+            <a class="contribution" data-record="pr-32467" href="https://github.com/sgl-project/sglang/pull/32467" target="_blank" rel="noreferrer"><div class="contribution-meta"><span>PR #32467</span><span data-i18n="status-32467" class="status-merged">Independent validation & review evidence · merged</span></div><h3>Validate the ragged-plan race fix and no-init simplification</h3></a>
             <a class="contribution" data-record="pr-34410" href="https://github.com/sgl-project/sglang/pull/34410" target="_blank" rel="noreferrer"><div class="contribution-meta"><span>PR #34410</span><span data-i18n="status-34410">Authored tests · open</span></div><h3>Pin the P/D decode draft-input handoff contract</h3></a>
             <a class="contribution" data-record="pr-34286" href="https://github.com/sgl-project/sglang/pull/34286" target="_blank" rel="noreferrer"><div class="contribution-meta"><span>PR #34286</span><span data-i18n="status-34286">Authored patch · open</span></div><h3>Synchronize graph construction after final warmup</h3></a>
           </div>
@@ -354,7 +358,7 @@
         <h2>Research notes and code, with the evidence behind them.</h2>
         <div class="footer-links"><a href="https://github.com/Phoenix3334" target="_blank" rel="noreferrer"><svg class="github-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .8a11.2 11.2 0 0 0-3.54 21.83c.56.1.76-.24.76-.54v-2.1c-3.12.68-3.78-1.33-3.78-1.33-.51-1.3-1.25-1.65-1.25-1.65-1.02-.7.08-.69.08-.69 1.13.08 1.72 1.16 1.72 1.16 1 1.71 2.63 1.22 3.27.93.1-.72.4-1.22.71-1.5-2.49-.28-5.11-1.25-5.11-5.55 0-1.23.44-2.23 1.16-3.02-.12-.28-.5-1.42.11-2.97 0 0 .95-.3 3.08 1.15a10.73 10.73 0 0 1 5.6 0c2.13-1.45 3.07-1.15 3.07-1.15.61 1.55.23 2.69.12 2.97.72.79 1.15 1.79 1.15 3.02 0 4.31-2.62 5.27-5.12 5.55.4.35.76 1.03.76 2.08v3.1c0 .3.2.65.77.54A11.2 11.2 0 0 0 12 .8Z"/></svg>GitHub ↗</a><a href="mailto:1187883824@qq.com">Email ↗</a></div>
       </div>
-      <div class="copyright">© 2026 Feihong Guo · 郭飞鸿 · Updated 11 October 2026</div>
+      <div class="copyright">© 2026 Feihong Guo · 郭飞鸿 · Updated 15 October 2026</div>
     </div>
   </footer>
   <a class="back-top" href="#top" aria-label="Back to top">↑</a>
@@ -369,6 +373,21 @@
     const sections=navLinks.map(link=>document.querySelector(link.getAttribute('href'))).filter(Boolean);
 
     const zh={
+      "[data-i18n=\"dp-detail-title\"]":"问题机制、验证与个人贡献",
+      "[data-i18n=\"dp-detail-copy\"]":"健康请求可能先修改 DPC 分配状态，随后才被忙碌的 scheduler 跳过。我隔离 health 轮转和用户负载预算状态，并保留显式 rank 与 PD 路由语义。最初新增 23 项 CPU 测试，rebase 后测试文件共 30 项通过；B300 性能证据来自此前实验。",
+      "[data-i18n=\"dp-record-link\"]":"根因调查 · #35241 ↗",
+      "[data-i18n=\"dcp-detail-title\"]":"我的修复与维护者的最终整合",
+      "[data-i18n=\"dcp-detail-copy\"]":"本人实现和 6 项 CPU 测试覆盖 rank 所有权、本地行映射及新分配 KV 位置上的恢复，4 项 KDA/Mamba GPU 回归检查独立循环状态路径。维护者复用共享 layout 工具，处理已解析物理索引和非完整页前缀，并补充 B200 强制回退及 logprob 检查。本人 B300 证据对应披露的本地补丁组合栈。",
+      "[data-i18n=\"dcp-draft-link\"]":"本人已验证草稿 · #38790 ↗",
+      "[data-i18n=\"dcp-merged-link\"]":"维护者整合 · 已合并 #39487 ↗",
+      "[data-i18n=\"dspark-detail-title\"]":"从原始报告到最终方案的验证证据",
+      "[data-i18n=\"dspark-detail-copy\"]":"将 TP 预算不一致、producer plan 越界、capture 顺序和 PD 草稿交接分开调查。我完成 #31195 的 120/120 TP8 验证、#32467 × #33795 四臂启动对照，并用 kernel 实验和 launch 布局分析回应 DarkSharpness 的 no-init 建议。18,560 请求验证使用披露的 v0.5.16 backport 栈，真实 ragged 覆盖另行验证。#34286、#34410 仍开放；#31455 已关闭且未合并。",
+      "[data-i18n=\"dspark-review-link\"]":"本人在上游 Review 中的 A/B/C 回复 ↗",
+      "[data-i18n=\"dspark-roadmap-link\"]":"调查路线图状态更新 ↗",
+      "[data-i18n=\"status-39487\"]":"协作修复 · 维护者编写 · 已合并",
+      "[data-i18n=\"status-32467\"]":"独立验证与 Review 证据 · 已合并",
+      ".contribution[data-record=\"pr-39487\"] h3":"从本人的报告与草稿推进 DCP 回退修复落地",
+      ".contribution[data-record=\"pr-32467\"] h3":"验证 ragged plan 竞争修复与 no-init 简化方案",
       '[data-i18n="figure-wearable"]':'<strong>可穿戴感知原型</strong>传感手套与身体侧边缘计算设备。',
       '[data-i18n="figure-inspection"]':'<strong>移动巡检平台</strong>感知、导航与边缘推理集成。',
       '[data-i18n="figure-microfluidic"]':'<strong>微流控分析原型</strong>连接物理采集与边缘分析。',
@@ -437,7 +456,7 @@
       'nav a[href="#research"]':'研究方向',
       '.hero .eyebrow':'AI Systems / MLSys · 郑州大学',
       '.hero h1':'面向<em>模型中心工作负载</em>的系统研究',
-      '.hero-lede':'我关注分布式推理、硬件感知执行与运行时正确性。在百度智能云，我研究 B300 GPU 上的长上下文服务；其他项目连接模型训练、昇腾部署与物理感知系统。这些经历共同形成了我的 AI Systems / MLSys 研究兴趣。',
+      '.hero-lede':"我关注分布式推理、硬件感知执行和运行时正确性。在百度 AI 通信组，我研究 B300 上的长上下文服务，并推进 DP 路由、DCP 缓存回退和 DSpark 正确性工作；其他项目连接模型训练、昇腾部署和实体感知系统。",
       '.hero-thesis':'从工作负载测量，走向<em>运行时不变量。</em>',
       '.hero-line .tag:nth-child(1)':'AI 基础设施',
       '.hero-line .tag:nth-child(2)':'运行时与分布式系统',
@@ -469,7 +488,7 @@
       '#experience .section-head > p':'贯穿这些工作的共同方法是 systems-first：先刻画工作负载，找到真正拥有行为边界的资源或状态，再在对应层介入并用真实硬件验证。',
       '.experience-row:nth-child(1) .year':'2026 · 至今',
       '.experience-row:nth-child(1) h3':'百度智能云<small>AI Infra 科研实习生</small>',
-      '.experience-row:nth-child(1) > p':'在 NVIDIA B300 上研究基于 SGLang 的 DeepSeek 长上下文推理，覆盖<strong>Prefill/Decode 阶段隔离测量、软硬件容量估算、DP Attention、CUDA Graph 与 P/D 正确性</strong>。将工作负载扫描、逐 rank 遥测与源码假设、受控干预和回归测试连接起来。<a class="inline-link" href="#internship">查看实习工作记录 ↓</a>',
+      '.experience-row:nth-child(1) > p':"在百度 AI 通信组，围绕 SGLang 与 NVIDIA B300 开展<strong>分布式推理性能与正确性</strong>研究。将单压 Prefill/Decode、容量估计与 DP 路由、DCP 缓存回退、DSpark 和 CUDA Graph 调查连接起来，通过代码分析、受控实验和回归推动上游修复。<a class=\"inline-link\" href=\"#internship\">阅读实习记录 ↓</a>",
       '.experience-row:nth-child(2) .year':'计算基础',
       '.experience-row:nth-child(2) h3':'华为 ICT 学院 & 郑州大学超算团队<small>鲲鹏 CPU · 昇腾 NPU · HPC · 推理运行时</small>',
       '.experience-row:nth-child(2) > p':'在<strong>鲲鹏 CPU、昇腾 NPU、xLLM 与 vLLM-Ascend</strong>上开展性能工程。昇腾 910B 上 Qwen3.5-9B 吞吐从<strong>2,301 提升至 30,451 tok/s（C960）</strong>：这是相对有较大优化空间基线的组合工程收益。独立的 Gemma 4 E2B 决赛部署对照记录<strong>1,159.53 → 1,274.00 tok/s</strong>。鲲鹏 FFTW 记录约<strong>80.9 → 312 GFLOP/s</strong>，与 NPU 推理分别评估。',
@@ -482,22 +501,22 @@
 
       '#opensource .eyebrow':'开源系统工作',
       '#opensource .section-head h2':'模型、运行时与加速器协同设计',
-      '#opensource .section-head > p':'系统结论应该经得住复现、因果隔离、正确性检查和持续回归，而不只是一次 benchmark。',
+      '#opensource .section-head > p':"三条相互关联的 SGLang 贡献：DP 请求路由、DCP 缓存回退恢复、DSpark 运行时正确性。既有独立编写的修复，也有持续推进的上游协作调查。",
       '.open-project:nth-of-type(1) .open-project-index':'01 · 模型 × 系统',
       '.open-project:nth-of-type(1) h3 a':'MiniCPM-o 4.5：NVIDIA B300 与昇腾 910C ↗',
       '.open-project:nth-of-type(1) .open-project-copy > p':'建立<strong>B300 draft 模型训练、DSpark 推测执行、draft-aware GGUF 转换与昇腾 910C 部署</strong>链路，基于 profiling 调整算子和图执行。相同 120 秒全双工视频与本地 harness 下，Core 实时因子 RTF 从<strong>0.6754 降至 0.4829</strong>，约降低 28.5%。训练接受长度、算子启动次数与全双工 RTF 是不同的证据端点。',
       '.open-project:nth-of-type(1) .open-project-proof span:nth-of-type(1)':'平均接受长度 · draft 模型评测',
       '.open-project:nth-of-type(1) .open-project-proof span:nth-of-type(2)':'Host Launch 次数 · profiling 路径',
       '.open-project:nth-of-type(2) .open-project-index':'02 · 路由状态',
-      '.open-project:nth-of-type(2) h3 a':'Generation Health 与用户路由状态隔离 ↗',
-      '.open-project:nth-of-type(2) .open-project-copy > p':'定位 generation-health 流量对用户路由的扰动后，编写<strong>PR #35721</strong>。修复将 health 的轮转状态与负载预算记账从用户调度中隔离，已于<strong>2026 年 10 月 11 日合入 SGLang 主分支</strong>。受控 B300 对照中，patched health-on 重复实验恢复预期吞吐区间；rebase 后 CPU 测试文件的 30 项测试全部通过，本次 rebase 未重新测量 GPU 性能。',
+      '.open-project:nth-of-type(2) h3 a':"DP 健康检查：独立完成路由状态修复 ↗",
+      '.open-project:nth-of-type(2) .open-project-copy > p':"独立将 Prefill 间歇性掉速定位到生成型健康请求修改共享用户路由状态。设计修复/未修复 × health 开/关对照，编写状态隔离补丁和回归测试。本人<strong>PR #35721 已合入 SGLang 主分支</strong>；指定八卡 B300 负载下，修复后保留健康检查的四次实验均恢复预期吞吐区间。",
       '.open-project:nth-of-type(3) .open-project-index':'03 · KV 状态',
-      '.open-project:nth-of-type(3) h3 a':'DCP Decode retract：问题报告与索引空间诊断 ↗',
-      '.open-project:nth-of-type(3) .open-project-copy > p':'发布并维护<strong>Issue #38645</strong>，将 Decode retract 崩溃追踪到 CPU backup/restore 中 DCP 扩展逻辑 KV 索引与 rank-local MLA 存储不匹配。建立 v0.5.17 DCP8 的修复/未修复对照：原路径在首次 retract 失败，本地修复路径经<strong>8 次真实 retract 完成 2,048 个请求</strong>。6 项 CPU 测试检查 owner filtering、本地行映射与新分配位置上的恢复。Issue 已关闭；这里记录的是本地验证结果。',
+      '.open-project:nth-of-type(3) h3 a':"DCP 缓存回退：从根因定位到协作合并 ↗",
+      '.open-project:nth-of-type(3) .open-project-copy > p':"报告<strong>Issue #38645</strong>，定位 DCP 回退备份/恢复中的逻辑与物理 KV 索引混用，并实现、验证草稿修复<strong>#38790</strong>。未修复 DCP8 首次回退即崩溃；本人 B300 修复组经<strong>8 次回退完成 2,048/2,048 请求</strong>。维护者 kpham-sgl 通过共享 DCP layout 工具整合方案、补齐兼容性和验证，最终合并<strong>#39487</strong>；本人随后关闭被取代的草稿。",
       '.open-project:nth-of-type(4) .open-project-index':'04 · CUDA Graph / P-D',
-      '.open-project:nth-of-type(4) h3 a':'DSpark 正确性：问题发现与受控证据 ↗',
-      '.open-project:nth-of-type(4) .open-project-copy > p':'发布并维护<strong>Issues #31023、#33356</strong>，组织 Roadmap #34297，并在 RFC #32432 提出运行时契约。设计同一 session 的 A/B/C ragged-plan 回归：原实现在<strong>30,000 次调用中产生 13,111 次越界计划</strong>；加 barrier 与审查者提出的移除初始化方案各为<strong>0/30,000</strong>。持续 TP8/DP8 Decode 扫描完成 18,560/18,560 请求。我的贡献是问题发现、复现、候选验证与回归证据；最终上游补丁由其他贡献者编写。',
-      '.group-label':'部分上游记录 · 状态核对于 2026 年 10 月 11 日',
+      '.open-project:nth-of-type(4) h3 a':"DSpark 正确性：持续调查与上游 Review ↗",
+      '.open-project:nth-of-type(4) .open-project-copy > p':"从本人<strong>#31023</strong> 发起 B300/TP8 故障调查，构建运行期、启动期和单 GPU producer 复现。独立验证 TP 计划和 plan kernel 修复，并针对 reviewer 的 no-init 建议完成同一 session 三臂实验：<strong>13,111/30,000 越界计划 → 0/30,000</strong>，支持最终方案选择。核心<strong>#32467 已合并，代码作者为 EanWang211123</strong>。本人另提交诊断 PR #31455、RFC #32432、Roadmap #34297，以及后续 PR #34286、#34410。",
+      '.group-label':"部分上游记录 · 状态核对于 2026 年 10 月 15 日",
       '.evidence-main h3':'复现、隔离、验证、上游',
       '.evidence-main p':'框架会变，但研究方法不应变。公开 issue、PR、回归与 RFC 构成可复现证据链，用来区分症状、因果机制、修复和验证。',
       '.method div:nth-child(1) strong':'复现',
@@ -524,7 +543,7 @@
       '.research-steps div:nth-child(4) p':'除了性能，还要求 runtime invariant、safe fallback、受控回归和长稳测试。',
       '.scope-note':'<strong>由实验支撑的开放方向：</strong>从一类负载、少量硬件与一到两个运行时决策开始。算子融合、图执行与 draft 显存、以及多模态流式交互提供具体案例；每个案例都需要瓶颈证据和正确性契约，再形成更广泛的结论。',
       'footer h2':'研究记录与代码，以及它们背后的证据。',
-      '.copyright':'© 2026 郭飞鸿 · Feihong Guo · 更新于 2026 年 10 月 11 日',
+      '.copyright':"© 2026 郭飞鸿 · Feihong Guo · 更新于 2026 年 10 月 15 日",
     };
 
     const bilingual=Object.entries(zh).map(([selector,value])=>{

@@ -42,14 +42,21 @@ package installation is required.
   independent measurements.
 - MiniCPM training acceptance, profiled launches, and duplex RTF are separate
   endpoints. The final workload and latency trade-offs are stated explicitly.
-- Feature authored issue reports, investigation roadmaps, RFCs, and open PRs.
-  Closed PRs are not listed as featured contributions. Distinguish problem
-  discovery, controlled evidence, proposed contracts, and authored patches.
-- DSpark A/B/C validation uses 30,000 calls per variant; candidate validation
-  and sustained runtime regression are separate evidence endpoints.
-- The DCP issue is a closed public investigation record with local validation;
-  its closed status is not presented as proof of a merged upstream fix.
-- Issue and PR status is a dated snapshot, checked on 8 October 2026; public GitHub
+- Feature authored fixes and public investigations alongside collaborative merged
+  fixes. Distinguish authored production code, diagnostic tooling, independent
+  validation, review evidence, and maintainer-authored integration. Closed,
+  unmerged drafts may be linked as historical supporting records.
+- DSpark A/B/C validation uses 30,000 calls per variant. The review evidence
+  supports the final no-init implementation in merged #32467, authored by
+  EanWang211123. The 18,560-request regression used the disclosed v0.5.16
+  backport stack; forced-ragged coverage is a separate endpoint.
+- DP #35721 was independently authored and merged. Initial work added 23 CPU
+  tests; the rebased test file passed 30 tests. B300 runs predate that rebase.
+- DCP #38645 and authored draft #38790 record discovery, root-cause analysis,
+  implementation, and B300 validation. Maintainer kpham-sgl integrated the fix
+  with shared layout/compatibility handling in merged #39487; the draft was
+  explicitly closed as superseded. Local results are not final-PR-head tests.
+- Issue and PR status is a dated snapshot, checked on 15 October 2026; public GitHub
   records are authoritative for later changes.
 - Physical and medical systems are prototypes; project evaluations do not
   establish field reliability or clinical effectiveness.
