@@ -56,8 +56,7 @@ package installation is required.
   implementation, and B300 validation. Maintainer kpham-sgl integrated the fix
   with shared layout/compatibility handling in merged #39487; the draft was
   explicitly closed as superseded. Local results are not final-PR-head tests.
-- Issue and PR status is a dated snapshot, checked on 15 October 2026; public GitHub
-  records are authoritative for later changes.
+- EPLB is presented as a performance investigation without a validated throughput\n  gain. Placement-only evidence used no extra replicas; held-out evaluation is\n  incomplete and earlier request-path confounds are disclosed. SGLang #44697 and\n  DeepSeek EPLB #29 are authored open proposals/discussions, not shipped fixes or\n  evidence of a quality-preserving routing optimization.\n- Existing Issue/PR statuses were checked on 15 October 2026; the EPLB records\n  were checked on 16 October 2026. Public GitHub records are authoritative for\n  later changes.
 - Physical and medical systems are prototypes; project evaluations do not
   establish field reliability or clinical effectiveness.
 - Do not publish private scripts, hostnames, environment paths, model assets,

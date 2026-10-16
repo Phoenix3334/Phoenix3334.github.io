@@ -254,6 +254,12 @@
             <p class="boundary" data-i18n="parallel-boundary">Static expert placement and dynamic rebalancing are separate decisions. I treat low-return settings and rollbacks as experimental evidence; comparisons require aligned workloads, harnesses, and resource budgets.</p>
           </article>
         </div>
+        <article class="lab-note" id="eplb-investigation">
+          <div class="note-heading"><span class="note-number">04</span><h3 data-i18n="eplb-title">EPLB: measure balance, then test throughput</h3></div>
+          <p data-i18n="eplb-copy">Investigated DeepSeek-V4-Pro Prefill imbalance on a single eight-GPU B300 node with SGLang/MegaMoE. I compared expert placement and rebalancing, recorded expert loads, and profiled execution and communication. The investigation separated <strong>logical expert popularity, physical placement and replica dispatch, kernel block rounding, and request-supply gaps</strong>, so a better token-count balance would not be mistaken for an end-to-end speedup.</p>
+          <p class="boundary" data-i18n="eplb-result">Result: a placement-only experiment improved physical-rank token balance while logical expert counts stayed unchanged. It used no extra expert replicas. Clean held-out validation remains incomplete, so I claim no validated throughput gain or limit on EPLB's potential.</p>
+          <details class="work-detail"><summary data-i18n="eplb-summary">What the experiment changed about the next step</summary><div class="detail-body"><p data-i18n="eplb-detail">Earlier request-path confounds prevented a clean end-to-end conclusion. CPU top-k also failed to reproduce GPU routing reliably near ties, so bias perturbations were not established as safe optimizations. I proposed a serving-level production-versus-synthetic-balanced routing comparison in SGLang, and asked DeepSeek about placement, replica-aware cost models, and the boundary with model-level routing. These are open proposals; a synthetic balanced result would be a profiling reference, not a quality-preserving optimization.</p><a class="inline-link" href="https://github.com/sgl-project/sglang/issues/44697" target="_blank" rel="noreferrer" data-i18n="eplb-rfc-link">My SGLang profiling RFC · #44697 ↗</a> · <a class="inline-link" href="https://github.com/deepseek-ai/EPLB/issues/29" target="_blank" rel="noreferrer" data-i18n="eplb-question-link">My DeepSeek EPLB discussion · #29 ↗</a></div></details>
+        </article>
       </div>
     </section>
 
@@ -303,7 +309,7 @@
           <div class="open-project-proof"><strong>PR #32467</strong><span>technical review · merged kernel fix</span><strong>13,111 → 0</strong><span>OOB plans · 30,000 calls per A/B/C variant</span></div>
         </article>
 
-        <p class="group-label">Selected upstream records · status checked 15 October 2026</p>
+        <p class="group-label">Selected upstream records · contribution and evidence index</p>
         <div class="evidence-grid">
           <div class="evidence-main">
             <h3>Reproduce, isolate, validate, upstream</h3>
@@ -319,6 +325,8 @@
             <a class="contribution" data-record="pr-35721" href="https://github.com/sgl-project/sglang/pull/35721" target="_blank" rel="noreferrer"><div class="contribution-meta"><span>PR #35721</span><span data-i18n="status-35721" class="status-merged">Authored · merged 11 Oct 2026</span></div><h3>Separate generation health state from user dispatch</h3></a>
             <a class="contribution" data-record="pr-39487" href="https://github.com/sgl-project/sglang/pull/39487" target="_blank" rel="noreferrer"><div class="contribution-meta"><span>PR #39487</span><span data-i18n="status-39487" class="status-merged">Collaborative fix · maintainer-authored · merged</span></div><h3>Land the DCP retraction fix following my report and draft</h3></a>
             <a class="contribution" data-record="pr-32467" href="https://github.com/sgl-project/sglang/pull/32467#discussion_r3749014153" target="_blank" rel="noreferrer"><div class="contribution-meta"><span>PR #32467</span><span data-i18n="status-32467" class="status-merged">Technical review & causal validation · merged</span></div><h3>My technical review of the final no-init fix ↗</h3></a>
+            <a class="contribution" data-record="issue-44697" href="https://github.com/sgl-project/sglang/issues/44697" target="_blank" rel="noreferrer"><div class="contribution-meta"><span>SGLang RFC #44697</span><span data-i18n="status-44697">Authored profiling proposal · open</span></div><h3 data-i18n="eplb-rfc-record">Separate routing imbalance from placement and serving costs</h3></a>
+            <a class="contribution" data-record="eplb-29" href="https://github.com/deepseek-ai/EPLB/issues/29" target="_blank" rel="noreferrer"><div class="contribution-meta"><span>DeepSeek EPLB #29</span><span data-i18n="status-eplb-29">Authored evaluation discussion · open</span></div><h3 data-i18n="eplb-question-record">Discuss replica costs and the boundary with model routing</h3></a>
             <a class="contribution" data-record="pr-34410" href="https://github.com/sgl-project/sglang/pull/34410" target="_blank" rel="noreferrer"><div class="contribution-meta"><span>PR #34410</span><span data-i18n="status-34410">Authored tests · open</span></div><h3>Pin the P/D decode draft-input handoff contract</h3></a>
             <a class="contribution" data-record="pr-34286" href="https://github.com/sgl-project/sglang/pull/34286" target="_blank" rel="noreferrer"><div class="contribution-meta"><span>PR #34286</span><span data-i18n="status-34286">Authored patch · open</span></div><h3>Synchronize graph construction after final warmup</h3></a>
           </div>
@@ -373,6 +381,18 @@
     const sections=navLinks.map(link=>document.querySelector(link.getAttribute('href'))).filter(Boolean);
 
     const zh={
+      "[data-i18n=\"eplb-title\"]":"EPLB：先测负载均衡，再验证吞吐收益",
+      "[data-i18n=\"eplb-copy\"]":"在单机八卡 B300、SGLang/MegaMoE 的 DeepSeek-V4-Pro Prefill 场景中，比较专家放置与重排，采集专家负载并分析执行、通信开销。将<strong>逻辑专家热度、物理放置与副本分发、kernel 分块取整、请求供给间隙</strong>分开排查，避免把 token 数更均衡直接当作端到端提速。",
+      "[data-i18n=\"eplb-result\"]":"实验结果：仅调整放置的实验改善了物理 rank 的 token 均衡，逻辑专家计数保持不变；该组未增加专家副本。干净的独立验证尚未完成，因此不宣称已验证的吞吐收益，也不据此判断 EPLB 的潜力上限。",
+      "[data-i18n=\"eplb-summary\"]":"这轮实验如何改变了下一步判断",
+      "[data-i18n=\"eplb-detail\"]":"早期请求路径存在干扰，无法形成干净的端到端结论；CPU top-k 在接近并列分数时也不能可靠复现 GPU 路由，因此未把 bias 扰动视为已验证的安全优化。我向 SGLang 提出真实路由与合成均衡路由的服务级 profiling 对照，并向 DeepSeek 讨论专家放置、副本成本模型和模型路由的边界。目前均为开放讨论；合成均衡结果只能作为性能参照，不能证明可保持模型质量的优化收益。",
+      "[data-i18n=\"eplb-rfc-link\"]":"本人提出的 SGLang profiling RFC · #44697 ↗",
+      "[data-i18n=\"eplb-question-link\"]":"本人发起的 DeepSeek EPLB 讨论 · #29 ↗",
+      "[data-i18n=\"status-44697\"]":"本人 profiling 提案 · 开放中",
+      "[data-i18n=\"status-eplb-29\"]":"本人评估讨论 · 开放中",
+      "[data-i18n=\"eplb-rfc-record\"]":"区分路由不均、专家放置与服务执行成本",
+      "[data-i18n=\"eplb-question-record\"]":"讨论副本成本与模型路由优化的边界",
+
       "[data-i18n=\"dp-detail-title\"]":"问题机制、验证与个人贡献",
       "[data-i18n=\"dp-detail-copy\"]":"健康请求可能先修改 DPC 分配状态，随后才被忙碌的 scheduler 跳过。我隔离 health 轮转和用户负载预算状态，并保留显式 rank 与 PD 路由语义。最初新增 23 项 CPU 测试，rebase 后测试文件共 30 项通过；B300 性能证据来自此前实验。",
       "[data-i18n=\"dp-record-link\"]":"根因调查 · #35241 ↗",
@@ -519,7 +539,7 @@
       '.open-project:nth-of-type(4) .open-project-index':'04 · 故障调查 / 技术评审',
       '.open-project:nth-of-type(4) h3 a':"DSpark 正确性：早期排查与技术评审 ↗",
       '.open-project:nth-of-type(4) .open-project-copy > p':"从本人较早提交的 B300/TP8 故障报告 <strong>#31023、#33356</strong> 出发，构建运行期、启动期和单 GPU kernel 复现，持续追踪到上游修复。随后参与<strong>已合并 PR #32467 的技术评审</strong>，通过同一 session 的 A/B/C 实验与同步机制分析，验证评审中提出的 no-init 方案：<strong>13,111/30,000 越界计划 → 0/30,000</strong>。贡献贯穿早期故障排查、因果验证与最终方案评审。",
-      '.group-label':"部分上游记录 · 状态核对于 2026 年 10 月 15 日",
+      '.group-label':"部分上游记录 · 贡献与证据索引",
       '.evidence-main h3':'复现、隔离、验证、上游',
       '.evidence-main p':'框架会变，但研究方法不应变。公开 issue、PR、回归与 RFC 构成可复现证据链，用来区分症状、因果机制、修复和验证。',
       '.method div:nth-child(1) strong':'复现',
