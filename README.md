@@ -46,7 +46,7 @@ package installation is required.
   fixes. Distinguish authored production code, diagnostic tooling, independent
   validation, review evidence, and maintainer-authored integration. Closed,
   unmerged drafts may be linked as historical supporting records.
-- DSpark A/B/C validation uses 30,000 calls per variant. The review evidence
+- DSpark preserves the early authored failure reports #31023 / #33356 and\n  diagnostic/RFC/roadmap work. Phoenix3334 submitted a formal `COMMENTED`\n  GitHub Review on #32467; link both the Review record and the A/B/C inline\n  analysis. Present technical review as a contribution in this repair.\n- DSpark A/B/C validation uses 30,000 calls per variant. The review evidence
   supports the final no-init implementation in merged #32467, authored by
   EanWang211123. The 18,560-request regression used the disclosed v0.5.16
   backport stack; forced-ragged coverage is a separate endpoint.
