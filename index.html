@@ -284,7 +284,7 @@
           <div class="open-project-index">02 · ROUTING STATE</div>
           <div class="open-project-copy">
             <div class="project-title"><img class="project-logo" src="https://github.com/sgl-project.png?size=88" alt="SGLang"><h3><a href="https://github.com/sgl-project/sglang/pull/35721" target="_blank" rel="noreferrer">DP health checks: independent routing-state repair ↗</a></h3></div>
-            <p>Independently traced intermittent Prefill throughput drops to generation-health requests changing shared user-routing state. Designed the patched/unpatched × health-on/off comparison, implemented separate health routing and load-budget handling, and added regression tests. My <strong>PR #35721 merged into SGLang main</strong>. On the tested eight-GPU B300 workload, all four patched health-on runs recovered the expected throughput range.</p>
+            <p>Independently traced intermittent Prefill throughput drops to generation-health requests changing shared user-routing state. Designed the patched/unpatched × health-on/off comparison, implemented separate health routing and load-budget handling, and added regression tests. My <strong>PR #35721 merged into SGLang main</strong> and is listed in the <a href="https://github.com/sgl-project/sglang/releases/tag/v0.5.22" target="_blank" rel="noreferrer">v0.5.22 release notes</a> under Parallelism &amp; Disaggregation. On the tested eight-GPU B300 workload, all four patched health-on runs recovered the expected throughput range.</p>
             <details class="work-detail"><summary data-i18n="dp-detail-title">Mechanism, validation, and contribution</summary><div class="detail-body"><p data-i18n="dp-detail-copy">A health request could mutate DPC dispatch state before being skipped by a busy scheduler. I isolated health round-robin and user load-budget state while preserving explicit rank and PD routing semantics. The work added 23 CPU tests initially; the rebased test file passed 30 tests. B300 performance evidence predates the rebase.</p><a class="inline-link" href="https://github.com/sgl-project/sglang/issues/35241" target="_blank" rel="noreferrer" data-i18n="dp-record-link">Root-cause investigation · #35241 ↗</a></div></details>
           </div><div class="open-project-proof"><strong>30 / 30</strong><span>targeted CPU tests · rebased tree</span><strong>4 / 4</strong><span>B300 patched health-on repeats · tested workload</span></div>
         </article>
@@ -322,7 +322,7 @@
             <a class="contribution" data-record="issue-34297" href="https://github.com/sgl-project/sglang/issues/34297" target="_blank" rel="noreferrer"><div class="contribution-meta"><span>Roadmap #34297</span><span data-i18n="status-issue-34297">Authored investigation roadmap · closed</span></div><h3>Organize DSpark correctness contracts and validation gates</h3></a>
             <a class="contribution" data-record="issue-32432" href="https://github.com/sgl-project/sglang/issues/32432" target="_blank" rel="noreferrer"><div class="contribution-meta"><span>RFC #32432</span><span data-i18n="status-issue-32432">Authored design proposal · closed</span></div><h3>Propose metadata, workspace, and stream-ownership contracts</h3></a>
             <a class="contribution" data-record="issue-38645" href="https://github.com/sgl-project/sglang/issues/38645" target="_blank" rel="noreferrer"><div class="contribution-meta"><span>Issue #38645</span><span data-i18n="status-issue-38645">Authored report & root-cause analysis · closed</span></div><h3>Trace the DCP retraction logical-to-local KV index mismatch</h3></a>
-            <a class="contribution" data-record="pr-35721" href="https://github.com/sgl-project/sglang/pull/35721" target="_blank" rel="noreferrer"><div class="contribution-meta"><span>PR #35721</span><span data-i18n="status-35721" class="status-merged">Authored · merged 11 Oct 2026</span></div><h3>Separate generation health state from user dispatch</h3></a>
+            <a class="contribution" data-record="pr-35721" href="https://github.com/sgl-project/sglang/pull/35721" target="_blank" rel="noreferrer"><div class="contribution-meta"><span>PR #35721</span><span data-i18n="status-35721" class="status-merged">Authored · merged · v0.5.22</span></div><h3>Separate generation health state from user dispatch</h3></a>
             <a class="contribution" data-record="pr-39487" href="https://github.com/sgl-project/sglang/pull/39487" target="_blank" rel="noreferrer"><div class="contribution-meta"><span>PR #39487</span><span data-i18n="status-39487" class="status-merged">Collaborative fix · maintainer-authored · merged</span></div><h3>Land the DCP retraction fix following my report and draft</h3></a>
             <a class="contribution" data-record="pr-32467" href="https://github.com/sgl-project/sglang/pull/32467#discussion_r3749014153" target="_blank" rel="noreferrer"><div class="contribution-meta"><span>PR #32467</span><span data-i18n="status-32467" class="status-merged">Technical review & causal validation · merged</span></div><h3>My technical review of the final no-init fix ↗</h3></a>
             <a class="contribution" data-record="issue-44697" href="https://github.com/sgl-project/sglang/issues/44697" target="_blank" rel="noreferrer"><div class="contribution-meta"><span>SGLang RFC #44697</span><span data-i18n="status-44697">Authored profiling proposal · open</span></div><h3 data-i18n="eplb-rfc-record">Separate routing imbalance from placement and serving costs</h3></a>
@@ -366,7 +366,7 @@
         <h2>Research notes and code, with the evidence behind them.</h2>
         <div class="footer-links"><a href="https://github.com/Phoenix3334" target="_blank" rel="noreferrer"><svg class="github-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .8a11.2 11.2 0 0 0-3.54 21.83c.56.1.76-.24.76-.54v-2.1c-3.12.68-3.78-1.33-3.78-1.33-.51-1.3-1.25-1.65-1.25-1.65-1.02-.7.08-.69.08-.69 1.13.08 1.72 1.16 1.72 1.16 1 1.71 2.63 1.22 3.27.93.1-.72.4-1.22.71-1.5-2.49-.28-5.11-1.25-5.11-5.55 0-1.23.44-2.23 1.16-3.02-.12-.28-.5-1.42.11-2.97 0 0 .95-.3 3.08 1.15a10.73 10.73 0 0 1 5.6 0c2.13-1.45 3.07-1.15 3.07-1.15.61 1.55.23 2.69.12 2.97.72.79 1.15 1.79 1.15 3.02 0 4.31-2.62 5.27-5.12 5.55.4.35.76 1.03.76 2.08v3.1c0 .3.2.65.77.54A11.2 11.2 0 0 0 12 .8Z"/></svg>GitHub ↗</a><a href="mailto:1187883824@qq.com">Email ↗</a></div>
       </div>
-      <div class="copyright">© 2026 Feihong Guo · 郭飞鸿 · Updated 16 October 2026</div>
+      <div class="copyright">© 2026 Feihong Guo · 郭飞鸿 · Updated 19 October 2026</div>
     </div>
   </footer>
   <a class="back-top" href="#top" aria-label="Back to top">↑</a>
@@ -462,7 +462,7 @@
       "[data-i18n=\"minicpm-summary\"]":"最终全双工配置究竟改了什么？",
       "[data-i18n=\"minicpm-detail\"]":"最终组合还将视觉输入从 overview + slice 减为仅 overview，并将首段 TTS chunk 从 5 调为 10 tokens。后者以约 +100 ms 首次响应延迟换取更少的重复边界工作。通过四项有限提交检查，不能直接推出广泛的视觉质量等价。",
       "[data-i18n=\"minicpm-rejected\"]":"最终短 chunk 全双工配置禁用了 thinker 推测解码，因为其开销使 RTF 变差。draft 模型接受长度与独立文本负载加速仍是单独产出，不用来解释最终全双工收益。",
-      "[data-i18n=\"status-35721\"]":"本人修复 PR · 已合并（2026-10-11）",
+      "[data-i18n=\"status-35721\"]":"本人修复 PR · 已合并 · v0.5.22",
       "[data-i18n=\"status-34410\"]":"本人回归测试 · 开放",
       "[data-i18n=\"status-34286\"]":"本人修复 PR · 开放",
       ".open-project:nth-of-type(2) .open-project-proof span:nth-of-type(1)":"指定 CPU 测试 · rebase 后版本",
@@ -530,7 +530,7 @@
       '.open-project:nth-of-type(1) .open-project-proof span:nth-of-type(2)':'Host Launch 次数 · profiling 路径',
       '.open-project:nth-of-type(2) .open-project-index':'02 · 路由状态',
       '.open-project:nth-of-type(2) h3 a':"DP 健康检查：独立完成路由状态修复 ↗",
-      '.open-project:nth-of-type(2) .open-project-copy > p':"独立将 Prefill 间歇性掉速定位到生成型健康请求修改共享用户路由状态。设计修复/未修复 × health 开/关对照，编写状态隔离补丁和回归测试。本人<strong>PR #35721 已合入 SGLang 主分支</strong>；指定八卡 B300 负载下，修复后保留健康检查的四次实验均恢复预期吞吐区间。",
+      '.open-project:nth-of-type(2) .open-project-copy > p':"独立将 Prefill 间歇性掉速定位到生成型健康请求修改共享用户路由状态。设计修复/未修复 × health 开/关对照，编写状态隔离补丁和回归测试。本人<strong>PR #35721 已合入 SGLang 主分支</strong>，并收录于 <a href=\"https://github.com/sgl-project/sglang/releases/tag/v0.5.22\" target=\"_blank\" rel=\"noreferrer\">v0.5.22 官方发布说明</a>的并行与分离部署分类；指定八卡 B300 负载下，修复后保留健康检查的四次实验均恢复预期吞吐区间。",
       '.open-project:nth-of-type(3) .open-project-index':'03 · KV 状态',
       '.open-project:nth-of-type(3) h3 a':"DCP 缓存回退：从根因定位到协作合并 ↗",
       '.open-project:nth-of-type(3) .open-project-copy > p':"报告<strong>Issue #38645</strong>，定位 DCP 回退备份/恢复中的逻辑与物理 KV 索引混用，并实现、验证草稿修复<strong>#38790</strong>。未修复 DCP8 首次回退即崩溃；本人 B300 修复组经<strong>8 次回退完成 2,048/2,048 请求</strong>。维护者 kpham-sgl 通过共享 DCP layout 工具整合方案、补齐兼容性和验证，最终合并<strong>#39487</strong>；本人随后关闭被取代的草稿。",
@@ -566,7 +566,7 @@
       '.research-steps div:nth-child(4) p':'除了性能，还要求 runtime invariant、safe fallback、受控回归和长稳测试。',
       '.scope-note':'<strong>由实验支撑的开放方向：</strong>从一类负载、少量硬件与一到两个运行时决策开始。算子融合、图执行与 draft 显存、以及多模态流式交互提供具体案例；每个案例都需要瓶颈证据和正确性契约，再形成更广泛的结论。',
       'footer h2':'研究记录与代码，以及它们背后的证据。',
-      '.copyright':"© 2026 郭飞鸿 · Feihong Guo · 更新于 2026 年 10 月 16 日",
+      '.copyright':"© 2026 郭飞鸿 · Feihong Guo · 更新于 2026 年 10 月 19 日",
     };
 
     const bilingual=Object.entries(zh).map(([selector,value])=>{

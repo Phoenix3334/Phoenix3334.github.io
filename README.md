@@ -50,8 +50,10 @@ package installation is required.
   supports the final no-init implementation in merged #32467, authored by
   EanWang211123. The 18,560-request regression used the disclosed v0.5.16
   backport stack; forced-ragged coverage is a separate endpoint.
-- DP #35721 was independently authored and merged. Initial work added 23 CPU
-  tests; the rebased test file passed 30 tests. B300 runs predate that rebase.
+- DP #35721 was independently authored and merged, and is listed under
+  Parallelism & Disaggregation in the [SGLang v0.5.22 release notes](https://github.com/sgl-project/sglang/releases/tag/v0.5.22).
+  Initial work added 23 CPU tests; the rebased test file passed 30 tests.
+  B300 runs predate that rebase.
 - DCP #38645 and authored draft #38790 record discovery, root-cause analysis,
   implementation, and B300 validation. Maintainer kpham-sgl integrated the fix
   with shared layout/compatibility handling in merged #39487; the draft was
