@@ -107,7 +107,7 @@
       <div>
         <p class="eyebrow">AI Systems / MLSys · Zhengzhou University</p>
         <h1>Systems for <em>model-centric AI workloads</em></h1>
-        <p class="hero-lede">I work on distributed inference, hardware-aware execution, and runtime correctness. At Baidu AI Cloud, I investigate long-context serving on B300 GPUs; my other projects connect model training, Ascend deployment, and physical sensing systems. These experiences shape my research interests in AI Systems / MLSys.</p>
+        <p class="hero-lede">I work on distributed inference, hardware-aware execution, and runtime correctness. At Baidu AI Cloud, I investigate long-context serving on B300 and GB300 platforms; my other projects connect model training, Ascend deployment, and physical sensing systems. These experiences shape my research interests in AI Systems / MLSys.</p>
         <p class="hero-thesis">From workload measurements to <em>runtime invariants.</em></p>
         <div class="hero-line">
           <span class="tag">AI Infrastructure</span>
@@ -174,12 +174,12 @@
           <article class="experience-row">
             <div class="year">2026 · CURRENT</div>
             <h3>Baidu AI Cloud<small>AI Infrastructure Research Intern</small></h3>
-            <p>Working in the AI communications group on <strong>distributed inference performance and correctness</strong> with SGLang and NVIDIA B300. My work connects phase-isolated Prefill/Decode evaluation and capacity estimation with DP routing, DCP cache recovery, DSpark, and CUDA Graph investigation. I turn runtime observations into source-level explanations, controlled experiments, and upstream fixes. <a class="inline-link" href="#internship">Read the internship notes ↓</a></p>
+            <p>Working in the AI communications group on <strong>SGLang performance, resource efficiency, and runtime correctness</strong> for DeepSeek-V4-Pro and Kimi K3 on B300 and GB300. I evaluate Prefill/Decode workloads, framework versions, parallelism, speculative decoding, and cache/graph capacity, then connect profiling to deployment choices and upstream fixes. <a class="inline-link" href="#internship">Read the measurement summary ↓</a></p>
           </article>
           <article class="experience-row">
             <div class="year">COMPUTE FOUNDATION</div>
             <h3>Huawei ICT Academy & ZZU Supercomputing<small>Kunpeng CPU · Ascend NPU · HPC · Inference Runtime</small></h3>
-            <p>Performance engineering across <strong>Kunpeng CPU, Ascend NPU, xLLM, and vLLM-Ascend</strong>. Qwen3.5-9B throughput on Ascend 910B rose from <strong>2,301 to 30,451 tok/s at C960</strong>: a combined engineering gain against a baseline with substantial headroom. A separate Gemma 4 E2B final-round deployment measured <strong>1,159.53 → 1,274.00 tok/s</strong>. Kunpeng FFTW work reached about <strong>80.9 → 312 GFLOP/s</strong>, evaluated independently of NPU serving.</p>
+            <p>Performance engineering across <strong>Kunpeng CPU, Ascend NPU, xLLM, and vLLM-Ascend</strong>. Qwen3.5-9B throughput on Ascend 910B rose from <strong>2,301 to 30,451 tok/s at C960</strong>: a combined engineering gain against a baseline with substantial headroom. A separate Gemma 4 E2B final-round deployment measured <strong>1,159.53 → 1,274.00 tok/s</strong>. Kunpeng FFTW work reached about <strong>80.965 → 555.001 GFLOP/s</strong> (6.85×, 256³ FFTW), evaluated independently of NPU serving.</p>
             <details class="work-detail experience-detail">
               <summary data-i18n="ascend-summary">Two inference tracks, separate baselines</summary>
               <div class="detail-body">
@@ -223,35 +223,39 @@
     <section id="internship">
       <div class="wrap">
         <div class="section-head">
-          <div><p class="eyebrow" data-i18n="internship-eyebrow">Inside the internship</p><h2 data-i18n="internship-title">Measure the phase. Find the boundary.</h2></div>
-          <p data-i18n="internship-intro">Beyond headline throughput: workload characterization, capacity estimates, parallelism trade-offs, and the shared state that can make an otherwise identical run behave differently.</p>
+          <div><p class="eyebrow" data-i18n="internship-eyebrow">Inference engineering notes</p><h2 data-i18n="internship-title">Measure performance and resource efficiency</h2></div>
+          <p data-i18n="internship-intro">Selected measurements from SGLang evaluation on B300 and GB300, with workload conditions and contribution boundaries. These results inform deployment and capacity choices.</p>
         </div>
         <article class="lab-note phase-note">
-          <div class="note-heading"><span class="note-number">01</span><h3 data-i18n="phase-title">Prefill and Decode, measured separately</h3></div>
-          <p data-i18n="phase-intro">I built phase-isolated workload sweeps on an eight-GPU B300 node, separating long-prompt admission and batching from token-step execution. Throughput, tail latency, completion, and correctness were tracked separately rather than collapsed into one score.</p>
+          <div class="note-heading"><span class="note-number">01</span><h3 data-i18n="phase-title">Long-context serving: selected measured results</h3></div>
+          <p data-i18n="phase-intro">Evaluated DeepSeek-V4-Pro Prefill and Decode separately across B300 and two-node GB300 deployments. The comparison covers SGLang versions, DP Attention, PrefillDelayer, EAGLE speculative decoding, cache/graph capacity, batching, and host-side return paths; these are workload-dependent choices, not one universal launch recipe.</p>
           <div class="table-scroll" tabindex="0" role="region" aria-label="Phase-isolated inference results">
             <table class="result-table phase-table">
-              <caption data-i18n="phase-caption">Selected operating points · TP8 / DP8 with DP Attention</caption>
-              <thead><tr><th scope="col" data-i18n="phase">Phase</th><th scope="col" data-i18n="workload">Workload / configuration</th><th scope="col" data-i18n="result">Observed result</th></tr></thead>
+              <caption data-i18n="phase-caption">DeepSeek-V4-Pro · eight GPUs per deployment · selected measured points</caption>
+              <thead><tr><th scope="col" data-i18n="phase">Platform / phase</th><th scope="col" data-i18n="workload">Workload / comparison</th><th scope="col" data-i18n="result">Observed result</th></tr></thead>
               <tbody>
-                <tr><th scope="row">Prefill</th><td data-i18n="prefill-condition">60k input / 1 output token · C16 · 8k effective chunk per rank</td><td><strong>~94.6k</strong> <span data-i18n="input-tokens">input tok/s</span></td></tr>
-                <tr><th scope="row">Decode</th><td data-i18n="decode-condition">60k input / 1k output tokens · C3072 · EAGLE-3-1-4 · simulated acceptance ~0.70</td><td><strong>40,651</strong> <span data-i18n="generated-tokens">generated tok/s</span></td></tr>
+                <tr><th scope="row" data-i18n="b-p60-platform">B300 · Prefill</th><td data-i18n="b-p60-condition">60k input / 1 output token · SGLang 0.5.22</td><td><strong>95.44k</strong><span data-i18n="b-p60-unit">input tok/s</span></td></tr>
+                <tr><th scope="row" data-i18n="gb-p60-platform">GB300 · Prefill</th><td data-i18n="gb-p60-condition">60k input / 1 output token · SGLang 0.5.22</td><td><strong>117.83k</strong><span data-i18n="gb-p60-unit">input tok/s</span></td></tr>
+                <tr><th scope="row" data-i18n="gb-p128-platform">GB300 · Prefill</th><td data-i18n="gb-p128-condition">128k input / 1 output token · SGLang 0.5.22</td><td><strong>100.27k</strong><span data-i18n="gb-p128-unit">input tok/s</span></td></tr>
+                <tr><th scope="row" data-i18n="b-d60-platform">B300 · Decode</th><td data-i18n="b-d60-condition">60k input / 1k output · AR → EAGLE · SGLang 0.5.14 → 0.5.22</td><td><strong>32.88k → 46.81k</strong><span data-i18n="b-d60-unit">output tok/s · +42.4% combined</span></td></tr>
+                <tr><th scope="row" data-i18n="b-d128-platform">B300 · Decode</th><td data-i18n="b-d128-condition">128k input / 1k output · AR → EAGLE · SGLang 0.5.14 → 0.5.22</td><td><strong>20.34k → 36.49k</strong><span data-i18n="b-d128-unit">output tok/s · +79.4% combined</span></td></tr>
+                <tr><th scope="row" data-i18n="gb-d60-platform">GB300 · Decode</th><td data-i18n="gb-d60-condition">60k input / 1k output · EAGLE · tuned SGLang 0.5.17</td><td><strong>48.01k</strong><span data-i18n="gb-d60-unit">output tok/s</span></td></tr>
               </tbody>
             </table>
           </div>
-          <p class="boundary" data-i18n="phase-boundary">Different phases and workload settings, not a combined end-to-end P/D result. Decode uses simulated speculative acceptance; it does not establish natural model acceptance or deployment-wide performance.</p>
+          <p class="boundary" data-i18n="phase-boundary">Decode speculation uses a fixed simulated acceptance rate of about 0.70 (mean accepted length about 3.10). AR-to-EAGLE results include version and capacity/concurrency changes; they are combined configuration comparisons, not isolated patch gains. Prefill and Decode are separate tests, and the GB300 result is not a matched hardware speedup or a measured cost reduction.</p>
           <details class="work-detail"><summary data-i18n="phase-summary">How a performance anomaly became a routing-state investigation</summary><div class="detail-body"><p data-i18n="phase-discovery">Repeated Prefill runs exposed intermittent low-throughput behavior. I isolated generation-health traffic as a trigger, then traced how health dispatch mutated the Data Parallel Controller state also used by user requests. A patched/unpatched × health-on/off comparison made the causal test explicit. The fix, merged into SGLang main on 11 October 2026, separates health routing and load-budget bookkeeping from user dispatch.</p><a class="inline-link" href="https://github.com/sgl-project/sglang/pull/35721" target="_blank" rel="noreferrer" data-i18n="health-evidence">Public A/B evidence and merged fix · PR #35721 ↗</a></div></details>
         </article>
         <div class="note-grid">
           <article class="lab-note">
             <div class="note-heading"><span class="note-number">02</span><h3 data-i18n="capacity-title">Estimate before the full-node test</h3></div>
-            <p data-i18n="capacity-copy">Extended an InferFlux-based capacity model for the target model and B300 topology. Model structure, compute and bandwidth limits, KV memory, sequence lengths, parallel layout, and efficiency priors produce a plausible Prefill/Decode envelope before a full load test.</p>
+            <p data-i18n="capacity-copy">Extended an InferFlux-based capacity model for long-context inference and used workload, compute/bandwidth limits, cache memory, parallel layout, and efficiency priors to narrow the test space. For Kimi K3, examined DCP and the capacity/rollback boundaries of KV and SSM state pools.</p>
             <p class="boundary" data-i18n="capacity-boundary">The output is a capacity estimate, not a guaranteed throughput number. Gaps between prediction and measurement help prioritize memory, communication, batching, or runtime investigation.</p>
           </article>
           <article class="lab-note">
             <div class="note-heading"><span class="note-number">03</span><h3 data-i18n="parallel-title">Parallelism is a workload decision</h3></div>
-            <p data-i18n="parallel-copy">Compared DP Attention and context parallelism (CP) across concurrency regimes, and examined expert placement and load-balancing (EPLB) costs. A layout that lowers isolated-request latency can still lose at higher concurrency; redistribution and redundant experts also consume time and memory.</p>
-            <p class="boundary" data-i18n="parallel-boundary">Static expert placement and dynamic rebalancing are separate decisions. I treat low-return settings and rollbacks as experimental evidence; comparisons require aligned workloads, harnesses, and resource budgets.</p>
+            <p data-i18n="parallel-copy">Compared DP Attention and context parallelism across load regimes. In a separate CP8 low-latency configuration on GB300, median TTFT was <strong>0.666 s at 60k</strong> and <strong>1.516 s at 128k</strong> input, each with one output token. These are separate operating points from the high-throughput Prefill rows.</p>
+            <p class="boundary" data-i18n="parallel-boundary">Peak capacity, peak throughput, and minimum latency are different objectives. Version upgrades and larger batches are evaluated per workload rather than assumed to improve every case.</p>
           </article>
         </div>
         <article class="lab-note" id="eplb-investigation">
@@ -260,6 +264,12 @@
           <p class="boundary" data-i18n="eplb-result">Result: a placement-only experiment improved physical-rank token balance while logical expert counts stayed unchanged. It used no extra expert replicas. Clean held-out validation remains incomplete, so I claim no validated throughput gain or limit on EPLB's potential.</p>
           <details class="work-detail"><summary data-i18n="eplb-summary">What the experiment changed about the next step</summary><div class="detail-body"><p data-i18n="eplb-detail">Earlier request-path confounds prevented a clean end-to-end conclusion. CPU top-k also failed to reproduce GPU routing reliably near ties, so bias perturbations were not established as safe optimizations. I proposed a serving-level production-versus-synthetic-balanced routing comparison in SGLang, and asked DeepSeek about placement, replica-aware cost models, and the boundary with model-level routing. These are open proposals; a synthetic balanced result would be a profiling reference, not a quality-preserving optimization.</p><a class="inline-link" href="https://github.com/sgl-project/sglang/issues/44697" target="_blank" rel="noreferrer" data-i18n="eplb-rfc-link">My SGLang profiling RFC · #44697 ↗</a> · <a class="inline-link" href="https://github.com/deepseek-ai/EPLB/issues/29" target="_blank" rel="noreferrer" data-i18n="eplb-question-link">My DeepSeek EPLB discussion · #29 ↗</a></div></details>
         </article>
+        <article class="lab-note" id="component-analysis">
+          <div class="note-heading"><span class="note-number">05</span><h3 data-i18n="component-title">Component baselines and local kernel optimization</h3></div>
+          <p data-i18n="component-copy">Designed MegaMoE tests across model shapes, batch/token counts, and fast-math settings, using nsys/NCU to analyze compute, memory, and communication. The fused chain measured <strong>1.51–1.87×</strong> against the original FFN path; a separate small-batch point reached about <strong>5.1 TB/s</strong> HBM bandwidth. June component baselines informed independently designed September EPLB retests and serving-level comparisons.</p>
+          <p data-i18n="fusion-copy">Implemented inverse-RoPE + FP8 quantization fusion in the CUDA attention path. The earlier SGLang 0.5.17-derived B300 comparison measured <strong>+1.63% input throughput</strong> at 60k input / 1 output token, with FP8 codes and scales byte-identical in numerical tests. The public upstream port is <a class="inline-link" href="https://github.com/sgl-project/sglang/pull/43786" target="_blank" rel="noreferrer">PR #43786 ↗</a>.</p>
+          <p class="boundary" data-i18n="component-boundary">Component speedups and HBM points are separate from whole-model gains. MegaMoE is an upstream implementation; my contribution is test design, profiling, and integration analysis. PR #43786 is open; the reported GPU measurements predate its cleanup refactor, which still needs updated GPU validation. The fusion result is not added to the AR-to-EAGLE gain.</p>
+        </article>
       </div>
     </section>
 
@@ -267,7 +277,7 @@
       <div class="wrap">
         <div class="section-head">
           <div><p class="eyebrow">Open-source systems work</p><h2>Model, runtime, and accelerator co-design</h2></div>
-          <p>My SGLang contributions span three connected problems: DP request routing, DCP cache recovery, and DSpark runtime correctness. They combine independently authored fixes with collaborative upstream investigation.</p>
+          <p>My SGLang work covers DP routing, DCP cache recovery, DSpark correctness, and GB300 DCP communication, alongside component profiling and an attention-kernel fusion PR. Authored implementations, merged collaborative fixes, and open investigations are identified separately.</p>
         </div>
 
         <article class="open-project">
@@ -309,6 +319,16 @@
           <div class="open-project-proof"><strong>PR #32467</strong><span>technical review · merged kernel fix</span><strong>13,111 → 0</strong><span>OOB plans · 30,000 calls per A/B/C variant</span></div>
         </article>
 
+        <article class="open-project" id="gb300-dcp">
+          <div class="open-project-index" data-i18n="gb-index">05 · DISTRIBUTED COMMUNICATION</div>
+          <div class="open-project-copy">
+            <div class="project-title"><img class="project-logo" src="https://github.com/sgl-project.png?size=88" alt="SGLang"><h3><a href="https://github.com/sgl-project/sglang/issues/45367" target="_blank" rel="noreferrer" data-i18n="gb-title">GB300 DCP: CUDA Graph and communication buffer lifetime ↗</a></h3></div>
+            <p data-i18n="gb-copy">Investigated corrupted Kimi K3 output in graph-captured DCP all-to-all on a two-node GB300 deployment. Implemented two alternative repairs: a graph-registration startup guard (<a class="inline-link" href="https://github.com/sgl-project/sglang/pull/45371" target="_blank" rel="noreferrer">#45371</a>) and persistent exchange buffers (<a class="inline-link" href="https://github.com/sgl-project/sglang/pull/45824" target="_blank" rel="noreferrer">#45824</a>). Controlled registration × buffer-lifetime comparisons restored coherent output; both PRs remain open while experiments and upstream review continue.</p>
+            <details class="work-detail"><summary data-i18n="gb-summary">Validation completed and what remains open</summary><div class="detail-body"><p data-i18n="gb-detail">The persistent-buffer PR head 9cb1de5 completed the two-node 12-prompt probe with 12/12 correct outputs and no degenerate outputs, with registration enabled and the startup guard absent. Focused DCP regression tests passed: 23 tests plus 5 subtests. The guard policy also completed a separate 640/640-request run on the previously failing deployment; that result is not validation of its later merge-updated head.</p><p class="boundary" data-i18n="gb-boundary">The PRs are alternatives for one failure, not two fixes to stack. Evidence isolates the registration × temporary-buffer-lifetime interaction on the reported deployment; the exact transient replay-time clobber has not been observed. Local validation does not imply upstream CI completion or a merged fix.</p></div></details>
+          </div>
+          <div class="open-project-proof"><strong>12 / 12</strong><span data-i18n="gb-probe">correct outputs · tested persistent-buffer head</span><strong>23 + 5</strong><span data-i18n="gb-tests">focused tests + subtests · local GPU validation</span></div>
+        </article>
+
         <p class="group-label">Selected upstream records · contribution and evidence index</p>
         <div class="evidence-grid">
           <div class="evidence-main">
@@ -317,6 +337,9 @@
             <div class="method"><div><span>01</span><strong>Reproduce</strong></div><div><span>02</span><strong>Isolate</strong></div><div><span>03</span><strong>Validate</strong></div><div><span>04</span><strong>Upstream</strong></div></div>
           </div>
           <div class="contributions">
+            <a class="contribution" data-record="pr-45371" href="https://github.com/sgl-project/sglang/pull/45371" target="_blank" rel="noreferrer"><div class="contribution-meta"><span>PR #45371</span><span data-i18n="status-45371">Authored alternative guard · open</span></div><h3 data-i18n="record-45371">Default DCP a2a registration protection</h3></a>
+            <a class="contribution" data-record="pr-45824" href="https://github.com/sgl-project/sglang/pull/45824" target="_blank" rel="noreferrer"><div class="contribution-meta"><span>PR #45824</span><span data-i18n="status-45824">Authored alternative lifetime fix · open</span></div><h3 data-i18n="record-45824">Retain DCP all-to-all buffers across graph replay</h3></a>
+            <a class="contribution" data-record="pr-43786" href="https://github.com/sgl-project/sglang/pull/43786" target="_blank" rel="noreferrer"><div class="contribution-meta"><span>PR #43786</span><span data-i18n="status-43786">Authored CUDA kernel fusion · open</span></div><h3 data-i18n="record-43786">Fuse inverse RoPE with FP8 activation quantization</h3></a>
             <a class="contribution" data-record="issue-31023" href="https://github.com/sgl-project/sglang/issues/31023" target="_blank" rel="noreferrer"><div class="contribution-meta"><span>Issue #31023</span><span data-i18n="status-issue-31023">Authored report & evidence · closed</span></div><h3>Isolate DSpark target-verify replay failures on TP8</h3></a>
             <a class="contribution" data-record="issue-33356" href="https://github.com/sgl-project/sglang/issues/33356" target="_blank" rel="noreferrer"><div class="contribution-meta"><span>Issue #33356</span><span data-i18n="status-issue-33356">Authored report & validation · closed</span></div><h3>Separate plan-kernel corruption from graph capture ordering</h3></a>
             <a class="contribution" data-record="issue-34297" href="https://github.com/sgl-project/sglang/issues/34297" target="_blank" rel="noreferrer"><div class="contribution-meta"><span>Roadmap #34297</span><span data-i18n="status-issue-34297">Authored investigation roadmap · closed</span></div><h3>Organize DSpark correctness contracts and validation gates</h3></a>
@@ -334,7 +357,7 @@
 
         <div class="metrics-band" aria-label="Selected results">
           <div><strong>−28.5%</strong><span>MiniCPM-o Core RTF · paired local duplex comparison</span></div>
-          <div><strong>~94.6k</strong><span>input tok/s · isolated Prefill operating point</span></div>
+          <div><strong>+42.4%</strong><span>B300 Decode · AR → simulated EAGLE combined configuration</span></div>
           <div><strong>+9.9%</strong><span>Gemma throughput · independent migration comparison</span></div>
           <div><strong>13.2×</strong><span>Qwen throughput · combined gain at C960</span></div>
         </div>
@@ -366,7 +389,7 @@
         <h2>Research notes and code, with the evidence behind them.</h2>
         <div class="footer-links"><a href="https://github.com/Phoenix3334" target="_blank" rel="noreferrer"><svg class="github-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .8a11.2 11.2 0 0 0-3.54 21.83c.56.1.76-.24.76-.54v-2.1c-3.12.68-3.78-1.33-3.78-1.33-.51-1.3-1.25-1.65-1.25-1.65-1.02-.7.08-.69.08-.69 1.13.08 1.72 1.16 1.72 1.16 1 1.71 2.63 1.22 3.27.93.1-.72.4-1.22.71-1.5-2.49-.28-5.11-1.25-5.11-5.55 0-1.23.44-2.23 1.16-3.02-.12-.28-.5-1.42.11-2.97 0 0 .95-.3 3.08 1.15a10.73 10.73 0 0 1 5.6 0c2.13-1.45 3.07-1.15 3.07-1.15.61 1.55.23 2.69.12 2.97.72.79 1.15 1.79 1.15 3.02 0 4.31-2.62 5.27-5.12 5.55.4.35.76 1.03.76 2.08v3.1c0 .3.2.65.77.54A11.2 11.2 0 0 0 12 .8Z"/></svg>GitHub ↗</a><a href="mailto:1187883824@qq.com">Email ↗</a></div>
       </div>
-      <div class="copyright">© 2026 Feihong Guo · 郭飞鸿 · Updated 19 October 2026</div>
+      <div class="copyright">© 2026 Feihong Guo · 郭飞鸿 · Updated 23 October 2026</div>
     </div>
   </footer>
   <a class="back-top" href="#top" aria-label="Back to top">↑</a>
@@ -381,193 +404,218 @@
     const sections=navLinks.map(link=>document.querySelector(link.getAttribute('href'))).filter(Boolean);
 
     const zh={
-      "[data-i18n=\"eplb-title\"]":"EPLB：先测负载均衡，再验证吞吐收益",
-      "[data-i18n=\"eplb-copy\"]":"在单机八卡 B300、SGLang/MegaMoE 的 DeepSeek-V4-Pro Prefill 场景中，比较专家放置与重排，采集专家负载并分析执行、通信开销。将<strong>逻辑专家热度、物理放置与副本分发、kernel 分块取整、请求供给间隙</strong>分开排查，避免把 token 数更均衡直接当作端到端提速。",
-      "[data-i18n=\"eplb-result\"]":"实验结果：仅调整放置的实验改善了物理 rank 的 token 均衡，逻辑专家计数保持不变；该组未增加专家副本。干净的独立验证尚未完成，因此不宣称已验证的吞吐收益，也不据此判断 EPLB 的潜力上限。",
-      "[data-i18n=\"eplb-summary\"]":"这轮实验如何改变了下一步判断",
-      "[data-i18n=\"eplb-detail\"]":"早期请求路径存在干扰，无法形成干净的端到端结论；CPU top-k 在接近并列分数时也不能可靠复现 GPU 路由，因此未把 bias 扰动视为已验证的安全优化。我向 SGLang 提出真实路由与合成均衡路由的服务级 profiling 对照，并向 DeepSeek 讨论专家放置、副本成本模型和模型路由的边界。目前均为开放讨论；合成均衡结果只能作为性能参照，不能证明可保持模型质量的优化收益。",
-      "[data-i18n=\"eplb-rfc-link\"]":"本人提出的 SGLang profiling RFC · #44697 ↗",
-      "[data-i18n=\"eplb-question-link\"]":"本人发起的 DeepSeek EPLB 讨论 · #29 ↗",
-      "[data-i18n=\"status-44697\"]":"本人 profiling 提案 · 开放中",
-      "[data-i18n=\"status-eplb-29\"]":"本人评估讨论 · 开放中",
-      "[data-i18n=\"eplb-rfc-record\"]":"区分路由不均、专家放置与服务执行成本",
-      "[data-i18n=\"eplb-question-record\"]":"讨论副本成本与模型路由优化的边界",
-
-      "[data-i18n=\"dp-detail-title\"]":"问题机制、验证与个人贡献",
-      "[data-i18n=\"dp-detail-copy\"]":"健康请求可能先修改 DPC 分配状态，随后才被忙碌的 scheduler 跳过。我隔离 health 轮转和用户负载预算状态，并保留显式 rank 与 PD 路由语义。最初新增 23 项 CPU 测试，rebase 后测试文件共 30 项通过；B300 性能证据来自此前实验。",
-      "[data-i18n=\"dp-record-link\"]":"根因调查 · #35241 ↗",
-      "[data-i18n=\"dcp-detail-title\"]":"我的修复与维护者的最终整合",
-      "[data-i18n=\"dcp-detail-copy\"]":"本人实现和 6 项 CPU 测试覆盖 rank 所有权、本地行映射及新分配 KV 位置上的恢复，4 项 KDA/Mamba GPU 回归检查独立循环状态路径。维护者复用共享 layout 工具，处理已解析物理索引和非完整页前缀，并补充 B200 强制回退及 logprob 检查。本人 B300 证据对应披露的本地补丁组合栈。",
-      "[data-i18n=\"dcp-draft-link\"]":"本人已验证草稿 · #38790 ↗",
-      "[data-i18n=\"dcp-merged-link\"]":"维护者整合 · 已合并 #39487 ↗",
-      "[data-i18n=\"dspark-detail-title\"]":"从本人早期故障报告到已合并方案的技术评审",
-      "[data-i18n=\"dspark-detail-copy\"]":"我提交原始运行期故障 #31023，随后报告启动捕获问题 #33356，并编写诊断 PR #31455、RFC #32432 和 Roadmap #34297。将 TP 预算一致性、producer plan 越界、capture 顺序与 PD 交接分开排查，完成 120/120 TP 计划验证和 #32467 × #33795 四臂启动实验。在 GitHub 正式 COMMENTED Review 中，我用每组 30,000 次实验及 launch 布局分析回应 DarkSharpness 的 no-init 建议；最终合并代码由 EanWang211123 编写。18,560 请求验证使用披露的 v0.5.16 backport 栈，真实 ragged 覆盖另行验证。本人后续 PR #34286、#34410 仍收录在下方证据索引。",
-      "[data-i18n=\"dspark-review-link\"]":"本人的 kernel A/B/C 技术评审 ↗",
-      "[data-i18n=\"dspark-review-record\"]":"本人提交的 GitHub Review 记录 ↗",
-      "[data-i18n=\"dspark-roadmap-link\"]":"调查路线图状态更新 ↗",
-      "[data-i18n=\"status-39487\"]":"协作修复 · 维护者编写 · 已合并",
-      "[data-i18n=\"status-32467\"]":"技术评审与因果验证 · 修复已合并",
-      ".contribution[data-record=\"pr-39487\"] h3":"从本人的报告与草稿推进 DCP 回退修复落地",
-      ".contribution[data-record=\"pr-32467\"] h3":"本人对最终 no-init 修复的技术评审 ↗",
-      '[data-i18n="figure-wearable"]':'<strong>可穿戴感知原型</strong>传感手套与身体侧边缘计算设备。',
-      '[data-i18n="figure-inspection"]':'<strong>移动巡检平台</strong>感知、导航与边缘推理集成。',
-      '[data-i18n="figure-microfluidic"]':'<strong>微流控分析原型</strong>连接物理采集与边缘分析。',
-      '[data-i18n="figure-thermopulse-device"]':'<strong>热成像系统</strong>项目采集设备与分析工作站。',
-      '[data-i18n="figure-thermopulse-output"]':'<strong>热成像输出示例</strong>原型流程中的不同温度范围视图。',
-      "[data-i18n=\"status-issue-31023\"]":"本人问题报告与证据 · 已关闭",
-      "[data-i18n=\"status-issue-33356\"]":"本人问题报告与验证 · 已关闭",
-      "[data-i18n=\"status-issue-34297\"]":"本人调查路线图 · 已关闭",
-      "[data-i18n=\"status-issue-32432\"]":"本人设计提案 · 已关闭",
-      "[data-i18n=\"status-issue-38645\"]":"本人问题报告与根因分析 · 已关闭",
-      ".contribution[data-record=\"issue-31023\"] h3":"隔离 TP8 上的 DSpark target-verify replay 故障",
-      ".contribution[data-record=\"issue-33356\"] h3":"区分 plan-kernel 越界与图捕获顺序问题",
-      ".contribution[data-record=\"issue-34297\"] h3":"组织 DSpark 正确性契约与验证闸门",
-      ".contribution[data-record=\"issue-32432\"] h3":"提出 metadata、workspace 与 stream 所有权契约",
-      ".contribution[data-record=\"issue-38645\"] h3":"追踪 DCP retract 的逻辑 KV 索引到本地行映射缺失",
-      ".contribution[data-record=\"pr-35721\"] h3":"将 generation-health 状态从用户调度中隔离",
-      ".contribution[data-record=\"pr-34410\"] h3":"固定 P/D Decode draft-input 交接契约",
-      ".contribution[data-record=\"pr-34286\"] h3":"最后一次 warmup 后、capture 前同步图构建",
-      'nav a[href="#internship"]':'实习记录',
-      "[data-i18n=\"ascend-summary\"]":"两条推理路线，分别解释基线",
-      "[data-i18n=\"qwen-detail\"]":"<strong>xLLM / Qwen3.5-9B：</strong>模型适配、运行时配置与执行路径优化形成 C960 的组合结果。13.2× 仅对应该负载与起始配置，不是单项优化消融，也不代表硬件上限。",
-      "[data-i18n=\"gemma-detail\"]":"<strong>vLLM-Ascend / Gemma 4 E2B：</strong>独立的三小时决赛推理部署，按给定赛题需求和 skills，在 Claude Code / Opus 辅助下完成。环境包括 CANN 8.5.1、Torch NPU、Triton 与 vLLM。",
-      "[data-i18n=\"gemma-caption\"]":"Gemma 4 E2B · 独立迁移对照",
-      "[data-i18n=\"metric\"]":"指标",
-      "[data-i18n=\"baseline\"]":"基线",
-      "[data-i18n=\"throughput\"]":"吞吐（tok/s）",
-      "[data-i18n=\"gemma-boundary\"]":"该对照中吞吐约 +9.9%，首 token 延迟 −7.5%，每输出 token 延迟 −9.0%。4k chunk 配置测得 1,126.36 tok/s，未作为最终收益路线；这些结果与 Qwen 配置分别解释。",
-      "[data-i18n=\"internship-eyebrow\"]":"实习工作记录",
-      "[data-i18n=\"internship-title\"]":"隔离阶段，找到行为边界。",
-      "[data-i18n=\"internship-intro\"]":"吞吐数字之外的工作：负载刻画、容量估算、并行策略取舍，以及让相同配置出现不同行为的共享状态。",
-      "[data-i18n=\"phase-title\"]":"分别测量 Prefill 与 Decode",
-      "[data-i18n=\"phase-intro\"]":"在八卡 B300 节点建立阶段隔离的负载扫描，将长 prompt 的准入和 batching 与逐 token 执行分开。吞吐、尾延迟、请求完成和正确性分别记录，而非合成一个分数。",
-      "[data-i18n=\"phase-caption\"]":"选定工作点 · TP8 / DP8，启用 DP Attention",
-      "[data-i18n=\"phase\"]":"阶段",
-      "[data-i18n=\"workload\"]":"负载 / 配置",
-      "[data-i18n=\"result\"]":"观测结果",
-      "[data-i18n=\"prefill-condition\"]":"60k 输入 / 1 输出 token · C16 · 每 rank 8k effective chunk",
-      "[data-i18n=\"decode-condition\"]":"60k 输入 / 1k 输出 token · C3072 · EAGLE-3-1-4 · 模拟接受率约 0.70",
-      "[data-i18n=\"input-tokens\"]":"input tok/s",
-      "[data-i18n=\"generated-tokens\"]":"generated tok/s",
-      "[data-i18n=\"phase-boundary\"]":"来自不同阶段与负载配置，不是 P/D 联合端到端结果。Decode 使用模拟推测接受率，不能推出模型自然接受率或整体部署性能。",
-      "[data-i18n=\"phase-summary\"]":"一次性能异常如何变成路由状态调查",
-      "[data-i18n=\"phase-discovery\"]":"Prefill 重复实验暴露间歇性低吞吐。我隔离出 generation-health 流量这一触发因素，随后追踪它如何修改用户请求也使用的 Data Parallel Controller 状态。patched/unpatched × health-on/off 的对照使因果检验具体化；修复将 health 路由与负载预算记账从用户调度中分离，已于 2026 年 10 月 11 日合入 SGLang 主分支。",
-      "[data-i18n=\"health-evidence\"]":"公开 A/B 证据与已合并修复 · PR #35721 ↗",
-      "[data-i18n=\"capacity-title\"]":"全节点测试前先估算容量",
-      "[data-i18n=\"capacity-copy\"]":"为目标模型和 B300 拓扑扩展基于 InferFlux 的容量模型。由模型结构、计算与带宽上限、KV 显存、序列长度、并行布局和效率先验，在完整压测前给出合理的 Prefill/Decode 性能区间。",
-      "[data-i18n=\"capacity-boundary\"]":"输出是容量估计，不是吞吐保证。预测与实测的差距用于确定内存、通信、batching 或运行时调查的优先级。",
-      "[data-i18n=\"parallel-title\"]":"并行方式取决于负载",
-      "[data-i18n=\"parallel-copy\"]":"在不同并发区间比较 DP Attention 与上下文并行 CP，并考察专家放置与负载均衡 EPLB 的开销。降低单请求延迟的布局在更高并发下可能失去优势；重分布与冗余专家也消耗时间和显存。",
-      "[data-i18n=\"parallel-boundary\"]":"静态专家放置与动态重平衡是不同决策。低收益配置与回退也是实验证据；比较需要对齐负载、harness 与资源预算。",
-      "[data-i18n=\"minicpm-summary\"]":"最终全双工配置究竟改了什么？",
-      "[data-i18n=\"minicpm-detail\"]":"最终组合还将视觉输入从 overview + slice 减为仅 overview，并将首段 TTS chunk 从 5 调为 10 tokens。后者以约 +100 ms 首次响应延迟换取更少的重复边界工作。通过四项有限提交检查，不能直接推出广泛的视觉质量等价。",
-      "[data-i18n=\"minicpm-rejected\"]":"最终短 chunk 全双工配置禁用了 thinker 推测解码，因为其开销使 RTF 变差。draft 模型接受长度与独立文本负载加速仍是单独产出，不用来解释最终全双工收益。",
-      "[data-i18n=\"status-35721\"]":"本人修复 PR · 已合并 · v0.5.22",
-      "[data-i18n=\"status-34410\"]":"本人回归测试 · 开放",
-      "[data-i18n=\"status-34286\"]":"本人修复 PR · 开放",
-      ".open-project:nth-of-type(2) .open-project-proof span:nth-of-type(1)":"指定 CPU 测试 · rebase 后版本",
-      ".open-project:nth-of-type(2) .open-project-proof span:nth-of-type(2)":"B300 patched health-on 重复实验 · 指定负载",
-      ".open-project:nth-of-type(3) .open-project-proof span:nth-of-type(1)":"v0.5.17 修复组请求 · 8 次真实 retract",
-      ".open-project:nth-of-type(3) .open-project-proof span:nth-of-type(2)":"CPU 正确性测试",
-      ".open-project:nth-of-type(4) .open-project-proof span:nth-of-type(1)":"持续 Decode 测试完成请求数",
-      ".open-project:nth-of-type(4) .open-project-proof span:nth-of-type(2)":"越界计划 · A/B/C 每个方案各 30,000 次调用",
-      'nav a[href="#lens"]':'系统视角',
-      'nav a[href="#experience"]':'经历',
-      'nav a[href="#opensource"]':'开源工作',
-      'nav a[href="#research"]':'研究方向',
-      '.hero .eyebrow':'AI Systems / MLSys · 郑州大学',
-      '.hero h1':'面向<em>模型中心工作负载</em>的系统研究',
-      '.hero-lede':"我关注分布式推理、硬件感知执行和运行时正确性。在百度 AI 通信组，我研究 B300 上的长上下文服务，并推进 DP 路由、DCP 缓存回退和 DSpark 正确性工作；其他项目连接模型训练、昇腾部署和实体感知系统。",
-      '.hero-thesis':'从工作负载测量，走向<em>运行时不变量。</em>',
-      '.hero-line .tag:nth-child(1)':'AI 基础设施',
-      '.hero-line .tag:nth-child(2)':'运行时与分布式系统',
-      '.hero-line .tag:nth-child(3)':'硬件感知计算',
-      '.hero-line .tag:nth-child(4)':'真实世界智能负载',
-      '.affiliations .affiliation:nth-child(1)':'<span class="logo-type">ZZU</span>郑州大学',
-      '.affiliations .affiliation:nth-child(2)':'<span class="logo-type">HPC</span>郑州大学超算团队',
-      '.portrait figcaption':'物联网工程<br>郑州大学 · 2027 届',
-
-      '#lens .eyebrow':'系统视角',
-      '#lens .section-head h2':'一个系统问题，两类证据来源',
-      '#lens .section-head > p':'物联网给了我端到端系统视角：真实项目告诉我负载和约束从哪里来，计算与基础设施工作则让我理解执行、资源与正确性如何决定这些负载真正能做到什么。',
-      '.thread.real h3':'真实世界智能系统',
-      '.thread.real > p':'物理系统会暴露干净 benchmark 中没有的约束：感知质量、时序、部署、交互与异构边缘资源。',
-      '.thread.real .thread-row:nth-child(1) span':'医疗热成像 · 感知 → 推理 → 报告',
-      '.thread.real .thread-row:nth-child(2) span':'可穿戴感知 · 自主巡检 · 微流控',
-      '.thread.real .thread-row:nth-child(3) span':'感知 · 网络 · 边缘—云系统',
-      '.thread.sys h3':'系统与计算深度',
-      '.thread.sys > p':'系统侧的问题是找到真正拥有瓶颈的层：内存局部性、加速器算子、图执行、分布式调度、共享状态还是运行时策略。',
-      '.thread.sys .thread-row:nth-child(1) span':'HPCG · FFTW · 鲲鹏 · 昇腾',
-      '.thread.sys .thread-row:nth-child(2) span':'服务 · 调度 · 分布式运行时 · 正确性',
-      '.thread.sys .thread-row:nth-child(3) span':'复现 · 隔离 · 修复 · 回归 · 上游',
-      '.converge span':'汇合',
-      '.co-design h3':'模型—系统协同设计',
-      '.co-design p':'<strong>MiniCPM-o 4.5</strong> 成为两条线的汇合点：模型侧接受率、推测执行、kernel/runtime 开销与实时全双工服务需要分别测量，但最终都服务于同一个端到端目标。',
-
-      '#experience .eyebrow':'核心经历',
-      '#experience .section-head h2':'跨越不同层级的系统工作',
-      '#experience .section-head > p':'贯穿这些工作的共同方法是 systems-first：先刻画工作负载，找到真正拥有行为边界的资源或状态，再在对应层介入并用真实硬件验证。',
-      '.experience-row:nth-child(1) .year':'2026 · 至今',
-      '.experience-row:nth-child(1) h3':'百度智能云<small>AI Infra 科研实习生</small>',
-      '.experience-row:nth-child(1) > p':"在百度 AI 通信组，围绕 SGLang 与 NVIDIA B300 开展<strong>分布式推理性能与正确性</strong>研究。将单压 Prefill/Decode、容量估计与 DP 路由、DCP 缓存回退、DSpark 和 CUDA Graph 调查连接起来，通过代码分析、受控实验和回归推动上游修复。<a class=\"inline-link\" href=\"#internship\">阅读实习记录 ↓</a>",
-      '.experience-row:nth-child(2) .year':'计算基础',
-      '.experience-row:nth-child(2) h3':'华为 ICT 学院 & 郑州大学超算团队<small>鲲鹏 CPU · 昇腾 NPU · HPC · 推理运行时</small>',
-      '.experience-row:nth-child(2) > p':'在<strong>鲲鹏 CPU、昇腾 NPU、xLLM 与 vLLM-Ascend</strong>上开展性能工程。昇腾 910B 上 Qwen3.5-9B 吞吐从<strong>2,301 提升至 30,451 tok/s（C960）</strong>：这是相对有较大优化空间基线的组合工程收益。独立的 Gemma 4 E2B 决赛部署对照记录<strong>1,159.53 → 1,274.00 tok/s</strong>。鲲鹏 FFTW 记录约<strong>80.9 → 312 GFLOP/s</strong>，与 NPU 推理分别评估。',
-      '.experience-row:nth-child(3) .year':'真实世界系统',
-      '.experience-row:nth-child(3) h3':'郑州大学–汉威物联网研究院<small>边缘 AI · 智能感知 · 物理部署</small>',
-      '.experience-row:nth-child(3) > p':'围绕<strong>可穿戴多模态感知、自主巡检与微流控边缘 AI</strong>，连接传感数据、模型转换、边缘推理和应用反馈。保留的项目评测分别记录巡检<strong>mAP50 0.869</strong>与微流控检测<strong>mAP50 0.923</strong>。两者来自各自测试集，是独立原型结果；真实场景可靠性仍需进一步评估。',
-      '.experience-row:nth-child(4) .year':'智慧医疗',
-      '.experience-row:nth-child(4) h3':'ThermoPulse<small>省级大学生创新项目 · 郑州大学</small>',
-      '.experience-row:nth-child(4) > p':'医疗热成像原型，连接采集、视觉推理与<strong>Qwen3-8B CPT/SFT 报告生成</strong>。我在跨学科项目中侧重软件集成和模型适配。产出是可运行的感知到报告链路；任务评测、报告事实一致性与独立临床评审仍是不同层次的验证。',
-
-      '#opensource .eyebrow':'开源系统工作',
-      '#opensource .section-head h2':'模型、运行时与加速器协同设计',
-      '#opensource .section-head > p':"三条相互关联的 SGLang 贡献：DP 请求路由、DCP 缓存回退恢复、DSpark 运行时正确性。既有独立编写的修复，也有持续推进的上游协作调查。",
-      '.open-project:nth-of-type(1) .open-project-index':'01 · 模型 × 系统',
-      '.open-project:nth-of-type(1) h3 a':'MiniCPM-o 4.5：NVIDIA B300 与昇腾 910C ↗',
-      '.open-project:nth-of-type(1) .open-project-copy > p':'建立<strong>B300 draft 模型训练、DSpark 推测执行、draft-aware GGUF 转换与昇腾 910C 部署</strong>链路，基于 profiling 调整算子和图执行。相同 120 秒全双工视频与本地 harness 下，Core 实时因子 RTF 从<strong>0.6754 降至 0.4829</strong>，约降低 28.5%。训练接受长度、算子启动次数与全双工 RTF 是不同的证据端点。',
-      '.open-project:nth-of-type(1) .open-project-proof span:nth-of-type(1)':'平均接受长度 · draft 模型评测',
-      '.open-project:nth-of-type(1) .open-project-proof span:nth-of-type(2)':'Host Launch 次数 · profiling 路径',
-      '.open-project:nth-of-type(2) .open-project-index':'02 · 路由状态',
-      '.open-project:nth-of-type(2) h3 a':"DP 健康检查：独立完成路由状态修复 ↗",
-      '.open-project:nth-of-type(2) .open-project-copy > p':"独立将 Prefill 间歇性掉速定位到生成型健康请求修改共享用户路由状态。设计修复/未修复 × health 开/关对照，编写状态隔离补丁和回归测试。本人<strong>PR #35721 已合入 SGLang 主分支</strong>，并收录于 <a href=\"https://github.com/sgl-project/sglang/releases/tag/v0.5.22\" target=\"_blank\" rel=\"noreferrer\">v0.5.22 官方发布说明</a>的并行与分离部署分类；指定八卡 B300 负载下，修复后保留健康检查的四次实验均恢复预期吞吐区间。",
-      '.open-project:nth-of-type(3) .open-project-index':'03 · KV 状态',
-      '.open-project:nth-of-type(3) h3 a':"DCP 缓存回退：从根因定位到协作合并 ↗",
-      '.open-project:nth-of-type(3) .open-project-copy > p':"报告<strong>Issue #38645</strong>，定位 DCP 回退备份/恢复中的逻辑与物理 KV 索引混用，并实现、验证草稿修复<strong>#38790</strong>。未修复 DCP8 首次回退即崩溃；本人 B300 修复组经<strong>8 次回退完成 2,048/2,048 请求</strong>。维护者 kpham-sgl 通过共享 DCP layout 工具整合方案、补齐兼容性和验证，最终合并<strong>#39487</strong>；本人随后关闭被取代的草稿。",
-      '.open-project:nth-of-type(4) .open-project-proof span:nth-of-type(1)':'技术评审 · kernel 修复已合并',
-      '.open-project:nth-of-type(4) .open-project-proof span:nth-of-type(2)':'越界计划 · A/B/C 每组 30,000 次调用',
-      '.open-project:nth-of-type(4) .open-project-index':'04 · 故障调查 / 技术评审',
-      '.open-project:nth-of-type(4) h3 a':"DSpark 正确性：早期排查与技术评审 ↗",
-      '.open-project:nth-of-type(4) .open-project-copy > p':"从本人较早提交的 B300/TP8 故障报告 <strong>#31023、#33356</strong> 出发，构建运行期、启动期和单 GPU kernel 复现，持续追踪到上游修复。随后参与<strong>已合并 PR #32467 的技术评审</strong>，通过同一 session 的 A/B/C 实验与同步机制分析，验证评审中提出的 no-init 方案：<strong>13,111/30,000 越界计划 → 0/30,000</strong>。贡献贯穿早期故障排查、因果验证与最终方案评审。",
-      '.group-label':"部分上游记录 · 贡献与证据索引",
-      '.evidence-main h3':'复现、隔离、验证、上游',
-      '.evidence-main p':'框架会变，但研究方法不应变。公开 issue、PR、回归与 RFC 构成可复现证据链，用来区分症状、因果机制、修复和验证。',
-      '.method div:nth-child(1) strong':'复现',
-      '.method div:nth-child(2) strong':'隔离',
-      '.method div:nth-child(3) strong':'验证',
-      '.method div:nth-child(4) strong':'上游',
-      '.metrics-band div:nth-child(1) span':'MiniCPM-o Core RTF · 同 harness 本地全双工对照',
-      '.metrics-band div:nth-child(2) span':'input tok/s · 单压 Prefill 选定工作点',
-      '.metrics-band div:nth-child(3) span':'Gemma 吞吐 · 独立迁移对照',
-      '.metrics-band div:nth-child(4) span':'Qwen 吞吐 · C960 组合收益',
-
-      '#research .eyebrow':'长期研究视角',
-      '#research .section-head h2':'面向模型中心工作负载的系统研究',
-      '#research .section-head > p':'我真正感兴趣的不是某一个 serving framework，而是当模型成为主要计算工作负载后，系统抽象、资源管理与执行机制应如何演进。',
-      '.research-question':'推理系统如何<em>适应变化的工作负载</em>，同时保持正确性与可预测延迟？',
-      '.research-sub':'<strong>研究兴趣——自适应推理系统。</strong>真实服务负载会变化：请求到达、序列长度、Prefill/Decode 比例、模态、SLO、缓存压力与硬件可用性都会随时间改变。我希望研究如何让负载测量指导在线运行时决策，同时考虑策略切换成本与可靠回退。',
-      '.research-steps div:nth-child(1) h3':'观测',
-      '.research-steps div:nth-child(1) p':'识别 workload phase、到达模式、序列分布、cache pressure、SLO、telemetry 与资源可用性。',
-      '.research-steps div:nth-child(2) h3':'建模',
-      '.research-steps div:nth-child(2) p':'估计 workload × hardware × policy 到吞吐、延迟、显存占用与策略切换成本之间的关系。',
-      '.research-steps div:nth-child(3) h3':'自适应',
-      '.research-steps div:nth-child(3) p':'先只调整一到两个高影响决策：batching、cache policy、并行布局或 execution strategy。',
-      '.research-steps div:nth-child(4) h3':'验证',
-      '.research-steps div:nth-child(4) p':'除了性能，还要求 runtime invariant、safe fallback、受控回归和长稳测试。',
-      '.scope-note':'<strong>由实验支撑的开放方向：</strong>从一类负载、少量硬件与一到两个运行时决策开始。算子融合、图执行与 draft 显存、以及多模态流式交互提供具体案例；每个案例都需要瓶颈证据和正确性契约，再形成更广泛的结论。',
-      'footer h2':'研究记录与代码，以及它们背后的证据。',
-      '.copyright':"© 2026 郭飞鸿 · Feihong Guo · 更新于 2026 年 10 月 19 日",
-    };
+  "[data-i18n=\"eplb-title\"]": "EPLB：先测负载均衡，再验证吞吐收益",
+  "[data-i18n=\"eplb-copy\"]": "在单机八卡 B300、SGLang/MegaMoE 的 DeepSeek-V4-Pro Prefill 场景中，比较专家放置与重排，采集专家负载并分析执行、通信开销。将<strong>逻辑专家热度、物理放置与副本分发、kernel 分块取整、请求供给间隙</strong>分开排查，避免把 token 数更均衡直接当作端到端提速。",
+  "[data-i18n=\"eplb-result\"]": "实验结果：仅调整放置的实验改善了物理 rank 的 token 均衡，逻辑专家计数保持不变；该组未增加专家副本。干净的独立验证尚未完成，因此不宣称已验证的吞吐收益，也不据此判断 EPLB 的潜力上限。",
+  "[data-i18n=\"eplb-summary\"]": "这轮实验如何改变了下一步判断",
+  "[data-i18n=\"eplb-detail\"]": "早期请求路径存在干扰，无法形成干净的端到端结论；CPU top-k 在接近并列分数时也不能可靠复现 GPU 路由，因此未把 bias 扰动视为已验证的安全优化。我向 SGLang 提出真实路由与合成均衡路由的服务级 profiling 对照，并向 DeepSeek 讨论专家放置、副本成本模型和模型路由的边界。目前均为开放讨论；合成均衡结果只能作为性能参照，不能证明可保持模型质量的优化收益。",
+  "[data-i18n=\"eplb-rfc-link\"]": "本人提出的 SGLang profiling RFC · #44697 ↗",
+  "[data-i18n=\"eplb-question-link\"]": "本人发起的 DeepSeek EPLB 讨论 · #29 ↗",
+  "[data-i18n=\"status-44697\"]": "本人 profiling 提案 · 开放中",
+  "[data-i18n=\"status-eplb-29\"]": "本人评估讨论 · 开放中",
+  "[data-i18n=\"eplb-rfc-record\"]": "区分路由不均、专家放置与服务执行成本",
+  "[data-i18n=\"eplb-question-record\"]": "讨论副本成本与模型路由优化的边界",
+  "[data-i18n=\"dp-detail-title\"]": "问题机制、验证与个人贡献",
+  "[data-i18n=\"dp-detail-copy\"]": "健康请求可能先修改 DPC 分配状态，随后才被忙碌的 scheduler 跳过。我隔离 health 轮转和用户负载预算状态，并保留显式 rank 与 PD 路由语义。最初新增 23 项 CPU 测试，rebase 后测试文件共 30 项通过；B300 性能证据来自此前实验。",
+  "[data-i18n=\"dp-record-link\"]": "根因调查 · #35241 ↗",
+  "[data-i18n=\"dcp-detail-title\"]": "我的修复与维护者的最终整合",
+  "[data-i18n=\"dcp-detail-copy\"]": "本人实现和 6 项 CPU 测试覆盖 rank 所有权、本地行映射及新分配 KV 位置上的恢复，4 项 KDA/Mamba GPU 回归检查独立循环状态路径。维护者复用共享 layout 工具，处理已解析物理索引和非完整页前缀，并补充 B200 强制回退及 logprob 检查。本人 B300 证据对应披露的本地补丁组合栈。",
+  "[data-i18n=\"dcp-draft-link\"]": "本人已验证草稿 · #38790 ↗",
+  "[data-i18n=\"dcp-merged-link\"]": "维护者整合 · 已合并 #39487 ↗",
+  "[data-i18n=\"dspark-detail-title\"]": "从本人早期故障报告到已合并方案的技术评审",
+  "[data-i18n=\"dspark-detail-copy\"]": "我提交原始运行期故障 #31023，随后报告启动捕获问题 #33356，并编写诊断 PR #31455、RFC #32432 和 Roadmap #34297。将 TP 预算一致性、producer plan 越界、capture 顺序与 PD 交接分开排查，完成 120/120 TP 计划验证和 #32467 × #33795 四臂启动实验。在 GitHub 正式 COMMENTED Review 中，我用每组 30,000 次实验及 launch 布局分析回应 DarkSharpness 的 no-init 建议；最终合并代码由 EanWang211123 编写。18,560 请求验证使用披露的 v0.5.16 backport 栈，真实 ragged 覆盖另行验证。本人后续 PR #34286、#34410 仍收录在下方证据索引。",
+  "[data-i18n=\"dspark-review-link\"]": "本人的 kernel A/B/C 技术评审 ↗",
+  "[data-i18n=\"dspark-review-record\"]": "本人提交的 GitHub Review 记录 ↗",
+  "[data-i18n=\"dspark-roadmap-link\"]": "调查路线图状态更新 ↗",
+  "[data-i18n=\"status-39487\"]": "协作修复 · 维护者编写 · 已合并",
+  "[data-i18n=\"status-32467\"]": "技术评审与因果验证 · 修复已合并",
+  ".contribution[data-record=\"pr-39487\"] h3": "从本人的报告与草稿推进 DCP 回退修复落地",
+  ".contribution[data-record=\"pr-32467\"] h3": "本人对最终 no-init 修复的技术评审 ↗",
+  "[data-i18n=\"figure-wearable\"]": "<strong>可穿戴感知原型</strong>传感手套与身体侧边缘计算设备。",
+  "[data-i18n=\"figure-inspection\"]": "<strong>移动巡检平台</strong>感知、导航与边缘推理集成。",
+  "[data-i18n=\"figure-microfluidic\"]": "<strong>微流控分析原型</strong>连接物理采集与边缘分析。",
+  "[data-i18n=\"figure-thermopulse-device\"]": "<strong>热成像系统</strong>项目采集设备与分析工作站。",
+  "[data-i18n=\"figure-thermopulse-output\"]": "<strong>热成像输出示例</strong>原型流程中的不同温度范围视图。",
+  "[data-i18n=\"status-issue-31023\"]": "本人问题报告与证据 · 已关闭",
+  "[data-i18n=\"status-issue-33356\"]": "本人问题报告与验证 · 已关闭",
+  "[data-i18n=\"status-issue-34297\"]": "本人调查路线图 · 已关闭",
+  "[data-i18n=\"status-issue-32432\"]": "本人设计提案 · 已关闭",
+  "[data-i18n=\"status-issue-38645\"]": "本人问题报告与根因分析 · 已关闭",
+  ".contribution[data-record=\"issue-31023\"] h3": "隔离 TP8 上的 DSpark target-verify replay 故障",
+  ".contribution[data-record=\"issue-33356\"] h3": "区分 plan-kernel 越界与图捕获顺序问题",
+  ".contribution[data-record=\"issue-34297\"] h3": "组织 DSpark 正确性契约与验证闸门",
+  ".contribution[data-record=\"issue-32432\"] h3": "提出 metadata、workspace 与 stream 所有权契约",
+  ".contribution[data-record=\"issue-38645\"] h3": "追踪 DCP retract 的逻辑 KV 索引到本地行映射缺失",
+  ".contribution[data-record=\"pr-35721\"] h3": "将 generation-health 状态从用户调度中隔离",
+  ".contribution[data-record=\"pr-34410\"] h3": "固定 P/D Decode draft-input 交接契约",
+  ".contribution[data-record=\"pr-34286\"] h3": "最后一次 warmup 后、capture 前同步图构建",
+  "nav a[href=\"#internship\"]": "实习记录",
+  "[data-i18n=\"ascend-summary\"]": "两条推理路线，分别解释基线",
+  "[data-i18n=\"qwen-detail\"]": "<strong>xLLM / Qwen3.5-9B：</strong>模型适配、运行时配置与执行路径优化形成 C960 的组合结果。13.2× 仅对应该负载与起始配置，不是单项优化消融，也不代表硬件上限。",
+  "[data-i18n=\"gemma-detail\"]": "<strong>vLLM-Ascend / Gemma 4 E2B：</strong>独立的三小时决赛推理部署，按给定赛题需求和 skills，在 Claude Code / Opus 辅助下完成。环境包括 CANN 8.5.1、Torch NPU、Triton 与 vLLM。",
+  "[data-i18n=\"gemma-caption\"]": "Gemma 4 E2B · 独立迁移对照",
+  "[data-i18n=\"metric\"]": "指标",
+  "[data-i18n=\"baseline\"]": "基线",
+  "[data-i18n=\"throughput\"]": "吞吐（tok/s）",
+  "[data-i18n=\"gemma-boundary\"]": "该对照中吞吐约 +9.9%，首 token 延迟 −7.5%，每输出 token 延迟 −9.0%。4k chunk 配置测得 1,126.36 tok/s，未作为最终收益路线；这些结果与 Qwen 配置分别解释。",
+  "[data-i18n=\"internship-eyebrow\"]": "推理工程记录",
+  "[data-i18n=\"internship-title\"]": "推理性能与资源效率评估",
+  "[data-i18n=\"internship-intro\"]": "SGLang 在 B300、GB300 上的代表测量，保留负载条件与贡献边界，用于支撑部署选型和容量规划。",
+  "[data-i18n=\"phase-title\"]": "长上下文推理：代表测量结果",
+  "[data-i18n=\"phase-intro\"]": "分别评测 DeepSeek-V4-Pro 在 B300 与双机 GB300 上的 Prefill、Decode。评测范围覆盖 SGLang 版本、DP Attention、PrefillDelayer、EAGLE 投机解码、缓存/图容量、batching 与主机侧回传链路；各策略适用的负载不同。",
+  "[data-i18n=\"phase-caption\"]": "DeepSeek-V4-Pro · 各部署均为八卡 · 已测代表工作点",
+  "[data-i18n=\"phase\"]": "平台 / 阶段",
+  "[data-i18n=\"workload\"]": "负载 / 对照",
+  "[data-i18n=\"result\"]": "观测结果",
+  "[data-i18n=\"phase-boundary\"]": "Decode 投机端固定模拟接受率约 0.70，平均接受长度约 3.10。AR→EAGLE 对照包含版本及容量/并发变化，属于组合配置结果；P/D 分别测试，GB300 数字也不作为严格硬件净收益或实测成本降幅。",
+  "[data-i18n=\"phase-summary\"]": "一次性能异常如何变成路由状态调查",
+  "[data-i18n=\"phase-discovery\"]": "Prefill 重复实验暴露间歇性低吞吐。我隔离出 generation-health 流量这一触发因素，随后追踪它如何修改用户请求也使用的 Data Parallel Controller 状态。patched/unpatched × health-on/off 的对照使因果检验具体化；修复将 health 路由与负载预算记账从用户调度中分离，已于 2026 年 10 月 11 日合入 SGLang 主分支。",
+  "[data-i18n=\"health-evidence\"]": "公开 A/B 证据与已合并修复 · PR #35721 ↗",
+  "[data-i18n=\"capacity-title\"]": "全节点测试前先估算容量",
+  "[data-i18n=\"capacity-copy\"]": "扩展基于 InferFlux 的容量模型，由工作负载、计算/带宽上限、缓存显存、并行布局及效率先验缩小测试范围；针对 Kimi K3 分析 DCP、KV/SSM 状态池的容量与回退边界。",
+  "[data-i18n=\"capacity-boundary\"]": "输出是容量估计，不是吞吐保证。预测与实测的差距用于确定内存、通信、batching 或运行时调查的优先级。",
+  "[data-i18n=\"parallel-title\"]": "并行方式取决于负载",
+  "[data-i18n=\"parallel-copy\"]": "比较不同负载下的 DP Attention 与上下文并行。在 GB300 独立 CP8 低时延档，60k、128k 输入（均输出 1 token）的 median TTFT 分别为 <strong>0.666 s、1.516 s</strong>；与表中高吞吐 Prefill 属于不同工作点。",
+  "[data-i18n=\"parallel-boundary\"]": "最大容量、最高吞吐和最低时延是不同目标；版本升级与增大 batch 的收益都按具体负载验证。",
+  "[data-i18n=\"minicpm-summary\"]": "最终全双工配置究竟改了什么？",
+  "[data-i18n=\"minicpm-detail\"]": "最终组合还将视觉输入从 overview + slice 减为仅 overview，并将首段 TTS chunk 从 5 调为 10 tokens。后者以约 +100 ms 首次响应延迟换取更少的重复边界工作。通过四项有限提交检查，不能直接推出广泛的视觉质量等价。",
+  "[data-i18n=\"minicpm-rejected\"]": "最终短 chunk 全双工配置禁用了 thinker 推测解码，因为其开销使 RTF 变差。draft 模型接受长度与独立文本负载加速仍是单独产出，不用来解释最终全双工收益。",
+  "[data-i18n=\"status-35721\"]": "本人修复 PR · 已合并 · v0.5.22",
+  "[data-i18n=\"status-34410\"]": "本人回归测试 · 开放",
+  "[data-i18n=\"status-34286\"]": "本人修复 PR · 开放",
+  ".open-project:nth-of-type(2) .open-project-proof span:nth-of-type(1)": "指定 CPU 测试 · rebase 后版本",
+  ".open-project:nth-of-type(2) .open-project-proof span:nth-of-type(2)": "B300 patched health-on 重复实验 · 指定负载",
+  ".open-project:nth-of-type(3) .open-project-proof span:nth-of-type(1)": "v0.5.17 修复组请求 · 8 次真实 retract",
+  ".open-project:nth-of-type(3) .open-project-proof span:nth-of-type(2)": "CPU 正确性测试",
+  ".open-project:nth-of-type(4) .open-project-proof span:nth-of-type(1)": "技术评审 · kernel 修复已合并",
+  ".open-project:nth-of-type(4) .open-project-proof span:nth-of-type(2)": "越界计划 · A/B/C 每组 30,000 次调用",
+  "nav a[href=\"#lens\"]": "系统视角",
+  "nav a[href=\"#experience\"]": "经历",
+  "nav a[href=\"#opensource\"]": "开源工作",
+  "nav a[href=\"#research\"]": "研究方向",
+  ".hero .eyebrow": "AI Systems / MLSys · 郑州大学",
+  ".hero h1": "面向<em>模型中心工作负载</em>的系统研究",
+  ".hero-lede": "我关注分布式推理、硬件感知执行和运行时正确性。在百度 AI 通信组，我研究 B300、GB300 上的长上下文服务，并推进 DP 路由、DCP 缓存与通信、DSpark 正确性工作；其他项目连接模型训练、昇腾部署和实体感知系统。",
+  ".hero-thesis": "从工作负载测量，走向<em>运行时不变量。</em>",
+  ".hero-line .tag:nth-child(1)": "AI 基础设施",
+  ".hero-line .tag:nth-child(2)": "运行时与分布式系统",
+  ".hero-line .tag:nth-child(3)": "硬件感知计算",
+  ".hero-line .tag:nth-child(4)": "真实世界智能负载",
+  ".affiliations .affiliation:nth-child(1)": "<span class=\"logo-type\">ZZU</span>郑州大学",
+  ".affiliations .affiliation:nth-child(2)": "<span class=\"logo-type\">HPC</span>郑州大学超算团队",
+  ".portrait figcaption": "物联网工程<br>郑州大学 · 2027 届",
+  "#lens .eyebrow": "系统视角",
+  "#lens .section-head h2": "一个系统问题，两类证据来源",
+  "#lens .section-head > p": "物联网给了我端到端系统视角：真实项目告诉我负载和约束从哪里来，计算与基础设施工作则让我理解执行、资源与正确性如何决定这些负载真正能做到什么。",
+  ".thread.real h3": "真实世界智能系统",
+  ".thread.real > p": "物理系统会暴露干净 benchmark 中没有的约束：感知质量、时序、部署、交互与异构边缘资源。",
+  ".thread.real .thread-row:nth-child(1) span": "医疗热成像 · 感知 → 推理 → 报告",
+  ".thread.real .thread-row:nth-child(2) span": "可穿戴感知 · 自主巡检 · 微流控",
+  ".thread.real .thread-row:nth-child(3) span": "感知 · 网络 · 边缘—云系统",
+  ".thread.sys h3": "系统与计算深度",
+  ".thread.sys > p": "系统侧的问题是找到真正拥有瓶颈的层：内存局部性、加速器算子、图执行、分布式调度、共享状态还是运行时策略。",
+  ".thread.sys .thread-row:nth-child(1) span": "HPCG · FFTW · 鲲鹏 · 昇腾",
+  ".thread.sys .thread-row:nth-child(2) span": "服务 · 调度 · 分布式运行时 · 正确性",
+  ".thread.sys .thread-row:nth-child(3) span": "复现 · 隔离 · 修复 · 回归 · 上游",
+  ".converge span": "汇合",
+  ".co-design h3": "模型—系统协同设计",
+  ".co-design p": "<strong>MiniCPM-o 4.5</strong> 成为两条线的汇合点：模型侧接受率、推测执行、kernel/runtime 开销与实时全双工服务需要分别测量，但最终都服务于同一个端到端目标。",
+  "#experience .eyebrow": "核心经历",
+  "#experience .section-head h2": "跨越不同层级的系统工作",
+  "#experience .section-head > p": "贯穿这些工作的共同方法是 systems-first：先刻画工作负载，找到真正拥有行为边界的资源或状态，再在对应层介入并用真实硬件验证。",
+  ".experience-row:nth-child(1) .year": "2026 · 至今",
+  ".experience-row:nth-child(1) h3": "百度智能云<small>AI Infra 科研实习生</small>",
+  ".experience-row:nth-child(1) > p": "在百度 AI 通信组，围绕 <strong>SGLang、DeepSeek-V4-Pro 与 Kimi K3</strong>，开展 B300、GB300 平台的推理性能、资源效率和运行时正确性工作。评测 P/D 负载、框架版本、并行与投机解码策略及缓存/图容量，结合 profiling 支撑部署选型，并推进上游修复。<a class=\"inline-link\" href=\"#internship\">阅读测量摘要 ↓</a>",
+  ".experience-row:nth-child(2) .year": "计算基础",
+  ".experience-row:nth-child(2) h3": "华为 ICT 学院 & 郑州大学超算团队<small>鲲鹏 CPU · 昇腾 NPU · HPC · 推理运行时</small>",
+  ".experience-row:nth-child(2) > p": "在<strong>鲲鹏 CPU、昇腾 NPU、xLLM 与 vLLM-Ascend</strong>上开展科研工程实践。昇腾 910B 上 Qwen3.5-9B 吞吐从<strong>2,301 提升至 30,451 tok/s（C960）</strong>，为组合工程收益；独立的 Gemma 4 E2B 部署对照记录<strong>1,159.53 → 1,274.00 tok/s</strong>。鲲鹏 256³ FFTW 经向量化、编译与执行计划调优，由<strong>80.965 提升至 555.001 GFLOP/s（6.85×）</strong>，与 NPU 推理分别评估。",
+  ".experience-row:nth-child(3) .year": "真实世界系统",
+  ".experience-row:nth-child(3) h3": "郑州大学–汉威物联网研究院<small>边缘 AI · 智能感知 · 物理部署</small>",
+  ".experience-row:nth-child(3) > p": "围绕<strong>可穿戴多模态感知、自主巡检与微流控边缘 AI</strong>，连接传感数据、模型转换、边缘推理和应用反馈。保留的项目评测分别记录巡检<strong>mAP50 0.869</strong>与微流控检测<strong>mAP50 0.923</strong>。两者来自各自测试集，是独立原型结果；真实场景可靠性仍需进一步评估。",
+  ".experience-row:nth-child(4) .year": "智慧医疗",
+  ".experience-row:nth-child(4) h3": "ThermoPulse<small>省级大学生创新项目 · 郑州大学</small>",
+  ".experience-row:nth-child(4) > p": "医疗热成像原型，连接采集、视觉推理与<strong>Qwen3-8B CPT/SFT 报告生成</strong>。我在跨学科项目中侧重软件集成和模型适配。产出是可运行的感知到报告链路；任务评测、报告事实一致性与独立临床评审仍是不同层次的验证。",
+  "#opensource .eyebrow": "开源系统工作",
+  "#opensource .section-head h2": "模型、运行时与加速器协同设计",
+  "#opensource .section-head > p": "SGLang 工作覆盖 DP 路由、DCP 缓存回退、DSpark 正确性与 GB300 DCP 通信，并包含组件 profiling 和 attention 融合 PR；分别标明本人实现、协作合并与仍在推进的工作。",
+  ".open-project:nth-of-type(1) .open-project-index": "01 · 模型 × 系统",
+  ".open-project:nth-of-type(1) h3 a": "MiniCPM-o 4.5：NVIDIA B300 与昇腾 910C ↗",
+  ".open-project:nth-of-type(1) .open-project-copy > p": "建立<strong>B300 draft 模型训练、DSpark 推测执行、draft-aware GGUF 转换与昇腾 910C 部署</strong>链路，基于 profiling 调整算子和图执行。相同 120 秒全双工视频与本地 harness 下，Core 实时因子 RTF 从<strong>0.6754 降至 0.4829</strong>，约降低 28.5%。训练接受长度、算子启动次数与全双工 RTF 是不同的证据端点。",
+  ".open-project:nth-of-type(1) .open-project-proof span:nth-of-type(1)": "平均接受长度 · draft 模型评测",
+  ".open-project:nth-of-type(1) .open-project-proof span:nth-of-type(2)": "Host Launch 次数 · profiling 路径",
+  ".open-project:nth-of-type(2) .open-project-index": "02 · 路由状态",
+  ".open-project:nth-of-type(2) h3 a": "DP 健康检查：独立完成路由状态修复 ↗",
+  ".open-project:nth-of-type(2) .open-project-copy > p": "独立将 Prefill 间歇性掉速定位到生成型健康请求修改共享用户路由状态。设计修复/未修复 × health 开/关对照，编写状态隔离补丁和回归测试。本人<strong>PR #35721 已合入 SGLang 主分支</strong>，并收录于 <a href=\"https://github.com/sgl-project/sglang/releases/tag/v0.5.22\" target=\"_blank\" rel=\"noreferrer\">v0.5.22 官方发布说明</a>的并行与分离部署分类；指定八卡 B300 负载下，修复后保留健康检查的四次实验均恢复预期吞吐区间。",
+  ".open-project:nth-of-type(3) .open-project-index": "03 · KV 状态",
+  ".open-project:nth-of-type(3) h3 a": "DCP 缓存回退：从根因定位到协作合并 ↗",
+  ".open-project:nth-of-type(3) .open-project-copy > p": "报告<strong>Issue #38645</strong>，定位 DCP 回退备份/恢复中的逻辑与物理 KV 索引混用，并实现、验证草稿修复<strong>#38790</strong>。未修复 DCP8 首次回退即崩溃；本人 B300 修复组经<strong>8 次回退完成 2,048/2,048 请求</strong>。维护者 kpham-sgl 通过共享 DCP layout 工具整合方案、补齐兼容性和验证，最终合并<strong>#39487</strong>；本人随后关闭被取代的草稿。",
+  ".open-project:nth-of-type(4) .open-project-index": "04 · 故障调查 / 技术评审",
+  ".open-project:nth-of-type(4) h3 a": "DSpark 正确性：早期排查与技术评审 ↗",
+  ".open-project:nth-of-type(4) .open-project-copy > p": "从本人较早提交的 B300/TP8 故障报告 <strong>#31023、#33356</strong> 出发，构建运行期、启动期和单 GPU kernel 复现，持续追踪到上游修复。随后参与<strong>已合并 PR #32467 的技术评审</strong>，通过同一 session 的 A/B/C 实验与同步机制分析，验证评审中提出的 no-init 方案：<strong>13,111/30,000 越界计划 → 0/30,000</strong>。贡献贯穿早期故障排查、因果验证与最终方案评审。",
+  ".group-label": "部分上游记录 · 贡献与证据索引",
+  ".evidence-main h3": "复现、隔离、验证、上游",
+  ".evidence-main p": "框架会变，但研究方法不应变。公开 issue、PR、回归与 RFC 构成可复现证据链，用来区分症状、因果机制、修复和验证。",
+  ".method div:nth-child(1) strong": "复现",
+  ".method div:nth-child(2) strong": "隔离",
+  ".method div:nth-child(3) strong": "验证",
+  ".method div:nth-child(4) strong": "上游",
+  ".metrics-band div:nth-child(1) span": "MiniCPM-o Core RTF · 同 harness 本地全双工对照",
+  ".metrics-band div:nth-child(2) span": "B300 Decode · AR→模拟 EAGLE 组合配置收益",
+  ".metrics-band div:nth-child(3) span": "Gemma 吞吐 · 独立迁移对照",
+  ".metrics-band div:nth-child(4) span": "Qwen 吞吐 · C960 组合收益",
+  "#research .eyebrow": "长期研究视角",
+  "#research .section-head h2": "面向模型中心工作负载的系统研究",
+  "#research .section-head > p": "我真正感兴趣的不是某一个 serving framework，而是当模型成为主要计算工作负载后，系统抽象、资源管理与执行机制应如何演进。",
+  ".research-question": "推理系统如何<em>适应变化的工作负载</em>，同时保持正确性与可预测延迟？",
+  ".research-sub": "<strong>研究兴趣——自适应推理系统。</strong>真实服务负载会变化：请求到达、序列长度、Prefill/Decode 比例、模态、SLO、缓存压力与硬件可用性都会随时间改变。我希望研究如何让负载测量指导在线运行时决策，同时考虑策略切换成本与可靠回退。",
+  ".research-steps div:nth-child(1) h3": "观测",
+  ".research-steps div:nth-child(1) p": "识别 workload phase、到达模式、序列分布、cache pressure、SLO、telemetry 与资源可用性。",
+  ".research-steps div:nth-child(2) h3": "建模",
+  ".research-steps div:nth-child(2) p": "估计 workload × hardware × policy 到吞吐、延迟、显存占用与策略切换成本之间的关系。",
+  ".research-steps div:nth-child(3) h3": "自适应",
+  ".research-steps div:nth-child(3) p": "先只调整一到两个高影响决策：batching、cache policy、并行布局或 execution strategy。",
+  ".research-steps div:nth-child(4) h3": "验证",
+  ".research-steps div:nth-child(4) p": "除了性能，还要求 runtime invariant、safe fallback、受控回归和长稳测试。",
+  ".scope-note": "<strong>由实验支撑的开放方向：</strong>从一类负载、少量硬件与一到两个运行时决策开始。算子融合、图执行与 draft 显存、以及多模态流式交互提供具体案例；每个案例都需要瓶颈证据和正确性契约，再形成更广泛的结论。",
+  "footer h2": "研究记录与代码，以及它们背后的证据。",
+  ".copyright": "© 2026 郭飞鸿 · Feihong Guo · 更新于 2026 年 10 月 23 日",
+  "[data-i18n=\"b-p60-platform\"]": "B300 · Prefill",
+  "[data-i18n=\"b-p60-condition\"]": "60k 输入 / 1 输出 token · SGLang 0.5.22",
+  "[data-i18n=\"b-p60-unit\"]": "input tok/s",
+  "[data-i18n=\"gb-p60-platform\"]": "GB300 · Prefill",
+  "[data-i18n=\"gb-p60-condition\"]": "60k 输入 / 1 输出 token · SGLang 0.5.22",
+  "[data-i18n=\"gb-p60-unit\"]": "input tok/s",
+  "[data-i18n=\"gb-p128-platform\"]": "GB300 · Prefill",
+  "[data-i18n=\"gb-p128-condition\"]": "128k 输入 / 1 输出 token · SGLang 0.5.22",
+  "[data-i18n=\"gb-p128-unit\"]": "input tok/s",
+  "[data-i18n=\"b-d60-platform\"]": "B300 · Decode",
+  "[data-i18n=\"b-d60-condition\"]": "60k 输入 / 1k 输出 · AR → EAGLE · SGLang 0.5.14 → 0.5.22",
+  "[data-i18n=\"b-d60-unit\"]": "output tok/s · 综合 +42.4%",
+  "[data-i18n=\"b-d128-platform\"]": "B300 · Decode",
+  "[data-i18n=\"b-d128-condition\"]": "128k 输入 / 1k 输出 · AR → EAGLE · SGLang 0.5.14 → 0.5.22",
+  "[data-i18n=\"b-d128-unit\"]": "output tok/s · 综合 +79.4%",
+  "[data-i18n=\"gb-d60-platform\"]": "GB300 · Decode",
+  "[data-i18n=\"gb-d60-condition\"]": "60k 输入 / 1k 输出 · EAGLE · SGLang 0.5.17 调优配置",
+  "[data-i18n=\"gb-d60-unit\"]": "output tok/s",
+  "[data-i18n=\"component-title\"]": "组件基线与局部算子优化",
+  "[data-i18n=\"component-copy\"]": "自主设计 MegaMoE 跨模型规格、batch/token 与 fast_math 单测，以 nsys/NCU 分析计算、访存及通信。融合链路较原始 FFN 路径加速 <strong>1.51–1.87×</strong>；另一个小 batch 工作点 HBM 约 <strong>5.1 TB/s</strong>。6 月单测为 9 月自主设计的 EPLB 复测及服务对照建立基线。",
+  "[data-i18n=\"fusion-copy\"]": "在 CUDA attention 路径实现 inverse-RoPE + FP8 量化融合。较早的 SGLang 0.5.17 衍生 B300 构建，在 60k 输入 / 1 输出 token 下测得<strong>输入吞吐 +1.63%</strong>，数值测试中 FP8 codes 与 scales 逐字节一致；上游适配见 <a class=\"inline-link\" href=\"https://github.com/sgl-project/sglang/pull/43786\" target=\"_blank\" rel=\"noreferrer\">PR #43786 ↗</a>。",
+  "[data-i18n=\"component-boundary\"]": "组件加速比、小 batch 带宽和整模型收益分别报告；MegaMoE 实现来自上游，本人负责测试设计、profiling 与集成分析。#43786 仍开放，已报告 GPU 结果早于清理重构提交，重构后 GPU 复验仍待完成；融合收益不与 AR→EAGLE 综合收益叠加。",
+  "[data-i18n=\"gb-index\"]": "05 · 分布式通信",
+  "[data-i18n=\"gb-title\"]": "GB300 DCP：CUDA Graph 与通信缓冲区生命周期 ↗",
+  "[data-i18n=\"gb-copy\"]": "排查双机 GB300 上 Kimi K3 的 DCP all-to-all 在 CUDA Graph 下出现的输出异常，实现图注册启动保护（<a class=\"inline-link\" href=\"https://github.com/sgl-project/sglang/pull/45371\" target=\"_blank\" rel=\"noreferrer\">#45371</a>）与缓冲区持久化（<a class=\"inline-link\" href=\"https://github.com/sgl-project/sglang/pull/45824\" target=\"_blank\" rel=\"noreferrer\">#45824</a>）两种备选修复，通过注册开关 × 缓冲区生命周期对照恢复输出正确性；两项 PR 均仍开放，持续补充实验并推进上游评审。",
+  "[data-i18n=\"gb-summary\"]": "已完成的验证与仍待推进的部分",
+  "[data-i18n=\"gb-detail\"]": "持久缓冲区 PR 的 9cb1de5 提交在保留注册、未叠加启动保护的条件下，完成双机 12 条 prompt 测试：12/12 输出正确，无退化输出；DCP 定向回归通过 23 项测试及 5 项子测试。注册保护策略另在此前故障配置下完成 640/640 请求；该结果不等于其后续合并更新 head 的完整验证。",
+  "[data-i18n=\"gb-boundary\"]": "两项 PR 是同一故障的替代方案，不叠加使用。对照定位了已测部署中的注册 × 临时缓冲区生命周期交互，但尚未直接观测到瞬态 replay 数据覆盖；本地验证不代表上游 CI 全通过或已合并。",
+  "[data-i18n=\"gb-probe\"]": "输出正确 · 已验证持久缓冲区提交",
+  "[data-i18n=\"gb-tests\"]": "定向测试 + 子测试 · 本地 GPU 验证",
+  "[data-i18n=\"status-45371\"]": "本人注册保护备选修复 · 开放中",
+  "[data-i18n=\"record-45371\"]": "为 DCP a2a 添加默认图注册保护",
+  "[data-i18n=\"status-45824\"]": "本人生命周期备选修复 · 开放中",
+  "[data-i18n=\"record-45824\"]": "持久保留图执行中的 DCP all-to-all 缓冲区",
+  "[data-i18n=\"status-43786\"]": "本人 CUDA 算子融合 · 开放中",
+  "[data-i18n=\"record-43786\"]": "融合 inverse-RoPE 与 FP8 激活量化"
+};
 
     const bilingual=Object.entries(zh).map(([selector,value])=>{
       const element=document.querySelector(selector); if(!element)return null;
@@ -604,4 +652,5 @@
   </script>
 </body>
 </html>
+
 
