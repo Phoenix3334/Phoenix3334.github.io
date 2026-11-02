@@ -1,5 +1,29 @@
 # Feihong Guo — AI Systems / MLSys
 
+**Distributed LLM serving · runtime correctness · GPU / NPU performance engineering**
+
+[View portfolio](https://phoenix3334.github.io/) · [SGLang contribution index](https://github.com/Phoenix3334/sglang/blob/main/CONTRIBUTIONS.md) · [GitHub profile draft](GITHUB_PROFILE.md)
+
+## Selected open-source contributions
+
+| Work | My role | Upstream result |
+| --- | --- | --- |
+| [SGLang #47614](https://github.com/sgl-project/sglang/pull/47614) · PP tensor lifetime across streams | Diagnosis, implementation, B300 validation | **Merged · 2 Nov 2026** |
+| [SGLang #35721](https://github.com/sgl-project/sglang/pull/35721) · health-check routing isolation | Independently authored fix and tests | **Merged · v0.5.22** |
+| [SGLang #32467](https://github.com/sgl-project/sglang/pull/32467#discussion_r3749014153) · ragged-prefill planner race | Formal technical review and A/B/C kernel validation | **Fix merged** · EanWang211123 authored the PR |
+| [SGLang #39487](https://github.com/sgl-project/sglang/pull/39487) · DCP KV recovery | Original report, draft fix, validation | **Fix merged** · kpham-sgl integrated the repair |
+| [SGLang #32183](https://github.com/sgl-project/sglang/pull/32183#pullrequestreview-4897392620) · verifier rewrite window | Formal technical review separating correctness layers | Open · slchenchn authored the PR |
+
+## Representative projects
+
+- [MiniCPM-o 4.5 / Ascend 910C](https://github.com/Phoenix3334/minicpmo45-ascend): draft training through deployment, kernel fusion, and matched-harness duplex RTF evaluation.
+- [SGLang contribution fork](https://github.com/Phoenix3334/sglang): distributed runtime repairs, open proposals, regressions, and review records.
+- [llama.cpp-omni development](https://github.com/Phoenix3334/llama.cpp-omni-OpenBMB): vision projection and an opt-in Flow / CPU Vocoder pipeline proposal; upstream #146 remains Draft.
+
+The table above was verified on **2 November 2026**. Authored merged PRs, technical reviews, and maintainer-integrated repairs retain their distinct attribution.
+
+## Website source and maintenance
+
 Buildless, bilingual source for <https://phoenix3334.github.io/>.
 English is the default; the language button switches to Chinese and remembers
 the preference when browser storage is available.
@@ -67,8 +91,10 @@ package installation is required.
   incomplete and earlier request-path confounds are disclosed. SGLang #44697 and
   DeepSeek EPLB #29 are authored open proposals/discussions, not shipped fixes or
   evidence of a quality-preserving routing optimization.
-- Featured PR states were rechecked on 23 October 2026. #35721, #39487 and
-  #32467 are merged; #34286, #34410, #43786, #45371 and #45824 remain open.
+- Featured PR states were rechecked on 2 November 2026. #35721 and #47614 are
+  authored merged fixes; #39487 is a maintainer-integrated collaborative repair,
+  and #32467 is a merged fix with my technical review and validation.
+  #34286, #34410, #43786, #45371 and #45824 remain open.
   Public GitHub records are authoritative for later changes.
 - Physical and medical systems are prototypes; project evaluations do not
   establish field reliability or clinical effectiveness.
