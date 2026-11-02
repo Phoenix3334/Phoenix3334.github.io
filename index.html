@@ -3,13 +3,13 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Feihong Guo | AI Systems / MLSys</title>
-  <meta name="description" content="Feihong Guo — AI Systems / MLSys at Zhengzhou University. Distributed inference, hardware-aware execution, runtime correctness, and model–system co-design.">
+  <title>Feihong Guo | AI Infrastructure &amp; LLM Inference</title>
+  <meta name="description" content="Feihong Guo — AI Infrastructure and LLM inference engineering. SGLang on B300/GB300, serving performance, runtime correctness, capacity planning and TCO assessment; Ascend inference and kernel optimisation.">
   <link rel="canonical" href="https://phoenix3334.github.io/">
   <meta name="theme-color" content="#fbfaf7">
   <meta property="og:type" content="website">
-  <meta property="og:title" content="Feihong Guo | AI Systems / MLSys">
-  <meta property="og:description" content="Systems-first research for model-centric workloads, from real-world sensing and heterogeneous accelerators to distributed inference runtimes.">
+  <meta property="og:title" content="Feihong Guo | AI Infrastructure &amp; LLM Inference">
+  <meta property="og:description" content="SGLang serving engineering: measure performance, repair runtime failures, establish capacity, and support infrastructure and cost decisions.">
   <meta property="og:image" content="https://phoenix3334.github.io/og.jpg">
   <style>
     :root{
@@ -85,205 +85,49 @@
     .upstream-summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:28px;margin:0 0 36px;padding:24px 0;border-top:2px solid var(--ink);border-bottom:1px solid var(--line)}.upstream-summary>div{min-width:0}.upstream-summary h3{margin:0 0 9px;font:700 18px/1.3 var(--serif)}.upstream-summary p{margin:0;color:var(--muted);font-size:12px;line-height:1.75}.upstream-summary a{color:var(--blue);text-decoration:underline;text-underline-offset:3px}
     .contribution-group{margin:0;padding:20px 0 10px;color:var(--rust);font:700 10px/1.5 var(--sans);letter-spacing:.1em;text-transform:uppercase}.contributions .contribution-group:first-child{padding-top:14px}.record-note{font-size:11px;line-height:1.7;color:var(--muted)}
     @media(max-width:680px){.upstream-summary{grid-template-columns:1fr;gap:22px}.hero-evidence{font-size:12px}}
+
+    .hero{min-height:690px;grid-template-columns:minmax(0,1.65fr) 240px;gap:80px;padding-top:78px}h1{font-size:clamp(44px,5.6vw,69px);line-height:1.07}.hero-lede{max-width:750px}.hero-thesis{font-family:var(--sans);font-size:13px;font-weight:600;line-height:1.8}.portrait img{aspect-ratio:1/1}
+    .hero-actions{display:flex;flex-wrap:wrap;gap:20px;margin-top:26px}.hero-actions a{font-size:12px;font-weight:700;color:var(--blue);text-decoration:underline;text-underline-offset:5px}
+    .practice-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:30px;border-top:2px solid var(--ink);padding-top:28px}.practice-grid article{min-width:0}.practice-grid h3{margin:0 0 14px;font-size:24px;line-height:1.25}.practice-grid p{margin:0 0 14px;font-size:13px;color:#46525c;line-height:1.8}.practice-grid .scope{font-size:11px;color:var(--muted)}
+    .supporting-project{display:flex;gap:30px;align-items:baseline;margin-top:34px;padding-top:25px;border-top:1px solid var(--line)}.supporting-project h3{margin:0;min-width:170px;font-size:20px}.supporting-project p{margin:0;color:var(--muted);font-size:13px;line-height:1.8}
+    .records-detail{margin-top:42px;border-top:1px solid var(--line)}.records-detail>summary{padding:22px 0;color:var(--teal);font-weight:700;font-size:13px;cursor:pointer}.records-detail .evidence-grid{margin-top:20px}.records-detail .group-label{margin-top:0}
+    .economics{background:var(--paper2)}.cost-chain{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:28px}.cost-step{min-width:0;border-top:3px solid var(--blue);padding-top:20px}.cost-step .step-index{color:var(--rust);font:700 11px/1 var(--sans);letter-spacing:.1em}.cost-step h3{font-size:25px;line-height:1.2;margin:17px 0}.cost-step p{font-size:13px;color:#46525c;line-height:1.8;margin:12px 0}.formula{padding:14px 15px;border:1px solid var(--line);background:rgba(255,255,255,.55);font:12px/1.8 monospace;overflow-wrap:anywhere}.cost-scope{margin-top:30px;padding:20px 24px;border-left:3px solid var(--teal);font-size:13px;line-height:1.85;color:#46525c;background:rgba(255,255,255,.5)}
+    .reference-grid{display:grid;grid-template-columns:1fr 1fr;gap:35px;margin-top:36px;padding-top:25px;border-top:1px solid var(--line)}.reference-grid h3{font:700 11px/1.5 var(--sans);text-transform:uppercase;letter-spacing:.1em;margin:0 0 12px;color:var(--rust)}.reference-grid a{color:var(--blue);font-size:13px;line-height:1.6;text-decoration:underline;text-underline-offset:3px}.reference-grid p{margin:12px 0 0;color:var(--muted);font-size:12px;line-height:1.8}
+    #practice .research-steps h3{font-size:23px}.inference-scope{margin:25px 0 0;font-size:12px;line-height:1.8;color:var(--muted)}
+    @media(max-width:1080px){.hero{gap:45px;grid-template-columns:minmax(0,1fr) 210px}nav{gap:18px}}
+    @media(max-width:900px){.cost-chain,.practice-grid{grid-template-columns:1fr;gap:30px}.reference-grid{gap:24px}.supporting-project{flex-direction:column;gap:14px}.hero{gap:36px}}
+    @media(max-width:680px){.hero{grid-template-columns:1fr;padding:54px 0;gap:35px;min-height:auto}h1{font-size:42px}.portrait{display:none}.reference-grid{grid-template-columns:1fr}.hero-actions{gap:20px}.hero-lede{font-size:15px}.cost-scope{padding:16px 18px}.research-steps{gap:10px}}
   </style>
 </head>
 <body>
   <div class="progress" aria-hidden="true"></div>
-  <div class="site-header">
-    <header class="wrap">
-      <a class="wordmark" href="#top">Feihong Guo</a>
-      <nav id="site-nav" aria-label="Primary navigation">
-        <a href="#lens">Systems lens</a>
-        <a href="#experience">Experience</a>
-        <a href="#internship">Internship notes</a>
-        <a href="#opensource">Open source</a>
-        <a href="#research">Research</a>
-        <a class="github-link" href="https://github.com/Phoenix3334" target="_blank" rel="noreferrer"><svg class="github-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .8a11.2 11.2 0 0 0-3.54 21.83c.56.1.76-.24.76-.54v-2.1c-3.12.68-3.78-1.33-3.78-1.33-.51-1.3-1.25-1.65-1.25-1.65-1.02-.7.08-.69.08-.69 1.13.08 1.72 1.16 1.72 1.16 1 1.71 2.63 1.22 3.27.93.1-.72.4-1.22.71-1.5-2.49-.28-5.11-1.25-5.11-5.55 0-1.23.44-2.23 1.16-3.02-.12-.28-.5-1.42.11-2.97 0 0 .95-.3 3.08 1.15a10.73 10.73 0 0 1 5.6 0c2.13-1.45 3.07-1.15 3.07-1.15.61 1.55.23 2.69.12 2.97.72.79 1.15 1.79 1.15 3.02 0 4.31-2.62 5.27-5.12 5.55.4.35.76 1.03.76 2.08v3.1c0 .3.2.65.77.54A11.2 11.2 0 0 0 12 .8Z"/></svg>GitHub ↗</a>
-      </nav>
-      <div class="header-actions">
-        <button class="lang-button" type="button" aria-label="Switch language">中文</button>
-        <button class="menu-button" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="site-nav">☰</button>
-      </div>
-    </header>
-  </div>
-
+  <div class="site-header"><header class="wrap">
+    <a class="wordmark" href="#top">Feihong Guo</a>
+    <nav id="site-nav" aria-label="Primary navigation">
+      <a href="#opensource" data-i18n="nav-sglang">SGLang</a>
+      <a href="#internship" data-i18n="nav-performance">Performance</a>
+      <a href="#huawei" data-i18n="nav-huawei">Ascend &amp; Kunpeng</a>
+      <a href="#economics" data-i18n="nav-economics">Capacity &amp; TCO</a>
+      <a href="#practice" data-i18n="nav-practice">Method</a>
+      <a class="github-link" href="https://github.com/Phoenix3334" target="_blank" rel="noreferrer"><svg class="github-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .8a11.2 11.2 0 0 0-3.54 21.83c.56.1.76-.24.76-.54v-2.1c-3.12.68-3.78-1.33-3.78-1.33-.51-1.3-1.25-1.65-1.25-1.65-1.02-.7.08-.69.08-.69 1.13.08 1.72 1.22 1.72 1.22 1 1.71 2.63 1.16 3.27.87.1-.72.4-1.22.71-1.5-2.49-.28-5.11-1.25-5.11-5.55 0-1.23.44-2.23 1.16-3.02-.12-.28-.5-1.42.11-2.97 0 0 .95-.3 3.08 1.15a10.73 10.73 0 0 1 5.6 0c2.13-1.45 3.07-1.15 3.07-1.15.61 1.55.23 2.69.12 2.97.72.79 1.15 1.79 1.15 3.02 0 4.31-2.62 5.27-5.12 5.55.4.35.76 1.03.76 2.08v3.1c0 .3.2.65.77.54A11.2 11.2 0 0 0 12 .8Z"/></svg>GitHub ↗</a>
+    </nav>
+    <div class="header-actions"><button class="lang-button" type="button" aria-label="Switch language">中文</button><button class="menu-button" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="site-nav">☰</button></div>
+  </header></div>
   <main id="top">
-    <div class="hero wrap">
-      <div>
-        <p class="eyebrow">AI Systems / MLSys · Zhengzhou University</p>
-        <h1>Systems for <em>model-centric AI workloads</em></h1>
-        <p class="hero-lede">I work on distributed inference, hardware-aware execution, and runtime correctness. At Baidu AI Cloud, I investigate long-context serving on B300 and GB300 platforms; my other projects connect model training, Ascend deployment, and physical sensing systems. These experiences shape my research interests in AI Systems / MLSys.</p>
-        <p class="hero-thesis">From workload measurements to <em>runtime invariants.</em></p>
-        <p class="hero-evidence" data-i18n="hero-upstream"><strong>Authored &amp; merged in SGLang:</strong> <a href="https://github.com/sgl-project/sglang/pull/47614" target="_blank" rel="noreferrer">PP stream lifetime #47614</a> · <a href="https://github.com/sgl-project/sglang/pull/35721" target="_blank" rel="noreferrer">DP routing isolation #35721</a> · <a href="#opensource">Explore upstream work ↓</a></p>
-        <div class="hero-line">
-          <span class="tag">AI Infrastructure</span>
-          <span class="tag">Runtime & Distributed Systems</span>
-          <span class="tag">Hardware-aware Computing</span>
-          <span class="tag">Real-world Intelligent Workloads</span>
-        </div>
-        <div class="affiliations" aria-label="Selected platforms and communities">
-          <span class="affiliation"><span class="logo-type">ZZU</span>Zhengzhou University</span>
-          <span class="affiliation"><span class="logo-type">HPC</span>ZZU Supercomputing Team</span>
-          <span class="affiliation"><img src="https://cdn.simpleicons.org/baidu/2932E1" alt="">Baidu AI Cloud</span>
-          <span class="affiliation"><img src="https://github.com/sgl-project.png?size=64" alt="">SGLang</span>
-          <span class="affiliation"><img src="https://cdn.simpleicons.org/nvidia/76B900" alt="">NVIDIA</span>
-          <span class="affiliation"><img src="https://cdn.simpleicons.org/huawei/CF0A2C" alt="">Huawei Ascend</span>
-        </div>
-      </div>
-      <figure class="portrait">
-        <img src="https://avatars.githubusercontent.com/u/174691475?v=4" alt="Feihong Guo">
-        <figcaption>IoT Engineering<br>Zhengzhou University · Class of 2027</figcaption>
-      </figure>
-    </div>
-
-    <section id="lens">
-      <div class="wrap">
-        <div class="section-head">
-          <div><p class="eyebrow">Systems lens</p><h2>One systems question, two sources of evidence</h2></div>
-          <p>IoT gave me the end-to-end view. Real-world projects show where workloads and constraints come from; compute and infrastructure work shows how execution, resources, and correctness shape what those workloads can actually do.</p>
-        </div>
-        <div class="lens-grid">
-          <article class="thread real">
-            <h3>Real-world intelligent systems</h3>
-            <p>Physical systems expose the constraints that do not appear in a clean benchmark: sensing quality, timing, deployment, interaction, and heterogeneous edge resources.</p>
-            <div class="thread-list">
-              <div class="thread-row"><strong>ThermoPulse</strong><span>medical thermal imaging · sensing → inference → report</span></div>
-              <div class="thread-row"><strong>Hanwei research platform</strong><span>wearable sensing · autonomous inspection · microfluidics</span></div>
-              <div class="thread-row"><strong>IoT foundation</strong><span>sensing · networking · edge–cloud systems</span></div>
-            </div>
-          </article>
-          <div class="converge"><span>CONVERGE</span></div>
-          <article class="thread sys">
-            <h3>Systems & compute depth</h3>
-            <p>The systems side asks what owns the bottleneck: memory locality, accelerator kernels, graph execution, distributed scheduling, shared state, or runtime policy.</p>
-            <div class="thread-list">
-              <div class="thread-row"><strong>Compute foundations</strong><span>HPCG · FFTW · Kunpeng · Ascend</span></div>
-              <div class="thread-row"><strong>Baidu AI Cloud</strong><span>serving · scheduling · distributed runtime · correctness</span></div>
-              <div class="thread-row"><strong>Open-source systems work</strong><span>reproduce · isolate · repair · regress · upstream</span></div>
-            </div>
-          </article>
-        </div>
-        <div class="co-design">
-          <h3>Model–system co-design</h3>
-          <p><strong>MiniCPM-o 4.5</strong> became the convergence point: model-side acceptance, speculative execution, kernel/runtime overhead, and real-time duplex serving had to be measured as distinct endpoints but optimized toward one end-to-end objective.</p>
-        </div>
-      </div>
-    </section>
-
-    <section class="experience" id="experience">
-      <div class="wrap">
-        <div class="section-head">
-          <div><p class="eyebrow">Selected experience</p><h2>Systems work at different layers</h2></div>
-          <p>The recurring method is systems-first: characterize the workload, identify the resource or state boundary that owns the behavior, intervene at that layer, and validate the result on real hardware.</p>
-        </div>
-        <div class="experience-list">
-          <article class="experience-row">
-            <div class="year">2026 · CURRENT</div>
-            <h3>Baidu AI Cloud<small>AI Infrastructure Research Intern</small></h3>
-            <p>Working in the AI communications group on <strong>SGLang performance, resource efficiency, and runtime correctness</strong> for DeepSeek-V4-Pro and Kimi K3 on B300 and GB300. I evaluate Prefill/Decode workloads, framework versions, parallelism, speculative decoding, and cache/graph capacity, then connect profiling to deployment choices and upstream fixes. <a class="inline-link" href="#internship">Read the measurement summary ↓</a></p>
-          </article>
-          <article class="experience-row">
-            <div class="year">COMPUTE FOUNDATION</div>
-            <h3>Huawei ICT Academy & ZZU Supercomputing<small>Kunpeng CPU · Ascend NPU · HPC · Inference Runtime</small></h3>
-            <p>Performance engineering across <strong>Kunpeng CPU, Ascend NPU, xLLM, and vLLM-Ascend</strong>. Qwen3.5-9B throughput on Ascend 910B rose from <strong>2,301 to 30,451 tok/s at C960</strong>: a combined engineering gain against a baseline with substantial headroom. A separate Gemma 4 E2B final-round deployment measured <strong>1,159.53 → 1,274.00 tok/s</strong>. Kunpeng FFTW work reached about <strong>80.965 → 555.001 GFLOP/s</strong> (6.85×, 256³ FFTW), evaluated independently of NPU serving.</p>
-            <details class="work-detail experience-detail">
-              <summary data-i18n="ascend-summary">Two inference tracks, separate baselines</summary>
-              <div class="detail-body">
-                <div class="runtime-logos" aria-label="Inference runtimes used in the Ascend work"><img src="assets/projects/xllm.webp" width="2039" height="771" loading="lazy" decoding="async" alt="xLLM"><img src="assets/projects/vllm-ascend.webp" width="897" height="133" loading="lazy" decoding="async" alt="vLLM-Ascend"></div>
-                <p data-i18n="qwen-detail"><strong>xLLM / Qwen3.5-9B:</strong> model adaptation, runtime configuration, and execution-path optimization produced the C960 combined result. The 13.2× ratio is specific to that workload and starting configuration; it is not a single-optimization ablation or a hardware ceiling.</p>
-                <p data-i18n="gemma-detail"><strong>vLLM-Ascend / Gemma 4 E2B:</strong> a separate three-hour final-round inference deployment, following the provided task requirements and skills with a Claude Code / Opus-assisted workflow. The environment used CANN 8.5.1, Torch NPU, Triton, and vLLM.</p>
-                <div class="table-scroll" tabindex="0" role="region" aria-label="Gemma migration measurements">
-                  <table class="result-table">
-                    <caption data-i18n="gemma-caption">Gemma 4 E2B — independent migration comparison</caption>
-                    <thead><tr><th scope="col" data-i18n="metric">Metric</th><th scope="col" data-i18n="baseline">Baseline</th><th scope="col">Full ACL Graph</th></tr></thead>
-                    <tbody><tr><th scope="row" data-i18n="throughput">Throughput (tok/s)</th><td>1,159.53</td><td>1,274.00</td></tr><tr><th scope="row">TTFT (ms)</th><td>254.9</td><td>235.9</td></tr><tr><th scope="row">TPOT (ms)</th><td>14.42</td><td>13.12</td></tr></tbody>
-                  </table>
-                </div>
-                <p class="boundary" data-i18n="gemma-boundary">About +9.9% throughput, −7.5% time to first token, and −9.0% time per output token in this comparison. A 4k chunk setting measured 1,126.36 tok/s and was not the selected improvement. These results are separate from the Qwen configuration.</p>
-              </div>
-            </details>
-          </article>
-          <article class="experience-row">
-            <div class="year">REAL-WORLD SYSTEMS</div>
-            <h3>ZZU–Hanwei IoT Research Institute<small>Edge AI · Intelligent Sensing · Physical Deployment</small></h3>
-            <p>Worked across <strong>wearable multimodal sensing, autonomous inspection, and microfluidic edge AI</strong>, connecting sensor data, model conversion, edge inference, and application feedback. Retained project evaluations report inspection <strong>mAP50 0.869</strong> and microfluidic detection <strong>mAP50 0.923</strong> on their respective test sets. These are separate prototype results; field reliability requires further evaluation.</p>
-            <div class="experience-visuals">
-              <figure class="project-figure"><a href="assets/projects/wearable-prototype.webp" target="_blank" rel="noreferrer"><img src="assets/projects/wearable-prototype.webp" width="3137" height="1868" loading="lazy" decoding="async" alt="Wearable sensing prototype with a sensor glove and an edge computing board"></a><figcaption data-i18n="figure-wearable"><strong>Wearable sensing prototype</strong>Sensor glove and on-body edge computing.</figcaption></figure>
-              <figure class="project-figure"><a href="assets/projects/inspection-robot.webp" target="_blank" rel="noreferrer"><span class="inspection-crop"><img src="assets/projects/inspection-robot.webp" width="2197" height="1265" loading="lazy" decoding="async" alt="Mobile inspection robot with cameras, LiDAR and an Ascend edge module"></span></a><figcaption data-i18n="figure-inspection"><strong>Mobile inspection platform</strong>Perception, navigation, and edge inference integration.</figcaption></figure>
-              <figure class="project-figure"><a href="assets/projects/microfluidic-device.webp" target="_blank" rel="noreferrer"><img src="assets/projects/microfluidic-device.webp" width="900" height="888" loading="lazy" decoding="async" alt="Microfluidic analysis prototype with an integrated display and enclosure"></a><figcaption data-i18n="figure-microfluidic"><strong>Microfluidic analysis prototype</strong>Physical acquisition connected to edge analysis.</figcaption></figure>
-            </div>
-          </article>
-          <article class="experience-row">
-            <div class="year">SMART HEALTHCARE</div>
-            <h3>ThermoPulse<small>Provincial University Innovation Project · Zhengzhou University</small></h3>
-            <p>A medical thermal-imaging prototype connecting acquisition, visual inference, and <strong>Qwen3-8B CPT/SFT report generation</strong>. My focus was software integration and model adaptation within a multidisciplinary project. The result is a working sensing-to-report pipeline; task evaluation, report factuality, and independent clinical review remain distinct validation steps.</p>
-            <div class="experience-visuals medical-visuals">
-              <figure class="project-figure"><a href="assets/projects/thermopulse-device.webp" target="_blank" rel="noreferrer"><img src="assets/projects/thermopulse-device.webp" width="1080" height="1920" loading="lazy" decoding="async" alt="ThermoPulse thermal-imaging acquisition device and analysis workstation"></a><figcaption data-i18n="figure-thermopulse-device"><strong>Thermal-imaging system</strong>Project acquisition device and analysis workstation.</figcaption></figure>
-              <figure class="project-figure"><a href="assets/projects/thermopulse-output.webp" target="_blank" rel="noreferrer"><img src="assets/projects/thermopulse-output.webp" width="486" height="291" loading="lazy" decoding="async" alt="Example thermal-imaging output displayed at different temperature ranges"></a><figcaption data-i18n="figure-thermopulse-output"><strong>Example thermal output</strong>Temperature-range views from the prototype workflow.</figcaption></figure>
-            </div>
-          </article>
-        </div>
-      </div>
-    </section>
-
-    <section id="internship">
-      <div class="wrap">
-        <div class="section-head">
-          <div><p class="eyebrow" data-i18n="internship-eyebrow">Inference engineering notes</p><h2 data-i18n="internship-title">Measure performance and resource efficiency</h2></div>
-          <p data-i18n="internship-intro">Selected measurements from SGLang evaluation on B300 and GB300, with workload conditions and contribution boundaries. These results inform deployment and capacity choices.</p>
-        </div>
-        <article class="lab-note phase-note">
-          <div class="note-heading"><span class="note-number">01</span><h3 data-i18n="phase-title">Long-context serving: selected measured results</h3></div>
-          <p data-i18n="phase-intro">Evaluated DeepSeek-V4-Pro Prefill and Decode separately across B300 and two-node GB300 deployments. The comparison covers SGLang versions, DP Attention, PrefillDelayer, EAGLE speculative decoding, cache/graph capacity, batching, and host-side return paths; these are workload-dependent choices, not one universal launch recipe.</p>
-          <div class="table-scroll" tabindex="0" role="region" aria-label="Phase-isolated inference results">
-            <table class="result-table phase-table">
-              <caption data-i18n="phase-caption">DeepSeek-V4-Pro · eight GPUs per deployment · selected measured points</caption>
-              <thead><tr><th scope="col" data-i18n="phase">Platform / phase</th><th scope="col" data-i18n="workload">Workload / comparison</th><th scope="col" data-i18n="result">Observed result</th></tr></thead>
-              <tbody>
-                <tr><th scope="row" data-i18n="b-p60-platform">B300 · Prefill</th><td data-i18n="b-p60-condition">60k input / 1 output token · SGLang 0.5.22</td><td><strong>95.44k</strong><span data-i18n="b-p60-unit">input tok/s</span></td></tr>
-                <tr><th scope="row" data-i18n="gb-p60-platform">GB300 · Prefill</th><td data-i18n="gb-p60-condition">60k input / 1 output token · SGLang 0.5.22</td><td><strong>117.83k</strong><span data-i18n="gb-p60-unit">input tok/s</span></td></tr>
-                <tr><th scope="row" data-i18n="gb-p128-platform">GB300 · Prefill</th><td data-i18n="gb-p128-condition">128k input / 1 output token · SGLang 0.5.22</td><td><strong>100.27k</strong><span data-i18n="gb-p128-unit">input tok/s</span></td></tr>
-                <tr><th scope="row" data-i18n="b-d60-platform">B300 · Decode</th><td data-i18n="b-d60-condition">60k input / 1k output · AR → EAGLE · SGLang 0.5.14 → 0.5.22</td><td><strong>32.88k → 46.81k</strong><span data-i18n="b-d60-unit">output tok/s · +42.4% combined</span></td></tr>
-                <tr><th scope="row" data-i18n="b-d128-platform">B300 · Decode</th><td data-i18n="b-d128-condition">128k input / 1k output · AR → EAGLE · SGLang 0.5.14 → 0.5.22</td><td><strong>20.34k → 36.49k</strong><span data-i18n="b-d128-unit">output tok/s · +79.4% combined</span></td></tr>
-                <tr><th scope="row" data-i18n="gb-d60-platform">GB300 · Decode</th><td data-i18n="gb-d60-condition">60k input / 1k output · EAGLE · tuned SGLang 0.5.17</td><td><strong>48.01k</strong><span data-i18n="gb-d60-unit">output tok/s</span></td></tr>
-              </tbody>
-            </table>
-          </div>
-          <p class="boundary" data-i18n="phase-boundary">Decode speculation uses a fixed simulated acceptance rate of about 0.70 (mean accepted length about 3.10). AR-to-EAGLE results include version and capacity/concurrency changes; they are combined configuration comparisons, not isolated patch gains. Prefill and Decode are separate tests, and the GB300 result is not a matched hardware speedup or a measured cost reduction.</p>
-          <details class="work-detail"><summary data-i18n="phase-summary">How a performance anomaly became a routing-state investigation</summary><div class="detail-body"><p data-i18n="phase-discovery">Repeated Prefill runs exposed intermittent low-throughput behavior. I isolated generation-health traffic as a trigger, then traced how health dispatch mutated the Data Parallel Controller state also used by user requests. A patched/unpatched × health-on/off comparison made the causal test explicit. The fix, merged into SGLang main on 11 October 2026, separates health routing and load-budget bookkeeping from user dispatch.</p><a class="inline-link" href="https://github.com/sgl-project/sglang/pull/35721" target="_blank" rel="noreferrer" data-i18n="health-evidence">Public A/B evidence and merged fix · PR #35721 ↗</a></div></details>
-        </article>
-        <div class="note-grid">
-          <article class="lab-note">
-            <div class="note-heading"><span class="note-number">02</span><h3 data-i18n="capacity-title">Estimate before the full-node test</h3></div>
-            <p data-i18n="capacity-copy">Extended an InferFlux-based capacity model for long-context inference and used workload, compute/bandwidth limits, cache memory, parallel layout, and efficiency priors to narrow the test space. For Kimi K3, examined DCP and the capacity/rollback boundaries of KV and SSM state pools.</p>
-            <p class="boundary" data-i18n="capacity-boundary">The output is a capacity estimate, not a guaranteed throughput number. Gaps between prediction and measurement help prioritize memory, communication, batching, or runtime investigation.</p>
-          </article>
-          <article class="lab-note">
-            <div class="note-heading"><span class="note-number">03</span><h3 data-i18n="parallel-title">Parallelism is a workload decision</h3></div>
-            <p data-i18n="parallel-copy">Compared DP Attention and context parallelism across load regimes. In a separate CP8 low-latency configuration on GB300, median TTFT was <strong>0.666 s at 60k</strong> and <strong>1.516 s at 128k</strong> input, each with one output token. These are separate operating points from the high-throughput Prefill rows.</p>
-            <p class="boundary" data-i18n="parallel-boundary">Peak capacity, peak throughput, and minimum latency are different objectives. Version upgrades and larger batches are evaluated per workload rather than assumed to improve every case.</p>
-          </article>
-        </div>
-        <article class="lab-note" id="eplb-investigation">
-          <div class="note-heading"><span class="note-number">04</span><h3 data-i18n="eplb-title">EPLB: measure balance, then test throughput</h3></div>
-          <p data-i18n="eplb-copy">Investigated DeepSeek-V4-Pro Prefill imbalance on a single eight-GPU B300 node with SGLang/MegaMoE. I compared expert placement and rebalancing, recorded expert loads, and profiled execution and communication. The investigation separated <strong>logical expert popularity, physical placement and replica dispatch, kernel block rounding, and request-supply gaps</strong>, so a better token-count balance would not be mistaken for an end-to-end speedup.</p>
-          <p class="boundary" data-i18n="eplb-result">Result: a placement-only experiment improved physical-rank token balance while logical expert counts stayed unchanged. It used no extra expert replicas. Clean held-out validation remains incomplete, so I claim no validated throughput gain or limit on EPLB's potential.</p>
-          <details class="work-detail"><summary data-i18n="eplb-summary">What the experiment changed about the next step</summary><div class="detail-body"><p data-i18n="eplb-detail">Earlier request-path confounds prevented a clean end-to-end conclusion. CPU top-k also failed to reproduce GPU routing reliably near ties, so bias perturbations were not established as safe optimizations. I proposed a serving-level production-versus-synthetic-balanced routing comparison in SGLang, and asked DeepSeek about placement, replica-aware cost models, and the boundary with model-level routing. These are open proposals; a synthetic balanced result would be a profiling reference, not a quality-preserving optimization.</p><a class="inline-link" href="https://github.com/sgl-project/sglang/issues/44697" target="_blank" rel="noreferrer" data-i18n="eplb-rfc-link">My SGLang profiling RFC · #44697 ↗</a> · <a class="inline-link" href="https://github.com/deepseek-ai/EPLB/issues/29" target="_blank" rel="noreferrer" data-i18n="eplb-question-link">My DeepSeek EPLB discussion · #29 ↗</a></div></details>
-        </article>
-        <article class="lab-note" id="component-analysis">
-          <div class="note-heading"><span class="note-number">05</span><h3 data-i18n="component-title">Component baselines and local kernel optimization</h3></div>
-          <p data-i18n="component-copy">Designed MegaMoE tests across model shapes, batch/token counts, and fast-math settings, using nsys/NCU to analyze compute, memory, and communication. The fused chain measured <strong>1.51–1.87×</strong> against the original FFN path; a separate small-batch point reached about <strong>5.1 TB/s</strong> HBM bandwidth. June component baselines informed independently designed September EPLB retests and serving-level comparisons.</p>
-          <p data-i18n="fusion-copy">Implemented inverse-RoPE + FP8 quantization fusion in the CUDA attention path. The earlier SGLang 0.5.17-derived B300 comparison measured <strong>+1.63% input throughput</strong> at 60k input / 1 output token, with FP8 codes and scales byte-identical in numerical tests. The public upstream port is <a class="inline-link" href="https://github.com/sgl-project/sglang/pull/43786" target="_blank" rel="noreferrer">PR #43786 ↗</a>.</p>
-          <p class="boundary" data-i18n="component-boundary">Component speedups and HBM points are separate from whole-model gains. MegaMoE is an upstream implementation; my contribution is test design, profiling, and integration analysis. PR #43786 is open; the reported GPU measurements predate its cleanup refactor, which still needs updated GPU validation. The fusion result is not added to the AR-to-EAGLE gain.</p>
-        </article>
-      </div>
-    </section>
-
+    <div class="hero wrap"><div>
+      <p class="eyebrow" data-i18n="hero-kicker">AI Infrastructure · LLM Inference Engineering</p>
+      <h1 data-i18n="hero-title">From inference performance to <em>infrastructure decisions.</em></h1>
+      <p class="hero-lede" data-i18n="hero-lede">I am Feihong Guo, working on <strong>SGLang serving performance and runtime correctness</strong> at Baidu AI Cloud. On B300 and GB300, I deploy and evaluate DeepSeek-V4-Pro and Kimi K3, investigate Prefill/Decode bottlenecks, and contribute upstream repairs. The goal is to turn measured serving capability into defensible capacity, resource, and cost decisions.</p>
+      <p class="hero-thesis" data-i18n="hero-thesis">Deploy → measure → explain → improve → validate → size.<br><em>Throughput, latency, correctness, and stability belong in the same decision.</em></p>
+      <p class="hero-evidence" data-i18n="hero-upstream"><strong>Authored &amp; merged in SGLang:</strong> <a href="https://github.com/sgl-project/sglang/pull/47614" target="_blank" rel="noreferrer">PP tensor lifetime #47614</a> · <a href="https://github.com/sgl-project/sglang/pull/35721" target="_blank" rel="noreferrer">DP health routing #35721</a></p>
+      <div class="hero-actions"><a href="#opensource" data-i18n="hero-action-work">SGLang engineering work ↓</a><a href="#economics" data-i18n="hero-action-tco">Capacity and cost methodology ↓</a></div>
+      <div class="hero-line"><span class="tag">SGLang</span><span class="tag">Distributed LLM Serving</span><span class="tag">GPU / NPU Performance</span><span class="tag">Capacity &amp; TCO</span></div>
+    </div><figure class="portrait"><img src="https://avatars.githubusercontent.com/u/174691475?v=4" alt="Feihong Guo"><figcaption data-i18n="portrait-caption">Feihong Guo · 郭飞鸿<br>Zhengzhou University · AI Infrastructure</figcaption></figure></div>
     <section id="opensource">
       <div class="wrap">
         <div class="section-head">
-          <div><p class="eyebrow">Open-source systems work</p><h2>Model, runtime, and accelerator co-design</h2></div>
-          <p>My SGLang contributions span pipeline and data parallelism, CUDA stream lifetime, KV-cache recovery, and DSpark correctness. Two authored fixes are merged upstream. Technical reviews, maintainer-integrated repairs, and open engineering work are documented with their own evidence.</p>
+          <div><p class="eyebrow" data-i18n="sglang-kicker">Baidu AI Cloud · SGLang</p><h2 data-i18n="sglang-title">Serving performance.<br>Runtime correctness.</h2></div>
+          <p data-i18n="sglang-intro">My core work connects deployment and measurement to production runtime behaviour: DP request routing, pipeline and communication buffer lifetime, KV-state recovery, and speculative execution. Two authored fixes are merged; formal reviews and collaborative repairs carry their own attribution.</p>
         </div>
 
         <div class="upstream-summary" aria-label="Selected SGLang contribution roles">
@@ -341,16 +185,7 @@
           <div class="open-project-proof"><strong>12 / 12</strong><span data-i18n="gb-probe">correct outputs · tested persistent-buffer head</span><strong>23 + 5</strong><span data-i18n="gb-tests">focused tests + subtests · local GPU validation</span></div>
         </article>
 
-        <article class="open-project" id="project-minicpm">
-          <div class="open-project-index">06 · MODEL × SYSTEM</div>
-          <div class="open-project-copy">
-            <div class="project-title"><img class="project-logo" src="https://github.com/OpenBMB.png?size=88" alt="OpenBMB"><h3><a href="https://github.com/Phoenix3334/minicpmo45-ascend/tree/competition/final-ascend-track-a" target="_blank" rel="noreferrer">MiniCPM-o 4.5 on NVIDIA B300 and Ascend 910C ↗</a></h3></div>
-            <p>Built a training-to-runtime path: <strong>B300 draft-model training, DSpark speculative execution, draft-aware GGUF conversion, and Ascend 910C deployment</strong>. Profiling guided kernel and graph changes. On the same 120-second duplex video and local harness, Core real-time factor (RTF) fell <strong>0.6754 → 0.4829</strong> (about 28.5% lower). Training acceptance, operator launches, and duplex RTF are separate evidence endpoints.</p>
-            <details class="work-detail"><summary data-i18n="minicpm-summary">What changed in the final duplex configuration?</summary><div class="detail-body"><p data-i18n="minicpm-detail">The final stack also reduced visual input from overview + slice to overview only, and increased the first TTS chunk from 5 to 10 tokens. The latter trades about +100 ms first-response latency for less repeated boundary work. Four finite submission checks passed; this does not establish broad visual-quality equivalence.</p><p data-i18n="minicpm-rejected">Thinker-side speculation was disabled in the final short-chunk duplex configuration because its overhead worsened RTF. Draft-model acceptance and separate text-workload acceleration remain independent deliverables, not explanations for the final duplex gain.</p></div></details>
-          </div>
-          <div class="open-project-proof"><strong>3.4923 → 3.8620</strong><span>mean accepted length · draft-model evaluation</span><strong>18,214 → 1,301</strong><span>host launches · profiled execution path</span></div>
-        </article>
-
+        <details class="records-detail"><summary data-i18n="all-records">Explore the public PR, review, and investigation index</summary>
         <p class="group-label">Selected upstream records · contribution and evidence index</p>
         <div class="evidence-grid">
           <div class="evidence-main">
@@ -386,43 +221,98 @@
           </div>
         </div>
 
-        <div class="metrics-band" aria-label="Selected results">
-          <div><strong>−28.5%</strong><span>MiniCPM-o Core RTF · paired local duplex comparison</span></div>
-          <div><strong>+42.4%</strong><span>B300 Decode · AR → simulated EAGLE combined configuration</span></div>
-          <div><strong>+9.9%</strong><span>Gemma throughput · independent migration comparison</span></div>
-          <div><strong>13.2×</strong><span>Qwen throughput · combined gain at C960</span></div>
-        </div>
+        </details>
       </div>
     </section>
 
-    <section class="research" id="research">
+    <section id="internship">
       <div class="wrap">
         <div class="section-head">
-          <div><p class="eyebrow">Long-term research lens</p><h2>Systems for model-centric workloads</h2></div>
-          <p>What interests me is not one serving framework, but how systems abstractions, resource management, and execution mechanisms should evolve when models become a dominant computational workload.</p>
+          <div><p class="eyebrow" data-i18n="internship-eyebrow">SGLang deployment &amp; performance</p><h2 data-i18n="internship-title">Characterise the workload.<br>Measure the serving envelope.</h2></div>
+          <p data-i18n="internship-intro">Phase-isolated benchmarks, concurrency sweeps, capacity models, and profiler evidence help explain the cost of a serving configuration. Each result retains its workload, stack, and measurement boundary.</p>
         </div>
-        <p class="research-question">How can inference systems <em>adapt to changing workloads</em> while preserving correctness and predictable latency?</p>
-        <p class="research-sub"><strong>Research interest — adaptive inference systems.</strong> Real serving workloads are non-stationary: request arrivals, sequence lengths, Prefill/Decode ratio, modality, SLO, cache pressure, and hardware availability can change over time. I want to study how measured workload behavior can inform online runtime decisions, including the cost of changing policy and a reliable fallback.</p>
-        <div class="research-steps">
-          <div><span>01</span><h3>Observe</h3><p>Workload phase, arrival pattern, sequence distribution, cache pressure, SLO, telemetry, and resource availability.</p></div>
-          <div><span>02</span><h3>Model</h3><p>Estimate how workload × hardware × policy maps to throughput, latency, memory use, and switching cost.</p></div>
-          <div><span>03</span><h3>Adapt</h3><p>Change one or two high-impact decisions first: batching, cache policy, parallel layout, or execution strategy.</p></div>
-          <div><span>04</span><h3>Validate</h3><p>Require runtime invariants, safe fallback, controlled regression, and long-run stability — not performance alone.</p></div>
+        <article class="lab-note phase-note">
+          <div class="note-heading"><span class="note-number">01</span><h3 data-i18n="phase-title">Long-context serving: selected measured results</h3></div>
+          <p data-i18n="phase-intro">Evaluated DeepSeek-V4-Pro Prefill and Decode separately across B300 and two-node GB300 deployments. The comparison covers SGLang versions, DP Attention, PrefillDelayer, EAGLE speculative decoding, cache/graph capacity, batching, and host-side return paths; these are workload-dependent choices, not one universal launch recipe.</p>
+          <div class="table-scroll" tabindex="0" role="region" aria-label="Phase-isolated inference results">
+            <table class="result-table phase-table">
+              <caption data-i18n="phase-caption">DeepSeek-V4-Pro · eight GPUs per deployment · selected measured points</caption>
+              <thead><tr><th scope="col" data-i18n="phase">Platform / phase</th><th scope="col" data-i18n="workload">Workload / comparison</th><th scope="col" data-i18n="result">Observed result</th></tr></thead>
+              <tbody>
+                <tr><th scope="row" data-i18n="b-p60-platform">B300 · Prefill</th><td data-i18n="b-p60-condition">60k input / 1 output token · SGLang 0.5.22</td><td><strong>95.44k</strong><span data-i18n="b-p60-unit">input tok/s</span></td></tr>
+                <tr><th scope="row" data-i18n="gb-p60-platform">GB300 · Prefill</th><td data-i18n="gb-p60-condition">60k input / 1 output token · SGLang 0.5.22</td><td><strong>117.83k</strong><span data-i18n="gb-p60-unit">input tok/s</span></td></tr>
+                <tr><th scope="row" data-i18n="gb-p128-platform">GB300 · Prefill</th><td data-i18n="gb-p128-condition">128k input / 1 output token · SGLang 0.5.22</td><td><strong>100.27k</strong><span data-i18n="gb-p128-unit">input tok/s</span></td></tr>
+                <tr><th scope="row" data-i18n="b-d60-platform">B300 · Decode</th><td data-i18n="b-d60-condition">60k input / 1k output · AR → EAGLE · SGLang 0.5.14 → 0.5.22</td><td><strong>32.88k → 46.81k</strong><span data-i18n="b-d60-unit">output tok/s · +42.4% combined</span></td></tr>
+                <tr><th scope="row" data-i18n="b-d128-platform">B300 · Decode</th><td data-i18n="b-d128-condition">128k input / 1k output · AR → EAGLE · SGLang 0.5.14 → 0.5.22</td><td><strong>20.34k → 36.49k</strong><span data-i18n="b-d128-unit">output tok/s · +79.4% combined</span></td></tr>
+                <tr><th scope="row" data-i18n="gb-d60-platform">GB300 · Decode</th><td data-i18n="gb-d60-condition">60k input / 1k output · EAGLE · tuned SGLang 0.5.17</td><td><strong>48.01k</strong><span data-i18n="gb-d60-unit">output tok/s</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="boundary" data-i18n="phase-boundary">Decode speculation uses a fixed simulated acceptance rate of about 0.70 (mean accepted length about 3.10). AR-to-EAGLE results include version and capacity/concurrency changes; they are combined configuration comparisons, not isolated patch gains. Prefill and Decode are separate tests, and the GB300 result is not a matched hardware speedup or a measured cost reduction.</p>
+          <details class="work-detail"><summary data-i18n="phase-summary">How a performance anomaly became a routing-state investigation</summary><div class="detail-body"><p data-i18n="phase-discovery">Repeated Prefill runs exposed intermittent low-throughput behavior. I isolated generation-health traffic as a trigger, then traced how health dispatch mutated the Data Parallel Controller state also used by user requests. A patched/unpatched × health-on/off comparison made the causal test explicit. The fix, merged into SGLang main on 11 October 2026, separates health routing and load-budget bookkeeping from user dispatch.</p><a class="inline-link" href="https://github.com/sgl-project/sglang/pull/35721" target="_blank" rel="noreferrer" data-i18n="health-evidence">Public A/B evidence and merged fix · PR #35721 ↗</a></div></details>
+        </article>
+        <div class="note-grid">
+          <article class="lab-note">
+            <div class="note-heading"><span class="note-number">02</span><h3 data-i18n="capacity-title">Estimate before the full-node test</h3></div>
+            <p data-i18n="capacity-copy">Extended an InferFlux-based capacity model for long-context inference and used workload, compute/bandwidth limits, cache memory, parallel layout, and efficiency priors to narrow the test space. For Kimi K3, examined DCP and the capacity/rollback boundaries of KV and SSM state pools.</p>
+            <p class="boundary" data-i18n="capacity-boundary">The output is a capacity estimate, not a guaranteed throughput number. Gaps between prediction and measurement help prioritize memory, communication, batching, or runtime investigation.</p>
+          </article>
+          <article class="lab-note">
+            <div class="note-heading"><span class="note-number">03</span><h3 data-i18n="parallel-title">Parallelism is a workload decision</h3></div>
+            <p data-i18n="parallel-copy">Compared DP Attention and context parallelism across load regimes. In a separate CP8 low-latency configuration on GB300, median TTFT was <strong>0.666 s at 60k</strong> and <strong>1.516 s at 128k</strong> input, each with one output token. These are separate operating points from the high-throughput Prefill rows.</p>
+            <p class="boundary" data-i18n="parallel-boundary">Peak capacity, peak throughput, and minimum latency are different objectives. Version upgrades and larger batches are evaluated per workload rather than assumed to improve every case.</p>
+          </article>
         </div>
-        <div class="scope-note"><strong>An open direction, grounded in experiments:</strong> begin with one workload family, a small hardware set, and one or two runtime decisions. Kernel fusion, graph/draft memory, and multimodal streaming offer concrete cases; each needs its own bottleneck evidence and correctness contract before a broader claim.</div>
+        <article class="lab-note" id="eplb-investigation">
+          <div class="note-heading"><span class="note-number">04</span><h3 data-i18n="eplb-title">EPLB: measure balance, then test throughput</h3></div>
+          <p data-i18n="eplb-copy">Investigated DeepSeek-V4-Pro Prefill imbalance on a single eight-GPU B300 node with SGLang/MegaMoE. I compared expert placement and rebalancing, recorded expert loads, and profiled execution and communication. The investigation separated <strong>logical expert popularity, physical placement and replica dispatch, kernel block rounding, and request-supply gaps</strong>, so a better token-count balance would not be mistaken for an end-to-end speedup.</p>
+          <p class="boundary" data-i18n="eplb-result">Result: a placement-only experiment improved physical-rank token balance while logical expert counts stayed unchanged. It used no extra expert replicas. Clean held-out validation remains incomplete, so I claim no validated throughput gain or limit on EPLB's potential.</p>
+          <details class="work-detail"><summary data-i18n="eplb-summary">What the experiment changed about the next step</summary><div class="detail-body"><p data-i18n="eplb-detail">Earlier request-path confounds prevented a clean end-to-end conclusion. CPU top-k also failed to reproduce GPU routing reliably near ties, so bias perturbations were not established as safe optimizations. I proposed a serving-level production-versus-synthetic-balanced routing comparison in SGLang, and asked DeepSeek about placement, replica-aware cost models, and the boundary with model-level routing. These are open proposals; a synthetic balanced result would be a profiling reference, not a quality-preserving optimization.</p><a class="inline-link" href="https://github.com/sgl-project/sglang/issues/44697" target="_blank" rel="noreferrer" data-i18n="eplb-rfc-link">My SGLang profiling RFC · #44697 ↗</a> · <a class="inline-link" href="https://github.com/deepseek-ai/EPLB/issues/29" target="_blank" rel="noreferrer" data-i18n="eplb-question-link">My DeepSeek EPLB discussion · #29 ↗</a></div></details>
+        </article>
+        <article class="lab-note" id="component-analysis">
+          <div class="note-heading"><span class="note-number">05</span><h3 data-i18n="component-title">Component baselines and local kernel optimization</h3></div>
+          <p data-i18n="component-copy">Designed MegaMoE tests across model shapes, batch/token counts, and fast-math settings, using nsys/NCU to analyze compute, memory, and communication. The fused chain measured <strong>1.51–1.87×</strong> against the original FFN path; a separate small-batch point reached about <strong>5.1 TB/s</strong> HBM bandwidth. June component baselines informed independently designed September EPLB retests and serving-level comparisons.</p>
+          <p data-i18n="fusion-copy">Implemented inverse-RoPE + FP8 quantization fusion in the CUDA attention path. The earlier SGLang 0.5.17-derived B300 comparison measured <strong>+1.63% input throughput</strong> at 60k input / 1 output token, with FP8 codes and scales byte-identical in numerical tests. The public upstream port is <a class="inline-link" href="https://github.com/sgl-project/sglang/pull/43786" target="_blank" rel="noreferrer">PR #43786 ↗</a>.</p>
+          <p class="boundary" data-i18n="component-boundary">Component speedups and HBM points are separate from whole-model gains. MegaMoE is an upstream implementation; my contribution is test design, profiling, and integration analysis. PR #43786 is open; the reported GPU measurements predate its cleanup refactor, which still needs updated GPU validation. The fusion result is not added to the AR-to-EAGLE gain.</p>
+        </article>
       </div>
     </section>
-  </main>
 
-  <footer>
-    <div class="wrap">
-      <div class="footer-grid">
-        <h2>Research notes and code, with the evidence behind them.</h2>
-        <div class="footer-links"><a href="https://github.com/Phoenix3334" target="_blank" rel="noreferrer"><svg class="github-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .8a11.2 11.2 0 0 0-3.54 21.83c.56.1.76-.24.76-.54v-2.1c-3.12.68-3.78-1.33-3.78-1.33-.51-1.3-1.25-1.65-1.25-1.65-1.02-.7.08-.69.08-.69 1.13.08 1.72 1.16 1.72 1.16 1 1.71 2.63 1.22 3.27.93.1-.72.4-1.22.71-1.5-2.49-.28-5.11-1.25-5.11-5.55 0-1.23.44-2.23 1.16-3.02-.12-.28-.5-1.42.11-2.97 0 0 .95-.3 3.08 1.15a10.73 10.73 0 0 1 5.6 0c2.13-1.45 3.07-1.15 3.07-1.15.61 1.55.23 2.69.12 2.97.72.79 1.15 1.79 1.15 3.02 0 4.31-2.62 5.27-5.12 5.55.4.35.76 1.03.76 2.08v3.1c0 .3.2.65.77.54A11.2 11.2 0 0 0 12 .8Z"/></svg>GitHub ↗</a><a href="mailto:1187883824@qq.com">Email ↗</a></div>
+    <section class="experience" id="huawei"><div class="wrap">
+      <div class="section-head"><div><p class="eyebrow" data-i18n="huawei-kicker">Huawei ICT Academy · ZZU Supercomputing</p><h2 data-i18n="huawei-title">The same method,<br>across NPU and CPU.</h2></div><p data-i18n="huawei-intro">After the SGLang work, a complementary systems track: Ascend inference engines and kernels, plus Kunpeng memory and parallel performance. Hardware details matter when they change the serving path.</p></div>
+      <div class="practice-grid">
+        <article><h3 data-i18n="huawei-serving-title">Ascend serving engines</h3><p data-i18n="huawei-serving-copy">Worked with <strong>xLLM and vLLM-Ascend on Ascend 910B</strong>: model support, MTP, ACL Graph, cache capacity, and benchmark configuration. Qwen3.5-9B throughput moved <strong>2,301 → 30,451 tok/s at C960</strong> in a combined configuration comparison.</p><p class="scope" data-i18n="huawei-serving-scope">A separate Gemma 4 E2B deployment comparison measured 1,159.53 → 1,274.00 tok/s with Full ACL Graph. The two benchmarks have different baselines.</p></article>
+        <article><h3 data-i18n="huawei-kernel-title">Kernels into a valid runtime path</h3><p data-i18n="huawei-kernel-copy">Used <strong>Ascend C, Triton, and TileLang</strong> to connect tiling and fusion to the Da Vinci data path: aligned transfers, on-chip buffers, compute, and synchronisation. Specialised paths need shape and layout checks, precision validation, and a fallback before serving integration.</p><p class="scope" data-i18n="huawei-kernel-scope">Kernel timing and system throughput are measured separately. A faster local operator needs a reachable engine path and an end-to-end comparison.</p></article>
+        <article><h3 data-i18n="huawei-cpu-title">Kunpeng performance foundations</h3><p data-i18n="huawei-cpu-copy">HPCG and FFTW on <strong>Kunpeng 920</strong> grounded the same diagnosis in CPU workloads: SIMD, bandwidth, NUMA placement, MPI/OpenMP balance, compiler choices, and FFT plan reuse. These studies inform how I reason about locality, topology, and parallel overhead.</p><p class="scope" data-i18n="huawei-cpu-scope">CPU workloads are independent measurements, rather than evidence of an NPU or LLM serving speedup.</p></article>
       </div>
-      <div class="copyright">© 2026 Feihong Guo · 郭飞鸿 · Updated 2 November 2026</div>
-    </div>
-  </footer>
+      <div class="supporting-project"><h3 data-i18n="omni-title">Ascend 910C · MiniCPM-o</h3><p data-i18n="omni-copy">A complementary training-to-runtime project covered draft training, speculative execution, TileLang fusion, and duplex profiling. Paired local Core RTF measured <strong>0.6754 → 0.4829</strong> with workload trade-offs documented; model acceptance, kernel results, and duplex latency are separate endpoints. <a class="inline-link" href="https://github.com/Phoenix3334/minicpmo45-ascend" target="_blank" rel="noreferrer">Project evidence ↗</a></p></div>
+    </div></section>
+    <section class="economics" id="economics"><div class="wrap">
+      <div class="section-head"><div><p class="eyebrow" data-i18n="economics-kicker">Performance → capacity → economics</p><h2 data-i18n="economics-title">Size the service.<br>Then account for its cost.</h2></div><p data-i18n="economics-intro">A deployment decision starts with a model, workload, quality target, and latency objective. The benchmark establishes a feasible serving rate; resource sizing and a consistent cost model turn that rate into a TCO estimate.</p></div>
+      <div class="cost-chain">
+        <article class="cost-step"><span class="step-index">01 / SLO</span><h3 data-i18n="cost-slo-title">Find the feasible operating point</h3><p data-i18n="cost-slo-copy">Sweep concurrency and configuration on the target request mix. Compare TTFT, TPOT, request throughput, memory pressure, failures, and output correctness. Select an operating point that meets the specified latency, quality, and stability criteria.</p><div class="formula" data-i18n="cost-slo-formula">q_instance = measured requests/s<br>at the qualifying configuration</div><p data-i18n="cost-slo-note">Prefill input tok/s, Decode output tok/s, and requests/s describe different quantities. Request lengths and phase balance must stay explicit.</p></article>
+        <article class="cost-step"><span class="step-index">02 / CAPACITY</span><h3 data-i18n="cost-capacity-title">Translate demand into instances</h3><p data-i18n="cost-capacity-copy">Use peak request demand and the qualifying per-instance serving rate for the same workload. Round up to whole instances, then budget headroom, redundancy, and the GPU count of each instance.</p><div class="formula">N_min = ceil(λ_peak / q_instance)<br>GPU budget = N_provisioned × GPUs/instance</div><p data-i18n="cost-capacity-note">N_min is the capacity lower bound before redundancy and headroom. Real sizing must also respect memory, topology, and deployment constraints.</p></article>
+        <article class="cost-step"><span class="step-index">03 / TCO</span><h3 data-i18n="cost-tco-title">Price delivered service</h3><p data-i18n="cost-tco-copy">Use one accounting period for compute rental or hardware depreciation, power, networking, software, and operations. Divide by the correctly delivered token volume under the chosen service criteria. Treat input and output separately when the accounting requires it.</p><div class="formula" data-i18n="cost-tco-formula">Cost per 1M valid tokens<br>= period cost / valid tokens delivered × 10⁶</div><p data-i18n="cost-tco-note">Utilisation, idle reserve, uptime, retries, and traffic shape affect unit cost. Rental and depreciation require a consistent accounting boundary.</p></article>
+      </div>
+      <p class="cost-scope" data-i18n="cost-evidence"><strong>My current evidence:</strong> deployment benchmarks, capacity estimates, bottleneck analysis, and upstream correctness repairs support hardware selection and resource budgeting. A complete TCO result additionally needs actual resource prices, utilisation, redundancy policy, operating costs, and delivered traffic. The phase-isolated figures above are not a measured production cost reduction.</p>
+      <div class="reference-grid">
+        <div><h3 data-i18n="reference-performance">Methodology reference · performance engineering</h3><a href="https://www.databricks.com/blog/llm-inference-performance-engineering-best-practices" target="_blank" rel="noreferrer">Databricks · LLM Inference Performance Engineering: Best Practices ↗</a><p data-i18n="reference-performance-copy">A useful framework for relating Prefill/Decode, batching, memory bandwidth, and parallel execution to measured server behaviour.</p></div>
+        <div><h3 data-i18n="reference-cost">Methodology reference · capacity and cost</h3><a href="https://developer.nvidia.com/blog/llm-inference-benchmarking-how-much-does-your-llm-inference-cost/" target="_blank" rel="noreferrer">NVIDIA · How Much Does Your LLM Inference Cost? ↗</a><p data-i18n="reference-cost-copy">Connects latency-constrained benchmark points to deployment capacity and a cost model. These references guide the method; my results remain tied to my own workloads.</p></div>
+      </div>
+    </div></section>
+    <section class="research" id="practice"><div class="wrap">
+      <div class="section-head"><div><p class="eyebrow" data-i18n="practice-kicker">Inference engineering practice</p><h2 data-i18n="practice-title">Measure the service.<br>Explain the bottleneck.</h2></div><p data-i18n="practice-intro">A repeatable loop across SGLang, NVIDIA GPUs, and Ascend: make the workload and execution path explicit, prove the result, then use it to make a resource decision.</p></div>
+      <p class="research-question" data-i18n="practice-question">How much <em>correct, reliable serving capacity</em> can this configuration deliver within its latency and resource budget?</p>
+      <div class="research-steps">
+        <div><span>01</span><h3 data-i18n="practice-deploy-title">Deploy &amp; define</h3><p data-i18n="practice-deploy-copy">Pin model and framework versions, topology, request distribution, cache policy, precision, and resource limits. Confirm the intended backend and communication path.</p></div>
+        <div><span>02</span><h3 data-i18n="practice-measure-title">Measure &amp; profile</h3><p data-i18n="practice-measure-copy">Separate P/D tests from end-to-end service tests. Use nsys for critical paths, CPU/GPU gaps, communication overlap, synchronisation, and graph coverage; use ncu for selected kernels.</p></div>
+        <div><span>03</span><h3 data-i18n="practice-validate-title">Repair &amp; validate</h3><p data-i18n="practice-validate-copy">Test one causal hypothesis at a time. Check output quality, failure behaviour, memory boundaries, repeatability, and throughput/latency together. Carry the regression upstream.</p></div>
+        <div><span>04</span><h3 data-i18n="practice-decide-title">Size &amp; account</h3><p data-i18n="practice-decide-copy">Use qualifying serving capacity for instance sizing, GPU allocation, and cost scenarios. Keep measured results, estimates, and unvalidated assumptions visible.</p></div>
+      </div>
+      <div class="scope-note" data-i18n="practice-close"><strong>AI Infra is the connecting layer:</strong> model behaviour and workload shape meet runtime scheduling, cache state, kernels, interconnect, and deployment economics. My focus is building and validating that connection.</div>
+    </div></section>
+  </main>
+  <footer><div class="wrap"><div class="footer-grid"><h2 data-i18n="footer-title">Serving performance,<br>with evidence behind every decision.</h2><div class="footer-links"><a href="https://github.com/Phoenix3334" target="_blank" rel="noreferrer"><svg class="github-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .8a11.2 11.2 0 0 0-3.54 21.83c.56.1.76-.24.76-.54v-2.1c-3.12.68-3.78-1.33-3.78-1.33-.51-1.3-1.25-1.65-1.25-1.65-1.02-.7.08-.69.08-.69 1.13.08 1.72 1.22 1.72 1.22 1 1.71 2.63 1.16 3.27.87.1-.72.4-1.22.71-1.5-2.49-.28-5.11-1.25-5.11-5.55 0-1.23.44-2.23 1.16-3.02-.12-.28-.5-1.42.11-2.97 0 0 .95-.3 3.08 1.15a10.73 10.73 0 0 1 5.6 0c2.13-1.45 3.07-1.15 3.07-1.15.61 1.55.23 2.69.12 2.97.72.79 1.15 1.79 1.15 3.02 0 4.31-2.62 5.27-5.12 5.55.4.35.76 1.03.76 2.08v3.1c0 .3.2.65.77.54A11.2 11.2 0 0 0 12 .8Z"/></svg>GitHub ↗</a><a href="mailto:1187883824@qq.com">Email ↗</a></div></div><div class="copyright" data-i18n="copyright">© 2026 Feihong Guo · 郭飞鸿 · Updated 2 November 2026</div></div></footer>
   <a class="back-top" href="#top" aria-label="Back to top">↑</a>
 
   <script>
@@ -433,9 +323,8 @@
     const backTop=document.querySelector('.back-top');
     const navLinks=[...nav.querySelectorAll('a[href^="#"]')];
     const sections=navLinks.map(link=>document.querySelector(link.getAttribute('href'))).filter(Boolean);
-
     const zh={
-  "[data-i18n=\"hero-upstream\"]": "<strong>本人编写并合入 SGLang：</strong><a href=\"https://github.com/sgl-project/sglang/pull/47614\" target=\"_blank\" rel=\"noreferrer\">PP stream 生命周期 #47614</a> · <a href=\"https://github.com/sgl-project/sglang/pull/35721\" target=\"_blank\" rel=\"noreferrer\">DP 路由隔离 #35721</a> · <a href=\"#opensource\">查看上游贡献 ↓</a>",
+  "[data-i18n=\"hero-upstream\"]": "<strong>本人编写并合入 SGLang：</strong><a href=\"https://github.com/sgl-project/sglang/pull/47614\" target=\"_blank\" rel=\"noreferrer\">PP tensor 生命周期 #47614</a> · <a href=\"https://github.com/sgl-project/sglang/pull/35721\" target=\"_blank\" rel=\"noreferrer\">DP 健康检查路由 #35721</a>",
   "[data-i18n=\"summary-authored\"]": "本人修复 · 已合入",
   "[data-i18n=\"summary-authored-copy\"]": "<a href=\"https://github.com/sgl-project/sglang/pull/47614\" target=\"_blank\" rel=\"noreferrer\">#47614</a> PP tensor 生命周期<br><a href=\"https://github.com/sgl-project/sglang/pull/35721\" target=\"_blank\" rel=\"noreferrer\">#35721</a> DP 健康检查路由隔离",
   "[data-i18n=\"summary-review\"]": "正式技术 Review",
@@ -491,11 +380,6 @@
   "[data-i18n=\"status-32467\"]": "技术评审与因果验证 · 修复已合并",
   ".contribution[data-record=\"pr-39487\"] h3": "从本人的报告与草稿推进 DCP 回退修复落地",
   ".contribution[data-record=\"pr-32467\"] h3": "本人对最终 no-init 修复的技术评审 ↗",
-  "[data-i18n=\"figure-wearable\"]": "<strong>可穿戴感知原型</strong>传感手套与身体侧边缘计算设备。",
-  "[data-i18n=\"figure-inspection\"]": "<strong>移动巡检平台</strong>感知、导航与边缘推理集成。",
-  "[data-i18n=\"figure-microfluidic\"]": "<strong>微流控分析原型</strong>连接物理采集与边缘分析。",
-  "[data-i18n=\"figure-thermopulse-device\"]": "<strong>热成像系统</strong>项目采集设备与分析工作站。",
-  "[data-i18n=\"figure-thermopulse-output\"]": "<strong>热成像输出示例</strong>原型流程中的不同温度范围视图。",
   "[data-i18n=\"status-issue-31023\"]": "本人问题报告与证据 · 已关闭",
   "[data-i18n=\"status-issue-33356\"]": "本人问题报告与验证 · 已关闭",
   "[data-i18n=\"status-issue-34297\"]": "本人调查路线图 · 已关闭",
@@ -509,18 +393,9 @@
   ".contribution[data-record=\"pr-35721\"] h3": "将 generation-health 状态从用户调度中隔离",
   ".contribution[data-record=\"pr-34410\"] h3": "固定 P/D Decode draft-input 交接契约",
   ".contribution[data-record=\"pr-34286\"] h3": "最后一次 warmup 后、capture 前同步图构建",
-  "nav a[href=\"#internship\"]": "实习记录",
-  "[data-i18n=\"ascend-summary\"]": "两条推理路线，分别解释基线",
-  "[data-i18n=\"qwen-detail\"]": "<strong>xLLM / Qwen3.5-9B：</strong>模型适配、运行时配置与执行路径优化形成 C960 的组合结果。13.2× 仅对应该负载与起始配置，不是单项优化消融，也不代表硬件上限。",
-  "[data-i18n=\"gemma-detail\"]": "<strong>vLLM-Ascend / Gemma 4 E2B：</strong>独立的三小时决赛推理部署，按给定赛题需求和 skills，在 Claude Code / Opus 辅助下完成。环境包括 CANN 8.5.1、Torch NPU、Triton 与 vLLM。",
-  "[data-i18n=\"gemma-caption\"]": "Gemma 4 E2B · 独立迁移对照",
-  "[data-i18n=\"metric\"]": "指标",
-  "[data-i18n=\"baseline\"]": "基线",
-  "[data-i18n=\"throughput\"]": "吞吐（tok/s）",
-  "[data-i18n=\"gemma-boundary\"]": "该对照中吞吐约 +9.9%，首 token 延迟 −7.5%，每输出 token 延迟 −9.0%。4k chunk 配置测得 1,126.36 tok/s，未作为最终收益路线；这些结果与 Qwen 配置分别解释。",
-  "[data-i18n=\"internship-eyebrow\"]": "推理工程记录",
-  "[data-i18n=\"internship-title\"]": "推理性能与资源效率评估",
-  "[data-i18n=\"internship-intro\"]": "SGLang 在 B300、GB300 上的代表测量，保留负载条件与贡献边界，用于支撑部署选型和容量规划。",
+  "[data-i18n=\"internship-eyebrow\"]": "SGLang 部署与性能工程",
+  "[data-i18n=\"internship-title\"]": "刻画工作负载。<br>测清服务能力。",
+  "[data-i18n=\"internship-intro\"]": "通过 P/D 单压、并发矩阵、容量建模和 profiler 证据，解释一组服务配置的性能与资源开销。每项结果保留对应的负载、软件栈与测试口径。",
   "[data-i18n=\"phase-title\"]": "长上下文推理：代表测量结果",
   "[data-i18n=\"phase-intro\"]": "分别评测 DeepSeek-V4-Pro 在 B300 与双机 GB300 上的 Prefill、Decode。评测范围覆盖 SGLang 版本、DP Attention、PrefillDelayer、EAGLE 投机解码、缓存/图容量、batching 与主机侧回传链路；各策略适用的负载不同。",
   "[data-i18n=\"phase-caption\"]": "DeepSeek-V4-Pro · 各部署均为八卡 · 已测代表工作点",
@@ -537,9 +412,6 @@
   "[data-i18n=\"parallel-title\"]": "并行方式取决于负载",
   "[data-i18n=\"parallel-copy\"]": "比较不同负载下的 DP Attention 与上下文并行。在 GB300 独立 CP8 低时延档，60k、128k 输入（均输出 1 token）的 median TTFT 分别为 <strong>0.666 s、1.516 s</strong>；与表中高吞吐 Prefill 属于不同工作点。",
   "[data-i18n=\"parallel-boundary\"]": "最大容量、最高吞吐和最低时延是不同目标；版本升级与增大 batch 的收益都按具体负载验证。",
-  "[data-i18n=\"minicpm-summary\"]": "最终全双工配置究竟改了什么？",
-  "[data-i18n=\"minicpm-detail\"]": "最终组合还将视觉输入从 overview + slice 减为仅 overview，并将首段 TTS chunk 从 5 调为 10 tokens。后者以约 +100 ms 首次响应延迟换取更少的重复边界工作。通过四项有限提交检查，不能直接推出广泛的视觉质量等价。",
-  "[data-i18n=\"minicpm-rejected\"]": "最终短 chunk 全双工配置禁用了 thinker 推测解码，因为其开销使 RTF 变差。draft 模型接受长度与独立文本负载加速仍是单独产出，不用来解释最终全双工收益。",
   "[data-i18n=\"status-35721\"]": "本人修复 PR · 已合并 · v0.5.22",
   "[data-i18n=\"status-34410\"]": "本人回归测试 · 开放",
   "[data-i18n=\"status-34286\"]": "本人修复 PR · 开放",
@@ -549,60 +421,6 @@
   "#project-dcp-recovery .open-project-proof span:nth-of-type(2)": "CPU 正确性测试",
   "#project-dspark-review .open-project-proof span:nth-of-type(1)": "技术评审 · kernel 修复已合并",
   "#project-dspark-review .open-project-proof span:nth-of-type(2)": "越界计划 · A/B/C 每组 30,000 次调用",
-  "nav a[href=\"#lens\"]": "系统视角",
-  "nav a[href=\"#experience\"]": "经历",
-  "nav a[href=\"#opensource\"]": "开源工作",
-  "nav a[href=\"#research\"]": "研究方向",
-  ".hero .eyebrow": "AI Systems / MLSys · 郑州大学",
-  ".hero h1": "面向<em>模型中心工作负载</em>的系统研究",
-  ".hero-lede": "我关注分布式推理、硬件感知执行和运行时正确性。在百度 AI 通信组，我研究 B300、GB300 上的长上下文服务，并推进 DP 路由、DCP 缓存与通信、DSpark 正确性工作；其他项目连接模型训练、昇腾部署和实体感知系统。",
-  ".hero-thesis": "从工作负载测量，走向<em>运行时不变量。</em>",
-  ".hero-line .tag:nth-child(1)": "AI 基础设施",
-  ".hero-line .tag:nth-child(2)": "运行时与分布式系统",
-  ".hero-line .tag:nth-child(3)": "硬件感知计算",
-  ".hero-line .tag:nth-child(4)": "真实世界智能负载",
-  ".affiliations .affiliation:nth-child(1)": "<span class=\"logo-type\">ZZU</span>郑州大学",
-  ".affiliations .affiliation:nth-child(2)": "<span class=\"logo-type\">HPC</span>郑州大学超算团队",
-  ".portrait figcaption": "物联网工程<br>郑州大学 · 2027 届",
-  "#lens .eyebrow": "系统视角",
-  "#lens .section-head h2": "一个系统问题，两类证据来源",
-  "#lens .section-head > p": "物联网给了我端到端系统视角：真实项目告诉我负载和约束从哪里来，计算与基础设施工作则让我理解执行、资源与正确性如何决定这些负载真正能做到什么。",
-  ".thread.real h3": "真实世界智能系统",
-  ".thread.real > p": "物理系统会暴露干净 benchmark 中没有的约束：感知质量、时序、部署、交互与异构边缘资源。",
-  ".thread.real .thread-row:nth-child(1) span": "医疗热成像 · 感知 → 推理 → 报告",
-  ".thread.real .thread-row:nth-child(2) span": "可穿戴感知 · 自主巡检 · 微流控",
-  ".thread.real .thread-row:nth-child(3) span": "感知 · 网络 · 边缘—云系统",
-  ".thread.sys h3": "系统与计算深度",
-  ".thread.sys > p": "系统侧的问题是找到真正拥有瓶颈的层：内存局部性、加速器算子、图执行、分布式调度、共享状态还是运行时策略。",
-  ".thread.sys .thread-row:nth-child(1) span": "HPCG · FFTW · 鲲鹏 · 昇腾",
-  ".thread.sys .thread-row:nth-child(2) span": "服务 · 调度 · 分布式运行时 · 正确性",
-  ".thread.sys .thread-row:nth-child(3) span": "复现 · 隔离 · 修复 · 回归 · 上游",
-  ".converge span": "汇合",
-  ".co-design h3": "模型—系统协同设计",
-  ".co-design p": "<strong>MiniCPM-o 4.5</strong> 成为两条线的汇合点：模型侧接受率、推测执行、kernel/runtime 开销与实时全双工服务需要分别测量，但最终都服务于同一个端到端目标。",
-  "#experience .eyebrow": "核心经历",
-  "#experience .section-head h2": "跨越不同层级的系统工作",
-  "#experience .section-head > p": "贯穿这些工作的共同方法是 systems-first：先刻画工作负载，找到真正拥有行为边界的资源或状态，再在对应层介入并用真实硬件验证。",
-  ".experience-row:nth-child(1) .year": "2026 · 至今",
-  ".experience-row:nth-child(1) h3": "百度智能云<small>AI Infra 科研实习生</small>",
-  ".experience-row:nth-child(1) > p": "在百度 AI 通信组，围绕 <strong>SGLang、DeepSeek-V4-Pro 与 Kimi K3</strong>，开展 B300、GB300 平台的推理性能、资源效率和运行时正确性工作。评测 P/D 负载、框架版本、并行与投机解码策略及缓存/图容量，结合 profiling 支撑部署选型，并推进上游修复。<a class=\"inline-link\" href=\"#internship\">阅读测量摘要 ↓</a>",
-  ".experience-row:nth-child(2) .year": "计算基础",
-  ".experience-row:nth-child(2) h3": "华为 ICT 学院 & 郑州大学超算团队<small>鲲鹏 CPU · 昇腾 NPU · HPC · 推理运行时</small>",
-  ".experience-row:nth-child(2) > p": "在<strong>鲲鹏 CPU、昇腾 NPU、xLLM 与 vLLM-Ascend</strong>上开展科研工程实践。昇腾 910B 上 Qwen3.5-9B 吞吐从<strong>2,301 提升至 30,451 tok/s（C960）</strong>，为组合工程收益；独立的 Gemma 4 E2B 部署对照记录<strong>1,159.53 → 1,274.00 tok/s</strong>。鲲鹏 256³ FFTW 经向量化、编译与执行计划调优，由<strong>80.965 提升至 555.001 GFLOP/s（6.85×）</strong>，与 NPU 推理分别评估。",
-  ".experience-row:nth-child(3) .year": "真实世界系统",
-  ".experience-row:nth-child(3) h3": "郑州大学–汉威物联网研究院<small>边缘 AI · 智能感知 · 物理部署</small>",
-  ".experience-row:nth-child(3) > p": "围绕<strong>可穿戴多模态感知、自主巡检与微流控边缘 AI</strong>，连接传感数据、模型转换、边缘推理和应用反馈。保留的项目评测分别记录巡检<strong>mAP50 0.869</strong>与微流控检测<strong>mAP50 0.923</strong>。两者来自各自测试集，是独立原型结果；真实场景可靠性仍需进一步评估。",
-  ".experience-row:nth-child(4) .year": "智慧医疗",
-  ".experience-row:nth-child(4) h3": "ThermoPulse<small>省级大学生创新项目 · 郑州大学</small>",
-  ".experience-row:nth-child(4) > p": "医疗热成像原型，连接采集、视觉推理与<strong>Qwen3-8B CPT/SFT 报告生成</strong>。我在跨学科项目中侧重软件集成和模型适配。产出是可运行的感知到报告链路；任务评测、报告事实一致性与独立临床评审仍是不同层次的验证。",
-  "#opensource .eyebrow": "开源系统工作",
-  "#opensource .section-head h2": "模型、运行时与加速器协同设计",
-  "#opensource .section-head > p": "SGLang 贡献覆盖流水线与数据并行、CUDA stream 生命周期、KV 缓存回退和 DSpark 正确性。两项本人编写的修复已合入上游；正式技术评审、维护者整合的协作修复与开放中的工程工作，均附具体记录。",
-  "#project-minicpm .open-project-index": "06 · 模型 × 系统",
-  "#project-minicpm h3 a": "MiniCPM-o 4.5：NVIDIA B300 与昇腾 910C ↗",
-  "#project-minicpm .open-project-copy > p": "建立<strong>B300 draft 模型训练、DSpark 推测执行、draft-aware GGUF 转换与昇腾 910C 部署</strong>链路，基于 profiling 调整算子和图执行。相同 120 秒全双工视频与本地 harness 下，Core 实时因子 RTF 从<strong>0.6754 降至 0.4829</strong>，约降低 28.5%。训练接受长度、算子启动次数与全双工 RTF 是不同的证据端点。",
-  "#project-minicpm .open-project-proof span:nth-of-type(1)": "平均接受长度 · draft 模型评测",
-  "#project-minicpm .open-project-proof span:nth-of-type(2)": "Host Launch 次数 · profiling 路径",
   "#project-dp-health .open-project-index": "02 · 路由状态",
   "#project-dp-health h3 a": "DP 健康检查：独立完成路由状态修复 ↗",
   "#project-dp-health .open-project-copy > p": "独立将 Prefill 间歇性掉速定位到生成型健康请求修改共享用户路由状态。设计修复/未修复 × health 开/关对照，编写状态隔离补丁和回归测试。本人<strong>PR #35721 已合入 SGLang 主分支</strong>，并收录于 <a href=\"https://github.com/sgl-project/sglang/releases/tag/v0.5.22\" target=\"_blank\" rel=\"noreferrer\">v0.5.22 官方发布说明</a>的并行与分离部署分类；指定八卡 B300 负载下，修复后保留健康检查的四次实验均恢复预期吞吐区间。",
@@ -619,26 +437,6 @@
   ".method div:nth-child(2) strong": "隔离",
   ".method div:nth-child(3) strong": "验证",
   ".method div:nth-child(4) strong": "上游",
-  ".metrics-band div:nth-child(1) span": "MiniCPM-o Core RTF · 同 harness 本地全双工对照",
-  ".metrics-band div:nth-child(2) span": "B300 Decode · AR→模拟 EAGLE 组合配置收益",
-  ".metrics-band div:nth-child(3) span": "Gemma 吞吐 · 独立迁移对照",
-  ".metrics-band div:nth-child(4) span": "Qwen 吞吐 · C960 组合收益",
-  "#research .eyebrow": "长期研究视角",
-  "#research .section-head h2": "面向模型中心工作负载的系统研究",
-  "#research .section-head > p": "我真正感兴趣的不是某一个 serving framework，而是当模型成为主要计算工作负载后，系统抽象、资源管理与执行机制应如何演进。",
-  ".research-question": "推理系统如何<em>适应变化的工作负载</em>，同时保持正确性与可预测延迟？",
-  ".research-sub": "<strong>研究兴趣——自适应推理系统。</strong>真实服务负载会变化：请求到达、序列长度、Prefill/Decode 比例、模态、SLO、缓存压力与硬件可用性都会随时间改变。我希望研究如何让负载测量指导在线运行时决策，同时考虑策略切换成本与可靠回退。",
-  ".research-steps div:nth-child(1) h3": "观测",
-  ".research-steps div:nth-child(1) p": "识别 workload phase、到达模式、序列分布、cache pressure、SLO、telemetry 与资源可用性。",
-  ".research-steps div:nth-child(2) h3": "建模",
-  ".research-steps div:nth-child(2) p": "估计 workload × hardware × policy 到吞吐、延迟、显存占用与策略切换成本之间的关系。",
-  ".research-steps div:nth-child(3) h3": "自适应",
-  ".research-steps div:nth-child(3) p": "先只调整一到两个高影响决策：batching、cache policy、并行布局或 execution strategy。",
-  ".research-steps div:nth-child(4) h3": "验证",
-  ".research-steps div:nth-child(4) p": "除了性能，还要求 runtime invariant、safe fallback、受控回归和长稳测试。",
-  ".scope-note": "<strong>由实验支撑的开放方向：</strong>从一类负载、少量硬件与一到两个运行时决策开始。算子融合、图执行与 draft 显存、以及多模态流式交互提供具体案例；每个案例都需要瓶颈证据和正确性契约，再形成更广泛的结论。",
-  "footer h2": "研究记录与代码，以及它们背后的证据。",
-  ".copyright": "© 2026 郭飞鸿 · Feihong Guo · 更新于 2026 年 11 月 2 日",
   "[data-i18n=\"b-p60-platform\"]": "B300 · Prefill",
   "[data-i18n=\"b-p60-condition\"]": "60k 输入 / 1 输出 token · SGLang 0.5.22",
   "[data-i18n=\"b-p60-unit\"]": "input tok/s",
@@ -674,9 +472,72 @@
   "[data-i18n=\"status-45824\"]": "本人生命周期备选修复 · 开放中",
   "[data-i18n=\"record-45824\"]": "持久保留图执行中的 DCP all-to-all 缓冲区",
   "[data-i18n=\"status-43786\"]": "本人 CUDA 算子融合 · 开放中",
-  "[data-i18n=\"record-43786\"]": "融合 inverse-RoPE 与 FP8 激活量化"
+  "[data-i18n=\"record-43786\"]": "融合 inverse-RoPE 与 FP8 激活量化",
+  "[data-i18n=\"nav-sglang\"]": "SGLang",
+  "[data-i18n=\"nav-performance\"]": "性能评测",
+  "[data-i18n=\"nav-huawei\"]": "昇腾与鲲鹏",
+  "[data-i18n=\"nav-economics\"]": "容量与 TCO",
+  "[data-i18n=\"nav-practice\"]": "工程方法",
+  "[data-i18n=\"hero-kicker\"]": "AI INFRA · 大模型推理工程",
+  "[data-i18n=\"hero-title\"]": "从推理性能，走向<em>算力与成本决策。</em>",
+  "[data-i18n=\"hero-lede\"]": "我是郭飞鸿，在百度智能云围绕 <strong>SGLang 推理性能与运行时正确性</strong>开展工程工作。在 B300、GB300 上部署和评测 DeepSeek-V4-Pro、Kimi K3，分析 Prefill/Decode 瓶颈并推进上游修复；把测清的服务能力用于容量规划、资源配置与成本判断。",
+  "[data-i18n=\"hero-thesis\"]": "部署 → 测量 → 归因 → 改进 → 验证 → 资源决策。<br><em>吞吐、延迟、正确性与稳定性，需要放在同一个决策里。</em>",
+  "[data-i18n=\"hero-action-work\"]": "查看 SGLang 工程工作 ↓",
+  "[data-i18n=\"hero-action-tco\"]": "查看容量与成本方法 ↓",
+  "[data-i18n=\"portrait-caption\"]": "Feihong Guo · 郭飞鸿<br>郑州大学 · AI Infrastructure",
+  "[data-i18n=\"sglang-kicker\"]": "百度智能云 · SGLang",
+  "[data-i18n=\"sglang-title\"]": "推理服务性能。<br>运行时正确性。",
+  "[data-i18n=\"sglang-intro\"]": "核心工作把部署测量与服务运行时连接起来：DP 请求路由、流水线和通信缓冲区生命周期、KV 状态回退以及推测执行。两项本人编写的修复已合入；正式技术 Review 与协作修复分别保留贡献归属。",
+  "[data-i18n=\"all-records\"]": "展开公开 PR、Review 与故障调查索引",
+  "[data-i18n=\"huawei-kicker\"]": "华为 ICT 学院 · 郑州大学超算团队",
+  "[data-i18n=\"huawei-title\"]": "把同一套方法，<br>带到 NPU 与 CPU。",
+  "[data-i18n=\"huawei-intro\"]": "在百度 SGLang 工作之外，另一条互补实践覆盖昇腾推理引擎与算子，以及鲲鹏内存和并行性能。硬件细节的价值，在于它如何改变实际服务路径。",
+  "[data-i18n=\"huawei-serving-title\"]": "昇腾推理引擎",
+  "[data-i18n=\"huawei-serving-copy\"]": "在<strong>昇腾 910B 上使用 xLLM 与 vLLM-Ascend</strong>，围绕模型适配、MTP、ACL Graph、缓存容量和压测配置推进优化。Qwen3.5-9B 在 C960 下从<strong>2,301 提升至 30,451 tok/s</strong>，属于组合配置对照。",
+  "[data-i18n=\"huawei-serving-scope\"]": "独立的 Gemma 4 E2B 部署对照中，Full ACL Graph 对应吞吐 1,159.53 → 1,274.00 tok/s；与 Qwen 使用不同基线。",
+  "[data-i18n=\"huawei-kernel-title\"]": "让算子进入有效运行路径",
+  "[data-i18n=\"huawei-kernel-copy\"]": "通过 <strong>Ascend C、Triton 与 TileLang</strong>，把分块和融合落实到达芬奇数据通路：对齐搬运、片上缓冲、计算与同步。专用路径需要 shape/layout 检查、精度验证和回退机制，再集成到 serving。",
+  "[data-i18n=\"huawei-kernel-scope\"]": "单算子耗时与系统吞吐分别测量；局部算子更快，还需要确认引擎实际走到该路径，并完成端到端对照。",
+  "[data-i18n=\"huawei-cpu-title\"]": "鲲鹏性能工程基础",
+  "[data-i18n=\"huawei-cpu-copy\"]": "在<strong>鲲鹏 920</strong>上通过 HPCG 与 FFTW 研究 SIMD、带宽、NUMA 亲和性、MPI/OpenMP 组合、编译配置和 FFT 执行计划复用，用 CPU 负载建立对局部性、拓扑和并行开销的判断。",
+  "[data-i18n=\"huawei-cpu-scope\"]": "CPU 工作负载独立评测，不作为 NPU 或 LLM serving 加速的证据。",
+  "[data-i18n=\"omni-title\"]": "昇腾 910C · MiniCPM-o",
+  "[data-i18n=\"omni-copy\"]": "互补项目连接 draft 训练、推测执行、TileLang 融合与全双工 profiling。同一 harness 的本地配对 Core RTF 为<strong>0.6754 → 0.4829</strong>，保留负载取舍；模型接受率、算子结果和双工延迟分开评估。<a class=\"inline-link\" href=\"https://github.com/Phoenix3334/minicpmo45-ascend\" target=\"_blank\" rel=\"noreferrer\">项目证据 ↗</a>",
+  "[data-i18n=\"economics-kicker\"]": "性能 → 容量 → 成本",
+  "[data-i18n=\"economics-title\"]": "先确定服务容量。<br>再核算部署成本。",
+  "[data-i18n=\"economics-intro\"]": "部署决策从模型、负载、质量要求和延迟目标开始。压测确定满足要求的服务速率，资源规划与一致的成本口径再把它转成 TCO 估算。",
+  "[data-i18n=\"cost-slo-title\"]": "找到满足目标的工作点",
+  "[data-i18n=\"cost-slo-copy\"]": "针对目标请求分布，扫描并发与配置。共同检查 TTFT、TPOT、请求吞吐、显存压力、失败率和输出正确性，选择满足延迟、质量与稳定性要求的工作点。",
+  "[data-i18n=\"cost-slo-formula\"]": "q_instance = 满足准出要求的配置下<br>实测单实例 requests/s",
+  "[data-i18n=\"cost-slo-note\"]": "Prefill input tok/s、Decode output tok/s 与 requests/s 是不同量；请求长度和 P/D 比例需要明确。",
+  "[data-i18n=\"cost-capacity-title\"]": "把请求需求转成实例数量",
+  "[data-i18n=\"cost-capacity-copy\"]": "在相同负载下，用峰值请求需求与合格工作点的单实例服务速率计算实例数量，向上取整；再加入余量、冗余以及每实例使用的 GPU 数量。",
+  "[data-i18n=\"cost-capacity-note\"]": "N_min 是加入冗余和余量之前的容量下界。实际规划还需满足显存、拓扑及部署约束。",
+  "[data-i18n=\"cost-tco-title\"]": "核算实际交付服务的成本",
+  "[data-i18n=\"cost-tco-copy\"]": "统一计算周期，核算算力租金或硬件折旧、电力、网络、软件与运维费用，再除以满足服务要求且正确交付的 token 总量。需要分别核算输入与输出时，明确成本分摊口径。",
+  "[data-i18n=\"cost-tco-formula\"]": "每百万有效 token 成本<br>= 周期总成本 / 周期有效交付 token × 10⁶",
+  "[data-i18n=\"cost-tco-note\"]": "利用率、空闲冗余、可用率、重试与流量分布都会改变单位成本；租赁和自建需要一致且不重复计算的成本边界。",
+  "[data-i18n=\"cost-evidence\"]": "<strong>我现阶段的证据：</strong>部署压测、容量估计、瓶颈分析与上游正确性修复，用于支撑算力选型和资源预算。完整 TCO 还需真实资源价格、利用率、冗余策略、运维支出与实际交付流量；上面的 P/D 单压结果不等于已实测的生产降本。",
+  "[data-i18n=\"reference-performance\"]": "方法参考 · 推理性能工程",
+  "[data-i18n=\"reference-performance-copy\"]": "帮助把 Prefill/Decode、batching、内存带宽和并行执行，与实际测得的服务行为联系起来。",
+  "[data-i18n=\"reference-cost\"]": "方法参考 · 容量与成本",
+  "[data-i18n=\"reference-cost-copy\"]": "把延迟约束下的压测工作点，转成部署容量与成本模型。参考方法与本人具体负载下的实验结果分别呈现。",
+  "[data-i18n=\"practice-kicker\"]": "推理工程实践",
+  "[data-i18n=\"practice-title\"]": "测清服务能力。<br>解释性能瓶颈。",
+  "[data-i18n=\"practice-intro\"]": "贯穿 SGLang、NVIDIA GPU 与昇腾的一套可重复流程：明确负载和执行路径，验证结果，再用证据作资源决策。",
+  "[data-i18n=\"practice-question\"]": "这组配置在延迟与资源预算内，能交付多少<em>正确、可靠的服务能力</em>？",
+  "[data-i18n=\"practice-deploy-title\"]": "部署与定义",
+  "[data-i18n=\"practice-deploy-copy\"]": "固定模型和框架版本、拓扑、请求分布、缓存策略、精度与资源上限；确认实际使用的 backend 和通信路径。",
+  "[data-i18n=\"practice-measure-title\"]": "测量与归因",
+  "[data-i18n=\"practice-measure-copy\"]": "区分 P/D 单压与端到端服务压测。用 nsys 看关键路径、CPU/GPU 间隙、通信重叠、同步与 graph 覆盖，再用 ncu 分析选定的 kernel。",
+  "[data-i18n=\"practice-validate-title\"]": "改进与验证",
+  "[data-i18n=\"practice-validate-copy\"]": "逐个检验因果假设，同时检查输出质量、失败行为、内存边界、可复现性和吞吐/延迟，把回归约束提交到上游。",
+  "[data-i18n=\"practice-decide-title\"]": "规划与核算",
+  "[data-i18n=\"practice-decide-copy\"]": "根据满足准出要求的服务容量，估算实例数量、GPU 资源与成本场景；明确哪些是实测结果、哪些是估计和待验证假设。",
+  "[data-i18n=\"practice-close\"]": "<strong>AI Infra 是贯通这些工作的层：</strong>模型行为和工作负载，在这里连接运行时调度、缓存状态、算子、互连与部署成本。我的重点是把这条连接做出来，并用实验验证。",
+  "[data-i18n=\"footer-title\"]": "推理服务性能，<br>以及每个决策背后的证据。",
+  "[data-i18n=\"copyright\"]": "© 2026 郭飞鸿 · Feihong Guo · 更新于 2026 年 11 月 2 日"
 };
-
     const bilingual=Object.entries(zh).map(([selector,value])=>{
       const element=document.querySelector(selector); if(!element)return null;
       return {element,en:element.innerHTML,zh:value}
@@ -685,7 +546,7 @@
     const setLanguage=language=>{
       bilingual.forEach(item=>{item.element.innerHTML=item[language]});
       document.documentElement.lang=language==='zh'?'zh-CN':'en';
-      document.title=language==='zh'?'郭飞鸿 | AI Systems / MLSys':'Feihong Guo | AI Systems / MLSys';
+      document.title=language==='zh'?'郭飞鸿 | AI Infra · LLM 推理工程':'Feihong Guo | AI Infrastructure & LLM Inference';
       langButton.textContent=language==='zh'?'EN':'中文';
       langButton.setAttribute('aria-label',language==='zh'?'Switch to English':'切换至中文');
       try{localStorage.setItem('portfolio-language',language)}catch{}
@@ -709,8 +570,7 @@
     addEventListener('scroll',updateScroll,{passive:true});
     addEventListener('resize',updateScroll);
     langButton.addEventListener('click',updateScroll);updateScroll();
+  
   </script>
 </body>
 </html>
-
-
