@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="300" viewBox="0 0 1000 300" role="img" aria-labelledby="title desc">
+<title id="title">Feihong Guo — AI Infrastructure and LLM Inference Engineering</title>
+<desc id="desc">SGLang serving, runtime correctness, and performance-to-capacity engineering. Baidu AI Cloud, Ascend and Kunpeng.</desc>
+<defs><linearGradient id="bg" x2="1" y2="1"><stop stop-color="#0c181e"/><stop offset="1" stop-color="#101b24"/></linearGradient><pattern id="grid" width="32" height="32" patternUnits="userSpaceOnUse"><path d="M32 0H0V32" fill="none" stroke="#1a3036" stroke-width=".5"/></pattern></defs>
+<rect x="1" y="1" width="998" height="298" rx="16" fill="url(#bg)" stroke="#28423e"/>
+<rect x="1" y="43" width="998" height="255" rx="14" fill="url(#grid)"/>
+<path d="M1 43H999" stroke="#28423e"/><g><circle cx="24" cy="23" r="5" fill="#f28b82"/><circle cx="43" cy="23" r="5" fill="#fdd663"/><circle cx="62" cy="23" r="5" fill="#81c995"/></g>
+<g font-family="ui-monospace,SFMono-Regular,Consolas,monospace">
+<text x="87" y="28" fill="#91a9a8" font-size="12">phoenix / inference-workbench</text>
+<text x="40" y="85" fill="#65dfaf" font-size="13">AI INFRASTRUCTURE / LLM INFERENCE ENGINEERING</text>
+<text x="40" y="132" fill="#f1f6f4" font-size="34" font-weight="700">Feihong Guo <tspan fill="#6b8c89" font-size="23">/ Phoenix3334</tspan></text>
+<text x="40" y="169" fill="#b9cecb" font-size="16">SGLang at Baidu AI Cloud · Ascend &amp; Kunpeng</text>
+<text x="40" y="204" fill="#8aa7a3" font-size="14">Measure serving. Explain the bottleneck. Size the infrastructure.</text>
+<path d="M40 226H960" stroke="#28423e"/>
+<text x="40" y="261" fill="#65dfaf" font-size="13">WORKLOAD</text><text x="145" y="261" fill="#6b8c89" font-size="13">→</text>
+<text x="180" y="261" fill="#c3d8d2" font-size="13">RUNTIME</text><text x="270" y="261" fill="#6b8c89" font-size="13">→</text>
+<text x="305" y="261" fill="#c3d8d2" font-size="13">CAPACITY</text><text x="405" y="261" fill="#6b8c89" font-size="13">→</text>
+<text x="440" y="261" fill="#c3d8d2" font-size="13">COST</text>
+<text x="960" y="261" text-anchor="end" fill="#8aa7a3" font-size="12">Zhengzhou University</text>
+</g></svg>
