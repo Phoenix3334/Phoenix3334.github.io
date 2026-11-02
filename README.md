@@ -2,7 +2,7 @@
 
 **Distributed LLM serving · runtime correctness · GPU / NPU performance engineering**
 
-[View portfolio](https://phoenix3334.github.io/) · [SGLang contribution index](https://github.com/Phoenix3334/sglang/blob/main/CONTRIBUTIONS.md) · [GitHub profile draft](GITHUB_PROFILE.md)
+[View portfolio](https://phoenix3334.github.io/) · [SGLang contribution index](SGLANG_CONTRIBUTIONS.md) · [GitHub profile draft](GITHUB_PROFILE.md)
 
 ## Selected open-source contributions
 
@@ -17,7 +17,7 @@
 ## Representative projects
 
 - [MiniCPM-o 4.5 / Ascend 910C](https://github.com/Phoenix3334/minicpmo45-ascend): draft training through deployment, kernel fusion, and matched-harness duplex RTF evaluation.
-- [SGLang contribution fork](https://github.com/Phoenix3334/sglang): distributed runtime repairs, open proposals, regressions, and review records.
+- [SGLang contribution fork](https://github.com/Phoenix3334/sglang): upstream development branches for runtime repairs and regression tests; [contribution and review records](SGLANG_CONTRIBUTIONS.md) are maintained here.
 - [llama.cpp-omni development](https://github.com/Phoenix3334/llama.cpp-omni-OpenBMB): vision projection and an opt-in Flow / CPU Vocoder pipeline proposal; upstream #146 remains Draft.
 
 The table above was verified on **2 November 2026**. Authored merged PRs, technical reviews, and maintainer-integrated repairs retain their distinct attribution.
