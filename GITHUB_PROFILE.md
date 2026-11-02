@@ -4,7 +4,7 @@
 
 Undergraduate at Zhengzhou University. My work focuses on distributed LLM serving, runtime correctness, and GPU/NPU performance engineering.
 
-[Portfolio](https://phoenix3334.github.io/) · [SGLang contributions](https://github.com/Phoenix3334/sglang/blob/main/CONTRIBUTIONS.md) · [Authored PRs](https://github.com/sgl-project/sglang/pulls?q=is%3Apr+author%3APhoenix3334) · [Technical reviews](https://github.com/sgl-project/sglang/pulls?q=is%3Apr+reviewed-by%3APhoenix3334+-author%3APhoenix3334)
+[Portfolio](https://phoenix3334.github.io/) · [SGLang contributions](https://github.com/Phoenix3334/Phoenix3334.github.io/blob/main/SGLANG_CONTRIBUTIONS.md) · [Authored PRs](https://github.com/sgl-project/sglang/pulls?q=is%3Apr+author%3APhoenix3334) · [Technical reviews](https://github.com/sgl-project/sglang/pulls?q=is%3Apr+reviewed-by%3APhoenix3334+-author%3APhoenix3334)
 
 ## Selected upstream work
 
@@ -15,7 +15,7 @@ Undergraduate at Zhengzhou University. My work focuses on distributed LLM servin
 | [SGLang #32467](https://github.com/sgl-project/sglang/pull/32467#discussion_r3749014153) — ragged-prefill planner race | Formal technical review and controlled A/B/C kernel validation | **Fix merged** · authored by EanWang211123 |
 | [SGLang #39487](https://github.com/sgl-project/sglang/pull/39487) — DCP retraction KV-index mapping | Discovery, diagnosis, [draft implementation and validation](https://github.com/sgl-project/sglang/pull/38790) | **Fix merged** · integrated by kpham-sgl |
 
-I also submitted a [formal review on #32183](https://github.com/sgl-project/sglang/pull/32183), separating verifier-window correctness from the independently tested DSpark failure mechanisms.
+I also submitted a [formal review on #32183](https://github.com/sgl-project/sglang/pull/32183#pullrequestreview-4897392620), separating verifier-window correctness from the independently tested DSpark failure mechanisms.
 
 ## Current engineering work
 
@@ -28,7 +28,7 @@ I also submitted a [formal review on #32183](https://github.com/sgl-project/sgla
 
 | Repository | What to look at |
 | --- | --- |
-| [sglang](https://github.com/Phoenix3334/sglang) | My contribution fork and upstream evidence index |
+| [sglang](https://github.com/Phoenix3334/sglang) | Upstream development branches; contribution records are maintained in this profile and the portfolio |
 | [minicpmo45-ascend](https://github.com/Phoenix3334/minicpmo45-ascend) | Training-to-runtime engineering; matched-harness duplex RTF 0.6754 → 0.4829, with workload trade-offs documented |
 | [llama.cpp-omni-OpenBMB](https://github.com/Phoenix3334/llama.cpp-omni-OpenBMB) | Upstream development branches for [vision projection #144](https://github.com/tc-mb/llama.cpp-omni/pull/144) and [Flow / CPU Vocoder overlap #146](https://github.com/tc-mb/llama.cpp-omni/pull/146); #146 remains Draft |
 | [Phoenix3334.github.io](https://github.com/Phoenix3334/Phoenix3334.github.io) | Bilingual project portfolio, measurements, and contribution records |
