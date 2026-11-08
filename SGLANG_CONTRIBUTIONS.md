@@ -18,6 +18,8 @@ Status checked **8 November 2026**. This index lists **four authored merged SGLa
 | [#43786 — inverse RoPE + FP8 quantization](https://github.com/sgl-project/sglang/pull/43786) | Fused inverse RoPE into CUDA UE8M0 FP8 activation quantization, preserving BF16 rounding and packed scales. **Merged 4 Nov 2026.** | Upstream B200 numerical and replay kernel tests: 7/7. The historical B300 backport measured +1.61% Prefill throughput. Full-model performance of the final upstream implementation remains unmeasured. |
 | [#48404 — EPLB recorder compatibility](https://github.com/sgl-project/sglang/pull/48404) | Reproduced an assertion at first rebalance and moved incompatible `per_pass` / `per_token` configuration rejection to startup. **Merged 7 Nov 2026.** | On the tested v0.5.23 local stack, 4×B300 verified startup rejection for the invalid mode and a successful rebalance/generate path with `stat`. |
 
+The [DP Health case study](https://phoenix3334.github.io/#project-dp-health) walks through the Delayer hypothesis, measurement checks, request tracing and the same-image 2×2. The [public retrospective](https://github.com/sgl-project/sglang/issues/35241) preserves the chronology and separates the post-fix running-request analysis from the original discovery.
+
 ## Technical review and collaborative repairs
 
 | Upstream record | My contribution | Authorship and status |

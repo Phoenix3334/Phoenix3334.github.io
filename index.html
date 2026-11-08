@@ -150,9 +150,31 @@
         <article class="open-project" id="project-dp-health">
           <div class="open-project-index">02 · ROUTING STATE</div>
           <div class="open-project-copy">
-            <div class="project-title"><img class="project-logo" src="https://github.com/sgl-project.png?size=88" alt="SGLang"><h3><a href="https://github.com/sgl-project/sglang/pull/35721" target="_blank" rel="noreferrer">DP health checks: independent routing-state repair ↗</a></h3></div>
-            <p>Independently traced intermittent Prefill throughput drops to generation-health requests changing shared user-routing state. Designed the patched/unpatched × health-on/off comparison, implemented separate health routing and load-budget handling, and added regression tests. My <strong>PR #35721 merged into SGLang main</strong> and is listed in the <a href="https://github.com/sgl-project/sglang/releases/tag/v0.5.22" target="_blank" rel="noreferrer">v0.5.22 release notes</a> under Parallelism &amp; Disaggregation. On the tested eight-GPU B300 workload, all four patched health-on runs recovered the expected throughput range.</p>
-            <details class="work-detail"><summary data-i18n="dp-detail-title">Mechanism, validation, and contribution</summary><div class="detail-body"><p data-i18n="dp-detail-copy">A health request could mutate DPC dispatch state before being skipped by a busy scheduler. I isolated health round-robin and user load-budget state while preserving explicit rank and PD routing semantics. The work added 23 CPU tests initially; the rebased test file passed 30 tests. B300 performance evidence predates the rebase.</p><a class="inline-link" href="https://github.com/sgl-project/sglang/issues/35241" target="_blank" rel="noreferrer" data-i18n="dp-record-link">Root-cause investigation · #35241 ↗</a></div></details>
+            <div class="project-title"><img class="project-logo" src="https://github.com/sgl-project.png?size=88" alt="SGLang"><h3><a href="https://github.com/sgl-project/sglang/pull/35721" target="_blank" rel="noreferrer">DP Health: tracing an intermittent Prefill regression ↗</a></h3></div>
+            <p>Repeated DeepSeek-V4-Pro Prefill runs on 8×B300 showed intermittent throughput drops. I traced the trigger to generation-health requests changing shared DPC user-routing state before scheduler admission. After isolating health dispatch, all four patched health-ON runs reached <strong>94.56–94.70k input tok/s</strong>. <strong>PR #35721</strong> shipped in <a href="https://github.com/sgl-project/sglang/releases/tag/v0.5.22" target="_blank" rel="noreferrer">v0.5.22</a>.</p>
+            <details class="work-detail" id="dp-debug-case">
+              <summary data-i18n="dp-detail-title">Expand the investigation: hypotheses, traces and 2×2 validation</summary>
+              <div class="detail-body">
+                <p data-i18n="dp-detail-copy"><strong>1. Separate scheduling from GPU execution.</strong> Identical long-Prefill runs intermittently dropped throughput. I first tested DP Attention, chunk sizing and PrefillDelayer because LOW runs showed rank progress gaps and sustained mixed/delay activity. A Delayer admission-order backport still produced both GOOD and LOW, so I investigated whether a rank received less work or took longer to execute it. <a class="inline-link" href="https://github.com/sgl-project/sglang/issues/35241#issuecomment-5342316838" target="_blank" rel="noreferrer">Backport counterexample ↗</a></p>
+                <p data-i18n="dp-observer"><strong>2. Check whether observation perturbs the run.</strong> A continuous alternating 4 OFF / 4 ON DeviceTimer test gave healthy-state means of 94,563 and 94,569 input tok/s. The sample was too small to settle LOW entry probability. Moving from 5 s to 250 ms metrics sampling separated observed chunk completions, and a benchmark start marker made the fast window cover the onset. <a class="inline-link" href="https://github.com/sgl-project/sglang/issues/35241#issuecomment-5323649556" target="_blank" rel="noreferrer">DeviceTimer A/B ↗</a></p>
+                <p data-i18n="dp-trace"><strong>3. Trace the request across the control plane.</strong> Client POST, tokenizer, DataParallelController and scheduler admission traces exposed a hidden ordering: a generation-health request could advance shared user round-robin or touch load-budget state before a busy scheduler skipped it. The patch isolated health dispatch and preserved explicit-rank and P/D routing. The initial symptom report was filed on 18 August and the patch opened on 20 August. <a class="inline-link" href="https://github.com/sgl-project/sglang/issues/35241#issuecomment-5354692736" target="_blank" rel="noreferrer">Health trigger evidence ↗</a></p>
+                <p data-i18n="dp-ab-copy"><strong>4. Isolate the cause with a 2×2.</strong> On 26 August I held the image, workload, DP Attention, PrefillDelayer and external <code>GET /health</code> polling fixed. Each round started a fresh server and varied only the patch and generation-health request creation. <a class="inline-link" href="https://github.com/sgl-project/sglang/issues/35241#issuecomment-5422094664" target="_blank" rel="noreferrer">Four-arm experiment ↗</a></p>
+                <div class="table-scroll" tabindex="0" role="region" aria-labelledby="dp-ab-caption">
+                  <table class="result-table">
+                    <caption data-i18n="dp-ab-scope" id="dp-ab-caption">8×B300 · DeepSeek-V4-Pro · TP8/DP8 · 60k input / 1 output · C16 · 160 requests</caption>
+                    <thead><tr><th data-i18n="dp-ab-arm" scope="col">Configuration</th><th data-i18n="dp-ab-result" scope="col">Result</th><th data-i18n="dp-ab-tps" scope="col">Input tok/s</th></tr></thead>
+                    <tbody>
+                      <tr><th data-i18n="dp-ab-a1" scope="row">Original + generation health ON</th><td data-i18n="dp-ab-a1-outcome">2/8 LOW</td><td>68,403 / 82,883 <small>LOW</small></td></tr>
+                      <tr><th data-i18n="dp-ab-a2" scope="row">Original + generation health OFF</th><td>4/4 GOOD</td><td>94,783–94,847</td></tr>
+                      <tr><th data-i18n="dp-ab-b1" scope="row">Patched + generation health ON</th><td><strong>4/4 GOOD</strong></td><td><strong>94,558–94,699</strong></td></tr>
+                      <tr><th data-i18n="dp-ab-b2" scope="row">Patched + generation health OFF</th><td>4/4 GOOD</td><td>94,850–94,934</td></tr>
+                    </tbody>
+                  </table>
+                </div>
+                <p data-i18n="dp-inventory"><strong>What the follow-up revealed.</strong> In the severe LOW run, the active-window median of summed scheduler running requests was <strong>48 vs 72–80</strong> in the healthy controls. This is request inventory, measured separately from kernel batch dimensions. A milder LOW still had a median of 80. Rank dispatch traces and the four-arm result establish the causal link. Delayer timeouts persisted in healthy patched runs. <a class="inline-link" href="https://github.com/sgl-project/sglang/issues/35241#issuecomment-5488710824" target="_blank" rel="noreferrer">Revised mechanism ↗</a></p>
+                <a class="inline-link" href="https://github.com/sgl-project/sglang/issues/35241" target="_blank" rel="noreferrer" data-i18n="dp-record-link">Full public investigation · #35241 ↗</a>
+              </div>
+            </details>
           </div><div class="open-project-proof"><strong>30 / 30</strong><span>targeted CPU tests · rebased tree</span><strong>4 / 4</strong><span>B300 patched health-on repeats · tested workload</span></div>
         </article>
 
@@ -253,7 +275,7 @@
             </table>
           </div>
           <p class="boundary" data-i18n="phase-boundary">The tuned AR rows are separate recorded operating points. The version-spanning AR → EAGLE rows retain their own starting points and include capacity and concurrency changes. EAGLE uses fixed simulated acceptance ≈0.70 (mean accepted length ≈3.10).</p>
-          <details class="work-detail"><summary data-i18n="phase-summary">How a performance anomaly became a routing-state investigation</summary><div class="detail-body"><p data-i18n="phase-discovery">Repeated Prefill runs exposed intermittent low-throughput behavior. I isolated generation-health traffic as a trigger, then traced how health dispatch mutated the Data Parallel Controller state also used by user requests. A patched/unpatched × health-on/off comparison made the causal test explicit. The fix, merged into SGLang main on 11 October 2026, separates health routing and load-budget bookkeeping from user dispatch.</p><a class="inline-link" href="https://github.com/sgl-project/sglang/pull/35721" target="_blank" rel="noreferrer" data-i18n="health-evidence">Public A/B evidence and merged fix · PR #35721 ↗</a></div></details>
+          <details class="work-detail"><summary data-i18n="phase-summary">How a performance anomaly became a routing-state investigation</summary><div class="detail-body"><p data-i18n="phase-discovery">The <a class="inline-link" href="#project-dp-health">DP Health case</a> records the path from intermittent LOW runs to request-level tracing and a four-arm causal test.</p><a class="inline-link" href="https://github.com/sgl-project/sglang/pull/35721" target="_blank" rel="noreferrer" data-i18n="health-evidence">Public A/B evidence and merged fix · PR #35721 ↗</a></div></details>
         </article>
         <div class="note-grid">
           <article class="lab-note">
@@ -372,9 +394,9 @@
   "[data-i18n=\"status-eplb-29\"]": "本人评估讨论 · 开放中",
   "[data-i18n=\"eplb-rfc-record\"]": "区分路由不均、专家放置与服务执行成本",
   "[data-i18n=\"eplb-question-record\"]": "讨论副本成本与模型路由优化的边界",
-  "[data-i18n=\"dp-detail-title\"]": "问题机制、验证与个人贡献",
-  "[data-i18n=\"dp-detail-copy\"]": "健康请求可能先修改 DPC 分配状态，随后才被忙碌的 scheduler 跳过。我隔离 health 轮转和用户负载预算状态，并保留显式 rank 与 PD 路由语义。最初新增 23 项 CPU 测试，rebase 后测试文件共 30 项通过；B300 性能证据来自此前实验。",
-  "[data-i18n=\"dp-record-link\"]": "根因调查 · #35241 ↗",
+  "[data-i18n=\"dp-detail-title\"]": "展开排障复盘 · 假设、追踪与 2×2 对照",
+  "[data-i18n=\"dp-detail-copy\"]": "<strong>1. 区分调度供给与 GPU 执行。</strong> 相同长 Prefill 配置反复跑出 GOOD 和 LOW。早期因各 rank 进度拉开、Delayer 持续 mixed/delay，先排查 DP Attention、chunk 大小和 Delayer。回移 Delayer 准入顺序补丁后两种状态仍出现，调查转向两个方向：落后 rank 收到的活更少，还是收到同样的活但 GPU 执行更慢。<a class=\"inline-link\" href=\"https://github.com/sgl-project/sglang/issues/35241#issuecomment-5342316838\" target=\"_blank\" rel=\"noreferrer\">回移补丁对照 ↗</a>",
+  "[data-i18n=\"dp-record-link\"]": "完整公开排查记录 · #35241 ↗",
   "[data-i18n=\"dcp-detail-title\"]": "我的修复与维护者的最终整合",
   "[data-i18n=\"dcp-detail-copy\"]": "本人实现和 6 项 CPU 测试覆盖 rank 所有权、本地行映射及新分配 KV 位置上的恢复，4 项 KDA/Mamba GPU 回归检查独立循环状态路径。维护者复用共享 layout 工具，处理已解析物理索引和非完整页前缀，并补充 B200 强制回退及 logprob 检查。本人 B300 证据对应披露的本地补丁组合栈。",
   "[data-i18n=\"dcp-draft-link\"]": "本人已验证草稿 · #38790 ↗",
@@ -412,7 +434,7 @@
   "[data-i18n=\"result\"]": "观测结果",
   "[data-i18n=\"phase-boundary\"]": "两条自回归实测档是独立调优结果。跨版本的 AR → EAGLE 行沿用各自的起点，并包含容量与并发变化。EAGLE 使用固定模拟接受率约 0.70（平均接受长度约 3.10）。",
   "[data-i18n=\"phase-summary\"]": "一次性能异常如何变成路由状态调查",
-  "[data-i18n=\"phase-discovery\"]": "Prefill 重复实验暴露间歇性低吞吐。我隔离出 generation-health 流量这一触发因素，随后追踪它如何修改用户请求也使用的 Data Parallel Controller 状态。patched/unpatched × health-on/off 的对照使因果检验具体化；修复将 health 路由与负载预算记账从用户调度中分离，已于 2026 年 10 月 11 日合入 SGLang 主分支。",
+  "[data-i18n=\"phase-discovery\"]": "<a class=\"inline-link\" href=\"#project-dp-health\">DP Health 排障案例</a>记录了如何从间歇性掉速追到请求分发，再用四臂消融确认因果。",
   "[data-i18n=\"health-evidence\"]": "公开 A/B 证据与已合并修复 · PR #35721 ↗",
   "[data-i18n=\"capacity-title\"]": "全节点测试前先估算容量",
   "[data-i18n=\"capacity-copy\"]": "扩展基于 InferFlux 的容量模型，由工作负载、计算/带宽上限、缓存显存、并行布局及效率先验缩小测试范围；针对 Kimi K3 分析 DCP、KV/SSM 状态池的容量与回退边界。",
@@ -430,8 +452,8 @@
   "#project-dspark-review .open-project-proof span:nth-of-type(1)": "技术评审 · kernel 修复已合并",
   "#project-dspark-review .open-project-proof span:nth-of-type(2)": "越界计划 · A/B/C 每组 30,000 次调用",
   "#project-dp-health .open-project-index": "02 · 路由状态",
-  "#project-dp-health h3 a": "DP 健康检查：独立完成路由状态修复 ↗",
-  "#project-dp-health .open-project-copy > p": "独立将 Prefill 间歇性掉速定位到生成型健康请求修改共享用户路由状态。设计修复/未修复 × health 开/关对照，编写状态隔离补丁和回归测试。本人<strong>PR #35721 已合入 SGLang 主分支</strong>，并收录于 <a href=\"https://github.com/sgl-project/sglang/releases/tag/v0.5.22\" target=\"_blank\" rel=\"noreferrer\">v0.5.22 官方发布说明</a>的并行与分离部署分类；指定八卡 B300 负载下，修复后保留健康检查的四次实验均恢复预期吞吐区间。",
+  "#project-dp-health h3 a": "DP Health 排障：从间歇性 Prefill 掉速到路由状态污染 ↗",
+  "#project-dp-health .open-project-copy > p": "DeepSeek-V4-Pro 八卡 B300 的 Prefill 压测间歇性掉速。我沿请求链路定位到生成式探活在 scheduler 准入前已改写 DPC 共享用户路由状态。隔离探活分发后，保留探活的 4 轮均达到 <strong>94.56–94.70k input tok/s</strong>。<strong>PR #35721</strong> 已随 <a href=\"https://github.com/sgl-project/sglang/releases/tag/v0.5.22\" target=\"_blank\" rel=\"noreferrer\">v0.5.22</a> 发布。",
   "#project-dcp-recovery .open-project-index": "04 · KV 状态",
   "#project-dcp-recovery h3 a": "DCP 缓存回退：从根因定位到协作合并 ↗",
   "#project-dcp-recovery .open-project-copy > p": "报告<strong>Issue #38645</strong>，定位 DCP 回退备份/恢复中的逻辑与物理 KV 索引混用，并实现、验证草稿修复<strong>#38790</strong>。未修复 DCP8 首次回退即崩溃；本人 B300 修复组经<strong>8 次回退完成 2,048/2,048 请求</strong>。维护者 kpham-sgl 通过共享 DCP layout 工具整合方案、补齐兼容性和验证，最终合并<strong>#39487</strong>；本人随后关闭被取代的草稿。",
@@ -550,7 +572,20 @@
   "[data-i18n=\"ar-b300\"]": "60k 输入 / 1k 输出 · 自回归实测档",
   "[data-i18n=\"ar-gb300\"]": "60k 输入 / 1k 输出 · 自回归实测档",
   "[data-i18n=\"env-title\"]": "压测环境与工程复现",
-  "[data-i18n=\"env-copy\"]": "维护 SGLang 容器镜像与 CI/CD 流程，搭建多机推理环境。自动化依赖预装、服务启停与压测结果收集，并记录拓扑、缓存预算和验证配置以支持回归复现。"
+  "[data-i18n=\"env-copy\"]": "维护 SGLang 容器镜像与 CI/CD 流程，搭建多机推理环境。自动化依赖预装、服务启停与压测结果收集，并记录拓扑、缓存预算和验证配置以支持回归复现。",
+  "[data-i18n=\"dp-observer\"]": "<strong>2. 先验证观测会不会扰动压测。</strong> DeviceTimer 交替做 4 OFF / 4 ON，健康档平均输入吞吐为 94,563 和 94,569 tok/s。样本不足以判断插桩对 LOW 出现概率的影响。指标采样从 5 s 缩短到 250 ms，分辨单次 chunk 完成，再用发压端的开始标记把采样窗口提前，覆盖异常起点。<a class=\"inline-link\" href=\"https://github.com/sgl-project/sglang/issues/35241#issuecomment-5323649556\" target=\"_blank\" rel=\"noreferrer\">DeviceTimer 对照 ↗</a>",
+  "[data-i18n=\"dp-trace\"]": "<strong>3. 沿控制面追踪请求。</strong> 串联客户端 POST、Tokenizer、DataParallelController 与 scheduler 准入，发现生成式探活先经过 DPC，推进共享用户轮转或影响负载预算，之后才可能被忙碌的 scheduler 跳过。补丁隔离探活分发状态，保留显式 rank 与 P/D 路由。8 月 18 日先提交症状报告，8 月 20 日定位触发条件并提交补丁。<a class=\"inline-link\" href=\"https://github.com/sgl-project/sglang/issues/35241#issuecomment-5354692736\" target=\"_blank\" rel=\"noreferrer\">探活触发证据 ↗</a>",
+  "[data-i18n=\"dp-ab-copy\"]": "<strong>4. 用 2×2 消融验证根因。</strong> 8 月 26 日固定镜像、负载、DP Attention、PrefillDelayer 与外部 <code>GET /health</code> 轮询，每轮重启服务，只切换补丁和生成式探活请求的创建。<a class=\"inline-link\" href=\"https://github.com/sgl-project/sglang/issues/35241#issuecomment-5422094664\" target=\"_blank\" rel=\"noreferrer\">四臂实验 ↗</a>",
+  "[data-i18n=\"dp-ab-scope\"]": "8×B300 · DeepSeek-V4-Pro · TP8/DP8 · 60k 输入 / 1 输出 · C16 · 160 请求",
+  "[data-i18n=\"dp-ab-arm\"]": "配置",
+  "[data-i18n=\"dp-ab-result\"]": "轮次结果",
+  "[data-i18n=\"dp-ab-tps\"]": "输入 tok/s",
+  "[data-i18n=\"dp-ab-a1\"]": "原始代码 + 生成式探活开",
+  "[data-i18n=\"dp-ab-a1-outcome\"]": "2/8 异常",
+  "[data-i18n=\"dp-ab-a2\"]": "原始代码 + 生成式探活关",
+  "[data-i18n=\"dp-ab-b1\"]": "修复后 + 生成式探活开",
+  "[data-i18n=\"dp-ab-b2\"]": "修复后 + 生成式探活关",
+  "[data-i18n=\"dp-inventory\"]": "<strong>复盘时才补齐的定位线索。</strong> 严重 LOW 的活跃窗口内，跨 rank 的 scheduler running 请求总数中位数为 <strong>48</strong>，健康对照为 <strong>72–80</strong>。这里统计调度器在途请求数，和 kernel batch 维度分别计算。较轻的 LOW 仍可达到 80，因此用逐 rank dispatch 与四臂消融确认因果。修复后的健康轮次仍会出现 Delayer timeout。<a class=\"inline-link\" href=\"https://github.com/sgl-project/sglang/issues/35241#issuecomment-5488710824\" target=\"_blank\" rel=\"noreferrer\">修订后的机制 ↗</a>"
 };
     const bilingual=Object.entries(zh).map(([selector,value])=>{
       const element=document.querySelector(selector); if(!element)return null;
