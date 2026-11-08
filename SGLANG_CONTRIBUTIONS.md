@@ -30,6 +30,8 @@ The [PP Stream case study](https://phoenix3334.github.io/#project-pp-lifetime) c
 | [#32183 — verifier state rewrite window](https://github.com/sgl-project/sglang/pull/32183) | Formal COMMENTED review clarifying that this is a separate correctness layer; I did not run an isolated A/B of this fix. | **Open**, authored by **slchenchn**. Review participation does not imply approval or validated speedup. |
 | [#39487 — DCP retraction index localisation](https://github.com/sgl-project/sglang/pull/39487) | Reported [#38645](https://github.com/sgl-project/sglang/issues/38645), diagnosed the logical-to-local MLA KV mapping, implemented and validated [draft #38790](https://github.com/sgl-project/sglang/pull/38790). Unpatched DCP8 failed at first retraction; patched local stack completed 2,048 requests with 8 retractions. | **Merged**, integrated by **kpham-sgl** with shared layout and compatibility handling. #38790 closed as superseded; local results are not tests of the final upstream head. |
 
+The [DSpark case study](https://phoenix3334.github.io/#project-dspark-review) connects my original replay and startup reports, 120-trial TP consistency validation, four-arm startup isolation and single-GPU A/B/C review. It also separates the 18,560-request backport replay sweep from the forced-ragged coverage probe. [Roadmap and test records](https://github.com/sgl-project/sglang/issues/34297).
+
 ## Authored open work
 
 | PR | Focus | Current status |
