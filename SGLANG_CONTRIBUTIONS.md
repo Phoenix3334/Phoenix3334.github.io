@@ -6,7 +6,7 @@ Development branches live in the [SGLang fork](https://github.com/Phoenix3334/sg
 
 [Portfolio](https://phoenix3334.github.io/) · [All authored SGLang PRs](https://github.com/sgl-project/sglang/pulls?q=is%3Apr+author%3APhoenix3334) · [Formal reviews](https://github.com/sgl-project/sglang/pulls?q=is%3Apr+reviewed-by%3APhoenix3334+-author%3APhoenix3334)
 
-Status checked **2 November 2026**: **2 authored merged PRs, 8 authored open PRs, and formal reviews on 2 other authors' PRs**. The two closed, unmerged authored drafts are retained below as investigation history. These counts refer to SGLang, not all repositories.
+Status checked **8 November 2026**. This index lists **four authored merged SGLang PRs**, selected open work, and separately attributed technical reviews and collaborative fixes.
 
 ## Authored and merged
 
@@ -14,6 +14,9 @@ Status checked **2 November 2026**: **2 authored merged PRs, 8 authored open PRs
 | --- | --- | --- |
 | [#47614 — PP proxy tensor stream lifetime](https://github.com/sgl-project/sglang/pull/47614) | Traced output corruption at deeper PP queues to allocator reuse of received tensors before queued forward-stream reads. Added `record_stream(self.forward_stream)` at the shared PP launch boundary. **Merged 2 Nov 2026.** | B300 Kimi-K3 tests used v0.5.22 and fake PD transfer across PP2/PP4 and DCP combinations. Retained checksum probes support the lifetime diagnosis. Real two-node PD is outside the reported coverage; no throughput gain is claimed from corrupted baseline output. |
 | [#35721 — DP health routing isolation](https://github.com/sgl-project/sglang/pull/35721) | Isolated health-check routing and load-budget bookkeeping from user dispatch. Authored implementation and regression tests. **Merged 11 Oct 2026; included in v0.5.22.** | Patched/unpatched × health-on/off B300 controls; four patched health-on repetitions recovered the expected throughput range. The rebased CPU file passed 30 tests; B300 evidence predates that rebase. |
+
+| [#43786 — inverse RoPE + FP8 quantization](https://github.com/sgl-project/sglang/pull/43786) | Fused inverse RoPE into CUDA UE8M0 FP8 activation quantization, preserving BF16 rounding and packed scales. **Merged 4 Nov 2026.** | Upstream B200 numerical and replay kernel tests: 7/7. The historical B300 backport measured +1.61% Prefill throughput. Full-model performance of the final upstream implementation remains unmeasured. |
+| [#48404 — EPLB recorder compatibility](https://github.com/sgl-project/sglang/pull/48404) | Reproduced an assertion at first rebalance and moved incompatible `per_pass` / `per_token` configuration rejection to startup. **Merged 7 Nov 2026.** | On the tested v0.5.23 local stack, 4×B300 verified startup rejection for the invalid mode and a successful rebalance/generate path with `stat`. |
 
 ## Technical review and collaborative repairs
 
@@ -27,16 +30,17 @@ Status checked **2 November 2026**: **2 authored merged PRs, 8 authored open PRs
 
 | PR | Focus | Current status |
 | --- | --- | --- |
-| [#43786](https://github.com/sgl-project/sglang/pull/43786) | DeepSeek-V4 inverse-RoPE + FP8 quantisation fusion | Open |
-| [#45371](https://github.com/sgl-project/sglang/pull/45371) | Default protection against NCCL graph registration for DCP a2a | Open |
-| [#45824](https://github.com/sgl-project/sglang/pull/45824) | Persistent graph-captured DCP exchange buffers | Open; alternative to #45371 |
 | [#45384](https://github.com/sgl-project/sglang/pull/45384) | Lazy CUDA VMM multimodal transport initialisation | Open |
 | [#45584](https://github.com/sgl-project/sglang/pull/45584) | Serialise multi-tokenizer general warmups | Open; distinct from lazy transport initialisation |
 | [#44472](https://github.com/sgl-project/sglang/pull/44472) | Detect MNNVL fabric independently of GPU names | Draft |
 | [#34286](https://github.com/sgl-project/sglang/pull/34286) | Breakable CUDA Graph warmup-to-capture ordering | Open |
 | [#34410](https://github.com/sgl-project/sglang/pull/34410) | DSpark P/D decode draft-input handoff regression | Open; regression coverage, not a new support claim |
 
-## Investigation history
+## Serving diagnostics and investigation history
+
+- [RFC #44697](https://github.com/sgl-project/sglang/issues/44697): production expert placement and synthetic routing diagnostics for Prefill. The real-token V4.1-Flash follow-up records rank-count CV, MegaMoE duration, input throughput and GPU timelines separately.
+- [Issue #45367](https://github.com/sgl-project/sglang/issues/45367): two-node GB300 DCP graph replay investigation. The [registration guard #45371](https://github.com/sgl-project/sglang/pull/45371) and [persistent buffer proposal #45824](https://github.com/sgl-project/sglang/pull/45824) were closed unmerged.
+- [#48514](https://github.com/sgl-project/sglang/pull/48514): test import adjustment, closed unmerged.
 
 - [#31455](https://github.com/sgl-project/sglang/pull/31455): closed, unmerged diagnostic draft for DSpark replay synchronisation.
 - [#38790](https://github.com/sgl-project/sglang/pull/38790): closed, unmerged implementation draft superseded by #39487.

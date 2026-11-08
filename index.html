@@ -118,9 +118,9 @@
     <div class="hero wrap"><div>
       <p class="eyebrow" data-i18n="hero-kicker">AI Infrastructure · LLM Inference Engineering</p>
       <h1 data-i18n="hero-title">From inference performance to <em>infrastructure decisions.</em></h1>
-      <p class="hero-lede" data-i18n="hero-lede">I am Feihong Guo, working on <strong>SGLang serving performance and runtime correctness</strong> at Baidu AI Cloud. On B300 and GB300, I deploy and evaluate DeepSeek-V4-Pro and Kimi K3, investigate Prefill/Decode bottlenecks, and contribute upstream repairs. The goal is to turn measured serving capability into defensible capacity, resource, and cost decisions.</p>
+      <p class="hero-lede" data-i18n="hero-lede">I am Feihong Guo. During my AI Infrastructure internship at Baidu AI Cloud, I benchmarked and tuned <strong>SGLang serving for DeepSeek-V4-Pro, V4.1-Flash and Kimi K3</strong> across H200, B300 and GB300. I used workload measurements to compare deployments, size Prefill and Decode capacity, and trace performance and correctness failures to the runtime.</p>
       <p class="hero-thesis" data-i18n="hero-thesis">Deploy → measure → explain → improve → validate → size.<br><em>Throughput, latency, correctness, and stability belong in the same decision.</em></p>
-      <p class="hero-evidence" data-i18n="hero-upstream"><strong>Authored &amp; merged in SGLang:</strong> <a href="https://github.com/sgl-project/sglang/pull/47614" target="_blank" rel="noreferrer">PP tensor lifetime #47614</a> · <a href="https://github.com/sgl-project/sglang/pull/35721" target="_blank" rel="noreferrer">DP health routing #35721</a></p>
+      <p class="hero-evidence" data-i18n="hero-upstream"><strong>Authored and merged in SGLang</strong> · <a href="https://github.com/sgl-project/sglang/pull/35721" target="_blank" rel="noreferrer">DP health routing #35721</a> · <a href="https://github.com/sgl-project/sglang/pull/47614" target="_blank" rel="noreferrer">PP stream lifetime #47614</a> · <a href="https://github.com/sgl-project/sglang/pull/43786" target="_blank" rel="noreferrer">FP8 fusion #43786</a> · <a href="https://github.com/sgl-project/sglang/pull/48404" target="_blank" rel="noreferrer">EPLB validation #48404</a></p>
       <div class="hero-actions"><a href="#opensource" data-i18n="hero-action-work">SGLang engineering work ↓</a><a href="#economics" data-i18n="hero-action-tco">Capacity and cost methodology ↓</a></div>
       <div class="hero-line"><span class="tag">SGLang</span><span class="tag">Distributed LLM Serving</span><span class="tag">GPU / NPU Performance</span><span class="tag">Capacity &amp; TCO</span></div>
     </div><figure class="portrait"><img src="https://avatars.githubusercontent.com/u/174691475?v=4" alt="Feihong Guo"><figcaption data-i18n="portrait-caption">Feihong Guo · 郭飞鸿<br>Zhengzhou University · AI Infrastructure</figcaption></figure></div>
@@ -128,11 +128,11 @@
       <div class="wrap">
         <div class="section-head">
           <div><p class="eyebrow" data-i18n="sglang-kicker">Baidu AI Cloud · SGLang</p><h2 data-i18n="sglang-title">Serving performance.<br>Runtime correctness.</h2></div>
-          <p data-i18n="sglang-intro">My core work connects deployment and measurement to production runtime behaviour: DP request routing, pipeline and communication buffer lifetime, KV-state recovery, and speculative execution. Two authored fixes are merged; formal reviews and collaborative repairs carry their own attribution.</p>
+          <p data-i18n="sglang-intro">I reproduce serving failures with controlled workloads, trace them through scheduling and device execution, and carry verified repairs upstream. My four merged PRs cover DP routing, PP tensor lifetime, FP8 kernel fusion and EPLB configuration validation.</p>
         </div>
 
         <div class="upstream-summary" aria-label="Selected SGLang contribution roles">
-          <div><h3 data-i18n="summary-authored">Authored · merged</h3><p data-i18n="summary-authored-copy"><a href="https://github.com/sgl-project/sglang/pull/47614" target="_blank" rel="noreferrer">#47614</a> PP tensor lifetime<br><a href="https://github.com/sgl-project/sglang/pull/35721" target="_blank" rel="noreferrer">#35721</a> DP health-routing isolation</p></div>
+          <div><h3 data-i18n="summary-authored">Authored · merged</h3><p data-i18n="summary-authored-copy"><a href="https://github.com/sgl-project/sglang/pull/35721" target="_blank" rel="noreferrer">#35721</a> DP health routing<br><a href="https://github.com/sgl-project/sglang/pull/47614" target="_blank" rel="noreferrer">#47614</a> PP stream lifetime<br><a href="https://github.com/sgl-project/sglang/pull/43786" target="_blank" rel="noreferrer">#43786</a> FP8 fusion<br><a href="https://github.com/sgl-project/sglang/pull/48404" target="_blank" rel="noreferrer">#48404</a> EPLB validation</p></div>
           <div><h3 data-i18n="summary-review">Formal technical reviews</h3><p data-i18n="summary-review-copy"><a href="https://github.com/sgl-project/sglang/pull/32467#pullrequestreview-4896206171" target="_blank" rel="noreferrer">#32467</a> planner-race repair · merged<br><a href="https://github.com/sgl-project/sglang/pull/32183#pullrequestreview-4897392620" target="_blank" rel="noreferrer">#32183</a> verifier window · open</p></div>
           <div><h3 data-i18n="summary-collab">Collaborative repair · merged</h3><p data-i18n="summary-collab-copy"><a href="https://github.com/sgl-project/sglang/pull/39487" target="_blank" rel="noreferrer">#39487</a> DCP KV recovery<br>My diagnosis, draft fix, and validation; maintainer integration.</p></div>
         </div>
@@ -180,8 +180,8 @@
           <div class="open-project-index" data-i18n="gb-index">05 · DISTRIBUTED COMMUNICATION</div>
           <div class="open-project-copy">
             <div class="project-title"><img class="project-logo" src="https://github.com/sgl-project.png?size=88" alt="SGLang"><h3><a href="https://github.com/sgl-project/sglang/issues/45367" target="_blank" rel="noreferrer" data-i18n="gb-title">GB300 DCP: CUDA Graph and communication buffer lifetime ↗</a></h3></div>
-            <p data-i18n="gb-copy">Investigated corrupted Kimi K3 output in graph-captured DCP all-to-all on a two-node GB300 deployment. Implemented two alternative repairs: a graph-registration startup guard (<a class="inline-link" href="https://github.com/sgl-project/sglang/pull/45371" target="_blank" rel="noreferrer">#45371</a>) and persistent exchange buffers (<a class="inline-link" href="https://github.com/sgl-project/sglang/pull/45824" target="_blank" rel="noreferrer">#45824</a>). Controlled registration × buffer-lifetime comparisons restored coherent output; both PRs remain open while experiments and upstream review continue.</p>
-            <details class="work-detail"><summary data-i18n="gb-summary">Validation completed and what remains open</summary><div class="detail-body"><p data-i18n="gb-detail">The persistent-buffer PR head 9cb1de5 completed the two-node 12-prompt probe with 12/12 correct outputs and no degenerate outputs, with registration enabled and the startup guard absent. Focused DCP regression tests passed: 23 tests plus 5 subtests. The guard policy also completed a separate 640/640-request run on the previously failing deployment; that result is not validation of its later merge-updated head.</p><p class="boundary" data-i18n="gb-boundary">The PRs are alternatives for one failure, not two fixes to stack. Evidence isolates the registration × temporary-buffer-lifetime interaction on the reported deployment; the exact transient replay-time clobber has not been observed. Local validation does not imply upstream CI completion or a merged fix.</p></div></details>
+            <p data-i18n="gb-copy">Investigated corrupted Kimi K3 output in graph-captured DCP all-to-all on two-node GB300. Tested a registration guard (<a href="https://github.com/sgl-project/sglang/pull/45371" target="_blank" rel="noreferrer">#45371</a>) and persistent buffers (<a href="https://github.com/sgl-project/sglang/pull/45824" target="_blank" rel="noreferrer">#45824</a>) as alternatives. Both proposals closed unmerged. The <a href="https://github.com/sgl-project/sglang/issues/45367" target="_blank" rel="noreferrer">issue</a> retains the controlled evidence.</p>
+            <details class="work-detail"><summary data-i18n="gb-summary">Validation scope of the two proposals</summary><div class="detail-body"><p data-i18n="gb-detail">The persistent-buffer PR head 9cb1de5 completed the two-node 12-prompt probe with 12/12 correct outputs and no degenerate outputs, with registration enabled and the startup guard absent. Focused DCP regression tests passed: 23 tests plus 5 subtests. The guard policy also completed a separate 640/640-request run on the previously failing deployment; that result is not validation of its later merge-updated head.</p><p class="boundary" data-i18n="gb-boundary">The PRs are alternatives for one failure, not two fixes to stack. Evidence isolates the registration × temporary-buffer-lifetime interaction on the reported deployment; the exact transient replay-time clobber has not been observed. Local validation does not imply upstream CI completion or a merged fix.</p></div></details>
           </div>
           <div class="open-project-proof"><strong>12 / 12</strong><span data-i18n="gb-probe">correct outputs · tested persistent-buffer head</span><strong>23 + 5</strong><span data-i18n="gb-tests">focused tests + subtests · local GPU validation</span></div>
         </article>
@@ -195,22 +195,23 @@
             <div class="method"><div><span>01</span><strong>Reproduce</strong></div><div><span>02</span><strong>Isolate</strong></div><div><span>03</span><strong>Validate</strong></div><div><span>04</span><strong>Upstream</strong></div></div>
           </div>
           <div class="contributions">
-            <h4 class="contribution-group" data-i18n="group-merged">Authored fixes · merged</h4>
+            <h4 class="contribution-group" data-i18n="group-merged">Authored contributions · merged</h4>
             <a class="contribution" data-record="pr-47614" href="https://github.com/sgl-project/sglang/pull/47614" target="_blank" rel="noreferrer"><div class="contribution-meta"><span>PR #47614</span><span data-i18n="status-pr-47614" class="status-merged">Authored · merged · 2 Nov 2026</span></div><h3 data-i18n="title-pr-47614">Record received PP tensors on the forward stream</h3></a>
             <a class="contribution" data-record="pr-35721" href="https://github.com/sgl-project/sglang/pull/35721" target="_blank" rel="noreferrer"><div class="contribution-meta"><span>PR #35721</span><span data-i18n="status-35721" class="status-merged">Authored · merged · v0.5.22</span></div><h3>Separate generation health state from user dispatch</h3></a>
+            <a class="contribution" data-record="pr-43786" href="https://github.com/sgl-project/sglang/pull/43786" target="_blank" rel="noreferrer"><div class="contribution-meta"><span>PR #43786</span><span data-i18n="status-43786" class="status-merged">Authored · merged · 4 Nov 2026</span></div><h3 data-i18n="record-43786">Fuse inverse RoPE into CUDA FP8 wo_a quantization</h3></a>
+            <a class="contribution" data-record="pr-48404" href="https://github.com/sgl-project/sglang/pull/48404" target="_blank" rel="noreferrer"><div class="contribution-meta"><span>PR #48404</span><span data-i18n="status-48404" class="status-merged">Authored · merged · 7 Nov 2026</span></div><h3 data-i18n="record-48404">Reject incompatible EPLB recorder modes at startup</h3></a>
             <h4 class="contribution-group" data-i18n="group-reviewed">Technical reviews & collaborative repair</h4>
             <a class="contribution" data-record="pr-32467" href="https://github.com/sgl-project/sglang/pull/32467#discussion_r3749014153" target="_blank" rel="noreferrer"><div class="contribution-meta"><span>PR #32467</span><span data-i18n="status-32467" class="status-merged">Technical review & causal validation · merged</span></div><h3>My technical review of the final no-init fix ↗</h3></a>
             <a class="contribution" data-record="review-32183" href="https://github.com/sgl-project/sglang/pull/32183#pullrequestreview-4897392620" target="_blank" rel="noreferrer"><div class="contribution-meta"><span>Review · PR #32183</span><span data-i18n="status-review-32183">Formal COMMENTED review · PR open</span></div><h3 data-i18n="title-review-32183">Separate verifier-window correctness from other DSpark failures</h3></a>
             <a class="contribution" data-record="pr-39487" href="https://github.com/sgl-project/sglang/pull/39487" target="_blank" rel="noreferrer"><div class="contribution-meta"><span>PR #39487</span><span data-i18n="status-39487" class="status-merged">Collaborative fix · maintainer-authored · merged</span></div><h3>Land the DCP retraction fix following my report and draft</h3></a>
             <h4 class="contribution-group" data-i18n="group-open">Authored engineering work · open</h4>
-            <a class="contribution" data-record="pr-45371" href="https://github.com/sgl-project/sglang/pull/45371" target="_blank" rel="noreferrer"><div class="contribution-meta"><span>PR #45371</span><span data-i18n="status-45371">Authored alternative guard · open</span></div><h3 data-i18n="record-45371">Default DCP a2a registration protection</h3></a>
-            <a class="contribution" data-record="pr-45824" href="https://github.com/sgl-project/sglang/pull/45824" target="_blank" rel="noreferrer"><div class="contribution-meta"><span>PR #45824</span><span data-i18n="status-45824">Authored alternative lifetime fix · open</span></div><h3 data-i18n="record-45824">Retain DCP all-to-all buffers across graph replay</h3></a>
-            <a class="contribution" data-record="pr-43786" href="https://github.com/sgl-project/sglang/pull/43786" target="_blank" rel="noreferrer"><div class="contribution-meta"><span>PR #43786</span><span data-i18n="status-43786">Authored CUDA kernel fusion · open</span></div><h3 data-i18n="record-43786">Fuse inverse RoPE with FP8 activation quantization</h3></a>
             <a class="contribution" data-record="pr-45384" href="https://github.com/sgl-project/sglang/pull/45384" target="_blank" rel="noreferrer"><div class="contribution-meta"><span>PR #45384</span><span data-i18n="status-pr-45384">Authored · open</span></div><h3 data-i18n="title-pr-45384">Lazily initialise CUDA VMM multimodal transport</h3></a>
             <a class="contribution" data-record="pr-45584" href="https://github.com/sgl-project/sglang/pull/45584" target="_blank" rel="noreferrer"><div class="contribution-meta"><span>PR #45584</span><span data-i18n="status-pr-45584">Authored · open</span></div><h3 data-i18n="title-pr-45584">Serialise multi-tokenizer general warmups</h3></a>
             <a class="contribution" data-record="pr-34410" href="https://github.com/sgl-project/sglang/pull/34410" target="_blank" rel="noreferrer"><div class="contribution-meta"><span>PR #34410</span><span data-i18n="status-34410">Authored tests · open</span></div><h3>Pin the P/D decode draft-input handoff contract</h3></a>
             <a class="contribution" data-record="pr-34286" href="https://github.com/sgl-project/sglang/pull/34286" target="_blank" rel="noreferrer"><div class="contribution-meta"><span>PR #34286</span><span data-i18n="status-34286">Authored patch · open</span></div><h3>Synchronize graph construction after final warmup</h3></a>
             <h4 class="contribution-group" data-i18n="group-investigation">Investigation, RFCs & supporting records</h4>
+            <a class="contribution" data-record="pr-45371" href="https://github.com/sgl-project/sglang/pull/45371" target="_blank" rel="noreferrer"><div class="contribution-meta"><span>PR #45371</span><span data-i18n="status-45371">Authored investigation · closed unmerged</span></div><h3 data-i18n="record-45371">DCP graph-registration guard</h3></a>
+            <a class="contribution" data-record="pr-45824" href="https://github.com/sgl-project/sglang/pull/45824" target="_blank" rel="noreferrer"><div class="contribution-meta"><span>PR #45824</span><span data-i18n="status-45824">Authored investigation · closed unmerged</span></div><h3 data-i18n="record-45824">Persistent DCP all-to-all buffers</h3></a>
             <a class="contribution" data-record="issue-31023" href="https://github.com/sgl-project/sglang/issues/31023" target="_blank" rel="noreferrer"><div class="contribution-meta"><span>Issue #31023</span><span data-i18n="status-issue-31023">Authored report & evidence · closed</span></div><h3>Isolate DSpark target-verify replay failures on TP8</h3></a>
             <a class="contribution" data-record="issue-33356" href="https://github.com/sgl-project/sglang/issues/33356" target="_blank" rel="noreferrer"><div class="contribution-meta"><span>Issue #33356</span><span data-i18n="status-issue-33356">Authored report & validation · closed</span></div><h3>Separate plan-kernel corruption from graph capture ordering</h3></a>
             <a class="contribution" data-record="issue-34297" href="https://github.com/sgl-project/sglang/issues/34297" target="_blank" rel="noreferrer"><div class="contribution-meta"><span>Roadmap #34297</span><span data-i18n="status-issue-34297">Authored investigation roadmap · closed</span></div><h3>Organize DSpark correctness contracts and validation gates</h3></a>
@@ -218,7 +219,7 @@
             <a class="contribution" data-record="issue-38645" href="https://github.com/sgl-project/sglang/issues/38645" target="_blank" rel="noreferrer"><div class="contribution-meta"><span>Issue #38645</span><span data-i18n="status-issue-38645">Authored report & root-cause analysis · closed</span></div><h3>Trace the DCP retraction logical-to-local KV index mismatch</h3></a>
             <a class="contribution" data-record="issue-44697" href="https://github.com/sgl-project/sglang/issues/44697" target="_blank" rel="noreferrer"><div class="contribution-meta"><span>SGLang RFC #44697</span><span data-i18n="status-44697">Authored profiling proposal · open</span></div><h3 data-i18n="eplb-rfc-record">Separate routing imbalance from placement and serving costs</h3></a>
             <a class="contribution" data-record="eplb-29" href="https://github.com/deepseek-ai/EPLB/issues/29" target="_blank" rel="noreferrer"><div class="contribution-meta"><span>DeepSeek EPLB #29</span><span data-i18n="status-eplb-29">Authored evaluation discussion · open</span></div><h3 data-i18n="eplb-question-record">Discuss replica costs and the boundary with model routing</h3></a>
-            <p class="record-note" data-i18n="records-date">PR states checked 2 November 2026. <a class="inline-link" href="https://github.com/Phoenix3334/Phoenix3334.github.io/blob/main/SGLANG_CONTRIBUTIONS.md" target="_blank" rel="noreferrer">Full contribution index ↗</a></p>
+            <p class="record-note" data-i18n="records-date">PR states checked 8 November 2026. <a class="inline-link" href="https://github.com/Phoenix3334/Phoenix3334.github.io/blob/main/SGLANG_CONTRIBUTIONS.md" target="_blank" rel="noreferrer">Full contribution index ↗</a></p>
           </div>
         </div>
 
@@ -229,8 +230,8 @@
     <section id="internship">
       <div class="wrap">
         <div class="section-head">
-          <div><p class="eyebrow" data-i18n="internship-eyebrow">SGLang deployment &amp; performance</p><h2 data-i18n="internship-title">Characterise the workload.<br>Measure the serving envelope.</h2></div>
-          <p data-i18n="internship-intro">Phase-isolated benchmarks, concurrency sweeps, capacity models, and profiler evidence help explain the cost of a serving configuration. Each result retains its workload, stack, and measurement boundary.</p>
+          <div><p class="eyebrow" data-i18n="internship-eyebrow">SGLang deployment &amp; performance</p><h2 data-i18n="internship-title">Serving benchmarks and deployment choices</h2></div>
+          <p data-i18n="internship-intro">Built reproducible phase-isolated and end-to-end benchmarks across input/output lengths and concurrency. Compared TP, PP, EP, CP/DCP, DP Attention, EAGLE3/DSpark, EPLB, CUDA Graph and Chunked Prefill. Used KV cache and Mamba state pools, MRR/MF and memory pressure to identify feasible configurations.</p>
         </div>
         <article class="lab-note phase-note">
           <div class="note-heading"><span class="note-number">01</span><h3 data-i18n="phase-title">Long-context serving: selected measured results</h3></div>
@@ -243,13 +244,15 @@
                 <tr><th scope="row" data-i18n="b-p60-platform">B300 · Prefill</th><td data-i18n="b-p60-condition">60k input / 1 output token · SGLang 0.5.22</td><td><strong>95.44k</strong><span data-i18n="b-p60-unit">input tok/s</span></td></tr>
                 <tr><th scope="row" data-i18n="gb-p60-platform">GB300 · Prefill</th><td data-i18n="gb-p60-condition">60k input / 1 output token · SGLang 0.5.22</td><td><strong>117.83k</strong><span data-i18n="gb-p60-unit">input tok/s</span></td></tr>
                 <tr><th scope="row" data-i18n="gb-p128-platform">GB300 · Prefill</th><td data-i18n="gb-p128-condition">128k input / 1 output token · SGLang 0.5.22</td><td><strong>100.27k</strong><span data-i18n="gb-p128-unit">input tok/s</span></td></tr>
+                 <tr><th scope="row">B300 · Decode</th><td data-i18n="ar-b300">60k input / 1k output · tuned AR operating point</td><td><strong>43.74k</strong><span>output tok/s</span></td></tr>
+                 <tr><th scope="row">GB300 · Decode</th><td data-i18n="ar-gb300">60k input / 1k output · tuned AR operating point</td><td><strong>46.09k</strong><span>output tok/s</span></td></tr>
                 <tr><th scope="row" data-i18n="b-d60-platform">B300 · Decode</th><td data-i18n="b-d60-condition">60k input / 1k output · AR → EAGLE · SGLang 0.5.14 → 0.5.22</td><td><strong>32.88k → 46.81k</strong><span data-i18n="b-d60-unit">output tok/s · +42.4% combined</span></td></tr>
                 <tr><th scope="row" data-i18n="b-d128-platform">B300 · Decode</th><td data-i18n="b-d128-condition">128k input / 1k output · AR → EAGLE · SGLang 0.5.14 → 0.5.22</td><td><strong>20.34k → 36.49k</strong><span data-i18n="b-d128-unit">output tok/s · +79.4% combined</span></td></tr>
                 <tr><th scope="row" data-i18n="gb-d60-platform">GB300 · Decode</th><td data-i18n="gb-d60-condition">60k input / 1k output · EAGLE · tuned SGLang 0.5.17</td><td><strong>48.01k</strong><span data-i18n="gb-d60-unit">output tok/s</span></td></tr>
               </tbody>
             </table>
           </div>
-          <p class="boundary" data-i18n="phase-boundary">Decode speculation uses a fixed simulated acceptance rate of about 0.70 (mean accepted length about 3.10). AR-to-EAGLE results include version and capacity/concurrency changes; they are combined configuration comparisons, not isolated patch gains. Prefill and Decode are separate tests, and the GB300 result is not a matched hardware speedup or a measured cost reduction.</p>
+          <p class="boundary" data-i18n="phase-boundary">The tuned AR rows are separate recorded operating points. The version-spanning AR → EAGLE rows retain their own starting points and include capacity and concurrency changes. EAGLE uses fixed simulated acceptance ≈0.70 (mean accepted length ≈3.10).</p>
           <details class="work-detail"><summary data-i18n="phase-summary">How a performance anomaly became a routing-state investigation</summary><div class="detail-body"><p data-i18n="phase-discovery">Repeated Prefill runs exposed intermittent low-throughput behavior. I isolated generation-health traffic as a trigger, then traced how health dispatch mutated the Data Parallel Controller state also used by user requests. A patched/unpatched × health-on/off comparison made the causal test explicit. The fix, merged into SGLang main on 11 October 2026, separates health routing and load-budget bookkeeping from user dispatch.</p><a class="inline-link" href="https://github.com/sgl-project/sglang/pull/35721" target="_blank" rel="noreferrer" data-i18n="health-evidence">Public A/B evidence and merged fix · PR #35721 ↗</a></div></details>
         </article>
         <div class="note-grid">
@@ -260,21 +263,25 @@
           </article>
           <article class="lab-note">
             <div class="note-heading"><span class="note-number">03</span><h3 data-i18n="parallel-title">Parallelism is a workload decision</h3></div>
-            <p data-i18n="parallel-copy">Compared DP Attention and context parallelism across load regimes. In a separate CP8 low-latency configuration on GB300, median TTFT was <strong>0.666 s at 60k</strong> and <strong>1.516 s at 128k</strong> input, each with one output token. These are separate operating points from the high-throughput Prefill rows.</p>
-            <p class="boundary" data-i18n="parallel-boundary">Peak capacity, peak throughput, and minimum latency are different objectives. Version upgrades and larger batches are evaluated per workload rather than assumed to improve every case.</p>
+            <p data-i18n="parallel-copy">Compared TP8/DP8 and TP8/CP8 for DeepSeek-V4-Pro, and TP8/EP8/MegaMoE and PP8 for Kimi K3. A separate GB300 CP8 V4-Pro Prefill configuration measured median TTFT of <strong>0.666 s at 60k</strong> and <strong>1.516 s at 128k</strong> input, with one output token.</p>
+            <p class="boundary" data-i18n="parallel-boundary">Select hardware and parallel layout against the target workload and SLO. Compare throughput, TTFT/TPOT and resource use at the qualifying operating point.</p>
           </article>
         </div>
         <article class="lab-note" id="eplb-investigation">
           <div class="note-heading"><span class="note-number">04</span><h3 data-i18n="eplb-title">EPLB: measure balance, then test throughput</h3></div>
-          <p data-i18n="eplb-copy">Investigated DeepSeek-V4-Pro Prefill imbalance on a single eight-GPU B300 node with SGLang/MegaMoE. I compared expert placement and rebalancing, recorded expert loads, and profiled execution and communication. The investigation separated <strong>logical expert popularity, physical placement and replica dispatch, kernel block rounding, and request-supply gaps</strong>, so a better token-count balance would not be mistaken for an end-to-end speedup.</p>
-          <p class="boundary" data-i18n="eplb-result">Result: a placement-only experiment improved physical-rank token balance while logical expert counts stayed unchanged. It used no extra expert replicas. Clean held-out validation remains incomplete, so I claim no validated throughput gain or limit on EPLB's potential.</p>
-          <details class="work-detail"><summary data-i18n="eplb-summary">What the experiment changed about the next step</summary><div class="detail-body"><p data-i18n="eplb-detail">Earlier request-path confounds prevented a clean end-to-end conclusion. CPU top-k also failed to reproduce GPU routing reliably near ties, so bias perturbations were not established as safe optimizations. I proposed a serving-level production-versus-synthetic-balanced routing comparison in SGLang, and asked DeepSeek about placement, replica-aware cost models, and the boundary with model-level routing. These are open proposals; a synthetic balanced result would be a profiling reference, not a quality-preserving optimization.</p><a class="inline-link" href="https://github.com/sgl-project/sglang/issues/44697" target="_blank" rel="noreferrer" data-i18n="eplb-rfc-link">My SGLang profiling RFC · #44697 ↗</a> · <a class="inline-link" href="https://github.com/deepseek-ai/EPLB/issues/29" target="_blank" rel="noreferrer" data-i18n="eplb-question-link">My DeepSeek EPLB discussion · #29 ↗</a></div></details>
+          <p data-i18n="eplb-copy">Separated logical expert popularity, physical placement, replica dispatch, padding and kernel time. Earlier V4-Pro B300 work motivated a follow-up on real-token V4.1-Flash 64K/C32 Prefill workloads.</p>
+          <p class="boundary" data-i18n="eplb-result">In the reported V4.1-Flash comparison, frozen placement lowered rank-count CV from <strong>0.149 to 0.047</strong> and average MegaMoE duration from <strong>7.512 to 7.180 ms</strong>. Input throughput rose <strong>0.95%</strong>, compared with <strong>1.01%</strong> for the synthetic balanced-routing diagnostic.</p>
+          <details class="work-detail"><summary data-i18n="eplb-summary">Routing diagnostics and recorder validation</summary><div class="detail-body"><p data-i18n="eplb-detail">The uniform-routing arm changes logical expert selection and serves as a performance diagnostic. The RFC records its measurement boundaries. Separately, <a class="inline-link" href="https://github.com/sgl-project/sglang/pull/48404" target="_blank" rel="noreferrer">#48404</a> rejects incompatible recorder modes at startup after an online rebalance crash was reproduced.</p><a class="inline-link" href="https://github.com/sgl-project/sglang/issues/44697" target="_blank" rel="noreferrer" data-i18n="eplb-rfc-link">My SGLang profiling RFC · #44697 ↗</a> · <a class="inline-link" href="https://github.com/deepseek-ai/EPLB/issues/29" target="_blank" rel="noreferrer" data-i18n="eplb-question-link">My DeepSeek EPLB discussion · #29 ↗</a></div></details>
         </article>
         <article class="lab-note" id="component-analysis">
-          <div class="note-heading"><span class="note-number">05</span><h3 data-i18n="component-title">Component baselines and local kernel optimization</h3></div>
-          <p data-i18n="component-copy">Designed MegaMoE tests across model shapes, batch/token counts, and fast-math settings, using nsys/NCU to analyze compute, memory, and communication. The fused chain measured <strong>1.51–1.87×</strong> against the original FFN path; a separate small-batch point reached about <strong>5.1 TB/s</strong> HBM bandwidth. June component baselines informed independently designed September EPLB retests and serving-level comparisons.</p>
-          <p data-i18n="fusion-copy">Implemented inverse-RoPE + FP8 quantization fusion in the CUDA attention path. The earlier SGLang 0.5.17-derived B300 comparison measured <strong>+1.63% input throughput</strong> at 60k input / 1 output token, with FP8 codes and scales byte-identical in numerical tests. The public upstream port is <a class="inline-link" href="https://github.com/sgl-project/sglang/pull/43786" target="_blank" rel="noreferrer">PR #43786 ↗</a>.</p>
-          <p class="boundary" data-i18n="component-boundary">Component speedups and HBM points are separate from whole-model gains. MegaMoE is an upstream implementation; my contribution is test design, profiling, and integration analysis. PR #43786 is open; the reported GPU measurements predate its cleanup refactor, which still needs updated GPU validation. The fusion result is not added to the AR-to-EAGLE gain.</p>
+          <div class="note-heading"><span class="note-number">05</span><h3 data-i18n="component-title">Microbenchmarks and runtime profiling</h3></div>
+          <p data-i18n="component-copy">Used a MegaMoE microbenchmark as a component reference for the serving trace. A 32K-chunk microbenchmark measured about <strong>5.6 ms</strong>. In a separate V4.1-Flash real-input Prefill trace, mean main MegaMoE kernel times were <strong>6.9–7.5 ms</strong> across ranks. Used nsys to follow execution and communication, and ncu to examine selected kernels.</p>
+          <p data-i18n="fusion-copy">Merged <a class="inline-link" href="https://github.com/sgl-project/sglang/pull/43786" target="_blank" rel="noreferrer">#43786 ↗</a> fuses inverse RoPE into CUDA UE8M0 FP8 activation quantization, preserving BF16 rounding and packed scales. Upstream B200 kernel tests passed <strong>7/7</strong>, including numerical equivalence and CUDA Graph replay with updated inputs.</p>
+          <p class="boundary" data-i18n="component-boundary">The microbenchmark and serving trace have different execution boundaries. The trace includes internal waits, so the gap guides attribution. The historical B300 fusion backport measured +1.61% Prefill throughput. Full-model performance of the final upstream implementation remains unmeasured.</p>
+        </article>
+        <article class="lab-note" id="benchmark-engineering">
+          <div class="note-heading"><span class="note-number">06</span><h3 data-i18n="env-title">Reproducible benchmark environments</h3></div>
+          <p data-i18n="env-copy">Maintained SGLang container images and CI/CD workflows for multi-node experiments. Automated dependency setup, service lifecycle and benchmark collection, and recorded topology, cache budgets and validation settings for repeatable regressions.</p>
         </article>
       </div>
     </section>
@@ -284,18 +291,18 @@
       <div class="practice-grid">
         <article><h3 data-i18n="huawei-serving-title">Ascend serving engines</h3><p data-i18n="huawei-serving-copy">Worked with <strong>xLLM and vLLM-Ascend on Ascend 910B</strong>: model support, MTP, ACL Graph, cache capacity, and benchmark configuration. Qwen3.5-9B throughput moved <strong>2,301 → 30,451 tok/s at C960</strong> in a combined configuration comparison.</p><p class="scope" data-i18n="huawei-serving-scope">A separate Gemma 4 E2B deployment comparison measured 1,159.53 → 1,274.00 tok/s with Full ACL Graph. The two benchmarks have different baselines.</p></article>
         <article><h3 data-i18n="huawei-kernel-title">Kernels into a valid runtime path</h3><p data-i18n="huawei-kernel-copy">Used <strong>Ascend C, Triton, and TileLang</strong> to connect tiling and fusion to the Da Vinci data path: aligned transfers, on-chip buffers, compute, and synchronisation. Specialised paths need shape and layout checks, precision validation, and a fallback before serving integration.</p><p class="scope" data-i18n="huawei-kernel-scope">Kernel timing and system throughput are measured separately. A faster local operator needs a reachable engine path and an end-to-end comparison.</p></article>
-        <article><h3 data-i18n="huawei-cpu-title">Kunpeng performance foundations</h3><p data-i18n="huawei-cpu-copy">HPCG and FFTW on <strong>Kunpeng 920</strong> grounded the same diagnosis in CPU workloads: SIMD, bandwidth, NUMA placement, MPI/OpenMP balance, compiler choices, and FFT plan reuse. These studies inform how I reason about locality, topology, and parallel overhead.</p><p class="scope" data-i18n="huawei-cpu-scope">CPU workloads are independent measurements, rather than evidence of an NPU or LLM serving speedup.</p></article>
+        <article><h3 data-i18n="huawei-cpu-title">Kunpeng performance foundations</h3><p data-i18n="huawei-cpu-copy">On <strong>Kunpeng 920</strong>, tuned SVE/NEON, NUMA affinity, MPI/OpenMP and FFT plan reuse. The 256³ FFTW workload moved from <strong>80.97 to 555.00 GFLOP/s</strong>.</p><p class="scope" data-i18n="huawei-cpu-scope">CPU workloads are independent measurements, rather than evidence of an NPU or LLM serving speedup.</p></article>
       </div>
-      <div class="supporting-project"><h3 data-i18n="omni-title">Ascend 910C · MiniCPM-o</h3><p data-i18n="omni-copy">A complementary training-to-runtime project covered draft training, speculative execution, TileLang fusion, and duplex profiling. Paired local Core RTF measured <strong>0.6754 → 0.4829</strong> with workload trade-offs documented; model acceptance, kernel results, and duplex latency are separate endpoints. <a class="inline-link" href="https://github.com/Phoenix3334/minicpmo45-ascend" target="_blank" rel="noreferrer">Project evidence ↗</a></p></div>
+      <div class="supporting-project"><h3 data-i18n="omni-title">Ascend 910C · MiniCPM-o</h3><p data-i18n="omni-copy">Trained a DSpark draft with DeepSpec on B300/DP8 and exported it via GGUF to Ascend 910C. The project also covered prefix KV reuse, ACL Graph replay and TileLang AOT fusion in ggml-CANN. Matched-harness Core RTF went from <strong>0.6754 to 0.4829</strong> on the same 120 s duplex workload. <a class="inline-link" href="https://github.com/Phoenix3334/minicpmo45-ascend" target="_blank" rel="noreferrer">Project ↗</a> · <a class="inline-link" href="https://github.com/tc-mb/llama.cpp-omni/pull/144" target="_blank" rel="noreferrer">Packed vision projection #144 · open</a> · <a class="inline-link" href="https://github.com/tc-mb/llama.cpp-omni/pull/146" target="_blank" rel="noreferrer">Flow/Vocoder overlap #146 · draft</a></p></div>
     </div></section>
     <section class="economics" id="economics"><div class="wrap">
-      <div class="section-head"><div><p class="eyebrow" data-i18n="economics-kicker">Performance → capacity → economics</p><h2 data-i18n="economics-title">Size the service.<br>Then account for its cost.</h2></div><p data-i18n="economics-intro">A deployment decision starts with a model, workload, quality target, and latency objective. The benchmark establishes a feasible serving rate; resource sizing and a consistent cost model turn that rate into a TCO estimate.</p></div>
+      <div class="section-head"><div><p class="eyebrow" data-i18n="economics-kicker">Performance → capacity → economics</p><h2 data-i18n="economics-title">Hardware selection, P/D sizing<br>and deployment economics</h2></div><p data-i18n="economics-intro">Compare serving performance, resource utilization and deployment cost under a defined SLO. Use measured phase capacity for an initial P/D allocation, then validate the combined service path.</p></div>
       <div class="cost-chain">
         <article class="cost-step"><span class="step-index">01 / SLO</span><h3 data-i18n="cost-slo-title">Find the feasible operating point</h3><p data-i18n="cost-slo-copy">Sweep concurrency and configuration on the target request mix. Compare TTFT, TPOT, request throughput, memory pressure, failures, and output correctness. Select an operating point that meets the specified latency, quality, and stability criteria.</p><div class="formula" data-i18n="cost-slo-formula">q_instance = measured requests/s<br>at the qualifying configuration</div><p data-i18n="cost-slo-note">Prefill input tok/s, Decode output tok/s, and requests/s describe different quantities. Request lengths and phase balance must stay explicit.</p></article>
-        <article class="cost-step"><span class="step-index">02 / CAPACITY</span><h3 data-i18n="cost-capacity-title">Translate demand into instances</h3><p data-i18n="cost-capacity-copy">Use peak request demand and the qualifying per-instance serving rate for the same workload. Round up to whole instances, then budget headroom, redundancy, and the GPU count of each instance.</p><div class="formula">N_min = ceil(λ_peak / q_instance)<br>GPU budget = N_provisioned × GPUs/instance</div><p data-i18n="cost-capacity-note">N_min is the capacity lower bound before redundancy and headroom. Real sizing must also respect memory, topology, and deployment constraints.</p></article>
+        <article class="cost-step"><span class="step-index">02 / CAPACITY</span><h3 data-i18n="cost-capacity-title">Size Prefill and Decode separately</h3><p data-i18n="cost-capacity-copy">Convert Prefill and Decode rates to per-instance requests/s under the same workload and SLO. Size both stages for peak demand, with headroom and redundancy for the deployment.</p><div class="formula">N_P = ceil(λ_peak / q_P)<br>N_D = ceil(λ_peak / q_D)<br>Minimum GPU count = N_P × g_P + N_D × g_D</div><p data-i18n="cost-capacity-note">Validate the resulting P/D ratio with real KV transfers, queueing and end-to-end TTFT/TPOT. Stage-isolated rates are sizing inputs.</p></article>
         <article class="cost-step"><span class="step-index">03 / TCO</span><h3 data-i18n="cost-tco-title">Price delivered service</h3><p data-i18n="cost-tco-copy">Use one accounting period for compute rental or hardware depreciation, power, networking, software, and operations. Divide by the correctly delivered token volume under the chosen service criteria. Treat input and output separately when the accounting requires it.</p><div class="formula" data-i18n="cost-tco-formula">Cost per 1M valid tokens<br>= period cost / valid tokens delivered × 10⁶</div><p data-i18n="cost-tco-note">Utilisation, idle reserve, uptime, retries, and traffic shape affect unit cost. Rental and depreciation require a consistent accounting boundary.</p></article>
       </div>
-      <p class="cost-scope" data-i18n="cost-evidence"><strong>My current evidence:</strong> deployment benchmarks, capacity estimates, bottleneck analysis, and upstream correctness repairs support hardware selection and resource budgeting. A complete TCO result additionally needs actual resource prices, utilisation, redundancy policy, operating costs, and delivered traffic. The phase-isolated figures above are not a measured production cost reduction.</p>
+      <p class="cost-scope" data-i18n="cost-evidence"><strong>Evidence for sizing</strong> comes from benchmarks, resource limits and runtime validation. These inputs support hardware selection and comparative cost scenarios. Full TCO requires actual prices, power, utilization, redundancy, operations and delivered traffic.</p>
       <div class="reference-grid">
         <div><h3 data-i18n="reference-performance">Methodology reference · performance engineering</h3><a href="https://www.databricks.com/blog/llm-inference-performance-engineering-best-practices" target="_blank" rel="noreferrer">Databricks · LLM Inference Performance Engineering: Best Practices ↗</a><p data-i18n="reference-performance-copy">A useful framework for relating Prefill/Decode, batching, memory bandwidth, and parallel execution to measured server behaviour.</p></div>
         <div><h3 data-i18n="reference-cost">Methodology reference · capacity and cost</h3><a href="https://developer.nvidia.com/blog/llm-inference-benchmarking-how-much-does-your-llm-inference-cost/" target="_blank" rel="noreferrer">NVIDIA · How Much Does Your LLM Inference Cost? ↗</a><p data-i18n="reference-cost-copy">Connects latency-constrained benchmark points to deployment capacity and a cost model. These references guide the method; my results remain tied to my own workloads.</p></div>
@@ -313,7 +320,7 @@
       <div class="scope-note" data-i18n="practice-close"><strong>AI Infra is the connecting layer:</strong> model behaviour and workload shape meet runtime scheduling, cache state, kernels, interconnect, and deployment economics. My focus is building and validating that connection.</div>
     </div></section>
   </main>
-  <footer><div class="wrap"><div class="footer-grid"><h2 data-i18n="footer-title">Serving performance,<br>with evidence behind every decision.</h2><div class="footer-links"><a href="https://github.com/Phoenix3334" target="_blank" rel="noreferrer"><svg class="github-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .8a11.2 11.2 0 0 0-3.54 21.83c.56.1.76-.24.76-.54v-2.1c-3.12.68-3.78-1.33-3.78-1.33-.51-1.3-1.25-1.65-1.25-1.65-1.02-.7.08-.69.08-.69 1.13.08 1.72 1.22 1.72 1.22 1 1.71 2.63 1.16 3.27.87.1-.72.4-1.22.71-1.5-2.49-.28-5.11-1.25-5.11-5.55 0-1.23.44-2.23 1.16-3.02-.12-.28-.5-1.42.11-2.97 0 0 .95-.3 3.08 1.15a10.73 10.73 0 0 1 5.6 0c2.13-1.45 3.07-1.15 3.07-1.15.61 1.55.23 2.69.12 2.97.72.79 1.15 1.79 1.15 3.02 0 4.31-2.62 5.27-5.12 5.55.4.35.76 1.03.76 2.08v3.1c0 .3.2.65.77.54A11.2 11.2 0 0 0 12 .8Z"/></svg>GitHub ↗</a><a href="mailto:1187883824@qq.com">Email ↗</a></div></div><div class="copyright" data-i18n="copyright">© 2026 Feihong Guo · 郭飞鸿 · Updated 2 November 2026</div></div></footer>
+  <footer><div class="wrap"><div class="footer-grid"><h2 data-i18n="footer-title">Serving performance,<br>with evidence behind every decision.</h2><div class="footer-links"><a href="https://github.com/Phoenix3334" target="_blank" rel="noreferrer"><svg class="github-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .8a11.2 11.2 0 0 0-3.54 21.83c.56.1.76-.24.76-.54v-2.1c-3.12.68-3.78-1.33-3.78-1.33-.51-1.3-1.25-1.65-1.25-1.65-1.02-.7.08-.69.08-.69 1.13.08 1.72 1.22 1.72 1.22 1 1.71 2.63 1.16 3.27.87.1-.72.4-1.22.71-1.5-2.49-.28-5.11-1.25-5.11-5.55 0-1.23.44-2.23 1.16-3.02-.12-.28-.5-1.42.11-2.97 0 0 .95-.3 3.08 1.15a10.73 10.73 0 0 1 5.6 0c2.13-1.45 3.07-1.15 3.07-1.15.61 1.55.23 2.69.12 2.97.72.79 1.15 1.79 1.15 3.02 0 4.31-2.62 5.27-5.12 5.55.4.35.76 1.03.76 2.08v3.1c0 .3.2.65.77.54A11.2 11.2 0 0 0 12 .8Z"/></svg>GitHub ↗</a><a href="mailto:1187883824@qq.com">Email ↗</a></div></div><div class="copyright" data-i18n="copyright">© 2026 Feihong Guo · Updated 8 November 2026</div></div></footer>
   <a class="back-top" href="#top" aria-label="Back to top">↑</a>
 
   <script>
@@ -325,9 +332,9 @@
     const navLinks=[...nav.querySelectorAll('a[href^="#"]')];
     const sections=navLinks.map(link=>document.querySelector(link.getAttribute('href'))).filter(Boolean);
     const zh={
-  "[data-i18n=\"hero-upstream\"]": "<strong>本人编写并合入 SGLang：</strong><a href=\"https://github.com/sgl-project/sglang/pull/47614\" target=\"_blank\" rel=\"noreferrer\">PP tensor 生命周期 #47614</a> · <a href=\"https://github.com/sgl-project/sglang/pull/35721\" target=\"_blank\" rel=\"noreferrer\">DP 健康检查路由 #35721</a>",
+  "[data-i18n=\"hero-upstream\"]": "<strong>本人编写并合入 SGLang</strong> · <a href=\"https://github.com/sgl-project/sglang/pull/35721\" target=\"_blank\" rel=\"noreferrer\">DP 健康检查路由 #35721</a> · <a href=\"https://github.com/sgl-project/sglang/pull/47614\" target=\"_blank\" rel=\"noreferrer\">PP Stream 生命周期 #47614</a> · <a href=\"https://github.com/sgl-project/sglang/pull/43786\" target=\"_blank\" rel=\"noreferrer\">FP8 融合 #43786</a> · <a href=\"https://github.com/sgl-project/sglang/pull/48404\" target=\"_blank\" rel=\"noreferrer\">EPLB 配置校验 #48404</a>",
   "[data-i18n=\"summary-authored\"]": "本人修复 · 已合入",
-  "[data-i18n=\"summary-authored-copy\"]": "<a href=\"https://github.com/sgl-project/sglang/pull/47614\" target=\"_blank\" rel=\"noreferrer\">#47614</a> PP tensor 生命周期<br><a href=\"https://github.com/sgl-project/sglang/pull/35721\" target=\"_blank\" rel=\"noreferrer\">#35721</a> DP 健康检查路由隔离",
+  "[data-i18n=\"summary-authored-copy\"]": "<a href=\"https://github.com/sgl-project/sglang/pull/35721\" target=\"_blank\" rel=\"noreferrer\">#35721</a> DP 健康检查路由<br><a href=\"https://github.com/sgl-project/sglang/pull/47614\" target=\"_blank\" rel=\"noreferrer\">#47614</a> PP Stream 生命周期<br><a href=\"https://github.com/sgl-project/sglang/pull/43786\" target=\"_blank\" rel=\"noreferrer\">#43786</a> FP8 融合<br><a href=\"https://github.com/sgl-project/sglang/pull/48404\" target=\"_blank\" rel=\"noreferrer\">#48404</a> EPLB 配置校验",
   "[data-i18n=\"summary-review\"]": "正式技术 Review",
   "[data-i18n=\"summary-review-copy\"]": "<a href=\"https://github.com/sgl-project/sglang/pull/32467#pullrequestreview-4896206171\" target=\"_blank\" rel=\"noreferrer\">#32467</a> planner 竞态修复 · 已合入<br><a href=\"https://github.com/sgl-project/sglang/pull/32183#pullrequestreview-4897392620\" target=\"_blank\" rel=\"noreferrer\">#32183</a> verifier 窗口 · 开放中",
   "[data-i18n=\"summary-collab\"]": "协作修复 · 已合入",
@@ -349,16 +356,16 @@
   "[data-i18n=\"title-pr-45384\"]": "延迟初始化 CUDA VMM 多模态传输",
   "[data-i18n=\"status-pr-45584\"]": "本人实现 · 开放中",
   "[data-i18n=\"title-pr-45584\"]": "串行执行多 tokenizer 的通用 warmup",
-  "[data-i18n=\"group-merged\"]": "本人编写的修复 · 已合入",
+  "[data-i18n=\"group-merged\"]": "本人编写的贡献 · 已合入",
   "[data-i18n=\"group-reviewed\"]": "技术评审与协作修复",
   "[data-i18n=\"group-open\"]": "本人编写的工程工作 · 开放中",
   "[data-i18n=\"group-investigation\"]": "故障调查、RFC 与支持记录",
-  "[data-i18n=\"records-date\"]": "PR 状态核实于 2026 年 11 月 2 日。<a class=\"inline-link\" href=\"https://github.com/Phoenix3334/Phoenix3334.github.io/blob/main/SGLANG_CONTRIBUTIONS.md\" target=\"_blank\" rel=\"noreferrer\">完整贡献索引 ↗</a>",
+  "[data-i18n=\"records-date\"]": "PR 状态核实于 2026 年 11 月 8 日。<a class=\"inline-link\" href=\"https://github.com/Phoenix3334/Phoenix3334.github.io/blob/main/SGLANG_CONTRIBUTIONS.md\" target=\"_blank\" rel=\"noreferrer\">完整贡献索引 ↗</a>",
   "[data-i18n=\"eplb-title\"]": "EPLB：先测负载均衡，再验证吞吐收益",
-  "[data-i18n=\"eplb-copy\"]": "在单机八卡 B300、SGLang/MegaMoE 的 DeepSeek-V4-Pro Prefill 场景中，比较专家放置与重排，采集专家负载并分析执行、通信开销。将<strong>逻辑专家热度、物理放置与副本分发、kernel 分块取整、请求供给间隙</strong>分开排查，避免把 token 数更均衡直接当作端到端提速。",
-  "[data-i18n=\"eplb-result\"]": "实验结果：仅调整放置的实验改善了物理 rank 的 token 均衡，逻辑专家计数保持不变；该组未增加专家副本。干净的独立验证尚未完成，因此不宣称已验证的吞吐收益，也不据此判断 EPLB 的潜力上限。",
-  "[data-i18n=\"eplb-summary\"]": "这轮实验如何改变了下一步判断",
-  "[data-i18n=\"eplb-detail\"]": "早期请求路径存在干扰，无法形成干净的端到端结论；CPU top-k 在接近并列分数时也不能可靠复现 GPU 路由，因此未把 bias 扰动视为已验证的安全优化。我向 SGLang 提出真实路由与合成均衡路由的服务级 profiling 对照，并向 DeepSeek 讨论专家放置、副本成本模型和模型路由的边界。目前均为开放讨论；合成均衡结果只能作为性能参照，不能证明可保持模型质量的优化收益。",
+  "[data-i18n=\"eplb-copy\"]": "区分逻辑专家热度、物理放置、副本分发、分块填充与 kernel 耗时。早期 V4-Pro B300 实验之后，进一步用 V4.1-Flash 真实 64K/C32 Prefill 负载复测。",
+  "[data-i18n=\"eplb-result\"]": "V4.1-Flash 对照中，冻结布局使卡间 CV 从 <strong>0.149 降至 0.047</strong>，MegaMoE 平均耗时由 <strong>7.512 降至 7.180 ms</strong>。输入吞吐提升 <strong>0.95%</strong>，模拟均衡路由参照为 <strong>1.01%</strong>。",
+  "[data-i18n=\"eplb-summary\"]": "路由性能诊断与 recorder 校验",
+  "[data-i18n=\"eplb-detail\"]": "均匀路由对照改变逻辑专家选择，用于性能诊断，测量边界见 RFC。另外，复现在线重排触发的 scheduler 崩溃后，通过 <a class=\"inline-link\" href=\"https://github.com/sgl-project/sglang/pull/48404\" target=\"_blank\" rel=\"noreferrer\">#48404</a> 将不兼容 recorder 模式的检查前移到启动阶段。",
   "[data-i18n=\"eplb-rfc-link\"]": "本人提出的 SGLang profiling RFC · #44697 ↗",
   "[data-i18n=\"eplb-question-link\"]": "本人发起的 DeepSeek EPLB 讨论 · #29 ↗",
   "[data-i18n=\"status-44697\"]": "本人 profiling 提案 · 开放中",
@@ -395,15 +402,15 @@
   ".contribution[data-record=\"pr-34410\"] h3": "固定 P/D Decode draft-input 交接契约",
   ".contribution[data-record=\"pr-34286\"] h3": "最后一次 warmup 后、capture 前同步图构建",
   "[data-i18n=\"internship-eyebrow\"]": "SGLang 部署与性能工程",
-  "[data-i18n=\"internship-title\"]": "刻画工作负载。<br>测清服务能力。",
-  "[data-i18n=\"internship-intro\"]": "通过 P/D 单压、并发矩阵、容量建模和 profiler 证据，解释一组服务配置的性能与资源开销。每项结果保留对应的负载、软件栈与测试口径。",
+  "[data-i18n=\"internship-title\"]": "推理最佳实践与部署选型",
+  "[data-i18n=\"internship-intro\"]": "按输入输出长度、并发和 P/D 阶段构建可复现压测矩阵，对照 TP、PP、EP、CP/DCP、DP Attention、EAGLE3/DSpark、EPLB、CUDA Graph 与 Chunked Prefill。结合 KV Cache、Mamba State Pool、MRR/MF 与显存压力确定可用配置。",
   "[data-i18n=\"phase-title\"]": "长上下文推理：代表测量结果",
   "[data-i18n=\"phase-intro\"]": "分别评测 DeepSeek-V4-Pro 在 B300 与双机 GB300 上的 Prefill、Decode。评测范围覆盖 SGLang 版本、DP Attention、PrefillDelayer、EAGLE 投机解码、缓存/图容量、batching 与主机侧回传链路；各策略适用的负载不同。",
   "[data-i18n=\"phase-caption\"]": "DeepSeek-V4-Pro · 各部署均为八卡 · 已测代表工作点",
   "[data-i18n=\"phase\"]": "平台 / 阶段",
   "[data-i18n=\"workload\"]": "负载 / 对照",
   "[data-i18n=\"result\"]": "观测结果",
-  "[data-i18n=\"phase-boundary\"]": "Decode 投机端固定模拟接受率约 0.70，平均接受长度约 3.10。AR→EAGLE 对照包含版本及容量/并发变化，属于组合配置结果；P/D 分别测试，GB300 数字也不作为严格硬件净收益或实测成本降幅。",
+  "[data-i18n=\"phase-boundary\"]": "两条自回归实测档是独立调优结果。跨版本的 AR → EAGLE 行沿用各自的起点，并包含容量与并发变化。EAGLE 使用固定模拟接受率约 0.70（平均接受长度约 3.10）。",
   "[data-i18n=\"phase-summary\"]": "一次性能异常如何变成路由状态调查",
   "[data-i18n=\"phase-discovery\"]": "Prefill 重复实验暴露间歇性低吞吐。我隔离出 generation-health 流量这一触发因素，随后追踪它如何修改用户请求也使用的 Data Parallel Controller 状态。patched/unpatched × health-on/off 的对照使因果检验具体化；修复将 health 路由与负载预算记账从用户调度中分离，已于 2026 年 10 月 11 日合入 SGLang 主分支。",
   "[data-i18n=\"health-evidence\"]": "公开 A/B 证据与已合并修复 · PR #35721 ↗",
@@ -411,8 +418,8 @@
   "[data-i18n=\"capacity-copy\"]": "扩展基于 InferFlux 的容量模型，由工作负载、计算/带宽上限、缓存显存、并行布局及效率先验缩小测试范围；针对 Kimi K3 分析 DCP、KV/SSM 状态池的容量与回退边界。",
   "[data-i18n=\"capacity-boundary\"]": "输出是容量估计，不是吞吐保证。预测与实测的差距用于确定内存、通信、batching 或运行时调查的优先级。",
   "[data-i18n=\"parallel-title\"]": "并行方式取决于负载",
-  "[data-i18n=\"parallel-copy\"]": "比较不同负载下的 DP Attention 与上下文并行。在 GB300 独立 CP8 低时延档，60k、128k 输入（均输出 1 token）的 median TTFT 分别为 <strong>0.666 s、1.516 s</strong>；与表中高吞吐 Prefill 属于不同工作点。",
-  "[data-i18n=\"parallel-boundary\"]": "最大容量、最高吞吐和最低时延是不同目标；版本升级与增大 batch 的收益都按具体负载验证。",
+  "[data-i18n=\"parallel-copy\"]": "DeepSeek-V4-Pro 对照 TP8/DP8 与 TP8/CP8，Kimi K3 对照 TP8/EP8/MegaMoE 与 PP8。V4-Pro 在 GB300 独立 CP8 Prefill 配置下，60k、128k 输入（均输出 1 token）的 median TTFT 分别为 <strong>0.666 s、1.516 s</strong>。",
+  "[data-i18n=\"parallel-boundary\"]": "按目标负载与 SLO 选择硬件和并行配置，在合格工作点对照吞吐、TTFT/TPOT 与资源占用。",
   "[data-i18n=\"status-35721\"]": "本人修复 PR · 已合并 · v0.5.22",
   "[data-i18n=\"status-34410\"]": "本人回归测试 · 开放",
   "[data-i18n=\"status-34286\"]": "本人修复 PR · 开放",
@@ -456,24 +463,18 @@
   "[data-i18n=\"gb-d60-platform\"]": "GB300 · Decode",
   "[data-i18n=\"gb-d60-condition\"]": "60k 输入 / 1k 输出 · EAGLE · SGLang 0.5.17 调优配置",
   "[data-i18n=\"gb-d60-unit\"]": "output tok/s",
-  "[data-i18n=\"component-title\"]": "组件基线与局部算子优化",
-  "[data-i18n=\"component-copy\"]": "自主设计 MegaMoE 跨模型规格、batch/token 与 fast_math 单测，以 nsys/NCU 分析计算、访存及通信。融合链路较原始 FFN 路径加速 <strong>1.51–1.87×</strong>；另一个小 batch 工作点 HBM 约 <strong>5.1 TB/s</strong>。6 月单测为 9 月自主设计的 EPLB 复测及服务对照建立基线。",
-  "[data-i18n=\"fusion-copy\"]": "在 CUDA attention 路径实现 inverse-RoPE + FP8 量化融合。较早的 SGLang 0.5.17 衍生 B300 构建，在 60k 输入 / 1 输出 token 下测得<strong>输入吞吐 +1.63%</strong>，数值测试中 FP8 codes 与 scales 逐字节一致；上游适配见 <a class=\"inline-link\" href=\"https://github.com/sgl-project/sglang/pull/43786\" target=\"_blank\" rel=\"noreferrer\">PR #43786 ↗</a>。",
-  "[data-i18n=\"component-boundary\"]": "组件加速比、小 batch 带宽和整模型收益分别报告；MegaMoE 实现来自上游，本人负责测试设计、profiling 与集成分析。#43786 仍开放，已报告 GPU 结果早于清理重构提交，重构后 GPU 复验仍待完成；融合收益不与 AR→EAGLE 综合收益叠加。",
+  "[data-i18n=\"component-title\"]": "组件 microbench 与服务侧 Profiling",
+  "[data-i18n=\"component-copy\"]": "用 MegaMoE microbench 建立组件参考。32K chunk 单测约 <strong>5.6 ms</strong>，另一次 V4.1-Flash 真实输入单压 P 中，各 rank 主 MegaMoE kernel 平均耗时约 <strong>6.9–7.5 ms</strong>。用 nsys 看执行与通信时间线，用 ncu 下钻选定 kernel。",
+  "[data-i18n=\"fusion-copy\"]": "已合入的 <a class=\"inline-link\" href=\"https://github.com/sgl-project/sglang/pull/43786\" target=\"_blank\" rel=\"noreferrer\">#43786 ↗</a> 将 inverse RoPE 融入 CUDA UE8M0 FP8 激活量化，保留 BF16 舍入与 packed scale。上游 B200 kernel 测试 <strong>7/7 通过</strong>，覆盖数值等价与更新输入后的 CUDA Graph 回放。",
+  "[data-i18n=\"component-boundary\"]": "组件单测与服务 trace 的执行边界不同。trace 含 kernel 内部等待，差值用于指导归因。历史 B300 融合回移版本测得 Prefill 吞吐 +1.61%，最终上游实现的整模型性能尚待复测。",
   "[data-i18n=\"gb-index\"]": "05 · 分布式通信",
   "[data-i18n=\"gb-title\"]": "GB300 DCP：CUDA Graph 与通信缓冲区生命周期 ↗",
-  "[data-i18n=\"gb-copy\"]": "排查双机 GB300 上 Kimi K3 的 DCP all-to-all 在 CUDA Graph 下出现的输出异常，实现图注册启动保护（<a class=\"inline-link\" href=\"https://github.com/sgl-project/sglang/pull/45371\" target=\"_blank\" rel=\"noreferrer\">#45371</a>）与缓冲区持久化（<a class=\"inline-link\" href=\"https://github.com/sgl-project/sglang/pull/45824\" target=\"_blank\" rel=\"noreferrer\">#45824</a>）两种备选修复，通过注册开关 × 缓冲区生命周期对照恢复输出正确性；两项 PR 均仍开放，持续补充实验并推进上游评审。",
-  "[data-i18n=\"gb-summary\"]": "已完成的验证与仍待推进的部分",
+  "[data-i18n=\"gb-copy\"]": "排查双机 GB300 上 Kimi K3 的 DCP all-to-all 图回放输出异常，对照测试图注册保护（<a href=\"https://github.com/sgl-project/sglang/pull/45371\" target=\"_blank\" rel=\"noreferrer\">#45371</a>）与持久化交换缓冲区（<a href=\"https://github.com/sgl-project/sglang/pull/45824\" target=\"_blank\" rel=\"noreferrer\">#45824</a>）。两项提案均关闭且未合入，证据保留在 <a href=\"https://github.com/sgl-project/sglang/issues/45367\" target=\"_blank\" rel=\"noreferrer\">Issue #45367</a>。",
+  "[data-i18n=\"gb-summary\"]": "两项方案的验证范围",
   "[data-i18n=\"gb-detail\"]": "持久缓冲区 PR 的 9cb1de5 提交在保留注册、未叠加启动保护的条件下，完成双机 12 条 prompt 测试：12/12 输出正确，无退化输出；DCP 定向回归通过 23 项测试及 5 项子测试。注册保护策略另在此前故障配置下完成 640/640 请求；该结果不等于其后续合并更新 head 的完整验证。",
   "[data-i18n=\"gb-boundary\"]": "两项 PR 是同一故障的替代方案，不叠加使用。对照定位了已测部署中的注册 × 临时缓冲区生命周期交互，但尚未直接观测到瞬态 replay 数据覆盖；本地验证不代表上游 CI 全通过或已合并。",
   "[data-i18n=\"gb-probe\"]": "输出正确 · 已验证持久缓冲区提交",
   "[data-i18n=\"gb-tests\"]": "定向测试 + 子测试 · 本地 GPU 验证",
-  "[data-i18n=\"status-45371\"]": "本人注册保护备选修复 · 开放中",
-  "[data-i18n=\"record-45371\"]": "为 DCP a2a 添加默认图注册保护",
-  "[data-i18n=\"status-45824\"]": "本人生命周期备选修复 · 开放中",
-  "[data-i18n=\"record-45824\"]": "持久保留图执行中的 DCP all-to-all 缓冲区",
-  "[data-i18n=\"status-43786\"]": "本人 CUDA 算子融合 · 开放中",
-  "[data-i18n=\"record-43786\"]": "融合 inverse-RoPE 与 FP8 激活量化",
   "[data-i18n=\"nav-sglang\"]": "SGLang",
   "[data-i18n=\"nav-performance\"]": "性能评测",
   "[data-i18n=\"nav-huawei\"]": "昇腾与鲲鹏",
@@ -481,14 +482,14 @@
   "[data-i18n=\"nav-practice\"]": "工程方法",
   "[data-i18n=\"hero-kicker\"]": "AI INFRA · 大模型推理工程",
   "[data-i18n=\"hero-title\"]": "从推理性能，<br>走向<em>算力与成本决策。</em>",
-  "[data-i18n=\"hero-lede\"]": "我是郭飞鸿，在百度智能云围绕 <strong>SGLang 推理性能与运行时正确性</strong>开展工程工作。在 B300、GB300 上部署和评测 DeepSeek-V4-Pro、Kimi K3，分析 Prefill/Decode 瓶颈并推进上游修复；把测清的服务能力用于容量规划、资源配置与成本判断。",
+  "[data-i18n=\"hero-lede\"]": "我是郭飞鸿。百度智能云 AI Infra 实习期间，我围绕 <strong>DeepSeek-V4-Pro、V4.1-Flash、Kimi K3</strong> 在 H200、B300、GB300 上开展 SGLang 压测与调优。用实测比较部署配置、规划 Prefill/Decode 容量，并追踪运行时的性能与正确性问题。",
   "[data-i18n=\"hero-thesis\"]": "部署 → 测量 → 归因 → 改进 → 验证 → 资源决策。<br><em>吞吐、延迟、正确性与稳定性，需要放在同一个决策里。</em>",
   "[data-i18n=\"hero-action-work\"]": "查看 SGLang 工程工作 ↓",
   "[data-i18n=\"hero-action-tco\"]": "查看容量与成本方法 ↓",
   "[data-i18n=\"portrait-caption\"]": "Feihong Guo · 郭飞鸿<br>郑州大学 · AI Infrastructure",
   "[data-i18n=\"sglang-kicker\"]": "百度智能云 · SGLang",
   "[data-i18n=\"sglang-title\"]": "推理服务性能。<br>运行时正确性。",
-  "[data-i18n=\"sglang-intro\"]": "核心工作把部署测量与服务运行时连接起来：DP 请求路由、流水线和通信缓冲区生命周期、KV 状态回退以及推测执行。两项本人编写的修复已合入；正式技术 Review 与协作修复分别保留贡献归属。",
+  "[data-i18n=\"sglang-intro\"]": "通过受控负载复现服务异常，沿调度与设备执行链路定位根因，并把修复提交上游。四项本人合入的 PR 涉及 DP 路由、PP 张量生命周期、FP8 算子融合与 EPLB 配置校验。",
   "[data-i18n=\"all-records\"]": "展开公开 PR、Review 与故障调查索引",
   "[data-i18n=\"huawei-kicker\"]": "华为 ICT 学院 · 郑州大学超算团队",
   "[data-i18n=\"huawei-title\"]": "把同一套方法，<br>带到 NPU 与 CPU。",
@@ -500,25 +501,25 @@
   "[data-i18n=\"huawei-kernel-copy\"]": "通过 <strong>Ascend C、Triton 与 TileLang</strong>，把分块和融合落实到达芬奇数据通路：对齐搬运、片上缓冲、计算与同步。专用路径需要 shape/layout 检查、精度验证和回退机制，再集成到 serving。",
   "[data-i18n=\"huawei-kernel-scope\"]": "单算子耗时与系统吞吐分别测量；局部算子更快，还需要确认引擎实际走到该路径，并完成端到端对照。",
   "[data-i18n=\"huawei-cpu-title\"]": "鲲鹏性能工程基础",
-  "[data-i18n=\"huawei-cpu-copy\"]": "在<strong>鲲鹏 920</strong>上通过 HPCG 与 FFTW 研究 SIMD、带宽、NUMA 亲和性、MPI/OpenMP 组合、编译配置和 FFT 执行计划复用，用 CPU 负载建立对局部性、拓扑和并行开销的判断。",
+  "[data-i18n=\"huawei-cpu-copy\"]": "在<strong>鲲鹏 920</strong>上调优 SVE/NEON、NUMA 亲和性、MPI/OpenMP 与 FFT 执行计划复用。256³ FFTW 工作负载从 <strong>80.97 提升至 555.00 GFLOP/s</strong>。",
   "[data-i18n=\"huawei-cpu-scope\"]": "CPU 工作负载独立评测，不作为 NPU 或 LLM serving 加速的证据。",
   "[data-i18n=\"omni-title\"]": "昇腾 910C · MiniCPM-o",
-  "[data-i18n=\"omni-copy\"]": "互补项目连接 draft 训练、推测执行、TileLang 融合与全双工 profiling。同一 harness 的本地配对 Core RTF 为<strong>0.6754 → 0.4829</strong>，保留负载取舍；模型接受率、算子结果和双工延迟分开评估。<a class=\"inline-link\" href=\"https://github.com/Phoenix3334/minicpmo45-ascend\" target=\"_blank\" rel=\"noreferrer\">项目证据 ↗</a>",
+  "[data-i18n=\"omni-copy\"]": "通过 DeepSpec 在 B300/DP8 上训练 DSpark 草稿模型，经 GGUF 导出部署到昇腾 910C。项目还覆盖固定前缀 KV 复用、ACL Graph 回放及 ggml-CANN 的 TileLang AOT 算子融合。同一 120 s 双工负载下，Core RTF 从 <strong>0.6754 降至 0.4829</strong>。<a class=\"inline-link\" href=\"https://github.com/Phoenix3334/minicpmo45-ascend\" target=\"_blank\" rel=\"noreferrer\">项目仓库 ↗</a> · <a class=\"inline-link\" href=\"https://github.com/tc-mb/llama.cpp-omni/pull/144\" target=\"_blank\" rel=\"noreferrer\">视觉 patch 投影 #144 · 开放中</a> · <a class=\"inline-link\" href=\"https://github.com/tc-mb/llama.cpp-omni/pull/146\" target=\"_blank\" rel=\"noreferrer\">Flow/Vocoder 流水线 #146 · 草稿</a>",
   "[data-i18n=\"economics-kicker\"]": "性能 → 容量 → 成本",
-  "[data-i18n=\"economics-title\"]": "先确定服务容量。<br>再核算部署成本。",
-  "[data-i18n=\"economics-intro\"]": "部署决策从模型、负载、质量要求和延迟目标开始。压测确定满足要求的服务速率，资源规划与一致的成本口径再把它转成 TCO 估算。",
+  "[data-i18n=\"economics-title\"]": "性能选型、P/D 规划<br>与经济性评估",
+  "[data-i18n=\"economics-intro\"]": "面向指定 SLO，比较硬件与并行配置的服务性能、资源利用率和部署成本。用分阶段实测容量估算 P/D 配比，再验证组合部署。",
   "[data-i18n=\"cost-slo-title\"]": "找到满足目标的工作点",
   "[data-i18n=\"cost-slo-copy\"]": "针对目标请求分布，扫描并发与配置。共同检查 TTFT、TPOT、请求吞吐、显存压力、失败率和输出正确性，选择满足延迟、质量与稳定性要求的工作点。",
   "[data-i18n=\"cost-slo-formula\"]": "q_instance = 满足准出要求的配置下<br>实测单实例 requests/s",
   "[data-i18n=\"cost-slo-note\"]": "Prefill input tok/s、Decode output tok/s 与 requests/s 是不同量；请求长度和 P/D 比例需要明确。",
-  "[data-i18n=\"cost-capacity-title\"]": "把请求需求转成实例数量",
-  "[data-i18n=\"cost-capacity-copy\"]": "在相同负载下，用峰值请求需求与合格工作点的单实例服务速率计算实例数量，向上取整；再加入余量、冗余以及每实例使用的 GPU 数量。",
-  "[data-i18n=\"cost-capacity-note\"]": "N_min 是加入冗余和余量之前的容量下界。实际规划还需满足显存、拓扑及部署约束。",
+  "[data-i18n=\"cost-capacity-title\"]": "分别估算 P/D 实例数",
+  "[data-i18n=\"cost-capacity-copy\"]": "在相同负载与 SLO 下，把 Prefill 和 Decode 能力换算为单实例 requests/s。按峰值请求量分别估算 P、D 实例数，再为部署预留余量和冗余。",
+  "[data-i18n=\"cost-capacity-note\"]": "用真实 KV 传输、排队及端到端 TTFT/TPOT 验证所得 P/D 配比。单压结果用于初步规划。",
   "[data-i18n=\"cost-tco-title\"]": "核算实际交付服务的成本",
   "[data-i18n=\"cost-tco-copy\"]": "统一计算周期，核算算力租金或硬件折旧、电力、网络、软件与运维费用，再除以满足服务要求且正确交付的 token 总量。需要分别核算输入与输出时，明确成本分摊口径。",
   "[data-i18n=\"cost-tco-formula\"]": "每百万有效 token 成本<br>= 周期总成本 / 周期有效交付 token × 10⁶",
   "[data-i18n=\"cost-tco-note\"]": "利用率、空闲冗余、可用率、重试与流量分布都会改变单位成本；租赁和自建需要一致且不重复计算的成本边界。",
-  "[data-i18n=\"cost-evidence\"]": "<strong>我现阶段的证据：</strong>部署压测、容量估计、瓶颈分析与上游正确性修复，用于支撑算力选型和资源预算。完整 TCO 还需真实资源价格、利用率、冗余策略、运维支出与实际交付流量；上面的 P/D 单压结果不等于已实测的生产降本。",
+  "[data-i18n=\"cost-evidence\"]": "<strong>选型依据</strong>来自压测、资源约束与正确性验证，用于估算 P/D 配比和比较部署经济性。完整 TCO 还需实际价格、电力、利用率、冗余、运维和交付流量。",
   "[data-i18n=\"reference-performance\"]": "方法参考 · 推理性能工程",
   "[data-i18n=\"reference-performance-copy\"]": "帮助把 Prefill/Decode、batching、内存带宽和并行执行，与实际测得的服务行为联系起来。",
   "[data-i18n=\"reference-cost\"]": "方法参考 · 容量与成本",
@@ -537,7 +538,19 @@
   "[data-i18n=\"practice-decide-copy\"]": "根据满足准出要求的服务容量，估算实例数量、GPU 资源与成本场景；明确哪些是实测结果、哪些是估计和待验证假设。",
   "[data-i18n=\"practice-close\"]": "<strong>AI Infra 是贯通这些工作的层：</strong>模型行为和工作负载，在这里连接运行时调度、缓存状态、算子、互连与部署成本。我的重点是把这条连接做出来，并用实验验证。",
   "[data-i18n=\"footer-title\"]": "推理服务性能，<br>以及每个决策背后的证据。",
-  "[data-i18n=\"copyright\"]": "© 2026 郭飞鸿 · Feihong Guo · 更新于 2026 年 11 月 2 日"
+  "[data-i18n=\"copyright\"]": "© 2026 郭飞鸿 · Feihong Guo · 更新于 2026 年 11 月 8 日",
+  "[data-i18n=\"status-43786\"]": "本人实现 · 2026-11-04 合入",
+  "[data-i18n=\"record-43786\"]": "将 inverse RoPE 融入 CUDA FP8 wo_a 量化",
+  "[data-i18n=\"status-48404\"]": "本人修复 · 2026-11-07 合入",
+  "[data-i18n=\"record-48404\"]": "启动时拒绝不兼容的 EPLB recorder 模式",
+  "[data-i18n=\"status-45371\"]": "本人调查方案 · 已关闭，未合入",
+  "[data-i18n=\"record-45371\"]": "DCP Graph 注册保护",
+  "[data-i18n=\"status-45824\"]": "本人调查方案 · 已关闭，未合入",
+  "[data-i18n=\"record-45824\"]": "DCP all-to-all 持久化缓冲区",
+  "[data-i18n=\"ar-b300\"]": "60k 输入 / 1k 输出 · 自回归实测档",
+  "[data-i18n=\"ar-gb300\"]": "60k 输入 / 1k 输出 · 自回归实测档",
+  "[data-i18n=\"env-title\"]": "压测环境与工程复现",
+  "[data-i18n=\"env-copy\"]": "维护 SGLang 容器镜像与 CI/CD 流程，搭建多机推理环境。自动化依赖预装、服务启停与压测结果收集，并记录拓扑、缓存预算和验证配置以支持回归复现。"
 };
     const bilingual=Object.entries(zh).map(([selector,value])=>{
       const element=document.querySelector(selector); if(!element)return null;

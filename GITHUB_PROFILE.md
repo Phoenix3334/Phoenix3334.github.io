@@ -9,17 +9,17 @@
 ### `$ whoami`
 
 **Feihong Guo · 郭飞鸿** — AI Infrastructure / LLM Inference Engineering  
-Zhengzhou University · AI Infra intern at Baidu AI Cloud · SGLang contributor
+Zhengzhou University · Baidu AI Cloud AI Infrastructure internship (May–Nov 2026) · SGLang contributor
 
-I work on **SGLang serving performance and runtime correctness** for DeepSeek-V4-Pro and Kimi K3 on B300/GB300. My focus is connecting reproducible measurements and causal debugging to capacity, resource, and deployment-cost decisions.
+I benchmarked and tuned **SGLang serving for DeepSeek-V4-Pro, V4.1-Flash and Kimi K3** on H200/B300/GB300. I use workload measurements to select hardware and parallel layouts, size Prefill and Decode against a service objective, and trace correctness issues to their runtime cause.
 
 ### `$ work --focus`
 
 | Track | What I work on |
 | --- | --- |
-| **Baidu / SGLang** | P/D benchmarking, DP/TP/EP/PP/DCP layouts, KV and graph capacity, speculative execution, runtime failures, and upstream regressions |
+| **Baidu / SGLang** | P/D and end-to-end benchmarks, TP/PP/EP/CP/DCP/DP Attention, speculative decoding, KV/SSM and graph capacity, Nsight attribution, and reproducible deployment |
 | **Huawei ICT / Ascend** | xLLM and vLLM-Ascend, Ascend C / Triton / TileLang, kernel-to-engine integration, and MiniCPM-o on Ascend 910C |
-| **Capacity & economics** | Latency–throughput trade-offs, workload-specific capacity models, GPU allocation, and the inputs needed for TCO estimation |
+| **Capacity & economics** | TTFT/TPOT and throughput trade-offs, per-stage QPS, P/D instance sizing, GPU allocation, and comparative cost modeling |
 | **CPU foundations** | Kunpeng HPCG / FFTW, memory locality, NUMA placement, SIMD, and MPI/OpenMP |
 
 ### `$ upstream --evidence`
@@ -28,19 +28,25 @@ I work on **SGLang serving performance and runtime correctness** for DeepSeek-V4
 | --- | --- | --- |
 | [SGLang #47614](https://github.com/sgl-project/sglang/pull/47614) | PP receive-tensor lifetime diagnosis, implementation, and B300 validation | **Authored · merged** |
 | [SGLang #35721](https://github.com/sgl-project/sglang/pull/35721) | Isolate health-check state from user routing; regression tests | **Authored · merged · v0.5.22** |
+| [#43786](https://github.com/sgl-project/sglang/pull/43786) | Fused inverse RoPE into CUDA UE8M0 FP8 `wo_a` activation quantization while preserving BF16 rounding and packed scales | Authored · merged 4 Nov 2026 · B200 kernel and graph tests 7/7 |
+| [#48404](https://github.com/sgl-project/sglang/pull/48404) | Reproduced incompatible EPLB recorder modes crashing at rebalance and added startup argument validation | Authored · merged 7 Nov 2026 · 4×B300 local invalid/valid path checks |
 | [SGLang #32467](https://github.com/sgl-project/sglang/pull/32467#discussion_r3749014153) | Formal technical review and controlled A/B/C validation of the planner-race repair | **Fix merged** · EanWang211123 authored the PR |
 | [SGLang #39487](https://github.com/sgl-project/sglang/pull/39487) | Original report, draft implementation, and DCP KV-recovery validation | **Fix merged** · kpham-sgl integrated the repair |
 | [SGLang #32183](https://github.com/sgl-project/sglang/pull/32183#pullrequestreview-4897392620) | Formal review distinguishing verifier-window correctness from other DSpark failures | **PR open** |
 
-<sub>PR states verified on 2 November 2026. Authored fixes, technical reviews, and maintainer-integrated repairs retain their own attribution.</sub>
+<sub>PR states verified on 8 November 2026. Authored fixes, technical reviews, and maintainer-integrated repairs retain their own attribution.</sub>
 
-### `$ investigate --current`
+### `$ benchmark --selected`
 
-- **Attention kernels:** [inverse-RoPE + FP8 quantisation fusion #43786](https://github.com/sgl-project/sglang/pull/43786).
-- **Graph-captured communication:** [DCP registration guard #45371](https://github.com/sgl-project/sglang/pull/45371) and [persistent buffers #45824](https://github.com/sgl-project/sglang/pull/45824), alternative proposals for the reported failure.
-- **Multimodal startup:** [lazy CUDA VMM transport #45384](https://github.com/sgl-project/sglang/pull/45384) and [multi-tokenizer warmup serialisation #45584](https://github.com/sgl-project/sglang/pull/45584).
+- **DeepSeek-V4-Pro:** At 60k input / 1k output, recorded eight-GPU phase-isolated AR Decode throughput of **43.74k tok/s on B300** and **46.09k tok/s on GB300**. Independent EAGLE points reached **46.81k / 48.01k output tok/s** with simulated acceptance ≈0.70. Each platform and configuration has its own measurement scope.
+- **V4.1-Flash:** On the reported real-token 64K/C32 Prefill workload, frozen placement lowered rank-count CV **0.149 → 0.047** and increased input throughput **0.95%**. The [RFC #44697](https://github.com/sgl-project/sglang/issues/44697) separates logical routing, physical placement and runtime cost.
+- **Kimi K3:** Compared TP/EP/MegaMoE and PP layouts, investigated KV/SSM capacity and diagnosed a cross-stream tensor lifetime fault in async pipeline Decode.
 
-These proposals remain open; the linked discussions record the tested stacks and remaining validation.
+### `$ upstream --in-progress`
+
+- **Multimodal startup:** [lazy CUDA VMM transport #45384](https://github.com/sgl-project/sglang/pull/45384) and [multi-tokenizer warmup serialization #45584](https://github.com/sgl-project/sglang/pull/45584).
+- **Graph and speculative execution:** [Breakable CUDA Graph synchronization #34286](https://github.com/sgl-project/sglang/pull/34286) and [DSpark P/D handoff regression #34410](https://github.com/sgl-project/sglang/pull/34410).
+- **Archived DCP investigation:** [Issue #45367](https://github.com/sgl-project/sglang/issues/45367) with [registration guard #45371](https://github.com/sgl-project/sglang/pull/45371) and [persistent buffers #45824](https://github.com/sgl-project/sglang/pull/45824). Both alternatives closed unmerged.
 
 ### `$ projects --selected`
 
