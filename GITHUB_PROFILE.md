@@ -46,7 +46,7 @@ I benchmarked and tuned **SGLang serving for DeepSeek-V4-Pro, V4.1-Flash and Kim
 
 - **Multimodal startup:** [lazy CUDA VMM transport #45384](https://github.com/sgl-project/sglang/pull/45384) and [multi-tokenizer warmup serialization #45584](https://github.com/sgl-project/sglang/pull/45584).
 - **Graph and speculative execution:** [Breakable CUDA Graph synchronization #34286](https://github.com/sgl-project/sglang/pull/34286) and [DSpark P/D handoff regression #34410](https://github.com/sgl-project/sglang/pull/34410).
-- **Archived DCP investigation:** [Issue #45367](https://github.com/sgl-project/sglang/issues/45367) with [registration guard #45371](https://github.com/sgl-project/sglang/pull/45371) and [persistent buffers #45824](https://github.com/sgl-project/sglang/pull/45824). Both alternatives closed unmerged.
+- **GB300 DCP investigation:** [Issue #45367](https://github.com/sgl-project/sglang/issues/45367) documents my reproduction and NCCL registration A/B. The broader [upstream #43216](https://github.com/sgl-project/sglang/pull/43216) covers the reported graph-enabled configuration at the source level. My [DCP guard #45371](https://github.com/sgl-project/sglang/pull/45371) was superseded, and [persistent buffers #45824](https://github.com/sgl-project/sglang/pull/45824) closed after high-load correctness failures. [Case study](https://phoenix3334.github.io/#gb300-dcp).
 
 ### `$ projects --selected`
 

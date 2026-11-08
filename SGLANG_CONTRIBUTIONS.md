@@ -45,7 +45,7 @@ The [DSpark case study](https://phoenix3334.github.io/#project-dspark-review) co
 ## Serving diagnostics and investigation history
 
 - [RFC #44697](https://github.com/sgl-project/sglang/issues/44697): production expert placement and synthetic routing diagnostics for Prefill. The real-token V4.1-Flash follow-up records rank-count CV, MegaMoE duration, input throughput and GPU timelines separately.
-- [Issue #45367](https://github.com/sgl-project/sglang/issues/45367): two-node GB300 DCP graph replay investigation. The [registration guard #45371](https://github.com/sgl-project/sglang/pull/45371) and [persistent buffer proposal #45824](https://github.com/sgl-project/sglang/pull/45824) were closed unmerged.
+- [Issue #45367](https://github.com/sgl-project/sglang/issues/45367): I reproduced the original two-node GB300 DCP graph-replay failure and isolated the effect of graph registration. [upstream #43216](https://github.com/sgl-project/sglang/pull/43216) (zhihengy) generalized the default guard to multi-rank CUDA Graph configurations and covers this deployment at the source level. My [DCP guard #45371](https://github.com/sgl-project/sglang/pull/45371) was superseded and closed unmerged. [persistent buffers #45824](https://github.com/sgl-project/sglang/pull/45824) closed unmerged after high-load correctness failures. The 12-prompt comparison and 640-request stress run were local experiments on the earlier stack. [Case study](https://phoenix3334.github.io/#gb300-dcp).
 - [#48514](https://github.com/sgl-project/sglang/pull/48514): test import adjustment, closed unmerged.
 
 - [#31455](https://github.com/sgl-project/sglang/pull/31455): closed, unmerged diagnostic draft for DSpark replay synchronisation.
