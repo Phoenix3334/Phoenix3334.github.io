@@ -98,8 +98,8 @@
     @media(max-width:900px){.cost-chain,.practice-grid{grid-template-columns:1fr;gap:30px}.reference-grid{gap:24px}.supporting-project{flex-direction:column;gap:14px}.hero{gap:36px}}
     @media(max-width:680px){.hero{grid-template-columns:1fr;padding:54px 0;gap:35px;min-height:auto}h1{font-size:42px}.portrait{display:none}.reference-grid{grid-template-columns:1fr}.hero-actions{gap:20px}.hero-lede{font-size:15px}.cost-scope{padding:16px 18px}.research-steps{gap:10px}}
     @media(max-width:680px){html[lang="zh-CN"] h1{font-size:32px}}
-    .phase-benchmarks{max-width:760px}.phase-benchmarks .table-scroll{margin:2px 0 14px}.phase-compact{table-layout:fixed}.phase-compact th:first-child{width:23%}.phase-compact td{overflow-wrap:anywhere}.phase-compact th,.phase-compact td{padding:6px 12px 6px 0}.phase-compact caption{padding-bottom:4px}.phase-compact td strong{color:var(--rust);font-variant-numeric:tabular-nums}
-    @media(max-width:480px){.phase-compact th,.phase-compact td{padding-right:6px}.phase-compact td strong{white-space:nowrap}}
+    .phase-benchmarks{max-width:760px}.phase-benchmarks .table-scroll{margin:2px 0 14px}.phase-compact{table-layout:fixed}.phase-compact th:first-child{width:28%}.phase-compact td{overflow-wrap:anywhere}.phase-compact th,.phase-compact td{padding:6px 12px 6px 0}.phase-compact caption{padding-bottom:4px}
+    @media(max-width:480px){.phase-compact th,.phase-compact td{padding-right:6px}}
   </style>
 </head>
 <body>
@@ -308,27 +308,23 @@
           <p data-i18n="internship-intro">Built reproducible phase-isolated and end-to-end benchmarks across input/output lengths and concurrency. Compared TP, PP, EP, CP/DCP, DP Attention, EAGLE3/DSpark, EPLB, CUDA Graph and Chunked Prefill. Used KV cache and Mamba state pools, MRR/MF and memory pressure to identify feasible configurations.</p>
         </div>
         <article class="lab-note phase-note" id="long-context-results">
-          <div class="note-heading"><span class="note-number">01</span><h3 data-i18n="phase-title">Long-context serving: selected measured results</h3></div>
-          <p data-i18n="phase-intro">Selected SGLang measurements across DeepSeek-V4-Pro, V4.1-Flash, and Kimi K3, covering Prefill throughput and Decode parallelism.</p>
+          <div class="note-heading"><span class="note-number">01</span><h3 data-i18n="phase-title">Long-context serving benchmarks</h3></div>
+          <p data-i18n="phase-intro">Benchmarked long-context Prefill and Decode on B300 and GB300, using throughput and latency to guide parallelism and deployment choices.</p>
           <details class="work-detail phase-benchmarks">
-            <summary data-i18n="phase-summary">View four benchmark comparisons</summary>
+            <summary data-i18n="phase-summary">View selected benchmark work</summary>
             <div class="detail-body">
               <div class="table-scroll" tabindex="0" role="region" aria-labelledby="phase-table-caption">
                 <table class="result-table phase-compact">
-                  <caption data-i18n="phase-caption" id="phase-table-caption">Selected SGLang runs · throughput in tokens/s</caption>
-                  <thead><tr><th data-i18n="phase-model" scope="col">Model / phase</th><th data-i18n="phase-scope" scope="col">Workload</th><th data-i18n="phase-result" scope="col">Observed result</th></tr></thead>
+                  <caption data-i18n="phase-caption" id="phase-table-caption">Selected SGLang benchmark work</caption>
+                  <thead><tr><th data-i18n="phase-model" scope="col">Model</th><th data-i18n="phase-scope" scope="col">Benchmark focus</th></tr></thead>
                   <tbody>
-                <tr><th scope="row">V4-Pro · Prefill</th><td data-i18n="phase-v4p-scope">8 GPUs · B300 / GB300<br>60k in, 1 out</td><td data-i18n="phase-v4p-result"><strong>95.44k / 117.83k</strong> input tok/s</td></tr>
-                <tr><th scope="row">V4-Pro · Decode</th><td data-i18n="phase-v4d-scope">8 GPUs · B300 / GB300<br>60k in, 1k out</td><td data-i18n="phase-v4d-result">AR <strong>43.74k / 46.09k</strong><br>EAGLE <strong>46.81k / 48.01k</strong> output tok/s</td></tr>
-                <tr><th scope="row">V4.1-Flash · Prefill</th><td data-i18n="phase-flash-scope">4 GPUs · real prompts, ~64k in, 1 out<br>Default vs. frozen expert placement</td><td data-i18n="phase-flash-result"><strong>369.75k → 373.26k</strong> input tok/s<br>Median TTFT 5.63 → 5.57 s</td></tr>
-                <tr><th scope="row">Kimi K3 · Decode</th><td data-i18n="phase-k3-scope">8× B300 · isolated Decode with fake KV transfer<br>TP8/DCP8 vs. PP2×TP4 + DCP4</td><td data-i18n="phase-k3-result"><strong>5.27k vs. 3.68k</strong> output tok/s<br>Median TPOT 69.3 vs. 99.7 ms</td></tr>
+                    <tr><th scope="row">DeepSeek-V4-Pro</th><td data-i18n="phase-v4">Prefill and Decode tuning, comparing batching, cache capacity, and speculative decoding.</td></tr>
+                    <tr><th scope="row">DeepSeek-V4.1-Flash</th><td data-i18n="phase-flash">Prefill and expert balancing under synthetic and real-token loads. <a class="inline-link" href="https://github.com/sgl-project/sglang/issues/44697" target="_blank" rel="noreferrer">RFC #44697 ↗</a></td></tr>
+                    <tr><th scope="row">Kimi K3</th><td data-i18n="phase-k3">Prefill: compared tensor/expert parallelism with pipeline parallelism. Decode: evaluated DCP and pipeline trade-offs in throughput, per-token latency, and runtime correctness.</td></tr>
                   </tbody>
                 </table>
               </div>
-              <p data-i18n="phase-v4-scope" class="boundary">V4-Pro rows show tuned operating points. EAGLE used simulated acceptance (≈0.70); versions and capacity settings varied. At 128k input, GB300 Prefill reached 100.27k input tok/s, and the B300 EAGLE Decode point reached 36.49k output tok/s at 1k output tokens.</p>
-              <p data-i18n="phase-k3-scope" class="boundary">K3 uses matched load with randomized lengths capped at 64k input and 1k output. See independent PP measurements and the GB300 DCP stress run for separate validation. <a class="inline-link" href="https://github.com/sgl-project/sglang/pull/47614#speed-tests-and-profiling" target="_blank" rel="noreferrer">PR #47614 ↗</a> · <a class="inline-link" href="https://github.com/sgl-project/sglang/issues/45367#high-concurrency-stability" target="_blank" rel="noreferrer">Issue #45367 ↗</a></p>
-              <p data-i18n="phase-flash-source" class="boundary">V4.1-Flash real-token EPLB follow-up. <a class="inline-link" href="https://github.com/sgl-project/sglang/issues/44697#additional-evidence-reported-2026-11-05-real-token-balanced-reference-and-gpu-timelines" target="_blank" rel="noreferrer">RFC #44697 ↗</a></p>
-              <p data-i18n="phase-discovery" class="boundary">The <a class="inline-link" href="#project-dp-health">DP Health case</a> traces a throughput anomaly back to request routing.</p>
+              <p data-i18n="phase-k3-source" class="boundary">Related K3 runtime investigations · <a class="inline-link" href="https://github.com/sgl-project/sglang/pull/47614" target="_blank" rel="noreferrer">PR #47614 ↗</a> · <a class="inline-link" href="https://github.com/sgl-project/sglang/issues/45367" target="_blank" rel="noreferrer">Issue #45367 ↗</a></p>
             </div>
           </details>
         </article>
@@ -627,24 +623,17 @@
   "[data-i18n=\"dspark-attribution\"]": "我提交故障报告、构建复现、完成对照实验并提交正式 Review。#32467 的最终 no-init 代码由 EanWang211123 编写并合入。我另外跟进了 Breakable CUDA Graph 捕获顺序（<a class=\"inline-link\" href=\"https://github.com/sgl-project/sglang/pull/34286\" target=\"_blank\" rel=\"noreferrer\">#34286</a>）和 P/D draft-input 交接回归（<a class=\"inline-link\" href=\"https://github.com/sgl-project/sglang/pull/34410\" target=\"_blank\" rel=\"noreferrer\">#34410</a>）。",
   "[data-i18n=\"dspark-case-links\"]": "<a class=\"inline-link\" href=\"https://github.com/sgl-project/sglang/issues/34297\" target=\"_blank\" rel=\"noreferrer\">排障路线图 #34297 ↗</a> · <a class=\"inline-link\" href=\"https://github.com/sgl-project/sglang/pull/32467#discussion_r3749014153\" target=\"_blank\" rel=\"noreferrer\">我的 A/B/C 实验与技术分析 ↗</a> · <a class=\"inline-link\" href=\"https://github.com/sgl-project/sglang/pull/32467#pullrequestreview-4896206171\" target=\"_blank\" rel=\"noreferrer\">我提交的 GitHub Review ↗</a> · <a class=\"inline-link\" href=\"https://github.com/sgl-project/sglang/pull/32467\" target=\"_blank\" rel=\"noreferrer\">合入的修复 #32467 ↗</a>",
   "[data-i18n=\"gb-upstream\"]": "<strong>上游通用保护。</strong> <a class=\"inline-link\" href=\"https://github.com/sgl-project/sglang/pull/43216\" target=\"_blank\" rel=\"noreferrer\">#43216</a> 于 2026 年 10 月 22 日合入。当 TP、EP 或 DP 涉及多 rank 且任一 CUDA Graph 阶段启用时，默认设置 <code>NCCL_GRAPH_REGISTER=0</code>，并保留显式覆盖。原 GB300 DCP <code>a2a</code> 配置满足该条件，因此我关闭了范围更窄的 <a class=\"inline-link\" href=\"https://github.com/sgl-project/sglang/pull/45371\" target=\"_blank\" rel=\"noreferrer\">#45371</a>（未合入），并将 <a class=\"inline-link\" href=\"https://github.com/sgl-project/sglang/issues/45367#issuecomment-6704556147\" target=\"_blank\" rel=\"noreferrer\">Issue #45367</a> 标为已完成。",
-  "[data-i18n=\"phase-title\"]": "长上下文推理：代表测量结果",
-  "[data-i18n=\"phase-intro\"]": "选取 DeepSeek-V4-Pro、V4.1-Flash 与 Kimi K3 的 SGLang 实测，涵盖 Prefill 吞吐与 Decode 并行配置对照。",
-  "[data-i18n=\"phase-summary\"]": "展开查看 4 组实测对照",
-  "[data-i18n=\"phase-caption\"]": "SGLang 代表实测 · 吞吐单位为 tok/s",
-  "[data-i18n=\"phase-model\"]": "模型 / 阶段",
-  "[data-i18n=\"phase-scope\"]": "测试口径",
-  "[data-i18n=\"phase-result\"]": "实测结果",
-  "[data-i18n=\"phase-v4p-scope\"]": "8 卡 · B300 / GB300<br>输入 60k，输出 1",
-  "[data-i18n=\"phase-v4p-result\"]": "<strong>95.44k / 117.83k</strong> 输入 tok/s",
-  "[data-i18n=\"phase-v4d-scope\"]": "8 卡 · B300 / GB300<br>输入 60k，输出 1k",
-  "[data-i18n=\"phase-v4d-result\"]": "AR <strong>43.74k / 46.09k</strong><br>EAGLE <strong>46.81k / 48.01k</strong> 输出 tok/s",
-  "[data-i18n=\"phase-flash-scope\"]": "4 卡 · 真实样本，输入约 64k，输出 1<br>默认布局 vs. 离线冻结专家布局",
-  "[data-i18n=\"phase-flash-result\"]": "<strong>369.75k → 373.26k</strong> 输入 tok/s<br>TTFT P50 5.63 → 5.57 s",
   "[data-i18n=\"phase-k3-scope\"]": "K3 使用同负载随机长度测试，64k 输入与 1k 输出是长度上限。PP 的独立对照与 GB300 DCP 压力验证见公开记录。 <a class=\"inline-link\" href=\"https://github.com/sgl-project/sglang/pull/47614#speed-tests-and-profiling\" target=\"_blank\" rel=\"noreferrer\">PR #47614 ↗</a> · <a class=\"inline-link\" href=\"https://github.com/sgl-project/sglang/issues/45367#high-concurrency-stability\" target=\"_blank\" rel=\"noreferrer\">Issue #45367 ↗</a>",
-  "[data-i18n=\"phase-k3-result\"]": "<strong>5.27k vs. 3.68k</strong> 输出 tok/s<br>TPOT P50 69.3 vs. 99.7 ms",
-  "[data-i18n=\"phase-v4-scope\"]": "V4-Pro 为各配置调优后的测量点。EAGLE 使用约 0.70 的模拟接受率，各测量点的版本及容量配置有差异。128k 输入下，GB300 Prefill 为 100.27k 输入 tok/s，B300 EAGLE 单压 D 在 1k 输出下为 36.49k 输出 tok/s。",
-  "[data-i18n=\"phase-flash-source\"]": "V4.1-Flash 真实样本 EPLB 复测。 <a class=\"inline-link\" href=\"https://github.com/sgl-project/sglang/issues/44697#additional-evidence-reported-2026-11-05-real-token-balanced-reference-and-gpu-timelines\" target=\"_blank\" rel=\"noreferrer\">RFC #44697 ↗</a>",
-  "[data-i18n=\"phase-discovery\"]": "<a class=\"inline-link\" href=\"#project-dp-health\">DP Health 案例</a>记录了从吞吐异常到请求路由的排查过程。"
+  "[data-i18n=\"phase-title\"]": "长上下文推理评测",
+  "[data-i18n=\"phase-intro\"]": "在 B300、GB300 上开展长上下文单压 P / D，结合吞吐与延迟评估并行策略和部署选型。",
+  "[data-i18n=\"phase-summary\"]": "展开查看代表性评测",
+  "[data-i18n=\"phase-caption\"]": "SGLang 代表性评测",
+  "[data-i18n=\"phase-model\"]": "模型",
+  "[data-i18n=\"phase-scope\"]": "评测重点",
+  "[data-i18n=\"phase-v4\"]": "分阶段压测 Prefill 和 Decode，对比分块、缓存容量及投机解码配置。",
+  "[data-i18n=\"phase-flash\"]": "对比随机输入与真实样本下的 Prefill 表现，分析专家均衡及其吞吐收益。 <a class=\"inline-link\" href=\"https://github.com/sgl-project/sglang/issues/44697\" target=\"_blank\" rel=\"noreferrer\">RFC #44697 ↗</a>",
+  "[data-i18n=\"phase-k3\"]": "单压 P 对比 TP/EP 与流水线并行，单压 D 评估 DCP、PP 对吞吐、逐 token 时延和运行时正确性的影响。",
+  "[data-i18n=\"phase-k3-source\"]": "K3 运行时排查 · <a class=\"inline-link\" href=\"https://github.com/sgl-project/sglang/pull/47614\" target=\"_blank\" rel=\"noreferrer\">PR #47614 ↗</a> · <a class=\"inline-link\" href=\"https://github.com/sgl-project/sglang/issues/45367\" target=\"_blank\" rel=\"noreferrer\">Issue #45367 ↗</a>"
 };
     const bilingual=Object.entries(zh).map(([selector,value])=>{
       const element=document.querySelector(selector); if(!element)return null;
