@@ -20,6 +20,8 @@ Status checked **8 November 2026**. This index lists **four authored merged SGLa
 
 The [DP Health case study](https://phoenix3334.github.io/#project-dp-health) walks through the Delayer hypothesis, measurement checks, request tracing and the same-image 2×2. The [public retrospective](https://github.com/sgl-project/sglang/issues/35241) preserves the chronology and separates the post-fix running-request analysis from the original discovery.
 
+The [PP Stream case study](https://phoenix3334.github.io/#project-pp-lifetime) covers async-depth reproduction, receive-versus-forward checksums, the reference-lifetime control, and why `record_stream` protects allocator lifetime. [Original issue](https://github.com/sgl-project/sglang/issues/47613).
+
 ## Technical review and collaborative repairs
 
 | Upstream record | My contribution | Authorship and status |

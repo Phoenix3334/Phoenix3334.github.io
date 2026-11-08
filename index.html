@@ -141,8 +141,30 @@
           <div class="open-project-index" data-i18n="pp-index">01 · PIPELINE / STREAM LIFETIME</div>
           <div class="open-project-copy">
             <div class="project-title"><img class="project-logo" src="https://github.com/sgl-project.png?size=88" alt="SGLang"><h3><a href="https://github.com/sgl-project/sglang/pull/47614" target="_blank" rel="noreferrer" data-i18n="pp-title">PP output corruption: repair tensor lifetime across CUDA streams ↗</a></h3></div>
-            <p data-i18n="pp-copy">Traced repeated token-0 output at deeper pipeline queues to received tensors being recycled before queued forward-stream reads completed. Checksum probes caught the data changing between receive and forward. I implemented the shared PP launch-boundary repair with <code>record_stream(self.forward_stream)</code>; <strong>my PR #47614 merged on 2 November 2026</strong>.</p>
-            <details class="work-detail"><summary data-i18n="pp-detail-title">From a suspicious benchmark to an allocator-lifetime fix</summary><div class="detail-body"><p data-i18n="pp-detail-copy">The apparent throughput gain at deeper PP queues came with corrupted outputs. On Kimi-K3, eight B300 GPUs, v0.5.22 and fake PD transfer, PP2 × TP4 at depths 2 and 3 produced 51/192 and 98/192 requests with at least 20 consecutive token 0; patched runs produced 0/192 at both depths. Tests also covered PP4 and a DCP combination. Recording the forward stream keeps the allocator from reusing the tensor storage until that stream finishes reading it.</p><p class="boundary" data-i18n="pp-boundary">The B300 reproduction used v0.5.22 and fake transfer, not real two-node PD. GPU results are tied to the documented patch variants. This is a correctness repair; corrupted baseline throughput is not a valid performance comparison.</p><a class="inline-link" href="https://github.com/sgl-project/sglang/issues/47613" target="_blank" rel="noreferrer" data-i18n="pp-issue">Original investigation · #47613 ↗</a></div></details>
+            <p data-i18n="pp-copy">Kimi-K3 produced long token-0 runs when I deepened the asynchronous PP Decode queue. I traced the failure to receive buffers being reused before the forward stream read them. After fixing tensor lifetime, affected requests fell from <strong>51/192 and 98/192 to 0/192</strong> at depths 2 and 3. <strong>PR #47614 merged on 2 November 2026.</strong></p>
+            <details class="work-detail" id="pp-debug-case">
+              <summary data-i18n="pp-detail-title">Expand the investigation: reproduction, checksum evidence and the fix</summary>
+              <div class="detail-body">
+                <p data-i18n="pp-detail-copy"><strong>1. Turn an apparent speedup into a correctness test.</strong> Deeper asynchronous PP queues appeared faster, but many Kimi-K3 requests emitted long runs of token 0. On PP2 × TP4, depth 1 produced no affected requests in the tested run. Raising the depth to 2 or 3 made the fault reproducible. Synchronizing after each launch also suppressed it, which directed the investigation to queued work and tensor lifetime.</p>
+                <p data-i18n="pp-checksum"><strong>2. Measure where the data changed.</strong> On the downstream stage, I checked the same proxy tensors just after receive on the communication stream and just before use on the forward stream. Two depth-2 runs had <strong>76/7,498 and 378/7,498 checksum mismatches</strong>. Keeping the previous tensor reference alive until the next receive had allocated its buffers gave <strong>0/7,499 mismatches</strong> with a similar observed queue depth. <a class="inline-link" href="https://github.com/sgl-project/sglang/issues/47613#evidence" target="_blank" rel="noreferrer">Checksum and reference-lifetime controls ↗</a></p>
+                <p data-i18n="pp-lifetime"><strong>3. Extend storage lifetime at the shared launch boundary.</strong> CPU scheduling could drop the old reference while a forward-stream read was still queued. The next receive could reuse the same storage and overwrite that microbatch's activations. In <code>_pp_launch_batch</code>, I used <code>record_stream(self.forward_stream)</code> on each non-CPU proxy tensor before <code>run_batch</code>. This tells the allocator to retain storage until forward-stream use completes. Existing stream dependencies still determine execution order.</p>
+                <div class="table-scroll" tabindex="0" role="region" aria-labelledby="pp-ab-caption">
+                  <table class="result-table">
+                    <caption data-i18n="pp-ab-caption" id="pp-ab-caption">Kimi-K3 · 8×B300 · v0.5.22 · fake P/D · C64 · requests with at least 20 consecutive token-0 outputs</caption>
+                    <thead><tr><th data-i18n="pp-ab-shape" scope="col">Configuration</th><th data-i18n="pp-ab-depth" scope="col">Async depth</th><th data-i18n="pp-ab-before" scope="col">Before</th><th data-i18n="pp-ab-after" scope="col">After</th></tr></thead>
+                    <tbody>
+                      <tr><th scope="row">PP2 × TP4</th><td>2</td><td>51/192</td><td><strong>0/192</strong></td></tr>
+                      <tr><th scope="row">PP2 × TP4</th><td>3</td><td>98/192</td><td><strong>0/192</strong></td></tr>
+                      <tr><th scope="row">PP2 × TP4 + DCP4</th><td>2</td><td>59/192</td><td><strong>0/192</strong></td></tr>
+                      <tr><th scope="row">PP4 × TP2</th><td>3</td><td>6/192</td><td><strong>0/192</strong></td></tr>
+                      <tr><th scope="row">PP4 × TP2</th><td>4</td><td>19/192</td><td><strong>0/192</strong></td></tr>
+                    </tbody>
+                  </table>
+                </div>
+                <p data-i18n="pp-boundary" class="boundary">The table reports single-node B300 correctness tests using fake transfer. The PR records the tested patch variants and separate communication-overlap follow-ups. The corrupted-output runs served as failure reproductions.</p>
+                <div data-i18n="pp-issue"><a class="inline-link" href="https://github.com/sgl-project/sglang/issues/47613" target="_blank" rel="noreferrer">Original investigation · #47613 ↗</a> · <a class="inline-link" href="https://github.com/sgl-project/sglang/pull/47614" target="_blank" rel="noreferrer">Merged fix and validation · #47614 ↗</a></div>
+              </div>
+            </details>
           </div>
           <div class="open-project-proof"><strong>PR #47614</strong><span data-i18n="pp-merged">authored · merged · 2 Nov 2026</span><strong>51–98 → 0</strong><span data-i18n="pp-probe">affected requests / 192 · PP2 depths 2 and 3 · tested B300 stack</span></div>
         </article>
@@ -363,11 +385,11 @@
   "[data-i18n=\"summary-collab-copy\"]": "<a href=\"https://github.com/sgl-project/sglang/pull/39487\" target=\"_blank\" rel=\"noreferrer\">#39487</a> DCP KV 回退恢复<br>本人定位、草稿实现与验证；维护者整合合入。",
   "[data-i18n=\"pp-index\"]": "01 · 流水线 / STREAM 生命周期",
   "[data-i18n=\"pp-title\"]": "PP 输出损坏：修复跨 CUDA stream 的 tensor 生命周期 ↗",
-  "[data-i18n=\"pp-copy\"]": "将较深流水线队列中的连续 token-0 输出，定位到接收 tensor 在排队的 forward 读取完成前被 allocator 复用。Checksum 探针捕捉到接收后与 forward 前的数据变化。我在统一 PP launch 边界加入 <code>record_stream(self.forward_stream)</code>，<strong>本人 PR #47614 于 2026 年 11 月 2 日合入</strong>。",
-  "[data-i18n=\"pp-detail-title\"]": "从可疑吞吐结果到 allocator 生命周期修复",
-  "[data-i18n=\"pp-detail-copy\"]": "较深 PP 队列下表面吞吐增长伴随输出损坏。Kimi-K3、八卡 B300、v0.5.22 与 fake PD transfer 条件下，PP2 × TP4 的 depth 2、3 分别有 51/192、98/192 个请求出现至少 20 个连续 token 0；修复组均为 0/192。还测试了 PP4 和 DCP 组合。记录 forward stream 后，allocator 会等待该 stream 完成读取，再复用 tensor 存储。",
-  "[data-i18n=\"pp-boundary\"]": "B300 复现使用 v0.5.22 和 fake transfer，未覆盖真实双机 PD；GPU 结果对应公开记录中的具体补丁变体。这是正确性修复，损坏输出的基线吞吐不构成有效性能对照。",
-  "[data-i18n=\"pp-issue\"]": "原始故障调查 · #47613 ↗",
+  "[data-i18n=\"pp-copy\"]": "Kimi-K3 异步 PP Decode 加深队列后出现连续 token 0。我定位到 Forward Stream 尚未读取接收张量，显存就被下一轮接收提前复用。修复生命周期后，depth 2、3 的异常请求数分别从 <strong>51/192、98/192 降到 0/192</strong>。<strong>PR #47614 已于 2026 年 11 月 2 日合入。</strong>",
+  "[data-i18n=\"pp-detail-title\"]": "展开排障复盘 · 复现、校验与修复",
+  "[data-i18n=\"pp-detail-copy\"]": "<strong>1. 从可疑的吞吐增长转向正确性检查。</strong> 异步 PP 加深队列后，表面吞吐变高，却有大量 Kimi-K3 请求持续输出 token 0。PP2 × TP4 的测试中，depth 1 未见异常，升到 2 或 3 就能复现。每次 launch 后加同步也能压住问题，排查因此转向排队中的 GPU 工作与张量生命周期。",
+  "[data-i18n=\"pp-boundary\"]": "表格是单机 B300、fake transfer 条件下的正确性对照。各轮补丁版本与独立通信 Stream 的后续验证见 PR，输出损坏的轮次用于复现故障。",
+  "[data-i18n=\"pp-issue\"]": "<a class=\"inline-link\" href=\"https://github.com/sgl-project/sglang/issues/47613\" target=\"_blank\" rel=\"noreferrer\">原始排查记录 · #47613 ↗</a> · <a class=\"inline-link\" href=\"https://github.com/sgl-project/sglang/pull/47614\" target=\"_blank\" rel=\"noreferrer\">已合入修复与验证 · #47614 ↗</a>",
   "[data-i18n=\"pp-merged\"]": "本人编写 · 已合入 · 2026-11-02",
   "[data-i18n=\"pp-probe\"]": "异常请求数 / 192 · PP2 depth 2、3 · 指定 B300 测试栈",
   "[data-i18n=\"status-pr-47614\"]": "本人修复 · 已合入 · 2026-11-02",
@@ -585,7 +607,14 @@
   "[data-i18n=\"dp-ab-a2\"]": "原始代码 + 生成式探活关",
   "[data-i18n=\"dp-ab-b1\"]": "修复后 + 生成式探活开",
   "[data-i18n=\"dp-ab-b2\"]": "修复后 + 生成式探活关",
-  "[data-i18n=\"dp-inventory\"]": "<strong>复盘时才补齐的定位线索。</strong> 严重 LOW 的活跃窗口内，跨 rank 的 scheduler running 请求总数中位数为 <strong>48</strong>，健康对照为 <strong>72–80</strong>。这里统计调度器在途请求数，和 kernel batch 维度分别计算。较轻的 LOW 仍可达到 80，因此用逐 rank dispatch 与四臂消融确认因果。修复后的健康轮次仍会出现 Delayer timeout。<a class=\"inline-link\" href=\"https://github.com/sgl-project/sglang/issues/35241#issuecomment-5488710824\" target=\"_blank\" rel=\"noreferrer\">修订后的机制 ↗</a>"
+  "[data-i18n=\"dp-inventory\"]": "<strong>复盘时才补齐的定位线索。</strong> 严重 LOW 的活跃窗口内，跨 rank 的 scheduler running 请求总数中位数为 <strong>48</strong>，健康对照为 <strong>72–80</strong>。这里统计调度器在途请求数，和 kernel batch 维度分别计算。较轻的 LOW 仍可达到 80，因此用逐 rank dispatch 与四臂消融确认因果。修复后的健康轮次仍会出现 Delayer timeout。<a class=\"inline-link\" href=\"https://github.com/sgl-project/sglang/issues/35241#issuecomment-5488710824\" target=\"_blank\" rel=\"noreferrer\">修订后的机制 ↗</a>",
+  "[data-i18n=\"pp-checksum\"]": "<strong>2. 对照接收后与计算前的数据。</strong> 在下游 Stage 分别于通信 Stream 接收完成后、Forward Stream 读取前对同一批 proxy tensor 计算 checksum。两轮 depth 2 复现分别有 <strong>76/7,498 和 378/7,498</strong> 次校验不一致。将旧引用保留到下一轮接收完成分配后，在相近的队列深度下校验不一致降至 <strong>0/7,499</strong>。<a class=\"inline-link\" href=\"https://github.com/sgl-project/sglang/issues/47613#evidence\" target=\"_blank\" rel=\"noreferrer\">校验与引用保留对照 ↗</a>",
+  "[data-i18n=\"pp-lifetime\"]": "<strong>3. 在公共 launch 入口修复显存生命周期。</strong> CPU 调度清掉旧引用时，Forward Stream 可能还没读到激活。下一轮接收随即复用同一块显存，覆盖上一 microbatch 的输入。我在 <code>_pp_launch_batch</code> 中、<code>run_batch</code> 之前给每个非 CPU proxy tensor 调用 <code>record_stream(self.forward_stream)</code>，让 allocator 在 Forward Stream 使用结束后才复用显存。执行顺序仍由原有 Stream 依赖保证。",
+  "[data-i18n=\"pp-ab-caption\"]": "Kimi-K3 · 8×B300 · v0.5.22 · fake P/D · C64 · 连续输出至少 20 个 token 0 的请求",
+  "[data-i18n=\"pp-ab-shape\"]": "并行配置",
+  "[data-i18n=\"pp-ab-depth\"]": "异步深度",
+  "[data-i18n=\"pp-ab-before\"]": "修复前",
+  "[data-i18n=\"pp-ab-after\"]": "修复后"
 };
     const bilingual=Object.entries(zh).map(([selector,value])=>{
       const element=document.querySelector(selector); if(!element)return null;
