@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="570" viewBox="0 0 1200 570" role="img" aria-labelledby="title desc">
+<title id="title">Async pipeline-parallel decode: cross-stream tensor lifetime</title>
+<desc id="desc">Timeline of a tensor received by communication stream, enqueued for forward stream, reference being released too early, allocator reusing storage for another batch, and corruption. Record stream protects lifetime without creating a synchronization barrier.</desc>
+<defs>
+<marker id="arrow" markerWidth="8" markerHeight="8" refX="6.6" refY="4" orient="auto"><path d="M1 1 L7 4 L1 7" fill="none" stroke="#81919B" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></marker>
+<style>
+text{font-family:Inter,"Segoe UI",Arial,sans-serif}.title{font-size:26px;font-weight:700;fill:#253641}
+.sub{font-size:13px;fill:#677681}.lane{font-size:15px;font-weight:700;fill:#2A3D48}
+.label{font-size:14px;font-weight:600;fill:#2A3D48}.small{font-size:12px;fill:#5E707B}
+.rule{stroke:#DDDAD4;stroke-width:1}.good{fill:#F0F7F5;stroke:#BFD9D2}
+.bad{fill:#FDF2EC;stroke:#E3C1B0}.plain{fill:#FFFFFF;stroke:#D8DDDC}
+</style></defs>
+<rect width="1200" height="570" fill="#FBFAF7"/>
+<text x="42" y="48" class="title">A Tensor Can Be Freed Before the GPU Finishes Using It</text>
+<text x="42" y="74" class="sub">PP async decode · producer and consumer streams · illustrative lifetime timeline</text>
+<text x="276" y="119" class="small">t0 · receive A</text>
+<text x="516" y="119" class="small">t1 · enqueue forward</text>
+<text x="760" y="119" class="small">t2 · reference drops</text>
+<text x="1010" y="119" class="small">t3 · reuse</text>
+
+<text x="45" y="173" class="lane">CPU / Python</text>
+<text x="45" y="274" class="lane">Comm Stream</text>
+<text x="45" y="375" class="lane">Forward Stream</text>
+<text x="45" y="476" class="lane">Allocator / storage</text>
+<path d="M260 156 H1158 M260 257 H1158 M260 358 H1158 M260 459 H1158" class="rule" fill="none"/>
+
+<rect x="277" y="137" width="190" height="50" rx="6" class="plain"/>
+<text x="292" y="158" class="label">Receive tensor A</text><text x="292" y="177" class="small">Python holds reference</text>
+<rect x="508" y="137" width="206" height="50" rx="6" class="plain"/>
+<text x="523" y="158" class="label">Queue forward(A)</text><text x="523" y="177" class="small">GPU may execute later</text>
+<rect x="753" y="137" width="198" height="50" rx="6" class="bad"/>
+<text x="768" y="158" class="label">Drop reference A</text><text x="768" y="177" class="small">Host advances early</text>
+<rect x="1001" y="137" width="145" height="50" rx="6" class="plain"/>
+<text x="1016" y="158" class="label">Receive B</text><text x="1016" y="177" class="small">Next microbatch</text>
+
+<rect x="300" y="238" width="222" height="50" rx="6" class="good"/>
+<text x="315" y="259" class="label">Receive hidden states A</text><text x="315" y="278" class="small">Producer stream</text>
+<rect x="982" y="238" width="164" height="50" rx="6" class="bad"/>
+<text x="997" y="259" class="label">Receive B</text><text x="997" y="278" class="small">Reuses storage</text>
+
+<rect x="543" y="339" width="218" height="50" rx="6" class="plain"/>
+<text x="558" y="360" class="label">Forward(A) pending</text><text x="558" y="379" class="small">Consumer stream</text>
+<rect x="930" y="339" width="216" height="50" rx="6" class="bad"/>
+<text x="945" y="360" class="label">Forward(A) reads B</text><text x="945" y="379" class="small">Silent output corruption</text>
+
+<rect x="300" y="440" width="221" height="50" rx="6" class="plain"/>
+<text x="315" y="461" class="label">Storage allocated for A</text><text x="315" y="480" class="small">Valid pointer, correct data</text>
+<rect x="752" y="440" width="205" height="50" rx="6" class="bad"/>
+<text x="767" y="461" class="label">Block becomes reusable</text><text x="767" y="480" class="small">Consumer use not recorded</text>
+<rect x="1000" y="440" width="146" height="50" rx="6" class="bad"/>
+<text x="1015" y="461" class="label">A overwritten</text><text x="1015" y="480" class="small">Same address, new data</text>
+<path d="M468 162 H502 M716 162 H746 M955 162 H994 M522 263 H538 V339 M960 465 H993" fill="none" stroke="#81919B" stroke-width="1.8" marker-end="url(#arrow)"/>
+<rect x="40" y="513" width="1120" height="42" rx="6" class="good"/>
+<text x="58" y="538" class="label">Fix: record_stream(forward_stream) extends allocator lifetime; it does not insert a stream synchronization barrier.</text>
+</svg>
