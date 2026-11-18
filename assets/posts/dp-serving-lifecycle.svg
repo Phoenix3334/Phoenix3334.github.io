@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="492" viewBox="0 0 1200 492" role="img" aria-labelledby="diagram-title diagram-desc">
+<title id="diagram-title">DP Request Lifecycle and Control-plane State</title>
+<desc id="diagram-desc">User requests and generation-health checks pass through the tokenizer and DataParallelController. Within DPC, independent user RR/LB and health RR states choose an active rank. The scheduler may skip health under busy load while user requests proceed through scheduling, DP Attention, MoE and model execution. The incorrect historical design let health mutate user routing state before the scheduler's skip.</desc>
+<defs>
+<style>
+text{font-family:Inter,"Segoe UI",Arial,sans-serif}
+.kicker{font-size:11px;fill:#197F79;font-weight:700;letter-spacing:1.4px}
+.heading{font-size:24px;fill:#233440;font-weight:700}
+.sub{font-size:13px;fill:#687985}
+.section{font-size:15px;fill:#233440;font-weight:700}
+.body{font-size:13px;fill:#445C67}
+.small{font-size:12px;fill:#697C85}
+.rlabel{font-size:13px;fill:#A7553C;font-weight:700}
+.arrow{stroke:#6B848D;stroke-width:1.9;fill:none}
+</style>
+<marker id="arr" markerWidth="8" markerHeight="8" refX="6.4" refY="4" orient="auto"><path d="M1 1 L7 4 L1 7" fill="none" stroke="#6B848D" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></marker>
+<marker id="arrteal" markerWidth="8" markerHeight="8" refX="6.4" refY="4" orient="auto"><path d="M1 1 L7 4 L1 7" fill="none" stroke="#197F79" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></marker>
+</defs>
+<rect width="1200" height="492" fill="#FBFAF7"/>
+<text x="38" y="38" class="kicker">SG LANG / DP SERVING</text>
+<text x="38" y="73" class="heading">The Request Crosses DPC Before It Reaches the Scheduler</text>
+<text x="38" y="98" class="sub">Simplified control path · rank selection first, execution / scheduler admission second</text>
+<rect x="38" y="132" width="212" height="224" rx="7" fill="#FFFFFF" stroke="#D8DED9"/>
+<text x="57" y="159" class="section">Ingress</text>
+<rect x="57" y="185" width="174" height="52" rx="5" fill="#EEF6F3" stroke="#C5DAD4"/>
+<text x="70" y="206" class="section">User request</text>
+<text x="70" y="225" class="small">tokenized input</text>
+<rect x="57" y="263" width="174" height="52" rx="5" fill="#FCF2EC" stroke="#E0C8B9"/>
+<text x="70" y="284" class="section">Generation-health</text>
+<text x="70" y="303" class="small">not equivalent user work</text>
+<rect x="288" y="132" width="300" height="224" rx="7" fill="#FFFFFF" stroke="#B8D3CE" stroke-width="1.5"/>
+<rect x="288" y="132" width="4" height="224" rx="2" fill="#197F79"/>
+<text x="308" y="158" class="section">DataParallelController</text>
+<text x="308" y="178" class="small">Select an active DP rank</text>
+<rect x="307" y="194" width="262" height="55" rx="5" fill="#EEF6F3" stroke="#C5DAD4"/>
+<text x="321" y="217" class="section">User RR / LB state</text>
+<text x="321" y="237" class="small">Updated only by real user work</text>
+<rect x="307" y="265" width="262" height="55" rx="5" fill="#FCF7F0" stroke="#E2D6C5"/>
+<text x="321" y="288" class="section">Independent health RR state</text>
+<text x="321" y="307" class="small">No user budget mutation</text>
+<path d="M250 211 H306" class="arrow" marker-end="url(#arr)"/>
+<path d="M250 289 H305" class="arrow" marker-end="url(#arr)"/>
+<rect x="626" y="132" width="232" height="224" rx="7" fill="#FFFFFF" stroke="#D8DED9"/>
+<text x="644" y="159" class="section">Selected Rank</text>
+<text x="644" y="179" class="small">Scheduler / admission</text>
+<rect x="646" y="196" width="192" height="55" rx="5" fill="#EEF6F3" stroke="#C5DAD4"/>
+<text x="660" y="218" class="section">User batch</text>
+<text x="660" y="238" class="small">Prefill / Decode / Delayer</text>
+<rect x="646" y="267" width="192" height="55" rx="5" fill="#FCF2EC" stroke="#E0C8B9"/>
+<text x="660" y="289" class="section">Busy health check</text>
+<text x="660" y="309" class="small">can be skipped here</text>
+<path d="M588 223 H645" class="arrow" marker-end="url(#arr)"/>
+<path d="M588 294 H645" class="arrow" marker-end="url(#arr)"/>
+<rect x="896" y="132" width="266" height="224" rx="7" fill="#FFFFFF" stroke="#D8DED9"/>
+<text x="916" y="159" class="section">Execution / Runtime</text>
+<rect x="916" y="193" width="226" height="56" rx="5" fill="#F0F3F5" stroke="#D3DDE0"/>
+<text x="932" y="217" class="section">TP Worker / Model Runner</text>
+<text x="932" y="237" class="small">GPU execution and KV state</text>
+<rect x="916" y="266" width="226" height="56" rx="5" fill="#F0F3F5" stroke="#D3DDE0"/>
+<text x="932" y="289" class="section">DP Attention + MoE</text>
+<text x="932" y="309" class="small">effective batches &amp; rank balance</text>
+<path d="M858 223 H915" class="arrow" marker-end="url(#arr)"/>
+<line x1="38" y1="387" x2="1162" y2="387" stroke="#D8D5CF"/>
+<text x="44" y="422" class="rlabel">Historical failure:</text>
+<text x="180" y="422" class="body">Health request mutated user routing state inside DPC, even when the Scheduler later skipped it.</text>
+<text x="44" y="453" fill="#197F79" font-size="13" font-weight="700">Invariant after fix:</text>
+<text x="180" y="453" class="body">The probe still routes, but does not change the user dispatch state or its load budget.</text>
+</svg>
