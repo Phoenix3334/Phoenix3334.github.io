@@ -146,6 +146,43 @@
     @media(max-width:900px){.learning-groups{grid-template-columns:1fr;gap:15px}.learning-group-head{min-height:0}.learning-links{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.learning-link:nth-child(odd){border-right:1px solid var(--line)}.learning-link:nth-last-child(2){border-bottom:0}}
     @media(max-width:680px){.learning-links{grid-template-columns:1fr}.learning-link:nth-child(odd){border-right:0}.learning-link:nth-last-child(2){border-bottom:1px solid var(--line)}.learning-group-head h3{font-size:22px}.learning-link{min-height:0}}
 
+
+    /* Extra learning maps with clear provenance labels */
+    .learning-more-maps{margin-top:44px;border-top:1px solid var(--line);padding-top:34px}
+    .learning-more-head{display:flex;justify-content:space-between;gap:32px;align-items:end;margin-bottom:24px}
+    .learning-more-head>div{flex:1}.learning-more-head h3{font:700 clamp(24px,2.5vw,32px)/1.25 var(--serif);margin:0}
+    .learning-more-head>p{max-width:350px;font-size:12px;line-height:1.75;color:var(--muted);margin:0}
+    .learning-extra-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 24px}
+    .learning-extra-link{display:flex;flex-direction:column;position:relative;gap:7px;padding:17px 30px 18px 0;min-width:0;border-top:1px solid var(--line)}
+    .learning-extra-top{display:flex;align-items:baseline;gap:9px;flex-wrap:wrap}
+    .learning-extra-top strong{font-size:14px;color:var(--ink)}.learning-extra-link:hover strong{color:var(--teal)}
+    .learning-source{border:1px solid #BED8D4;color:var(--teal);padding:2px 6px;font-size:10px}
+    .learning-extra-copy{color:var(--muted);font-size:12px;line-height:1.6}
+    .learning-extra-arrow{position:absolute;right:4px;top:15px;color:var(--teal)}
+    .star-explorer{margin-top:35px;background:#fff;border:1px solid var(--line)}
+    .star-explorer>summary{cursor:pointer;display:flex;align-items:center;gap:15px;padding:20px 24px;font-weight:700;font-size:15px;list-style:none}
+    .star-explorer>summary::-webkit-details-marker{display:none}
+    .star-explorer>summary::after{content:"+";color:var(--teal);margin-left:auto;font-size:20px;font-weight:400}
+    .star-explorer[open]>summary::after{content:"−"}
+    .star-summary-sub{font-size:11px;font-weight:400;color:var(--muted)}
+    .star-explorer-content{padding:0 24px 24px;border-top:1px solid var(--line)}
+    .star-explorer-content>p:first-child{font-size:12px;color:var(--muted);line-height:1.8}
+    .star-controls{display:flex;flex-wrap:wrap;gap:10px}
+    .star-controls input,.star-controls select{font:12px var(--sans);border:1px solid var(--line);padding:10px 12px;background:var(--paper);color:var(--ink)}
+    .star-controls input{flex:1;min-width:200px}
+    .star-status{font-size:11px;color:var(--muted);padding:4px 0}
+    .star-results{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 18px;max-height:490px;overflow:auto}
+    .star-result{position:relative;display:flex;flex-direction:column;gap:6px;padding:14px 24px 15px 0;border-top:1px solid var(--line);min-width:0}
+    .star-result-name{font-size:13px;font-weight:700;color:var(--ink);overflow-wrap:anywhere}
+    .star-result-desc{font-size:11px;line-height:1.6;color:var(--muted)}
+    .star-result-arrow{position:absolute;right:6px;top:14px;color:var(--teal)}
+    .star-actions{display:flex;flex-wrap:wrap;align-items:center;gap:20px;padding-top:18px}
+    .star-actions button{cursor:pointer;font:700 12px var(--sans);padding:10px 15px;background:var(--paper);color:var(--teal);border:1px solid var(--line)}
+    .star-actions button:disabled{opacity:.5}
+    .star-actions a{font-size:12px;color:var(--blue);text-decoration:underline}
+    @media(max-width:900px){.learning-more-head{display:block}.learning-more-head>p{margin-top:15px}}
+    @media(max-width:680px){.learning-extra-grid,.star-results{grid-template-columns:1fr}.star-explorer>summary{padding:18px;flex-wrap:wrap}.star-summary-sub{width:100%}.star-explorer-content{padding:0 18px 20px}}
+
   </style>
 </head>
 <body>
@@ -448,7 +485,7 @@
       <div class="section-head">
         <div><p class="eyebrow" data-i18n="learning-kicker">CURATED LEARNING RESOURCES</p>
         <h2 data-i18n="learning-title">A learning shelf<br>for AI systems.</h2></div>
-        <p data-i18n="learning-intro">A focused reading list from projects I've forked while exploring LLM infrastructure. Links lead to original upstream sources; this is a study map, not a ranking.</p>
+        <p data-i18n="learning-intro">A curated reading shelf combining verified forks with other public references. This selection is not my complete Star history.</p>
       </div>
       <div class="learning-groups">
         <div class="learning-group">
@@ -536,6 +573,90 @@
           </div>
         </div>
       </div>
+      <div class="learning-more-maps">
+        <div class="learning-more-head">
+          <div><p class="eyebrow" data-i18n="learning-extra-kicker">MORE LEARNING MAPS</p>
+          <h3 data-i18n="learning-extra-title">More open books, guides &amp; learning paths</h3></div>
+          <p data-i18n="learning-extra-intro">Two verified forks plus public reading picks. Recommendations are not claims that every project is starred.</p>
+        </div>
+        <div class="learning-extra-grid">
+          <a class="learning-extra-link" href="https://github.com/cr7258/ai-infra-learning" target="_blank" rel="noopener noreferrer">
+            <span class="learning-extra-top"><strong>AI Infra Learning Meetings</strong><span class="learning-source" data-i18n="learning-source-forked">Forked</span></span>
+            <span class="learning-extra-copy" data-i18n="learning-extra-desc-0">AI Infra discussions, talks and reading notes.</span>
+            <span class="learning-extra-arrow" aria-hidden="true">↗</span>
+          </a>
+          <a class="learning-extra-link" href="https://github.com/AI-mzq/From-Zero-to-AGI" target="_blank" rel="noopener noreferrer">
+            <span class="learning-extra-top"><strong>From Zero to AGI</strong><span class="learning-source" data-i18n="learning-source-forked">Forked</span></span>
+            <span class="learning-extra-copy" data-i18n="learning-extra-desc-1">A broad Chinese knowledge map for modern AI.</span>
+            <span class="learning-extra-arrow" aria-hidden="true">↗</span>
+          </a>
+          <a class="learning-extra-link" href="https://huggingface.co/spaces/nanotron/ultrascale-playbook" target="_blank" rel="noopener noreferrer">
+            <span class="learning-extra-top"><strong>Ultra-Scale Playbook</strong><span class="learning-source" data-i18n="learning-source-public">Reading pick</span></span>
+            <span class="learning-extra-copy" data-i18n="learning-extra-desc-2">Distributed LLM training and parallelism explained.</span>
+            <span class="learning-extra-arrow" aria-hidden="true">↗</span>
+          </a>
+          <a class="learning-extra-link" href="https://github.com/stas00/ml-engineering" target="_blank" rel="noopener noreferrer">
+            <span class="learning-extra-top"><strong>ML Engineering Open Book</strong><span class="learning-source" data-i18n="learning-source-public">Reading pick</span></span>
+            <span class="learning-extra-copy" data-i18n="learning-extra-desc-3">A practical handbook for operating large GPU clusters.</span>
+            <span class="learning-extra-arrow" aria-hidden="true">↗</span>
+          </a>
+          <a class="learning-extra-link" href="https://mlsysbook.ai/" target="_blank" rel="noopener noreferrer">
+            <span class="learning-extra-top"><strong>Machine Learning Systems</strong><span class="learning-source" data-i18n="learning-source-public">Reading pick</span></span>
+            <span class="learning-extra-copy" data-i18n="learning-extra-desc-4">Harvard CS249r open ML systems textbook.</span>
+            <span class="learning-extra-arrow" aria-hidden="true">↗</span>
+          </a>
+          <a class="learning-extra-link" href="https://github.com/iambiniyam/ai-infra-roadmap" target="_blank" rel="noopener noreferrer">
+            <span class="learning-extra-top"><strong>AI Infra Roadmap</strong><span class="learning-source" data-i18n="learning-source-public">Reading pick</span></span>
+            <span class="learning-extra-copy" data-i18n="learning-extra-desc-5">A staged roadmap for GPUs, inference and infrastructure.</span>
+            <span class="learning-extra-arrow" aria-hidden="true">↗</span>
+          </a>
+          <a class="learning-extra-link" href="https://github.com/mlabonne/llm-course" target="_blank" rel="noopener noreferrer">
+            <span class="learning-extra-top"><strong>LLM Course</strong><span class="learning-source" data-i18n="learning-source-public">Reading pick</span></span>
+            <span class="learning-extra-copy" data-i18n="learning-extra-desc-6">Model training, fine-tuning and LLM applications.</span>
+            <span class="learning-extra-arrow" aria-hidden="true">↗</span>
+          </a>
+          <a class="learning-extra-link" href="https://github.com/gpu-mode/resource-stream" target="_blank" rel="noopener noreferrer">
+            <span class="learning-extra-top"><strong>GPU MODE Resource Stream</strong><span class="learning-source" data-i18n="learning-source-public">Reading pick</span></span>
+            <span class="learning-extra-copy" data-i18n="learning-extra-desc-7">CUDA and GPU performance reading resources.</span>
+            <span class="learning-extra-arrow" aria-hidden="true">↗</span>
+          </a>
+          <a class="learning-extra-link" href="https://github.com/rasbt/LLMs-from-scratch" target="_blank" rel="noopener noreferrer">
+            <span class="learning-extra-top"><strong>LLMs from Scratch</strong><span class="learning-source" data-i18n="learning-source-public">Reading pick</span></span>
+            <span class="learning-extra-copy" data-i18n="learning-extra-desc-8">Build language-model components step by step.</span>
+            <span class="learning-extra-arrow" aria-hidden="true">↗</span>
+          </a>
+          <a class="learning-extra-link" href="https://github.com/ai-infra-curriculum/ai-infra-engineer-learning" target="_blank" rel="noopener noreferrer">
+            <span class="learning-extra-top"><strong>AI Infra Engineer Learning</strong><span class="learning-source" data-i18n="learning-source-public">Reading pick</span></span>
+            <span class="learning-extra-copy" data-i18n="learning-extra-desc-9">Production AI infrastructure curriculum and labs.</span>
+            <span class="learning-extra-arrow" aria-hidden="true">↗</span>
+          </a>
+          <a class="learning-extra-link" href="https://github.com/0xmsu/awesome-inference-engineering" target="_blank" rel="noopener noreferrer">
+            <span class="learning-extra-top"><strong>Awesome Inference Engineering</strong><span class="learning-source" data-i18n="learning-source-public">Reading pick</span></span>
+            <span class="learning-extra-copy" data-i18n="learning-extra-desc-10">A reference map for inference systems engineering.</span>
+            <span class="learning-extra-arrow" aria-hidden="true">↗</span>
+          </a>
+          <a class="learning-extra-link" href="https://github.com/gpu-mode/lectures" target="_blank" rel="noopener noreferrer">
+            <span class="learning-extra-top"><strong>GPU MODE Lectures</strong><span class="learning-source" data-i18n="learning-source-public">Reading pick</span></span>
+            <span class="learning-extra-copy" data-i18n="learning-extra-desc-11">CUDA, Triton and NCCL lectures and exercises.</span>
+            <span class="learning-extra-arrow" aria-hidden="true">↗</span>
+          </a>
+        </div>
+      </div>
+      <details class="star-explorer" id="star-explorer">
+        <summary><span data-i18n="stars-title">Browse my public GitHub Stars</span><span class="star-summary-sub" data-i18n="stars-subtitle">Live · searchable · paginated</span></summary>
+        <div class="star-explorer-content">
+          <p data-i18n="stars-explainer">Read public Stars directly from GitHub on demand. No token needed. The learning filter is keyword-based; search covers loaded repositories.</p>
+          <div class="star-controls">
+            <input id="star-search" type="search" placeholder="Search repository name / description" aria-label="Search loaded public stars">
+            <select id="star-filter" aria-label="Filter loaded repositories"><option value="all">All loaded Stars / 全部</option><option value="learning">Learning-related / 学习资料</option></select>
+          </div>
+          <p class="star-status" id="star-status" aria-live="polite"></p>
+          <div class="star-results" id="star-results"></div>
+          <div class="star-actions"><button id="star-more" type="button" hidden>加载更多 / Load more</button>
+            <a href="https://github.com/Phoenix3334?tab=stars" target="_blank" rel="noopener noreferrer" data-i18n="stars-fallback">Open all Stars on GitHub ↗</a>
+          </div>
+        </div>
+      </details>
       <div class="learning-bottom">
         <span data-i18n="learning-note">Selected from verified forks · Upstream links · Reviewed November 2026</span>
         <a href="https://github.com/Phoenix3334?tab=stars" target="_blank" rel="noopener noreferrer" data-i18n="learning-more">Browse more starred repositories ↗</a>
@@ -674,7 +795,7 @@
   "[data-i18n=\"nav-home\"]": "主页",
   "[data-i18n=\"learning-kicker\"]": "学习资料精选",
   "[data-i18n=\"learning-title\"]": "我的 AI Infra<br>学习资源清单。",
-  "[data-i18n=\"learning-intro\"]": "从我 Fork 过的开源项目中精选，按学习用途整理。链接优先指向原作者的上游资料，而非项目排名。",
+  "[data-i18n=\"learning-intro\"]": "精选我已 Fork 的资料与额外推荐的公开资源，优先展示知识地图和学习路径。精选不代表全部 Star 收藏。",
   "[data-i18n=\"learning-group-0\"]": "知识地图与学习路径",
   "[data-i18n=\"learning-group-sub-0\"]": "先建立完整的 AI Infra 知识框架。",
   "[data-i18n=\"learning-desc-0-0\"]": "系统串联模型架构、训练与推理、并行策略和底层硬件。",
@@ -695,6 +816,27 @@
   "[data-i18n=\"learning-desc-2-3\"]": "理解 MoE 专家放置、复制与负载均衡。",
   "[data-i18n=\"learning-note\"]": "源自已核实的 Fork · 链接指向上游 · 2026 年 11 月整理",
   "[data-i18n=\"learning-more\"]": "查看更多 GitHub Stars ↗",
+  "[data-i18n=\"learning-extra-kicker\"]": "扩展学习资源",
+  "[data-i18n=\"learning-extra-title\"]": "更多开放书籍、知识地图与学习路径",
+  "[data-i18n=\"learning-extra-intro\"]": "另外收录 2 项已核实的 Fork 和公开推荐资料；推荐不意味着我对每项都点过 Star。",
+  "[data-i18n=\"learning-source-forked\"]": "已 Fork",
+  "[data-i18n=\"learning-source-public\"]": "公开推荐",
+  "[data-i18n=\"stars-title\"]": "浏览我的全部公开 GitHub Stars",
+  "[data-i18n=\"stars-subtitle\"]": "实时读取 · 可搜索 · 按页加载",
+  "[data-i18n=\"stars-explainer\"]": "展开后由浏览器读取公开 Stars，无需 Token。学习资源过滤基于关键词，搜索仅覆盖已加载的仓库。",
+  "[data-i18n=\"stars-fallback\"]": "在 GitHub 打开完整 Stars 列表 ↗",
+  "[data-i18n=\"learning-extra-desc-0\"]": "AI Infra 交流、录播与学习资料。",
+  "[data-i18n=\"learning-extra-desc-1\"]": "涵盖模型与多模态等方向的中文知识地图。",
+  "[data-i18n=\"learning-extra-desc-2\"]": "大模型分布式训练与并行策略的系统教程。",
+  "[data-i18n=\"learning-extra-desc-3\"]": "GPU 集群、训练及排障的工程手册。",
+  "[data-i18n=\"learning-extra-desc-4\"]": "哈佛 CS249r 的机器学习系统开放教材。",
+  "[data-i18n=\"learning-extra-desc-5\"]": "覆盖推理、GPU 与基础设施的阶段化路线。",
+  "[data-i18n=\"learning-extra-desc-6\"]": "模型训练、微调和部署的系统化路线。",
+  "[data-i18n=\"learning-extra-desc-7\"]": "CUDA / GPU 性能工程资料和课程索引。",
+  "[data-i18n=\"learning-extra-desc-8\"]": "通过实现代码理解 LLM 的完整内部结构。",
+  "[data-i18n=\"learning-extra-desc-9\"]": "生产级 AI Infra 实验和课程体系。",
+  "[data-i18n=\"learning-extra-desc-10\"]": "推理系统工具、技术与学习资料的分类地图。",
+  "[data-i18n=\"learning-extra-desc-11\"]": "CUDA、Triton 与 NCCL 讲座及实践。",
   "[data-i18n=\"hero-kicker\"]": "AI INFRA · 大模型推理工程",
   "[data-i18n=\"hero-title\"]": "从推理性能，<br>走向<em>算力与成本决策。</em>",
   "[data-i18n=\"hero-lede\"]": "我是郭飞鸿。百度智能云 AI Infra 实习期间，我围绕 <strong>DeepSeek-V4-Pro、V4.1-Flash、Kimi K3</strong> 在 H200、B300、GB300 上开展 SGLang 压测与调优。用实测比较部署配置、规划 Prefill/Decode 容量，并追踪运行时的性能与正确性问题。",
@@ -874,5 +1016,6 @@
     langButton.addEventListener('click',updateScroll);updateScroll();
   
   </script>
+<script src="/assets/learning-stars.js" defer></script>
 </body>
 </html>
