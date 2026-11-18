@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="510" viewBox="0 0 1200 510" role="img" aria-labelledby="title desc">
+<title id="title">DP Health: shared routing state versus isolated health state</title>
+<desc id="desc">Before: generation-health and user traffic both change user dispatch state, producing skew. After: health checks use separate routing state while user dispatch state remains unchanged by health checks. A controlled two-by-two matrix identifies the regression.</desc>
+<defs>
+<marker id="arrow" markerWidth="8" markerHeight="8" refX="6.5" refY="4" orient="auto"><path d="M1 1 L7 4 L1 7" fill="none" stroke="#637A84" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></marker>
+<style>
+text{font-family:Inter,"Segoe UI",Arial,sans-serif}
+.title{font-size:26px;font-weight:700;fill:#253641}.sub{font-size:13px;fill:#677681}
+.panel{fill:#FFFFFF;stroke:#DDDAD4;stroke-width:1.4}.heading{font-size:19px;font-weight:700;fill:#253641}
+.small{font-size:13px;fill:#63727D}.box{fill:#FAF9F6;stroke:#D6DAD8;stroke-width:1.2}
+.boxtext{font-size:15px;fill:#2C404A;font-weight:600}.note{font-size:12px;fill:#697782}
+.bad{fill:#B65334}.good{fill:#197F79}.key{font-size:13px;font-weight:700}
+</style></defs>
+<rect width="1200" height="510" fill="#FBFAF7"/>
+<text x="42" y="48" class="title">When a Health Check Changes User Routing</text>
+<text x="42" y="74" class="sub">DP serving · control-plane state ownership · conceptual diagram, not a per-rank measurement</text>
+<rect x="42" y="108" width="536" height="327" rx="8" class="panel"/>
+<rect x="622" y="108" width="536" height="327" rx="8" class="panel"/>
+<rect x="42" y="108" width="4" height="327" rx="2" fill="#B65334"/>
+<rect x="622" y="108" width="4" height="327" rx="2" fill="#197F79"/>
+<text x="66" y="146" class="heading">Before: shared user routing state</text>
+<text x="646" y="146" class="heading">After: separate health routing state</text>
+
+<rect x="64" y="180" width="149" height="52" rx="5" class="box"/>
+<text x="84" y="201" class="boxtext">Health check</text><text x="84" y="221" class="note">generation-health</text>
+<rect x="64" y="268" width="149" height="52" rx="5" class="box"/>
+<text x="84" y="289" class="boxtext">User requests</text><text x="84" y="309" class="note">business traffic</text>
+<rect x="284" y="212" width="248" height="85" rx="6" fill="#FDF3EE" stroke="#E3BFAF"/>
+<text x="305" y="237" class="boxtext">Shared RR / LB state</text>
+<text x="305" y="260" class="small">Both request types mutate</text>
+<text x="305" y="279" class="small">user dispatch decisions</text>
+<path d="M214 206 H244 V243 H277" fill="none" stroke="#B65334" stroke-width="2" marker-end="url(#arrow)"/>
+<path d="M214 294 H244 V267 H277" fill="none" stroke="#637A84" stroke-width="2" marker-end="url(#arrow)"/>
+<text x="68" y="364" class="key bad">Observed: skewed dispatch, smaller effective batch</text>
+<text x="68" y="388" class="small">Health traffic changes the history used for future user routing.</text>
+<text x="68" y="412" class="small">The scheduler receives an already-skewed user workload.</text>
+
+<rect x="644" y="180" width="149" height="52" rx="5" class="box"/>
+<text x="664" y="201" class="boxtext">Health check</text><text x="664" y="221" class="note">generation-health</text>
+<rect x="644" y="286" width="149" height="52" rx="5" class="box"/>
+<text x="664" y="307" class="boxtext">User requests</text><text x="664" y="327" class="note">business traffic</text>
+<rect x="864" y="171" width="246" height="68" rx="6" fill="#F0F7F5" stroke="#BFD6D2"/>
+<text x="884" y="196" class="boxtext">Health RR state</text>
+<text x="884" y="218" class="small">Independent counter</text>
+<rect x="864" y="275" width="246" height="68" rx="6" fill="#F0F7F5" stroke="#BFD6D2"/>
+<text x="884" y="300" class="boxtext">User RR / LB state</text>
+<text x="884" y="322" class="small">Only real user work updates it</text>
+<path d="M794 204 H856" fill="none" stroke="#197F79" stroke-width="2" marker-end="url(#arrow)"/>
+<path d="M794 312 H856" fill="none" stroke="#197F79" stroke-width="2" marker-end="url(#arrow)"/>
+<text x="648" y="375" class="key good">Observed: balanced user dispatch with health still ON</text>
+<text x="648" y="399" class="small">No health-only refresh of user load budget.</text>
+<text x="648" y="421" class="small">Preserves existing user policy and scheduler behavior.</text>
+<line x1="42" y1="461" x2="1158" y2="461" stroke="#DAD7D0"/>
+<text x="44" y="488" class="small">Causal test: unpatched + health ON → intermittent LOW; three other arms → GOOD in the recorded matrix.</text>
+</svg>
