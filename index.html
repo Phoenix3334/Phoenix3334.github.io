@@ -147,6 +147,15 @@
     @media(max-width:680px){.learning-links{grid-template-columns:1fr}.learning-link:nth-child(odd){border-right:0}.learning-link:nth-last-child(2){border-bottom:1px solid var(--line)}.learning-group-head h3{font-size:22px}.learning-link{min-height:0}}
 
 
+    /* Direct link to the user's own GitHub curated AI Infra star list */
+    .learning-curated-list{display:flex;justify-content:space-between;align-items:center;gap:28px;margin-top:34px;padding:25px 27px;border:1px solid #BBD1CC;background:#F1F7F4;color:var(--ink);text-decoration:none}
+    .learning-curated-list:hover,.learning-curated-list:focus-visible{background:#E8F3EF;border-color:var(--teal)}
+    .learning-curated-copy{display:flex;flex-direction:column;gap:9px;min-width:0}
+    .learning-curated-kicker{font-size:10px;letter-spacing:.12em;font-weight:700;color:var(--teal)}
+    .learning-curated-copy strong{font:700 23px/1.25 var(--serif)}
+    .learning-curated-copy>span:last-child{font-size:12px;line-height:1.65;color:var(--muted)}
+    .learning-curated-arrow{font-size:22px;color:var(--teal);flex-shrink:0}
+    @media(max-width:680px){.learning-curated-list{padding:20px}.learning-curated-copy strong{font-size:20px}}
     /* Extra learning maps with clear provenance labels */
     .learning-more-maps{margin-top:44px;border-top:1px solid var(--line);padding-top:34px}
     .learning-more-head{display:flex;justify-content:space-between;gap:32px;align-items:end;margin-bottom:24px}
@@ -642,6 +651,14 @@
           </a>
         </div>
       </div>
+      <a class="learning-curated-list" href="https://github.com/stars/Phoenix3334/lists/ai-infra" target="_blank" rel="noopener noreferrer">
+        <span class="learning-curated-copy">
+          <span class="learning-curated-kicker" data-i18n="learning-star-list-kicker">MY GITHUB STAR LIST</span>
+          <strong data-i18n="learning-star-list-title">AI Infra · Curated Star List</strong>
+          <span data-i18n="learning-star-list-description">My maintained GitHub collection of AI Infrastructure repositories and learning resources. Browse the full list directly on GitHub.</span>
+        </span>
+        <span class="learning-curated-arrow" aria-hidden="true">↗</span>
+      </a>
       <details class="star-explorer" id="star-explorer">
         <summary><span data-i18n="stars-title">Browse my public GitHub Stars</span><span class="star-summary-sub" data-i18n="stars-subtitle">Live · searchable · paginated</span></summary>
         <div class="star-explorer-content">
@@ -816,6 +833,9 @@
   "[data-i18n=\"learning-desc-2-3\"]": "理解 MoE 专家放置、复制与负载均衡。",
   "[data-i18n=\"learning-note\"]": "源自已核实的 Fork · 链接指向上游 · 2026 年 11 月整理",
   "[data-i18n=\"learning-more\"]": "查看更多 GitHub Stars ↗",
+  "[data-i18n=\"learning-star-list-kicker\"]": "我的 GitHub 收藏清单",
+  "[data-i18n=\"learning-star-list-title\"]": "AI Infra · 专题 Star 列表",
+  "[data-i18n=\"learning-star-list-description\"]": "我在 GitHub 上维护的 AI Infrastructure 相关仓库与学习资料清单，点击直接查看完整专题收藏。",
   "[data-i18n=\"learning-extra-kicker\"]": "扩展学习资源",
   "[data-i18n=\"learning-extra-title\"]": "更多开放书籍、知识地图与学习路径",
   "[data-i18n=\"learning-extra-intro\"]": "另外收录 2 项已核实的 Fork 和公开推荐资料；推荐不意味着我对每项都点过 Star。",
