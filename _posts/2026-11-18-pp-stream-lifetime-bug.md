@@ -28,7 +28,63 @@ PP 将模型层分布到多个 stage。前一 stage 计算出 hidden states，�
 
 而这类问题容易和“通信与计算的同步关系”混为一谈。Stream 事件或等待机制负责数据生产先于消费的 **execution ordering**；Allocator 还需要知道消费者的使用何时结束，这属于 **memory lifetime**。前者正确，并不能自动保证后者正确。
 
-## 02 · 一块合法显存，为什么会装着错误的数据
+## 02 · 把这次 Bug 放回完整的 PP Forward 链路
+
+理解这次修复之前，需要先分清：**Stage 之间传递的模型中间结果**，和 **最后一个 Stage 生成、准备返回给请求管理层的 Token 结果**，不是同一种消息。
+
+以 **PP2** 为例，可以把正常的 Decode 过程理解为：
+
+~~~text
+Stage 0（第一个 PP Stage）                 Stage 1（最后一个 PP Stage）
+────────────────────────                 ─────────────────────────────
+Token IDs
+    ↓
+Embedding
+    ↓
+前半段 Transformer Blocks
+    ↓
+中间 Hidden States / 辅助状态
+    │
+    └───── proxy ───────────────────────→ recv（Comm Stream）
+                                              │
+                                              │ record_stream(Forward Stream)
+                                              │ ← 本次 PR 修复的位置
+                                              ↓
+                                         后半段 Transformer Blocks
+                                              ↓
+                                          Final Norm
+                                              ↓
+                                           LM Head
+                                              ↓
+                                            Logits
+                                              ↓
+                                           Sampling
+                                              ↓
+                                        next_token_ids
+    ↑                                         │
+    └───── output ───────────────────────────┘
+    ↓
+Scheduler / 请求管理层更新生成状态
+~~~
+
+这是理解路径的示意图，不代表每种模型、PP 规模或推测解码配置都有完全相同的执行细节。对不止两个 Stage 的情形，中间的 proxy 会沿多个 Stage 继续传递。
+
+在 SGLang 的 PP 调度代码中，**<code>proxy</code> 和 <code>output</code> 是两类不同的消息语义**：
+
+| 消息 | 主要携带内容 | 用途 |
+| :--- | :--- | :--- |
+| <code>proxy</code> | 尚需后续 Stage 计算的 Hidden States 等中间 Tensor | 沿 Forward 方向传递给下一 Stage |
+| <code>output</code> | 最后 Stage 的 <code>next_token_ids</code>，以及按执行模式需要同步的附加状态 | 沿结果回传路径交给前面的 Stage 和调度逻辑 |
+
+例如，推测解码场景还可能在 output 中携带 acceptance length、bonus token 等元数据，以便各 Stage 维持一致的生成与 KV 状态。它不是纯粹的“打印生成文本”消息。
+
+**因此，本次修复的落点非常明确：**下游 Stage 的 <code>_pp_recv_proxy_tensors</code> 接收中间 Tensor；<code>_pp_launch_batch</code> 随后将这些 Tensor 交给 Forward Stream 的 <code>run_batch</code>。在这里调用 <code>record_stream(self.forward_stream)</code>，是为了保护**进入后续 Transformer Forward 的输入存储**，不是在 LM Head、Logits 或 Sampling 之后修复 Token 后处理。
+
+虽然最终观察到的是“采样输出错误”，**错误最早出现的位置在上游 Hidden States 的接收—消费边界**。一旦输入激活已经被覆盖，后续的 Final Norm、LM Head 和 Sampling 即使各自实现完全正确，也会基于错误的输入继续生成结果。
+
+相关实现可对照 [SGLang scheduler_pp_mixin.py](https://github.com/sgl-project/sglang/blob/main/python/sglang/srt/managers/scheduler_pp_mixin.py) 中的 <code>_pp_recv_proxy_tensors</code>、<code>_pp_launch_batch</code> 和 <code>_pp_prepare_tensor_dict</code>。
+
+## 03 · 一块合法显存，为什么会装着错误的数据
 
 假设通信 Stream 刚接收到 microbatch A 的 hidden states，Forward Stream 已经排队准备计算 A，但是还没有真正读取它。
 
@@ -44,7 +100,7 @@ CPU 端事件循环并不会等这个 Forward 做完：它可能很快释放上�
 
 当 async batch depth 更大、同时在飞的 microbatch 更多时，CPU 引用释放与 GPU 真正消费之间的时间窗口更容易扩大，所以问题更容易出现。但并不存在一个对所有 PP 实现都适用的统一深度阈值。
 
-## 03 · 从输出异常，追到接收与消费之间的数据变化
+## 04 · 从输出异常，追到接收与消费之间的数据变化
 
 原始异常在测试中表现为较长的连续 token-0 输出。为了形成可重复的观测，实验把**单请求中至少连续 20 个 token-0** 作为异常判据。
 
@@ -72,7 +128,7 @@ Decode 出现 silent corruption
 
 这比直接调整 Sampling 参数、怀疑模型稳定性，或者仅通过降低异步深度隐藏现象，都更接近真正的因果位置。
 
-## 04 · 多组 PP 形状下的验证
+## 05 · 多组 PP 形状下的验证
 
 实验主要在 Kimi-K3、8×B300、历史 v0.5.22 相关配置中完成，使用 **fake P/D transfer**。对多个 PP/TP/DCP 形状和异步深度做了对比：
 
@@ -88,7 +144,7 @@ Decode 出现 silent corruption
 
 但不能因此宣称“所有请求在所有部署方式下都绝对正确”。0/192 代表**这一轮负载和检测标准下没有观察到异常**。真实两节点 P/D、所有事件循环组合以及合入后的完整 GPU 复测，不属于这组实验已证明的范围。
 
-## 05 · <code>record_stream</code> 到底修了什么
+## 06 · <code>record_stream</code> 到底修了什么
 
 最终修复放在公共的 PP batch 启动位置 <code>_pp_launch_batch</code>。在调用 <code>run_batch</code> 前，对接收到的非 CPU proxy Tensor 记录它的消费者 Stream。
 
@@ -110,7 +166,7 @@ for tensor in pp_proxy_tensors.values():
 
 把修复放在公共启动路径可以让多个 PP 事件循环共享相同的生命周期保障，但“代码路径覆盖”与“所有路径都完成 GPU 端到端实测”也不应该混为一谈。
 
-## 06 · 为什么这是 Correctness Fix，而不是“又一个性能优化”
+## 07 · 为什么这是 Correctness Fix，而不是“又一个性能优化”
 
 使用异步 Stream、流水线和 Overlap，确实是为了减少串行等待。但优化存在一个先决条件：**数据必须在被正确消费之前保持有效**。如果吞吐很高，却让请求读到其他 microbatch 的 hidden states，那么这些吞吐指标没有真正的服务价值。
 
@@ -118,7 +174,7 @@ for tensor in pp_proxy_tensors.values():
 
 这次工作的第一目标是**正确性与内存安全契约**，不是加速。
 
-## 07 · 我现在如何理解异步系统的正确性
+## 08 · 我现在如何理解异步系统的正确性
 
 这次之后，我习惯把异步正确性拆成三个单独的问题：
 
