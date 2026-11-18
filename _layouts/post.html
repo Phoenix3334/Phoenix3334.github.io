@@ -1,0 +1,22 @@
+---
+layout: blog
+---
+<article class="post">
+  <div class="breadcrumb"><a href="{{ '/blog/' | relative_url }}">← 返回文章列表 / All posts</a></div>
+  <header class="post-header">
+    <div class="eyebrow">ENGINEERING NOTES</div>
+    <h1>{{ page.title | escape }}</h1>
+    <div class="post-meta">
+      <time datetime="{{ page.date | date: '%Y-%m-%d' }}">{{ page.date | date: "%Y-%m-%d" }}</time>
+      {% for tag in page.tags %}<span class="tag">{{ tag | escape }}</span>{% endfor %}
+    </div>
+    {% if page.summary %}<p class="post-summary">{{ page.summary | escape }}</p>{% endif %}
+  </header>
+  <div class="article-content">
+    {{ content }}
+  </div>
+  <div class="post-bottom">
+    <a href="{{ '/blog/' | relative_url }}">← 返回博客首页</a>
+    <a href="https://github.com/Phoenix3334/Phoenix3334.github.io/blob/main/{{ page.path }}" target="_blank" rel="noopener noreferrer">在 GitHub 查看 Markdown ↗</a>
+  </div>
+</article>
