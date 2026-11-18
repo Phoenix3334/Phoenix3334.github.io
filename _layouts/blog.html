@@ -21,7 +21,7 @@
       </nav>
     </div>
   </header>
-  <main class="wrap content">
+  <main class="wrap content{% if page.layout == 'post' %} post-content-wrap{% endif %}">
     {{ content }}
   </main>
   <footer class="site-footer">
