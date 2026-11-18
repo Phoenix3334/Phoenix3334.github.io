@@ -260,3 +260,13 @@ h1,h2,h3{font-family:var(--serif)}
 @media(prefers-reduced-motion:reduce){
   .toc-list a{transition:none}
 }
+
+/* Consistent global header across the portfolio and blog. */
+.site-header .wrap{width:min(1180px,calc(100% - 64px))}
+.site-header nav{gap:25px}
+.site-header nav a[aria-current="page"]{color:var(--teal);font-weight:700}
+.site-header nav .github-link{color:var(--blue);font-weight:700}
+@media(max-width:720px){
+  .site-header .wrap{width:calc(100% - 34px)}
+  .site-header nav{gap:18px}
+}
