@@ -950,10 +950,11 @@
   "[data-i18n=\"phase-k3\"]": "单压 P 对比 TP/EP 与流水线并行，单压 D 评估 DCP、PP 对吞吐、逐 token 时延和运行时正确性的影响。",
   "[data-i18n=\"phase-k3-source\"]": "K3 运行时排查 · <a class=\"inline-link\" href=\"https://github.com/sgl-project/sglang/pull/47614\" target=\"_blank\" rel=\"noreferrer\">PR #47614 ↗</a> · <a class=\"inline-link\" href=\"https://github.com/sgl-project/sglang/issues/45367\" target=\"_blank\" rel=\"noreferrer\">Issue #45367 ↗</a>"
 };
-    const bilingual=Object.entries(zh).map(([selector,value])=>{
-      const element=document.querySelector(selector); if(!element)return null;
-      return {element,en:element.innerHTML,zh:value}
-    }).filter(Boolean);
+    const bilingual=Object.entries(zh).flatMap(([selector,value])=>
+      [...document.querySelectorAll(selector)].map(element=>({
+        element,en:element.innerHTML,zh:value
+      }))
+    );
 
     const tocDesktop=document.getElementById('home-toc-desktop');
     const tocMobile=document.getElementById('home-toc-mobile');
