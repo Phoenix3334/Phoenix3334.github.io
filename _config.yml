@@ -1,0 +1,16 @@
+title: "Feihong Guo | Engineering Notes"
+description: "Notes on AI infrastructure, LLM serving, GPU/NPU systems, and reproducible performance engineering."
+url: "https://phoenix3334.github.io"
+baseurl: ""
+lang: "zh-CN"
+timezone: "Asia/Shanghai"
+markdown: kramdown
+highlighter: rouge
+permalink: /blog/:year/:month/:day/:title/
+future: false
+exclude:
+  - README.md
+  - GITHUB_PROFILE.md
+  - GITHUB_PROFILE_SETUP.md
+  - SGLANG_CONTRIBUTIONS.md
+  - BLOG_GUIDE.md
