@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="525" viewBox="0 0 1200 525" role="img" aria-labelledby="title desc">
+<title id="title">注意力机制不是同一棵“进化树”</title><desc id="desc">先问：缓存什么、读取哪些位置、怎样聚合历史信息？三条路线可以组合。</desc><defs><style>
+text{font-family:Inter,"PingFang SC","Microsoft YaHei","Noto Sans CJK SC",Arial,sans-serif}
+.kicker{font-size:12px;font-weight:700;fill:#178779;letter-spacing:1.8px}
+.title{font-size:26px;font-weight:720;fill:#263942}
+.sub{font-size:14px;fill:#667A84}
+.heading{font-size:20px;font-weight:700;fill:#263942}
+.body{font-size:16px;fill:#263942}
+.small{font-size:13.5px;fill:#667A84}
+.note{font-size:15px;font-weight:700;fill:#BA6946}
+.blue{font-size:16px;font-weight:700;fill:#315DB9}
+.teal{font-size:16px;font-weight:700;fill:#178779}
+.value{font-size:24px;font-weight:720;fill:#263942}
+</style></defs><rect width="1200" height="525" fill="#FBFAF7"/>
+<text x="38" y="40" class="kicker" >ATTENTION  /  INFERENCE SYSTEMS</text><text x="38" y="80" class="title" >注意力机制不是同一棵“进化树”</text><text x="38" y="106" class="sub" >先问：缓存什么、读取哪些位置、怎样聚合历史信息？三条路线可以组合。</text>
+<rect x="40" y="145" width="346" height="202" rx="9" fill="#EEF3FC" stroke="#D9DEDA" stroke-width="1.2"/><rect x="40" y="145" width="346" height="5" rx="4" fill="#315DB9"/><text x="60" y="182" class="small" >01 / KV 表示</text><text x="60" y="219" class="heading" >缓存哪些信息？</text><text x="60" y="262" class="body" >MHA · GQA · MQA</text><text x="60" y="306" class="blue" fill="#315DB9">MLA：低秩压缩</text><rect x="426" y="145" width="346" height="202" rx="9" fill="#EAF6F2" stroke="#D9DEDA" stroke-width="1.2"/><rect x="426" y="145" width="346" height="5" rx="4" fill="#178779"/><text x="446" y="182" class="small" >02 / 可见范围</text><text x="446" y="219" class="heading" >读取哪些 Token？</text><text x="446" y="262" class="body" >Full · Sliding Window</text><text x="446" y="306" class="blue" fill="#178779">DSA：Indexer Top-k</text><rect x="812" y="145" width="346" height="202" rx="9" fill="#FAF0E9" stroke="#D9DEDA" stroke-width="1.2"/><rect x="812" y="145" width="346" height="5" rx="4" fill="#BA6946"/><text x="832" y="182" class="small" >03 / 更新机制</text><text x="832" y="219" class="heading" >怎样整合历史？</text><text x="832" y="262" class="body" >Softmax Attention</text><text x="832" y="306" class="blue" fill="#BA6946">Linear · KDA：递推状态</text><rect x="40" y="371" width="1118" height="112" rx="9" fill="#FFFFFF" stroke="#D9DEDA" stroke-width="1.2"/><text x="60" y="407" class="heading" >组合示例</text>
+<text x="60" y="439" class="blue" >K3：69 KDA + 24 Dense MLA</text>
+<text x="454" y="439" class="teal" >K3.1：69 KDA + 24 Sparse MLA / DSA</text>
+<text x="60" y="467" class="small" >TP / DCP、Paged Cache、FlashAttention、RoPE、QK-Norm 是其他独立维度。</text></svg>
