@@ -223,6 +223,26 @@
     @media(max-width:900px){.mini-feature-stages{grid-template-columns:1fr;gap:19px}.mini-feature-head,.mini-feature-result{flex-direction:column;align-items:start;gap:10px}.mini-feature-result strong{white-space:normal}}
     @media(max-width:680px){.mini-feature{padding:22px 18px}.mini-feature-head h3{font-size:23px}}
 
+
+    /* ThermoPulse: measurement-to-report workflow */
+    .medical-project .medical-section-head{margin-bottom:27px}
+    .medical-project .medical-section-head>p{max-width:410px}
+    .medical-path{border:1px solid var(--line);background:rgba(255,255,255,.5);padding:19px 24px 23px;margin-bottom:22px}
+    .medical-path-label{font-size:10px;letter-spacing:.09em;font-weight:700;color:var(--teal);margin:0 0 15px}
+    .medical-path-steps{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:0}
+    .medical-path-steps>div{display:flex;flex-direction:column;gap:6px;padding:0 15px;border-left:1px solid var(--line);min-width:0}
+    .medical-path-steps>div:first-child{border-left:0;padding-left:0}
+    .medical-path-steps>div:last-child{padding-right:0}
+    .medical-path-steps span{font-size:10px;color:var(--teal);font-weight:700}
+    .medical-path-steps strong{font-size:12px;line-height:1.4;color:var(--ink)}
+    .medical-path-steps small{font-size:10px;line-height:1.5;color:var(--muted)}
+    .medical-project .medical-modules{grid-template-columns:repeat(2,minmax(0,1fr));gap:15px}
+    .medical-project .medical-modules article{padding:23px 24px 24px}
+    .medical-outcome{border-top:1px solid var(--line);margin:22px 0 0;padding-top:17px;font-size:12px;color:var(--muted);line-height:1.75}
+    .medical-outcome strong{color:var(--ink)}
+    @media(max-width:900px){.medical-path-steps{grid-template-columns:repeat(3,minmax(0,1fr));row-gap:20px}.medical-path-steps>div:nth-child(4){border-left:0;padding-left:0}}
+    @media(max-width:680px){.medical-project .medical-modules{grid-template-columns:1fr}.medical-path-steps{grid-template-columns:1fr;gap:13px}.medical-path-steps>div,.medical-path-steps>div:nth-child(4){border-left:0;border-top:1px solid var(--line);padding:12px 0 0}.medical-path-steps>div:first-child{border-top:0;padding-top:0}.medical-path-steps>div:last-child{padding-right:0}.medical-path{padding:20px}}
+
   </style>
 </head>
 <body>
@@ -519,29 +539,44 @@
     <section class="medical-project" id="medical"><div class="wrap">
       <div class="section-head medical-section-head">
         <div>
-          <p class="eyebrow" data-i18n="medical-kicker">SELECTED APPLIED AI · THERMOPULSE</p>
-          <h2 data-i18n="medical-title">ThermoPulse:<br><em>an applied medical-AI prototype.</em></h2>
+          <p class="eyebrow" data-i18n="medical-kicker">APPLIED AI · THERMOPULSE</p>
+          <h2 data-i18n="medical-title">ThermoPulse:<br>from thermal sensing to medical reports.</h2>
         </div>
-        <p data-i18n="medical-intro">A separate applied project linking infrared image acquisition, visual analysis and medical-language generation. The engineering work covers a spatial two-branch vision model, Qwen3-8B domain adaptation and an exploratory TensorRT deployment path.</p>
+        <p data-i18n="medical-intro">A medical-AI research prototype connecting 640×480 long-wave infrared sensing, anatomical localization, spatial visual representation, GPU execution and medical-language adaptation into a structured reporting workflow.</p>
+      </div>
+      <div class="medical-path">
+        <p class="medical-path-label" data-i18n="medical-path-label">MEASUREMENT → REPRESENTATION → EXECUTION → REPORT</p>
+        <div class="medical-path-steps">
+          <div><span>01</span><strong data-i18n="medical-path-1">Thermal sensing</strong><small data-i18n="medical-path-sub-1">LWIR · FPGA acquisition</small></div>
+          <div><span>02</span><strong data-i18n="medical-path-2">Localization</strong><small data-i18n="medical-path-sub-2">YOLOv11 · ROI</small></div>
+          <div><span>03</span><strong data-i18n="medical-path-3">Visual features</strong><small data-i18n="medical-path-sub-3">ResNet18 + Transformer</small></div>
+          <div><span>04</span><strong data-i18n="medical-path-4">GPU execution</strong><small data-i18n="medical-path-sub-4">CUDA · TensorRT FP16</small></div>
+          <div><span>05</span><strong data-i18n="medical-path-5">Medical reporting</strong><small data-i18n="medical-path-sub-5">Qwen3-8B · CPT / SFT</small></div>
+        </div>
       </div>
       <div class="medical-modules">
         <article>
-          <span class="medical-index">01 / PERCEPTION</span>
+          <span class="medical-index" data-i18n="medical-sensing-index">01 / MEASUREMENT</span>
+          <h3 data-i18n="medical-sensing-title">Infrared sensing &amp; localization</h3>
+          <p data-i18n="medical-sensing-copy">A 640×480 LWIR camera with an FPGA-oriented acquisition and control path provides calibrated thermal images for YOLOv11 region and anatomical-landmark localization.</p>
+        </article>
+        <article>
+          <span class="medical-index" data-i18n="medical-vision-index">02 / REPRESENTATION</span>
           <h3 data-i18n="medical-vision-title">Spatial dual-stream vision</h3>
-          <p data-i18n="medical-vision-copy">YOLOv11 for localization; ResNet18 captures local image features while a Transformer models relations between patches. Features are concatenated for a prototype classifier.</p>
+          <p data-i18n="medical-vision-copy">ResNet18 encodes 512-D local features, while a lightweight Transformer models patch relations into 64-D features; the fused 576-D representation supports a classification prototype.</p>
         </article>
         <article>
-          <span class="medical-index">02 / MODEL ADAPTATION</span>
-          <h3 data-i18n="medical-llm-title">Qwen3-8B · CPT → SFT</h3>
-          <p data-i18n="medical-llm-copy">Continual pretraining (CPT) on medical-domain text, followed by supervised fine-tuning (SFT) of Qwen3-8B using PyTorch and DeepSpeed ZeRO-2.</p>
-        </article>
-        <article>
-          <span class="medical-index">03 / DEPLOYMENT</span>
+          <span class="medical-index" data-i18n="medical-runtime-index">03 / GPU EXECUTION</span>
           <h3 data-i18n="medical-runtime-title">CUDA · ONNX · TensorRT</h3>
-          <p data-i18n="medical-runtime-copy">Explored an FP16 TensorRT path for the ResNet branch, with the Transformer branch left in PyTorch. End-to-end acceleration has not been established.</p>
+          <p data-i18n="medical-runtime-copy">Explored fused CUDA WarpAffine preprocessing, GPU-side NMS and FP16 TensorRT deployment for the ResNet visual branch, with the Transformer branch in PyTorch.</p>
+        </article>
+        <article>
+          <span class="medical-index" data-i18n="medical-llm-index">04 / DOMAIN ADAPTATION</span>
+          <h3 data-i18n="medical-llm-title">Qwen3-8B · CPT → SFT</h3>
+          <p data-i18n="medical-llm-copy">Adapted the medical-language path through continual pretraining on approximately 114 GB of medical text and supervised fine-tuning on approximately 18k instruction pairs, using BF16, PyTorch SDPA and DeepSpeed ZeRO-2.</p>
         </article>
       </div>
-      <p class="medical-boundary" data-i18n="medical-boundary">Research and engineering prototype; neither clinical diagnostic validity nor end-to-end TensorRT speedup is inferred from these components.</p>
+      <p class="medical-outcome" data-i18n="medical-outcome"><strong>System output:</strong> Regional thermal findings and visual analysis are organized into structured medical reports and remote-service interfaces for human review.</p>
     </div></section>
     <section class="economics" id="economics"><div class="wrap">
       <div class="section-head"><div><p class="eyebrow" data-i18n="economics-kicker">Performance → capacity → economics</p><h2 data-i18n="economics-title">From measured service capacity<br>to deployment estimates.</h2></div><p data-i18n="economics-intro">At Baidu, my completed work established serving-performance and capacity baselines on NVIDIA GPUs, using workload-specific Prefill/Decode throughput, TTFT/TPOT, parallel layouts and memory constraints. The team's subsequent evaluation is intended to extend comparisons to Kunlunxin accelerators and connect qualified capacity with utilization, power, hardware pricing and traffic for TCO analysis. The cross-platform and full financial assessments are follow-on work, not my completed results.</p></div>
@@ -902,17 +937,34 @@
   "[data-i18n=\"nav-practice\"]": "工程方法",
   "[data-i18n=\"nav-blog\"]": "博客",
   "[data-i18n=\"nav-home\"]": "主页",
-  "[data-i18n=\"medical-kicker\"]": "应用 AI 项目 · THERMOPULSE",
-  "[data-i18n=\"medical-title\"]": "ThermoPulse：<br>医疗 AI 系统原型。",
-  "[data-i18n=\"medical-intro\"]": "另一项应用型工程实践：从红外图像采集、视觉分析到医疗文本生成，串联空间双分支视觉模型、Qwen3-8B 的 CPT/SFT 适配与 TensorRT 部署探索。",
-  "[data-i18n=\"medical-vision-title\"]": "空间双流视觉模型",
-  "[data-i18n=\"medical-vision-copy\"]": "YOLOv11 负责定位；ResNet18 提取局部图像特征，Transformer 建模 Patch 间关系，拼接特征用于原型分类任务。",
-  "[data-i18n=\"medical-llm-title\"]": "Qwen3-8B · CPT → SFT",
-  "[data-i18n=\"medical-llm-copy\"]": "使用 PyTorch 与 DeepSpeed ZeRO-2，对 Qwen3-8B 先进行医疗领域持续预训练（CPT），再进行监督微调（SFT）。",
-  "[data-i18n=\"medical-runtime-title\"]": "CUDA · ONNX · TensorRT",
-  "[data-i18n=\"medical-runtime-copy\"]": "探索 ResNet 分支的 FP16 TensorRT 路径，Transformer 分支仍由 PyTorch 执行；未据此宣称端到端加速。",
-  "[data-i18n=\"medical-boundary\"]": "这是感知、模型与部署的一体化工程原型，不将模块实现推断为临床诊断有效性或端到端加速。",
   "[data-i18n=\"learning-desc-0-4\"]": "结合可运行 Notebook 手写 Transformer、MoE、MLA 等核心机制。",
+  "[data-i18n=\"medical-kicker\"]": "应用 AI 项目 · THERMOPULSE",
+  "[data-i18n=\"medical-title\"]": "ThermoPulse：<br>从红外测量到医疗报告。",
+  "[data-i18n=\"medical-intro\"]": "围绕 640×480 长波红外成像，构建从采集控制、解剖区域定位、视觉表征、GPU 推理到医疗领域模型适配的系统流程，最终面向结构化报告与人工复核。",
+  "[data-i18n=\"medical-path-label\"]": "物理测量 → 视觉表征 → 加速执行 → 结构化报告",
+  "[data-i18n=\"medical-path-1\"]": "红外测量",
+  "[data-i18n=\"medical-path-sub-1\"]": "LWIR · FPGA 采集",
+  "[data-i18n=\"medical-path-2\"]": "区域定位",
+  "[data-i18n=\"medical-path-sub-2\"]": "YOLOv11 · ROI",
+  "[data-i18n=\"medical-path-3\"]": "视觉表征",
+  "[data-i18n=\"medical-path-sub-3\"]": "ResNet18 + Transformer",
+  "[data-i18n=\"medical-path-4\"]": "GPU 执行",
+  "[data-i18n=\"medical-path-sub-4\"]": "CUDA · TensorRT FP16",
+  "[data-i18n=\"medical-path-5\"]": "医疗报告",
+  "[data-i18n=\"medical-path-sub-5\"]": "Qwen3-8B · CPT / SFT",
+  "[data-i18n=\"medical-sensing-index\"]": "01 / 物理测量",
+  "[data-i18n=\"medical-sensing-title\"]": "红外采集与视觉定位",
+  "[data-i18n=\"medical-sensing-copy\"]": "基于 640×480 长波红外相机及 FPGA 采集控制架构获取热成像数据，结合标定与 YOLOv11 完成目标区域、解剖标志点定位。",
+  "[data-i18n=\"medical-vision-index\"]": "02 / 特征表征",
+  "[data-i18n=\"medical-vision-title\"]": "空间双流视觉模型",
+  "[data-i18n=\"medical-vision-copy\"]": "ResNet18 提取 512-D 局部特征，轻量 Transformer 建模 Patch 间关系并输出 64-D 特征，融合为 576-D 表征用于原型分类。",
+  "[data-i18n=\"medical-runtime-index\"]": "03 / GPU 推理",
+  "[data-i18n=\"medical-runtime-title\"]": "CUDA · ONNX · TensorRT",
+  "[data-i18n=\"medical-runtime-copy\"]": "探索 CUDA WarpAffine 融合预处理、GPU NMS 后处理，以及 ResNet 视觉分支的 FP16 TensorRT 部署；Transformer 分支保留 PyTorch 执行。",
+  "[data-i18n=\"medical-llm-index\"]": "04 / 医疗领域适配",
+  "[data-i18n=\"medical-llm-title\"]": "Qwen3-8B · CPT → SFT",
+  "[data-i18n=\"medical-llm-copy\"]": "基于约 114 GB 中西医文本开展持续预训练（CPT），并使用约 1.8 万条指令数据进行监督微调（SFT）；训练采用 BF16、PyTorch SDPA 和 DeepSpeed ZeRO-2。",
+  "[data-i18n=\"medical-outcome\"]": "<strong>系统输出：</strong>将区域温度信息、视觉分析结果与医疗语言模型串联，形成便于人工复核的结构化报告和远程服务接口。",
   "[data-i18n=\"learning-kicker\"]": "学习资料精选",
   "[data-i18n=\"learning-title\"]": "LLM Systems<br>学习资料与源码索引。",
   "[data-i18n=\"learning-intro\"]": "按具体问题整理的学习入口：先建立系统设计视角，再阅读推理框架中的请求路径，最后深入算子、显存与通信。这里是精选索引；更多项目收录在我的 GitHub AI Infra Star List。",
