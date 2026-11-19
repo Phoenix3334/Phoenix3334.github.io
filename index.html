@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Feihong Guo | AI Infrastructure &amp; LLM Inference</title>
-  <meta name="description" content="Feihong Guo — AI Infrastructure and LLM inference engineering. SGLang on B300/GB300, serving performance, runtime correctness, capacity planning and TCO assessment; Ascend inference and kernel optimisation.">
+  <meta name="description" content="Feihong Guo — AI Infrastructure and LLM inference engineering. SGLang on B300/GB300, serving performance, runtime correctness, capacity planning and TCO-aware evaluation; Ascend inference and kernel optimisation.">
   <link rel="canonical" href="https://phoenix3334.github.io/">
   <meta name="theme-color" content="#fbfaf7">
   <meta property="og:type" content="website">
@@ -581,11 +581,11 @@
     <section class="economics" id="economics"><div class="wrap">
       <div class="section-head"><div><p class="eyebrow" data-i18n="economics-kicker">Performance → capacity → economics</p><h2 data-i18n="economics-title">From measured service capacity<br>to deployment estimates.</h2></div><p data-i18n="economics-intro">At Baidu, my completed work established serving-performance and capacity baselines on NVIDIA GPUs, using workload-specific Prefill/Decode throughput, TTFT/TPOT, parallel layouts and memory constraints. The team's subsequent evaluation is intended to extend comparisons to Kunlunxin accelerators and connect qualified capacity with utilization, power, hardware pricing and traffic for TCO analysis. The cross-platform and full financial assessments are follow-on work, not my completed results.</p></div>
       <div class="cost-chain">
-        <article class="cost-step"><span class="step-index">01 / SLO</span><h3 data-i18n="cost-slo-title">Find the feasible operating point</h3><p data-i18n="cost-slo-copy">Sweep concurrency and configuration on the target request mix. Compare TTFT, TPOT, request throughput, memory pressure, failures, and output correctness. Select an operating point that meets the specified latency, quality, and stability criteria.</p><div class="formula" data-i18n="cost-slo-formula">q_instance = measured requests/s<br>at the qualifying configuration</div><p data-i18n="cost-slo-note">Prefill input tok/s, Decode output tok/s, and requests/s describe different quantities. Request lengths and phase balance must stay explicit.</p></article>
+        <article class="cost-step"><span class="step-index">01 / SLO</span><h3 data-i18n="cost-slo-title">Find the feasible operating point</h3><p data-i18n="cost-slo-copy">Sweep concurrency and configuration on the target request mix. Compare TTFT, TPOT, request throughput, memory pressure, failures, and output correctness. Select an operating point that meets the specified latency, quality, and stability criteria.</p><div class="formula" data-i18n="cost-slo-formula">q_instance = measured requests/s<br>at the qualifying configuration</div><p data-i18n="cost-slo-note">Input tok/s, output tok/s, aggregate input+output tok/s and requests/s are different metrics. State ISL/OSL, cache-hit rules, and whether reused tokens count as newly computed work.</p></article>
         <article class="cost-step"><span class="step-index">02 / CAPACITY</span><h3 data-i18n="cost-capacity-title">Size Prefill and Decode separately</h3><p data-i18n="cost-capacity-copy">Convert Prefill and Decode rates to per-instance requests/s under the same workload and SLO. Size both stages for peak demand, with headroom and redundancy for the deployment.</p><div class="formula">N_P = ceil(λ_peak / q_P)<br>N_D = ceil(λ_peak / q_D)<br>Minimum GPU count = N_P × g_P + N_D × g_D</div><p data-i18n="cost-capacity-note">Validate the resulting P/D ratio with real KV transfers, queueing and end-to-end TTFT/TPOT. Stage-isolated rates are sizing inputs.</p></article>
-        <article class="cost-step"><span class="step-index">03 / TCO</span><h3 data-i18n="cost-tco-title">Price delivered service</h3><p data-i18n="cost-tco-copy">Use one accounting period for compute rental or hardware depreciation, power, networking, software, and operations. Divide by the correctly delivered token volume under the chosen service criteria. Treat input and output separately when the accounting requires it.</p><div class="formula" data-i18n="cost-tco-formula">Cost per 1M valid tokens<br>= period cost / valid tokens delivered × 10⁶</div><p data-i18n="cost-tco-note">Utilisation, idle reserve, uptime, retries, and traffic shape affect unit cost. Rental and depreciation require a consistent accounting boundary.</p></article>
+        <article class="cost-step"><span class="step-index">03 / TCO</span><h3 data-i18n="cost-tco-title">Price delivered service</h3><p data-i18n="cost-tco-copy">Use one accounting period for compute rental or hardware depreciation, power, networking, software, and operations. Divide by the correctly delivered token volume under the chosen service criteria. Treat input and output separately when the accounting requires it.</p><div class="formula" data-i18n="cost-tco-formula">Cost per 1M valid tokens<br>= period cost / valid tokens delivered × 10⁶</div><p data-i18n="cost-tco-note">Use actual service days, busy/idle utilisation, headroom, uptime and retries rather than extrapolating peak TPS to 24×30. Keep compute cost, billable-token pricing and ROI separate.</p></article>
       </div>
-      <p class="cost-scope" data-i18n="cost-evidence"><strong>From performance evidence to hardware economics:</strong> NVIDIA serving baselines (my completed work) → controlled comparison with Kunlunxin and other accelerators (team follow-up) → deployment sizing and TCO with real utilization, power, prices and traffic. Comparable models, workloads and latency/correctness criteria are required before interpreting unit cost.</p>
+      <p class="cost-scope" data-i18n="cost-evidence"><strong>From performance evidence to hardware economics:</strong> NVIDIA serving baselines (my completed work) → controlled comparison with Kunlunxin and other accelerators (team follow-up) → deployment sizing and TCO with real utilization, power, prices and traffic. Compare like-for-like models, traffic mixes, SLOs and correctness criteria; cache-token accounting and operating windows must also be explicit before claiming a unit-cost advantage.</p>
       <div class="reference-grid">
         <div><h3 data-i18n="reference-performance">Methodology reference · performance engineering</h3><a href="https://www.databricks.com/blog/llm-inference-performance-engineering-best-practices" target="_blank" rel="noreferrer">Databricks · LLM Inference Performance Engineering: Best Practices ↗</a><p data-i18n="reference-performance-copy">A useful framework for relating Prefill/Decode, batching, memory bandwidth, and parallel execution to measured server behaviour.</p></div>
         <div><h3 data-i18n="reference-cost">Methodology reference · capacity and cost</h3><a href="https://developer.nvidia.com/blog/llm-inference-benchmarking-how-much-does-your-llm-inference-cost/" target="_blank" rel="noreferrer">NVIDIA · How Much Does Your LLM Inference Cost? ↗</a><p data-i18n="reference-cost-copy">Connects latency-constrained benchmark points to deployment capacity and a cost model. These references guide the method; my results remain tied to my own workloads.</p></div>
@@ -598,7 +598,7 @@
         <div><span>01</span><h3 data-i18n="practice-deploy-title">Deploy &amp; define</h3><p data-i18n="practice-deploy-copy">Pin model and framework versions, topology, request distribution, cache policy, precision, and resource limits. Confirm the intended backend and communication path.</p></div>
         <div><span>02</span><h3 data-i18n="practice-measure-title">Measure &amp; profile</h3><p data-i18n="practice-measure-copy">Separate P/D tests from end-to-end service tests. Use nsys for critical paths, CPU/GPU gaps, communication overlap, synchronisation, and graph coverage; use ncu for selected kernels.</p></div>
         <div><span>03</span><h3 data-i18n="practice-validate-title">Repair &amp; validate</h3><p data-i18n="practice-validate-copy">Test one causal hypothesis at a time. Check output quality, failure behaviour, memory boundaries, repeatability, and throughput/latency together. Carry the regression upstream.</p></div>
-        <div><span>04</span><h3 data-i18n="practice-decide-title">Size &amp; account</h3><p data-i18n="practice-decide-copy">Use qualifying serving capacity for instance sizing, GPU allocation, and cost scenarios. Keep measured results, estimates, and unvalidated assumptions visible.</p></div>
+        <div><span>04</span><h3 data-i18n="practice-decide-title">Size &amp; account</h3><p data-i18n="practice-decide-copy">Size from sustained, SLO-qualified service throughput—not SLO-free peaks or microbench numbers—then estimate GPU allocation and cost scenarios. Label measured results, estimates and open assumptions.</p></div>
       </div>
       <div class="scope-note" data-i18n="practice-close"><strong>The common thread is evidence across layers:</strong> connect request behavior to scheduling, cache ownership, communication, kernels and hardware constraints. Use that explanation to choose a fix—or decide that an apparent optimization is not worthwhile.</div>
     </div></section>
@@ -1055,15 +1055,15 @@
   "[data-i18n=\"cost-slo-title\"]": "找到满足目标的工作点",
   "[data-i18n=\"cost-slo-copy\"]": "针对目标请求分布，扫描并发与配置。共同检查 TTFT、TPOT、请求吞吐、显存压力、失败率和输出正确性，选择满足延迟、质量与稳定性要求的工作点。",
   "[data-i18n=\"cost-slo-formula\"]": "q_instance = 满足准出要求的配置下<br>实测单实例 requests/s",
-  "[data-i18n=\"cost-slo-note\"]": "Prefill input tok/s、Decode output tok/s 与 requests/s 是不同量；请求长度和 P/D 比例需要明确。",
+  "[data-i18n=\"cost-slo-note\"]": "输入 tok/s、输出 tok/s、输入加输出的总 tok/s 和 requests/s 不能混用；需要明确 ISL/OSL、Cache 命中口径，以及复用 Token 是否计入实际新增计算量。",
   "[data-i18n=\"cost-capacity-title\"]": "分别估算 P/D 实例数",
   "[data-i18n=\"cost-capacity-copy\"]": "在相同负载与 SLO 下，把 Prefill 和 Decode 能力换算为单实例 requests/s。按峰值请求量分别估算 P、D 实例数，再为部署预留余量和冗余。",
   "[data-i18n=\"cost-capacity-note\"]": "用真实 KV 传输、排队及端到端 TTFT/TPOT 验证所得 P/D 配比。单压结果用于初步规划。",
   "[data-i18n=\"cost-tco-title\"]": "核算实际交付服务的成本",
   "[data-i18n=\"cost-tco-copy\"]": "统一计算周期，核算算力租金或硬件折旧、电力、网络、软件与运维费用，再除以满足服务要求且正确交付的 token 总量。需要分别核算输入与输出时，明确成本分摊口径。",
   "[data-i18n=\"cost-tco-formula\"]": "每百万有效 token 成本<br>= 周期总成本 / 周期有效交付 token × 10⁶",
-  "[data-i18n=\"cost-tco-note\"]": "利用率、空闲冗余、可用率、重试与流量分布都会改变单位成本；租赁和自建需要一致且不重复计算的成本边界。",
-  "[data-i18n=\"cost-evidence\"]": "<strong>从推理性能到算力经济性：</strong>NVIDIA 平台的服务能力基线（本人已完成）→ 昆仑芯等平台的同条件对照（团队后续）→ 结合利用率、功耗、价格与实际流量评估部署规模和 TCO。只有统一模型、负载、延迟与正确性要求，单位 Token 成本的比较才有意义。",
+  "[data-i18n=\"cost-tco-note\"]": "采用实际经营天数、忙闲时利用率、冗余、可用率与重试数据，不将峰值 TPS 直接按 24×30 外推；区分计算成本、可计费 Token 定价与 ROI。",
+  "[data-i18n=\"cost-evidence\"]": "<strong>从推理性能到算力经济性：</strong>NVIDIA 平台的服务能力基线（本人已完成）→ 昆仑芯等平台的同条件对照（团队后续）→ 结合利用率、功耗、价格与实际流量评估部署规模和 TCO。比较单位 Token 成本前还必须统一模型、负载分布、SLO、正确性、Cache Token 计数与经营时间口径。",
   "[data-i18n=\"reference-performance\"]": "方法参考 · 推理性能工程",
   "[data-i18n=\"reference-performance-copy\"]": "帮助把 Prefill/Decode、batching、内存带宽和并行执行，与实际测得的服务行为联系起来。",
   "[data-i18n=\"reference-cost\"]": "方法参考 · 容量与成本",
@@ -1079,7 +1079,7 @@
   "[data-i18n=\"practice-validate-title\"]": "改进与验证",
   "[data-i18n=\"practice-validate-copy\"]": "逐个检验因果假设，同时检查输出质量、失败行为、内存边界、可复现性和吞吐/延迟，把回归约束提交到上游。",
   "[data-i18n=\"practice-decide-title\"]": "规划与核算",
-  "[data-i18n=\"practice-decide-copy\"]": "根据满足准出要求的服务容量，估算实例数量、GPU 资源与成本场景；明确哪些是实测结果、哪些是估计和待验证假设。",
+  "[data-i18n=\"practice-decide-copy\"]": "以持续且满足 SLO 的服务吞吐估算实例数和 GPU 资源，不把无时延约束的峰值或组件 Microbenchmark 当作可交付产能；成本场景需区分实测、推算与未验证假设。",
   "[data-i18n=\"practice-close\"]": "<strong>这些工作的共同点是跨层证据：</strong>把请求表现和调度、缓存、通信、算子及硬件约束对应起来。先解释现象，再决定该修哪里，以及一次优化是否值得保留。",
   "[data-i18n=\"footer-title\"]": "推理服务性能，<br>以及每个决策背后的证据。",
   "[data-i18n=\"copyright\"]": "© 2026 郭飞鸿 · Feihong Guo · 更新于 2026 年 11 月 18 日",
