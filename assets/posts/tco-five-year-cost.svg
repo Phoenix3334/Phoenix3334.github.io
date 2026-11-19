@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="530" viewBox="0 0 1200 530" role="img" aria-labelledby="title desc">
+<title id="title">Five-year 950DT cost to monthly quote</title><desc id="desc">China Mobile report 950DT air-cooled five-year costs: device 319.12, peripherals 11.60, IDC 50.94, total 381.66 in 10k CNY; monthly amortization 6.36; recommended bare metal quote 8.43 after finance staffing profit and tax.</desc>
+<defs><style>
+text{font-family:Inter,"Noto Sans CJK SC","PingFang SC","Microsoft YaHei",Arial,sans-serif}
+.kicker{fill:#197F79;font-size:12px;font-weight:700;letter-spacing:1.5px}
+.title{fill:#253641;font-size:26px;font-weight:700}
+.subtitle{fill:#657681;font-size:13px}
+.heading{fill:#253641;font-size:18px;font-weight:700}
+.body{fill:#253641;font-size:14px}
+.small{fill:#657681;font-size:12.5px}
+.number{fill:#253641;font-size:25px;font-weight:700}
+.value{fill:#253641;font-size:17px;font-weight:700}
+.note{fill:#B65334;font-size:14px;font-weight:700}
+.tag{fill:#197F79;font-size:13px;font-weight:700}
+</style>
+<marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M1 1 L9 5 L1 9" fill="none" stroke="#71828A" stroke-width="1.5"/></marker>
+</defs>
+<rect width="1200" height="530" fill="#FBFAF7"/>
+<text x="40" y="40" class="kicker" >COST BRIDGE / SOURCE REPORT + ARITHMETIC</text>
+<text x="40" y="80" class="title" >从五年建设投入，走到每台设备的月报价</text>
+<text x="40" y="106" class="subtitle" >950DT 风冷方案 · 金额单位：万元 / 台 · 原报告投资模型与算术复核</text>
+<rect x="40" y="142" width="340" height="114" rx="8" fill="#FFFFFF" stroke="#D8D5CF" /><rect x="40" y="142" width="340" height="5" rx="5" fill="#197F79"/><text x="58" y="182" class="body" >设备 + 五年维保</text><text x="58" y="226" class="number" >319.12</text><rect x="430" y="142" width="340" height="114" rx="8" fill="#FFFFFF" stroke="#D8D5CF" /><rect x="430" y="142" width="340" height="5" rx="5" fill="#2457C5"/><text x="448" y="182" class="body" >网络、通算配套</text><text x="448" y="226" class="number" >11.60</text><rect x="820" y="142" width="340" height="114" rx="8" fill="#FFFFFF" stroke="#D8D5CF" /><rect x="820" y="142" width="340" height="5" rx="5" fill="#B65334"/><text x="838" y="182" class="body" >五年 IDC 费用</text><text x="838" y="226" class="number" >50.94</text>
+<path d="M209 259 L209 294" stroke="#71828A" stroke-width="2.2" fill="none" marker-end="url(#arr)"/><path d="M599 259 L599 294" stroke="#71828A" stroke-width="2.2" fill="none" marker-end="url(#arr)"/><path d="M990 259 L990 294" stroke="#71828A" stroke-width="2.2" fill="none" marker-end="url(#arr)"/>
+<rect x="40" y="302" width="350" height="120" rx="9" fill="#E8F2EF" stroke="#C5DAD4" />
+<text x="60" y="334" class="heading" >五年投资建设总额</text><text x="60" y="378" class="number" >381.66 万元</text><text x="60" y="404" class="small" >319.12 + 11.60 + 50.94</text>
+<path d="M407 362 L444 362" stroke="#71828A" stroke-width="2.2" fill="none" marker-end="url(#arr)"/>
+<rect x="456" y="302" width="310" height="120" rx="9" fill="#EBF0F9" stroke="#C6D4F0" />
+<text x="475" y="334" class="heading" >月建设成本</text><text x="475" y="378" class="number" >约 6.36 万元</text><text x="475" y="404" class="small" >381.66 / 60 个月</text>
+<path d="M781 362 L815 362" stroke="#71828A" stroke-width="2.2" fill="none" marker-end="url(#arr)"/>
+<rect x="830" y="302" width="330" height="120" rx="9" fill="#FAF0EA" stroke="#E8C8B9" />
+<text x="849" y="334" class="heading" >裸金属参考含税报价</text><text x="849" y="378" class="number" >约 8.43 万元</text><text x="849" y="404" class="small" >叠加垫资、人力、目标利润、税费</text>
+<rect x="40" y="450" width="1120" height="54" rx="7" fill="#FFFFFF" stroke="#D8D5CF" />
+<text x="60" y="482" class="note" >核算边界：成本 ≠ 售价；目标利润不是 TCO 成本；IDC 已计入的电力费用不能重复叠加。</text>
+
+</svg>
