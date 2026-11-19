@@ -17,6 +17,13 @@ tags: [LLM-Inference, Benchmarking, Capacity-Planning, TCO, Performance-Engineer
 
 与其逐页摘录结论，不如顺着一个问题往下算：**如果真的要部署一套推理服务，怎么判断它能交付多少业务，以及值不值得投入？**
 
+
+<p align="center">
+  <img src="/assets/posts/tco-decision-chain.svg" width="100%" loading="lazy" alt="推理系统评估从请求分布与Benchmark出发，经过SLO有效容量、P/D资源配置、TCO与Token经营的五步流程">
+</p>
+
+*图 1 · 从性能数据到算力经济决策的完整链条。*
+
 ## 1. 读懂一张压测表：吞吐首先取决于请求长什么样
 
 先看这份报告的测试入口。现场使用 64 卡昇腾 950DT 超节点，以 vLLM、P/D 分离和 aisbench 对 GLM5.2、DeepSeek V4 Pro 做不同长度的推理测试。对我们来说，最有价值的不是设备名称，而是它把**请求长度和时延要求**放在了吞吐数字旁边。
@@ -31,6 +38,13 @@ tags: [LLM-Inference, Benchmarking, Capacity-Planning, TCO, Performance-Engineer
 这张表乍看有点反直觉：输入从 7K 变成 16K，**输出 TPS 从 417.80 降到 216.65，几乎减半，总 TPS 却从 1,882.57 略微升到 1,951.18**。难道输入更长反而跑得更快？
 
 不是。关键在于总 TPS 的统计口径。对于 7K/2K 的请求，每生成 2K 输出，逻辑上还处理了 7K 输入，因此输入加输出的 Token 总量约为输出的 4.5 倍；而 16K/2K 对应的倍数是 9。报告两组总吞吐与这个比例基本吻合。**总 TPS 变高，可能只是请求里输入 Token 的占比变高，并不能直接说明生成效率提高。**
+
+
+<p align="center">
+  <img src="/assets/posts/tco-throughput-denominator.svg" width="100%" loading="lazy" alt="基于中国移动950DT报告的GLM5.2实测，7K/2K与16K/2K相比，Output TPS下降但Total TPS略增，说明统计口径不能混用">
+</p>
+
+*图 2 · 原报告实测。两侧纵向比较，分别采用独立标尺。*
 
 这也把我们带回推理系统最基础的两个阶段。Prefill 负责处理输入上下文，决定用户多久能看到第一个 Token；Decode 则在之后逐步生成输出。TTFT（Time to First Token）包括排队和 Prefill 等首 Token 前的开销，TPOT（Time per Output Token）描述后续生成速度。两者共同影响一次请求从进入系统到输出完成的体验。
 
@@ -85,6 +99,13 @@ s：这部分自身的加速倍数
 
 把 0.197 ms 与当时约 59.6 ms 的 TPOT 粗略对比，只有约 **0.33%** 的量级。这里还暂时假定节省的时间全部处在关键路径；现实里有 CUDA Graph、通信重叠和多请求调度，结论只能更谨慎。这个例子让我更明确地理解：**Microbenchmark 证明局部优化发生了，Profiler 帮助解释它处于什么路径，端到端 Benchmark 才负责回答服务有没有真正受益。**
 
+
+<p align="center">
+  <img src="/assets/posts/tco-amdahl-kernel-e2e.svg" width="100%" loading="lazy" alt="公开SGLang PR49455中DCP打包Kernel由15微秒降到6.9微秒，但端到端吞吐差异落在测试波动内">
+</p>
+
+*图 3 · 局部 Kernel 加速与端到端服务收益并不是一回事。*
+
 也并非所有产能问题都来自算子。我在 [《SGLang DP Health：一次没有报错的吞吐退化，根因却在请求路由》](/blog/2026/11/18/dp-health-routing-bug/) 中复盘过一个例子：探活请求干扰了真实用户共用的 DP 路由状态，导致部分 rank 负载失衡、有效 Batch 下降，最终影响吞吐。对应的修复是 [SGLang PR #35721](https://github.com/sgl-project/sglang/pull/35721)。另一个例子是 [《SGLang 异步 PP 静默输出错误：一次跨 CUDA Stream 的生命周期竞态》](/blog/2026/11/18/pp-stream-lifetime-bug/)：通信 Stream 接收的 Tensor 在 Forward Stream 消费前，其显存可能被提前复用，造成静默输出错误，修复见 [PR #47614](https://github.com/sgl-project/sglang/pull/47614)。前者说明**调度状态会影响实际能跑多满**，后者说明**算得再快，结果不正确也不算有效交付**。
 
 把这三个例子放在一起，系统优化的目标就清楚了：**缩短真正的关键路径，维持合理的有效 Batch，并保证请求结果正确。** 只有当这些变化反映在可持续、符合 SLO 的端到端容量上时，下一步的设备成本比较才有意义。
@@ -130,6 +151,13 @@ s：这部分自身的加速倍数
 
 按五年、60 个月摊销，**381.66 ÷ 60 ≈ 6.36 万元/台月**。这就是上一节的成本数字从哪里来。
 
+
+<p align="center">
+  <img src="/assets/posts/tco-five-year-cost.svg" width="100%" loading="lazy" alt="中国移动报告950DT风冷五年设备维保319.12万、配套11.60万、IDC50.94万，合计381.66万，按60月分摊6.36万，裸金属含税报价8.43万每月">
+</p>
+
+*图 4 · 从五年建设成本到月度裸金属报价，注意区分成本和利润。*
+
 这一步引入了 TCO（Total Cost of Ownership）：一套推理基础设施的成本，不只有设备本身，还可能包括网络与配套、电力、机柜或机房、维护、人力、资金占用和冗余容量。但**先要统一成本边界**。比如原表的 IDC 已按特定功率与服务口径计费，就不能在没核清范围前，又把同一部分电费重复加进去。自建设备折旧与租赁费用也应该放在各自对应的方案里，不能双重计算。
 
 接下来，报告问了一个经营问题：如果把整台服务器作为裸金属出租，月租应该卖多少？
@@ -173,6 +201,13 @@ s：这部分自身的加速倍数
 ### 一个很值得保留的公式复核
 
 PPT 正文写的是每月按 **26 个工作日**测算。我检查内嵌的经营工作表后发现，**月 Token 产能**相关公式使用 **30 天**，而**月收入**公式使用 **26 天**；实际折扣单元格采用 **50%**，工作表中另有一处说明保留着“80%”的旧表述。
+
+
+<p align="center">
+  <img src="/assets/posts/tco-excel-period-mismatch.svg" width="100%" loading="lazy" alt="中国移动PPT内嵌Excel按30天计算月Token产能，却按26天计算月收入；统一26天后GLM与DeepSeek对应282.28亿和308.92亿Token">
+</p>
+
+*图 5 · Excel 公式复核：先统一时间周期，再讨论单位 Token 经济性。*
 
 这意味着不能直接用“10.07 万元 ÷ 325.70 亿 Token”倒推平均收费单价，因为分子和分母并不是同一个核算周期。如果仅把产能公式统一成 26 天，其他参数保持原样，那么 GLM5.2、DeepSeek 对应的 Token 产能分别约为 **282.28 亿**和 **308.92 亿**。这是依据报告公式进行的周期统一复算，**不是新的硬件实测**。
 
