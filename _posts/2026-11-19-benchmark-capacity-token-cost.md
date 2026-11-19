@@ -85,7 +85,7 @@ s：这部分自身的加速倍数
 
 把 0.197 ms 与当时约 59.6 ms 的 TPOT 粗略对比，只有约 **0.33%** 的量级。这里还暂时假定节省的时间全部处在关键路径；现实里有 CUDA Graph、通信重叠和多请求调度，结论只能更谨慎。这个例子让我更明确地理解：**Microbenchmark 证明局部优化发生了，Profiler 帮助解释它处于什么路径，端到端 Benchmark 才负责回答服务有没有真正受益。**
 
-也并非所有产能问题都来自算子。[SGLang PR #35721](https://github.com/sgl-project/sglang/pull/35721) 修复的是 DP Health 探活对用户请求路由状态的干扰——错误的控制面状态会造成 rank 间负载失衡，让有效 Batch 和吞吐下降；[PR #47614](https://github.com/sgl-project/sglang/pull/47614) 修复的是异步 PP 中接收 Tensor 的 Stream 生命周期问题——算得再快，显存被提前复用导致输出错误，也不能算真正交付了服务。
+也并非所有产能问题都来自算子。我在 [《SGLang DP Health：一次没有报错的吞吐退化，根因却在请求路由》](/blog/2026/11/18/dp-health-routing-bug/) 中复盘过一个例子：探活请求干扰了真实用户共用的 DP 路由状态，导致部分 rank 负载失衡、有效 Batch 下降，最终影响吞吐。对应的修复是 [SGLang PR #35721](https://github.com/sgl-project/sglang/pull/35721)。另一个例子是 [《SGLang 异步 PP 静默输出错误：一次跨 CUDA Stream 的生命周期竞态》](/blog/2026/11/18/pp-stream-lifetime-bug/)：通信 Stream 接收的 Tensor 在 Forward Stream 消费前，其显存可能被提前复用，造成静默输出错误，修复见 [PR #47614](https://github.com/sgl-project/sglang/pull/47614)。前者说明**调度状态会影响实际能跑多满**，后者说明**算得再快，结果不正确也不算有效交付**。
 
 把这三个例子放在一起，系统优化的目标就清楚了：**缩短真正的关键路径，维持合理的有效 Batch，并保证请求结果正确。** 只有当这些变化反映在可持续、符合 SLO 的端到端容量上时，下一步的设备成本比较才有意义。
 
