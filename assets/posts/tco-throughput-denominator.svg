@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="465" viewBox="0 0 1200 465" role="img" aria-labelledby="title desc">
+<title id="title">950DT GLM5.2 throughput metrics</title><desc id="desc">Report GLM5.2 tests: 7K/2K Output TPS 417.80 Total TPS 1882.57 versus 16K/2K Output TPS 216.65 Total TPS 1951.18. Separate chart scales.</desc>
+<defs><style>
+text{font-family:Inter,"Noto Sans CJK SC","PingFang SC","Microsoft YaHei",Arial,sans-serif}
+.kicker{fill:#197F79;font-size:12px;font-weight:700;letter-spacing:1.5px}
+.title{fill:#253641;font-size:26px;font-weight:700}
+.subtitle{fill:#657681;font-size:13px}
+.heading{fill:#253641;font-size:18px;font-weight:700}
+.body{fill:#253641;font-size:14px}
+.small{fill:#657681;font-size:12.5px}
+.number{fill:#253641;font-size:25px;font-weight:700}
+.value{fill:#253641;font-size:17px;font-weight:700}
+.note{fill:#B65334;font-size:14px;font-weight:700}
+.tag{fill:#197F79;font-size:13px;font-weight:700}
+</style>
+<marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M1 1 L9 5 L1 9" fill="none" stroke="#71828A" stroke-width="1.5"/></marker>
+</defs>
+<rect width="1200" height="465" fill="#FBFAF7"/>
+<text x="40" y="38" class="kicker" >SOURCE DATA / CHINA MOBILE 950DT REPORT</text>
+<text x="40" y="77" class="title" >总 TPS 略升，不等于输出吞吐变快</text>
+<text x="40" y="103" class="subtitle" >GLM5.2 · 单卡数值 · 两个面板使用不同量纲与比例尺，请分别阅读。</text>
+<rect x="40" y="129" width="542" height="274" rx="8" fill="#FFFFFF" stroke="#D8D5CF" /><rect x="617" y="129" width="543" height="274" rx="8" fill="#FFFFFF" stroke="#D8D5CF" />
+<rect x="40" y="129" width="542" height="5" rx="5" fill="#197F79"/><rect x="617" y="129" width="543" height="5" rx="5" fill="#2457C5"/>
+<text x="61" y="169" class="heading" >Output TPS / 输出吞吐</text><text x="638" y="169" class="heading" >Total TPS / 输入 + 输出吞吐</text>
+<text x="65" y="228" class="body" >7K / 2K</text><text x="65" y="315" class="body" >16K / 2K</text>
+<text x="644" y="228" class="body" >7K / 2K</text><text x="644" y="315" class="body" >16K / 2K</text>
+<rect x="167" y="205" width="300" height="33" rx="5" fill="#E8EFED"/><rect x="167" y="292" width="300" height="33" rx="5" fill="#E8EFED"/>
+<rect x="752" y="205" width="300" height="33" rx="5" fill="#E8EDF8"/><rect x="752" y="292" width="300" height="33" rx="5" fill="#E8EDF8"/>
+<rect x="167" y="205" width="251" height="33" rx="5" fill="#197F79"/>
+<rect x="167" y="292" width="130" height="33" rx="5" fill="#197F79"/>
+<rect x="752" y="205" width="257" height="33" rx="5" fill="#2457C5"/>
+<rect x="752" y="292" width="266" height="33" rx="5" fill="#2457C5"/>
+<text x="488" y="229" class="value" >417.80</text><text x="488" y="316" class="value" >216.65</text>
+<text x="1064" y="229" class="value" >1,882.57</text><text x="1064" y="316" class="value" >1,951.18</text>
+<text x="61" y="369" class="note" >约 -48.1% / 输出量明显下降</text>
+<text x="638" y="369" class="tag" >约 +3.6% / 总量仍略有增长</text>
+<text x="41" y="438" class="small" >原因：16K/2K 的输入占比更大；总 TPS 统计口径变化，不能替代请求完成速率或 Output TPS。</text>
+
+</svg>
