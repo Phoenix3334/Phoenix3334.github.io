@@ -231,9 +231,9 @@
     </details>
     <div class="hero wrap"><div>
       <p class="eyebrow" data-i18n="hero-kicker">AI Infrastructure · LLM Inference Engineering</p>
-      <h1 data-i18n="hero-title">From inference performance to <em>infrastructure decisions.</em></h1>
-      <p class="hero-lede" data-i18n="hero-lede">I am Feihong Guo. During my AI Infrastructure internship at Baidu AI Cloud, I benchmarked and tuned <strong>SGLang serving for DeepSeek-V4-Pro, V4.1-Flash and Kimi K3</strong> across H200, B300 and GB300. I used workload measurements to compare deployments, size Prefill and Decode capacity, and trace performance and correctness failures to the runtime.</p>
-      <p class="hero-thesis" data-i18n="hero-thesis">Deploy → measure → explain → improve → validate → size.<br><em>Throughput, latency, correctness, and stability belong in the same decision.</em></p>
+      <h1 data-i18n="hero-title">LLM inference engineering,<br><em>from symptoms to system fixes.</em></h1>
+      <p class="hero-lede" data-i18n="hero-lede">At Baidu AI Cloud, I worked on <strong>SGLang serving for DeepSeek-V4-Pro, V4.1-Flash and Kimi K3</strong> across H200, B300 and GB300. I built controlled Prefill/Decode benchmarks, investigated scheduling and GPU execution failures, and used measured service behavior to inform parallelism and capacity choices.</p>
+      <p class="hero-thesis" data-i18n="hero-thesis">Reproduce the symptom → locate the responsible layer → isolate the cause → verify the fix.<br><em>Throughput improvements must also preserve correctness and predictable latency.</em></p>
       <p class="hero-evidence" data-i18n="hero-upstream"><strong>Authored and merged in SGLang</strong> · <a href="https://github.com/sgl-project/sglang/pull/35721" target="_blank" rel="noreferrer">DP health routing #35721</a> · <a href="https://github.com/sgl-project/sglang/pull/47614" target="_blank" rel="noreferrer">PP stream lifetime #47614</a> · <a href="https://github.com/sgl-project/sglang/pull/43786" target="_blank" rel="noreferrer">FP8 fusion #43786</a> · <a href="https://github.com/sgl-project/sglang/pull/48404" target="_blank" rel="noreferrer">EPLB validation #48404</a></p>
       <div class="hero-actions"><a href="#opensource" data-i18n="hero-action-work">SGLang engineering work ↓</a><a href="#economics" data-i18n="hero-action-tco">Capacity and cost methodology ↓</a></div>
       <div class="hero-line"><span class="tag">SGLang</span><span class="tag">Distributed LLM Serving</span><span class="tag">GPU / NPU Performance</span><span class="tag">Capacity &amp; TCO</span></div>
@@ -241,8 +241,8 @@
     <section id="opensource">
       <div class="wrap">
         <div class="section-head">
-          <div><p class="eyebrow" data-i18n="sglang-kicker">Baidu AI Cloud · SGLang</p><h2 data-i18n="sglang-title">Serving performance.<br>Runtime correctness.</h2></div>
-          <p data-i18n="sglang-intro">I reproduce serving failures with controlled workloads, trace them through scheduling and device execution, and carry verified repairs upstream. My four merged PRs cover DP routing, PP tensor lifetime, FP8 kernel fusion and EPLB configuration validation.</p>
+          <div><p class="eyebrow" data-i18n="sglang-kicker">Baidu AI Cloud · SGLang</p><h2 data-i18n="sglang-title">Debugging the runtime,<br>not just tuning a benchmark.</h2></div>
+          <p data-i18n="sglang-intro">Several serving regressions turned out to be control-plane or asynchronous-lifetime bugs rather than slow GPU kernels. I traced requests from routing and scheduling into stream execution, used controlled A/B experiments to establish causality, and submitted fixes with regression coverage. The cases below show the evidence and the boundaries of each result.</p>
         </div>
 
         <div class="upstream-summary" aria-label="Selected SGLang contribution roles">
@@ -416,8 +416,8 @@
     <section id="internship">
       <div class="wrap">
         <div class="section-head">
-          <div><p class="eyebrow" data-i18n="internship-eyebrow">SGLang deployment &amp; performance</p><h2 data-i18n="internship-title">Serving benchmarks and deployment choices</h2></div>
-          <p data-i18n="internship-intro">Built reproducible phase-isolated and end-to-end benchmarks across input/output lengths and concurrency. Compared TP, PP, EP, CP/DCP, DP Attention, EAGLE3/DSpark, EPLB, CUDA Graph and Chunked Prefill. Used KV cache and Mamba state pools, MRR/MF and memory pressure to identify feasible configurations.</p>
+          <div><p class="eyebrow" data-i18n="internship-eyebrow">SGLang deployment &amp; performance</p><h2 data-i18n="internship-title">Benchmark the workload.<br>Choose the serving configuration.</h2></div>
+          <p data-i18n="internship-intro">I compare Prefill, Decode and end-to-end serving under explicit request lengths and concurrency, rather than treating peak tokens/s as a universal result. Parallel layout, KV/SSM memory budgets, graph replay and communication overhead all change the usable operating point. The goal is to identify configurations that meet latency and correctness constraints.</p>
         </div>
         <article class="lab-note phase-note" id="long-context-results">
           <div class="note-heading"><span class="note-number">01</span><h3 data-i18n="phase-title">Long-context serving benchmarks</h3></div>
@@ -472,7 +472,7 @@
     </section>
 
     <section class="experience" id="huawei"><div class="wrap">
-      <div class="section-head"><div><p class="eyebrow" data-i18n="huawei-kicker">Huawei ICT Academy · ZZU Supercomputing</p><h2 data-i18n="huawei-title">The same method,<br>across NPU and CPU.</h2></div><p data-i18n="huawei-intro">After the SGLang work, a complementary systems track: Ascend inference engines and kernels, plus Kunpeng memory and parallel performance. Hardware details matter when they change the serving path.</p></div>
+      <div class="section-head"><div><p class="eyebrow" data-i18n="huawei-kicker">Huawei ICT Academy · ZZU Supercomputing</p><h2 data-i18n="huawei-title">Inference and performance,<br>across NPU and CPU.</h2></div><p data-i18n="huawei-intro">My work beyond NVIDIA serving includes model deployment and kernel paths on Ascend 910B/910C, and memory/parallel tuning on Kunpeng 920. In each case, an isolated kernel gain matters only if the framework reaches that path and the complete workload benefits.</p></div>
       <div class="practice-grid">
         <article><h3 data-i18n="huawei-serving-title">Ascend serving engines</h3><p data-i18n="huawei-serving-copy">Worked with <strong>xLLM and vLLM-Ascend on Ascend 910B</strong>: model support, MTP, ACL Graph, cache capacity, and benchmark configuration. Qwen3.5-9B throughput moved <strong>2,301 → 30,451 tok/s at C960</strong> in a combined configuration comparison.</p><p class="scope" data-i18n="huawei-serving-scope">A separate Gemma 4 E2B deployment comparison measured 1,159.53 → 1,274.00 tok/s with Full ACL Graph. The two benchmarks have different baselines.</p></article>
         <article><h3 data-i18n="huawei-kernel-title">Kernels into a valid runtime path</h3><p data-i18n="huawei-kernel-copy">Used <strong>Ascend C, Triton, and TileLang</strong> to connect tiling and fusion to the Da Vinci data path: aligned transfers, on-chip buffers, compute, and synchronisation. Specialised paths need shape and layout checks, precision validation, and a fallback before serving integration.</p><p class="scope" data-i18n="huawei-kernel-scope">Kernel timing and system throughput are measured separately. A faster local operator needs a reachable engine path and an end-to-end comparison.</p></article>
@@ -484,31 +484,31 @@
       <div class="section-head medical-section-head">
         <div>
           <p class="eyebrow" data-i18n="medical-kicker">SELECTED APPLIED AI · THERMOPULSE</p>
-          <h2 data-i18n="medical-title">Medical AI, from sensing<br>to reasoning.</h2>
+          <h2 data-i18n="medical-title">ThermoPulse:<br><em>an applied medical-AI prototype.</em></h2>
         </div>
-        <p data-i18n="medical-intro">ThermoPulse is an infrared medical-AI prototype connecting thermal sensing, visual representation, a domain-adapted LLM and structured reporting.</p>
+        <p data-i18n="medical-intro">A separate applied project linking infrared image acquisition, visual analysis and medical-language generation. The engineering work covers a spatial two-branch vision model, Qwen3-8B domain adaptation and an exploratory TensorRT deployment path.</p>
       </div>
       <div class="medical-modules">
         <article>
           <span class="medical-index">01 / PERCEPTION</span>
           <h3 data-i18n="medical-vision-title">Spatial dual-stream vision</h3>
-          <p data-i18n="medical-vision-copy">YOLOv11 localization; ResNet18 local features and Transformer patch features fused for visual representation.</p>
+          <p data-i18n="medical-vision-copy">YOLOv11 for localization; ResNet18 captures local image features while a Transformer models relations between patches. Features are concatenated for a prototype classifier.</p>
         </article>
         <article>
           <span class="medical-index">02 / MODEL ADAPTATION</span>
           <h3 data-i18n="medical-llm-title">Qwen3-8B · CPT → SFT</h3>
-          <p data-i18n="medical-llm-copy">Medical-domain continual pretraining and supervised fine-tuning with PyTorch and DeepSpeed ZeRO-2.</p>
+          <p data-i18n="medical-llm-copy">Continual pretraining (CPT) on medical-domain text, followed by supervised fine-tuning (SFT) of Qwen3-8B using PyTorch and DeepSpeed ZeRO-2.</p>
         </article>
         <article>
           <span class="medical-index">03 / DEPLOYMENT</span>
           <h3 data-i18n="medical-runtime-title">CUDA · ONNX · TensorRT</h3>
-          <p data-i18n="medical-runtime-copy">Explored FP16 TensorRT compilation for the ResNet branch while retaining the Transformer branch in PyTorch; no end-to-end speedup claim.</p>
+          <p data-i18n="medical-runtime-copy">Explored an FP16 TensorRT path for the ResNet branch, with the Transformer branch left in PyTorch. End-to-end acceleration has not been established.</p>
         </article>
       </div>
-      <p class="medical-boundary" data-i18n="medical-boundary">An applied hardware-to-model systems prototype; no claim of clinically validated diagnostic performance.</p>
+      <p class="medical-boundary" data-i18n="medical-boundary">Research and engineering prototype; neither clinical diagnostic validity nor end-to-end TensorRT speedup is inferred from these components.</p>
     </div></section>
     <section class="economics" id="economics"><div class="wrap">
-      <div class="section-head"><div><p class="eyebrow" data-i18n="economics-kicker">Performance → capacity → economics</p><h2 data-i18n="economics-title">Hardware selection, P/D sizing<br>and deployment economics</h2></div><p data-i18n="economics-intro">Compare serving performance, resource utilization and deployment cost under a defined SLO. Use measured phase capacity for an initial P/D allocation, then validate the combined service path.</p></div>
+      <div class="section-head"><div><p class="eyebrow" data-i18n="economics-kicker">Performance → capacity → economics</p><h2 data-i18n="economics-title">From measured service capacity<br>to deployment estimates.</h2></div><p data-i18n="economics-intro">I use latency-qualified Prefill/Decode throughput and memory limits to estimate feasible instance counts and P/D ratios. Cost and TCO are then scenario models: without deployment prices, power and live traffic, they are estimates rather than measured savings.</p></div>
       <div class="cost-chain">
         <article class="cost-step"><span class="step-index">01 / SLO</span><h3 data-i18n="cost-slo-title">Find the feasible operating point</h3><p data-i18n="cost-slo-copy">Sweep concurrency and configuration on the target request mix. Compare TTFT, TPOT, request throughput, memory pressure, failures, and output correctness. Select an operating point that meets the specified latency, quality, and stability criteria.</p><div class="formula" data-i18n="cost-slo-formula">q_instance = measured requests/s<br>at the qualifying configuration</div><p data-i18n="cost-slo-note">Prefill input tok/s, Decode output tok/s, and requests/s describe different quantities. Request lengths and phase balance must stay explicit.</p></article>
         <article class="cost-step"><span class="step-index">02 / CAPACITY</span><h3 data-i18n="cost-capacity-title">Size Prefill and Decode separately</h3><p data-i18n="cost-capacity-copy">Convert Prefill and Decode rates to per-instance requests/s under the same workload and SLO. Size both stages for peak demand, with headroom and redundancy for the deployment.</p><div class="formula">N_P = ceil(λ_peak / q_P)<br>N_D = ceil(λ_peak / q_D)<br>Minimum GPU count = N_P × g_P + N_D × g_D</div><p data-i18n="cost-capacity-note">Validate the resulting P/D ratio with real KV transfers, queueing and end-to-end TTFT/TPOT. Stage-isolated rates are sizing inputs.</p></article>
@@ -521,7 +521,7 @@
       </div>
     </div></section>
     <section class="research" id="practice"><div class="wrap">
-      <div class="section-head"><div><p class="eyebrow" data-i18n="practice-kicker">Inference engineering practice</p><h2 data-i18n="practice-title">Measure the service.<br>Explain the bottleneck.</h2></div><p data-i18n="practice-intro">A repeatable loop across SGLang, NVIDIA GPUs, and Ascend: make the workload and execution path explicit, prove the result, then use it to make a resource decision.</p></div>
+      <div class="section-head"><div><p class="eyebrow" data-i18n="practice-kicker">Inference engineering practice</p><h2 data-i18n="practice-title">How I evaluate<br>an inference optimization.</h2></div><p data-i18n="practice-intro">A faster kernel or a higher benchmark TPS is only one piece of evidence. I keep workload, code revision, resource limits and correctness checks comparable before accepting a change as a service-level improvement.</p></div>
       <p class="research-question" data-i18n="practice-question">How much <em>correct, reliable serving capacity</em> can this configuration deliver within its latency and resource budget?</p>
       <div class="research-steps">
         <div><span>01</span><h3 data-i18n="practice-deploy-title">Deploy &amp; define</h3><p data-i18n="practice-deploy-copy">Pin model and framework versions, topology, request distribution, cache policy, precision, and resource limits. Confirm the intended backend and communication path.</p></div>
@@ -529,44 +529,44 @@
         <div><span>03</span><h3 data-i18n="practice-validate-title">Repair &amp; validate</h3><p data-i18n="practice-validate-copy">Test one causal hypothesis at a time. Check output quality, failure behaviour, memory boundaries, repeatability, and throughput/latency together. Carry the regression upstream.</p></div>
         <div><span>04</span><h3 data-i18n="practice-decide-title">Size &amp; account</h3><p data-i18n="practice-decide-copy">Use qualifying serving capacity for instance sizing, GPU allocation, and cost scenarios. Keep measured results, estimates, and unvalidated assumptions visible.</p></div>
       </div>
-      <div class="scope-note" data-i18n="practice-close"><strong>AI Infra is the connecting layer:</strong> model behaviour and workload shape meet runtime scheduling, cache state, kernels, interconnect, and deployment economics. My focus is building and validating that connection.</div>
+      <div class="scope-note" data-i18n="practice-close"><strong>The common thread is evidence across layers:</strong> connect request behavior to scheduling, cache ownership, communication, kernels and hardware constraints. Use that explanation to choose a fix—or decide that an apparent optimization is not worthwhile.</div>
     </div></section>
     <section class="learning-section" id="learning"><div class="wrap">
       <div class="section-head">
         <div><p class="eyebrow" data-i18n="learning-kicker">CURATED LEARNING RESOURCES</p>
-        <h2 data-i18n="learning-title">A learning shelf<br>for AI systems.</h2></div>
-        <p data-i18n="learning-intro">A curated reading shelf combining verified forks with other public references. This selection is not my complete Star history.</p>
+        <h2 data-i18n="learning-title">Notes and references<br>for learning LLM systems.</h2></div>
+        <p data-i18n="learning-intro">A personal collection of upstream repositories, books and implementation guides. I organize them by what they help answer: how the system is designed, how requests run, and where computation and communication costs arise. My GitHub AI Infra Star List contains the broader collection.</p>
       </div>
       <div class="learning-groups">
         <div class="learning-group">
           <div class="learning-group-head"><span class="learning-num">01</span>
             <h3 data-i18n="learning-group-0">Foundations &amp; Roadmaps</h3>
-            <p data-i18n="learning-group-sub-0">Build the systems view first.</p>
+            <p data-i18n="learning-group-sub-0">Architecture, quantitative reasoning and code-first tutorials.</p>
           </div>
           <div class="learning-links">
             <a class="learning-link" href="https://llm-infra-atlas.github.io/" target="_blank" rel="noopener noreferrer">
               <span class="learning-name">LLM Infra Atlas</span>
-              <span class="learning-description" data-i18n="learning-desc-0-0">A living map of models, training, serving, parallelism and hardware.</span>
+              <span class="learning-description" data-i18n="learning-desc-0-0">A system-level map linking LLM training, serving, parallelism, memory and hardware.</span>
               <span class="learning-link-arrow" aria-hidden="true">↗</span>
             </a>
             <a class="learning-link" href="https://bojieli.github.io/ai-infra-book/" target="_blank" rel="noopener noreferrer">
               <span class="learning-name">Understanding AI Infra</span>
-              <span class="learning-description" data-i18n="learning-desc-0-1">Quantitative systems design, bottlenecks and deployment trade-offs.</span>
+              <span class="learning-description" data-i18n="learning-desc-0-1">Reason quantitatively about throughput, memory constraints, hardware and deployment cost.</span>
               <span class="learning-link-arrow" aria-hidden="true">↗</span>
             </a>
             <a class="learning-link" href="https://github.com/caomaolufei/AIInfraGuide" target="_blank" rel="noopener noreferrer">
               <span class="learning-name">AIInfraGuide</span>
-              <span class="learning-description" data-i18n="learning-desc-0-2">A structured learning route for AI infrastructure fundamentals.</span>
+              <span class="learning-description" data-i18n="learning-desc-0-2">A Chinese learning path from infrastructure basics toward engineering practice.</span>
               <span class="learning-link-arrow" aria-hidden="true">↗</span>
             </a>
             <a class="learning-link" href="https://github.com/datawhalechina/zero-to-sglang" target="_blank" rel="noopener noreferrer">
               <span class="learning-name">Zero to SGLang</span>
-              <span class="learning-description" data-i18n="learning-desc-0-3">Hands-on path from LLM serving basics to the SGLang codebase.</span>
+              <span class="learning-description" data-i18n="learning-desc-0-3">Hands-on SGLang tutorials: deployment, APIs, serving configuration and optimization.</span>
               <span class="learning-link-arrow" aria-hidden="true">↗</span>
             </a>
             <a class="learning-link" href="https://github.com/bbruceyuan/LLMs-Zero-to-Hero" target="_blank" rel="noopener noreferrer">
               <span class="learning-name">LLMs-Zero-to-Hero</span>
-              <span class="learning-description" data-i18n="learning-desc-0-4">Code-first LLM lessons and notebooks covering Transformer, MoE, MLA and related topics.</span>
+              <span class="learning-description" data-i18n="learning-desc-0-4">Runnable notebooks for implementing Transformer, MoE and MLA concepts from code.</span>
               <span class="learning-link-arrow" aria-hidden="true">↗</span>
             </a>
           </div>
@@ -574,32 +574,32 @@
         <div class="learning-group">
           <div class="learning-group-head"><span class="learning-num">02</span>
             <h3 data-i18n="learning-group-1">Serving &amp; Runtime</h3>
-            <p data-i18n="learning-group-sub-1">Connect concepts to implementations.</p>
+            <p data-i18n="learning-group-sub-1">Trace a request through scheduling, caching and execution.</p>
           </div>
           <div class="learning-links">
             <a class="learning-link" href="https://github.com/sgl-project/mini-sglang" target="_blank" rel="noopener noreferrer">
               <span class="learning-name">mini-SGLang</span>
-              <span class="learning-description" data-i18n="learning-desc-1-0">A smaller codebase for tracing the LLM serving lifecycle.</span>
+              <span class="learning-description" data-i18n="learning-desc-1-0">A compact codebase for following request admission, scheduling and model execution.</span>
               <span class="learning-link-arrow" aria-hidden="true">↗</span>
             </a>
             <a class="learning-link" href="https://github.com/sgl-project/sglang" target="_blank" rel="noopener noreferrer">
               <span class="learning-name">SGLang</span>
-              <span class="learning-description" data-i18n="learning-desc-1-1">Production serving: scheduling, parallelism and runtime correctness.</span>
+              <span class="learning-description" data-i18n="learning-desc-1-1">Production runtime examples for DP/PP scheduling, asynchronous execution and correctness.</span>
               <span class="learning-link-arrow" aria-hidden="true">↗</span>
             </a>
             <a class="learning-link" href="https://github.com/vllm-project/vllm" target="_blank" rel="noopener noreferrer">
               <span class="learning-name">vLLM</span>
-              <span class="learning-description" data-i18n="learning-desc-1-2">An alternative engine for KV caching, batching and scheduling.</span>
+              <span class="learning-description" data-i18n="learning-desc-1-2">Compare continuous batching, KV-block management and scheduling with SGLang.</span>
               <span class="learning-link-arrow" aria-hidden="true">↗</span>
             </a>
             <a class="learning-link" href="https://github.com/flashinfer-ai/flashinfer" target="_blank" rel="noopener noreferrer">
               <span class="learning-name">FlashInfer</span>
-              <span class="learning-description" data-i18n="learning-desc-1-3">Serving-oriented attention and related GPU kernel implementations.</span>
+              <span class="learning-description" data-i18n="learning-desc-1-3">Attention and KV-cache GPU kernels used by LLM inference engines.</span>
               <span class="learning-link-arrow" aria-hidden="true">↗</span>
             </a>
             <a class="learning-link" href="https://github.com/tc-mb/llama.cpp-omni" target="_blank" rel="noopener noreferrer">
               <span class="learning-name">llama.cpp-omni</span>
-              <span class="learning-description" data-i18n="learning-desc-1-4">Multimodal llama.cpp-based runtime for full-duplex audio/video streaming and on-device inference.</span>
+              <span class="learning-description" data-i18n="learning-desc-1-4">Full-duplex multimodal inference, GGUF modules, and streaming audio / Flow-Vocoder execution.</span>
               <span class="learning-link-arrow" aria-hidden="true">↗</span>
             </a>
           </div>
@@ -607,32 +607,32 @@
         <div class="learning-group">
           <div class="learning-group-head"><span class="learning-num">03</span>
             <h3 data-i18n="learning-group-2">Kernels &amp; Parallelism</h3>
-            <p data-i18n="learning-group-sub-2">Follow the data movement and execution.</p>
+            <p data-i18n="learning-group-sub-2">Understand memory movement, collective communication and fused kernels.</p>
           </div>
           <div class="learning-links">
             <a class="learning-link" href="https://github.com/NVIDIA/nccl" target="_blank" rel="noopener noreferrer">
               <span class="learning-name">NCCL</span>
-              <span class="learning-description" data-i18n="learning-desc-2-0">Multi-GPU collectives, communication topology and performance.</span>
+              <span class="learning-description" data-i18n="learning-desc-2-0">Collective communication primitives, GPU topology and interconnect overhead.</span>
               <span class="learning-link-arrow" aria-hidden="true">↗</span>
             </a>
             <a class="learning-link" href="https://github.com/deepseek-ai/FlashMLA" target="_blank" rel="noopener noreferrer">
               <span class="learning-name">FlashMLA</span>
-              <span class="learning-description" data-i18n="learning-desc-2-1">Efficient MLA kernels and memory-access patterns.</span>
+              <span class="learning-description" data-i18n="learning-desc-2-1">MLA attention kernels: tensor layout, memory traffic and execution efficiency.</span>
               <span class="learning-link-arrow" aria-hidden="true">↗</span>
             </a>
             <a class="learning-link" href="https://github.com/deepseek-ai/DeepGEMM" target="_blank" rel="noopener noreferrer">
               <span class="learning-name">DeepGEMM</span>
-              <span class="learning-description" data-i18n="learning-desc-2-4">Tensor Core GEMM and fused MoE kernels, including communication-compute overlap.</span>
+              <span class="learning-description" data-i18n="learning-desc-2-4">Tensor Core GEMM, MegaMoE fused execution and communication–computation overlap.</span>
               <span class="learning-link-arrow" aria-hidden="true">↗</span>
             </a>
             <a class="learning-link" href="https://github.com/deepseek-ai/DeepSpec" target="_blank" rel="noopener noreferrer">
               <span class="learning-name">DeepSpec</span>
-              <span class="learning-description" data-i18n="learning-desc-2-2">Training and evaluation workflows for speculative decoding.</span>
+              <span class="learning-description" data-i18n="learning-desc-2-2">Draft-model training and evaluation paths for speculative decoding.</span>
               <span class="learning-link-arrow" aria-hidden="true">↗</span>
             </a>
             <a class="learning-link" href="https://github.com/deepseek-ai/EPLB" target="_blank" rel="noopener noreferrer">
               <span class="learning-name">EPLB</span>
-              <span class="learning-description" data-i18n="learning-desc-2-3">Expert placement and load balancing in MoE execution.</span>
+              <span class="learning-description" data-i18n="learning-desc-2-3">Expert placement, replication and load balancing in MoE systems.</span>
               <span class="learning-link-arrow" aria-hidden="true">↗</span>
             </a>
           </div>
@@ -641,8 +641,8 @@
       <div class="learning-more-maps">
         <div class="learning-more-head">
           <div><p class="eyebrow" data-i18n="learning-extra-kicker">MORE LEARNING MAPS</p>
-          <h3 data-i18n="learning-extra-title">More open books, guides &amp; learning paths</h3></div>
-          <p data-i18n="learning-extra-intro">Two verified forks plus public reading picks. Recommendations are not claims that every project is starred.</p>
+          <h3 data-i18n="learning-extra-title">More books, lectures and hands-on guides</h3></div>
+          <p data-i18n="learning-extra-intro">Additional verified forks and public references. These are reading suggestions, not a claim that every link is starred.</p>
         </div>
         <div class="learning-extra-grid">
           <a class="learning-extra-link" href="https://github.com/cr7258/ai-infra-learning" target="_blank" rel="noopener noreferrer">
@@ -731,7 +731,7 @@
         </div>
       </details>
       <div class="learning-bottom">
-        <span data-i18n="learning-note">Selected from verified forks · Upstream links · Reviewed November 2026</span>
+        <span data-i18n="learning-note">Selected upstream references · Verified forks and public reading picks · November 2026</span>
         <a href="https://github.com/Phoenix3334?tab=stars" target="_blank" rel="noopener noreferrer" data-i18n="learning-more">Browse more starred repositories ↗</a>
       </div>
     </div></section>
@@ -814,8 +814,8 @@
   ".contribution[data-record=\"pr-34410\"] h3": "固定 P/D Decode draft-input 交接契约",
   ".contribution[data-record=\"pr-34286\"] h3": "最后一次 warmup 后、capture 前同步图构建",
   "[data-i18n=\"internship-eyebrow\"]": "SGLang 部署与性能工程",
-  "[data-i18n=\"internship-title\"]": "推理最佳实践与部署选型",
-  "[data-i18n=\"internship-intro\"]": "按输入输出长度、并发和 P/D 阶段构建可复现压测矩阵，对照 TP、PP、EP、CP/DCP、DP Attention、EAGLE3/DSpark、EPLB、CUDA Graph 与 Chunked Prefill。结合 KV Cache、Mamba State Pool、MRR/MF 与显存压力确定可用配置。",
+  "[data-i18n=\"internship-title\"]": "按真实负载压测，<br>再选择部署配置。",
+  "[data-i18n=\"internship-intro\"]": "先明确输入输出长度、并发和目标 SLO，再分别测试 Prefill、Decode 与端到端服务。对照 TP/PP/EP、DCP、KV/SSM 容量、Graph Replay 和通信开销，找出可稳定运行的配置，而不是只比较最高 tok/s。",
   "[data-i18n=\"capacity-title\"]": "全节点测试前先估算容量",
   "[data-i18n=\"capacity-copy\"]": "扩展基于 InferFlux 的容量模型，由工作负载、计算/带宽上限、缓存显存、并行布局及效率先验缩小测试范围；针对 Kimi K3 分析 DCP、KV/SSM 状态池的容量与回退边界。",
   "[data-i18n=\"capacity-boundary\"]": "输出是容量估计，不是吞吐保证。预测与实测的差距用于确定内存、通信、batching 或运行时调查的优先级。",
@@ -867,47 +867,47 @@
   "[data-i18n=\"nav-blog\"]": "博客",
   "[data-i18n=\"nav-home\"]": "主页",
   "[data-i18n=\"medical-kicker\"]": "应用 AI 项目 · THERMOPULSE",
-  "[data-i18n=\"medical-title\"]": "医疗 AI：从感知<br>到模型推理。",
-  "[data-i18n=\"medical-intro\"]": "ThermoPulse 是红外医疗 AI 原型系统，将热成像采集、视觉特征建模、医疗领域 LLM 适配与结构化报告串联起来。",
+  "[data-i18n=\"medical-title\"]": "ThermoPulse：<br>医疗 AI 系统原型。",
+  "[data-i18n=\"medical-intro\"]": "另一项应用型工程实践：从红外图像采集、视觉分析到医疗文本生成，串联空间双分支视觉模型、Qwen3-8B 的 CPT/SFT 适配与 TensorRT 部署探索。",
   "[data-i18n=\"medical-vision-title\"]": "空间双流视觉模型",
-  "[data-i18n=\"medical-vision-copy\"]": "YOLOv11 定位；ResNet18 提取局部特征，Transformer 建模全局 Patch 关系并进行特征融合。",
+  "[data-i18n=\"medical-vision-copy\"]": "YOLOv11 负责定位；ResNet18 提取局部图像特征，Transformer 建模 Patch 间关系，拼接特征用于原型分类任务。",
   "[data-i18n=\"medical-llm-title\"]": "Qwen3-8B · CPT → SFT",
-  "[data-i18n=\"medical-llm-copy\"]": "基于医疗领域数据开展持续预训练（CPT）与监督微调（SFT），使用 PyTorch 与 DeepSpeed ZeRO-2。",
+  "[data-i18n=\"medical-llm-copy\"]": "使用 PyTorch 与 DeepSpeed ZeRO-2，对 Qwen3-8B 先进行医疗领域持续预训练（CPT），再进行监督微调（SFT）。",
   "[data-i18n=\"medical-runtime-title\"]": "CUDA · ONNX · TensorRT",
-  "[data-i18n=\"medical-runtime-copy\"]": "探索将 ResNet 分支编译为 FP16 TensorRT，同时保留 PyTorch Transformer 分支；不宣称端到端加速。",
-  "[data-i18n=\"medical-boundary\"]": "面向感知、模型与部署的一体化工程原型，不以此宣称临床诊断有效性。",
-  "[data-i18n=\"learning-desc-0-4\"]": "通过代码与 Notebook 学习 Transformer、MoE、MLA 等 LLM 原理与训练路线。",
+  "[data-i18n=\"medical-runtime-copy\"]": "探索 ResNet 分支的 FP16 TensorRT 路径，Transformer 分支仍由 PyTorch 执行；未据此宣称端到端加速。",
+  "[data-i18n=\"medical-boundary\"]": "这是感知、模型与部署的一体化工程原型，不将模块实现推断为临床诊断有效性或端到端加速。",
+  "[data-i18n=\"learning-desc-0-4\"]": "结合可运行 Notebook 手写 Transformer、MoE、MLA 等核心机制。",
   "[data-i18n=\"learning-kicker\"]": "学习资料精选",
-  "[data-i18n=\"learning-title\"]": "我的 AI Infra<br>学习资源清单。",
-  "[data-i18n=\"learning-intro\"]": "精选我已 Fork 的资料与额外推荐的公开资源，优先展示知识地图和学习路径。精选不代表全部 Star 收藏。",
+  "[data-i18n=\"learning-title\"]": "LLM Systems<br>学习资料与源码索引。",
+  "[data-i18n=\"learning-intro\"]": "按具体问题整理的学习入口：先建立系统设计视角，再阅读推理框架中的请求路径，最后深入算子、显存与通信。这里是精选索引；更多项目收录在我的 GitHub AI Infra Star List。",
   "[data-i18n=\"learning-group-0\"]": "知识地图与学习路径",
-  "[data-i18n=\"learning-group-sub-0\"]": "先建立完整的 AI Infra 知识框架。",
-  "[data-i18n=\"learning-desc-0-0\"]": "系统串联模型架构、训练与推理、并行策略和底层硬件。",
-  "[data-i18n=\"learning-desc-0-1\"]": "从性能、硬件约束到容量与成本的量化系统设计。",
-  "[data-i18n=\"learning-desc-0-2\"]": "从基础概念到 AI Infra 工程实践的系统学习路线。",
-  "[data-i18n=\"learning-desc-0-3\"]": "从推理基础到 SGLang 源码与实际工程的学习教程。",
+  "[data-i18n=\"learning-group-sub-0\"]": "从整体架构、量化分析到可运行的基础教程。",
+  "[data-i18n=\"learning-desc-0-0\"]": "把训练、推理、并行、显存与硬件串成一张系统知识地图。",
+  "[data-i18n=\"learning-desc-0-1\"]": "用定量模型分析吞吐、内存瓶颈、硬件配置与部署成本。",
+  "[data-i18n=\"learning-desc-0-2\"]": "从 AI Infra 基础概念逐步进入工程实现的中文学习路线。",
+  "[data-i18n=\"learning-desc-0-3\"]": "从部署和 API 使用入手，逐步学习 SGLang 服务配置与调优。",
   "[data-i18n=\"learning-group-1\"]": "推理框架与运行时",
-  "[data-i18n=\"learning-group-sub-1\"]": "把概念对应到生产级推理框架源码。",
-  "[data-i18n=\"learning-desc-1-0\"]": "用精简框架理解请求生命周期与关键推理机制。",
-  "[data-i18n=\"learning-desc-1-1\"]": "研究调度、并行策略、性能优化与运行时正确性。",
-  "[data-i18n=\"learning-desc-1-2\"]": "对照理解 KV Cache、批处理和请求调度设计。",
-  "[data-i18n=\"learning-desc-1-3\"]": "理解面向推理服务的 Attention 与 GPU Kernel 实现。",
-  "[data-i18n=\"learning-desc-1-4\"]": "基于 llama.cpp 的全模态推理运行时：双工流式交互、GGUF 与端侧部署。",
-  "[data-i18n=\"learning-desc-2-4\"]": "学习 Tensor Core GEMM、Mega MoE 融合内核与通算重叠优化。",
+  "[data-i18n=\"learning-group-sub-1\"]": "沿请求生命周期阅读调度、缓存与执行路径。",
+  "[data-i18n=\"learning-desc-1-0\"]": "用精简源码串起请求接入、调度和模型执行。",
+  "[data-i18n=\"learning-desc-1-1\"]": "重点阅读 DP/PP 调度、异步执行与正确性相关实现。",
+  "[data-i18n=\"learning-desc-1-2\"]": "对照 SGLang 理解连续批处理、KV Block 管理与调度。",
+  "[data-i18n=\"learning-desc-1-3\"]": "观察 Attention、KV Cache 相关 GPU Kernel 如何接入推理引擎。",
+  "[data-i18n=\"learning-desc-1-4\"]": "关注全双工多模态推理、GGUF 模块和流式音频 Flow/Vocoder 执行。",
+  "[data-i18n=\"learning-desc-2-4\"]": "沿 Tensor Core GEMM、MegaMoE 融合路径理解通算重叠。",
   "[data-i18n=\"learning-group-2\"]": "算子、通信与并行",
-  "[data-i18n=\"learning-group-sub-2\"]": "深入通信路径、算子执行及性能权衡。",
-  "[data-i18n=\"learning-desc-2-0\"]": "研究多 GPU 集体通信、拓扑和通信性能。",
-  "[data-i18n=\"learning-desc-2-1\"]": "理解 MLA 算子与显存访问、执行路径的取舍。",
-  "[data-i18n=\"learning-desc-2-2\"]": "学习投机解码的 Draft 训练与评测流程。",
-  "[data-i18n=\"learning-desc-2-3\"]": "理解 MoE 专家放置、复制与负载均衡。",
-  "[data-i18n=\"learning-note\"]": "源自已核实的 Fork · 链接指向上游 · 2026 年 11 月整理",
+  "[data-i18n=\"learning-group-sub-2\"]": "关注数据搬运、集体通信与计算融合的实际代价。",
+  "[data-i18n=\"learning-desc-2-0\"]": "从集体通信原语到 GPU 拓扑，分析通信开销的来源。",
+  "[data-i18n=\"learning-desc-2-1\"]": "关注 MLA Kernel 的数据布局、访存量与执行效率。",
+  "[data-i18n=\"learning-desc-2-2\"]": "阅读投机解码 Draft Model 的训练与评测代码。",
+  "[data-i18n=\"learning-desc-2-3\"]": "理解 MoE 专家放置、复制与负载均衡策略。",
+  "[data-i18n=\"learning-note\"]": "上游资源精选 · 已核实 Fork 与公开阅读推荐 · 2026 年 11 月整理",
   "[data-i18n=\"learning-more\"]": "查看更多 GitHub Stars ↗",
   "[data-i18n=\"learning-star-list-kicker\"]": "我的 GitHub 收藏清单",
   "[data-i18n=\"learning-star-list-title\"]": "AI Infra · 专题 Star 列表",
   "[data-i18n=\"learning-star-list-description\"]": "我在 GitHub 上维护的 AI Infrastructure 相关仓库与学习资料清单，点击直接查看完整专题收藏。",
   "[data-i18n=\"learning-extra-kicker\"]": "扩展学习资源",
-  "[data-i18n=\"learning-extra-title\"]": "更多开放书籍、知识地图与学习路径",
-  "[data-i18n=\"learning-extra-intro\"]": "另外收录 2 项已核实的 Fork 和公开推荐资料；推荐不意味着我对每项都点过 Star。",
+  "[data-i18n=\"learning-extra-title\"]": "开放教材、讲座与动手实践",
+  "[data-i18n=\"learning-extra-intro\"]": "补充已核实的 Fork 和其他公开资料；推荐阅读不等于本人已 Star 每个项目。",
   "[data-i18n=\"learning-source-forked\"]": "已 Fork",
   "[data-i18n=\"learning-source-public\"]": "公开推荐",
   "[data-i18n=\"stars-title\"]": "浏览我的全部公开 GitHub Stars",
@@ -927,19 +927,19 @@
   "[data-i18n=\"learning-extra-desc-10\"]": "推理系统工具、技术与学习资料的分类地图。",
   "[data-i18n=\"learning-extra-desc-11\"]": "CUDA、Triton 与 NCCL 讲座及实践。",
   "[data-i18n=\"hero-kicker\"]": "AI INFRA · 大模型推理工程",
-  "[data-i18n=\"hero-title\"]": "从推理性能，<br>走向<em>算力与成本决策。</em>",
-  "[data-i18n=\"hero-lede\"]": "我是郭飞鸿。百度智能云 AI Infra 实习期间，我围绕 <strong>DeepSeek-V4-Pro、V4.1-Flash、Kimi K3</strong> 在 H200、B300、GB300 上开展 SGLang 压测与调优。用实测比较部署配置、规划 Prefill/Decode 容量，并追踪运行时的性能与正确性问题。",
-  "[data-i18n=\"hero-thesis\"]": "部署 → 测量 → 归因 → 改进 → 验证 → 资源决策。<br><em>吞吐、延迟、正确性与稳定性，需要放在同一个决策里。</em>",
+  "[data-i18n=\"hero-title\"]": "从性能异常，<br>追到<em>系统根因与工程修复。</em>",
+  "[data-i18n=\"hero-lede\"]": "在百度智能云 AI Infra 实习期间，我围绕 <strong>DeepSeek-V4-Pro、V4.1-Flash、Kimi K3</strong> 在 H200、B300、GB300 上开展 SGLang 推理工程工作：设计 Prefill/Decode 压测，定位调度与 GPU 执行问题，再以实测结果比较并行配置和服务容量。",
+  "[data-i18n=\"hero-thesis\"]": "复现现象 → 找到责任层 → 隔离变量 → 修复并回归。<br><em>吞吐收益必须与输出正确性、延迟和稳定性一起验证。</em>",
   "[data-i18n=\"hero-action-work\"]": "查看 SGLang 工程工作 ↓",
   "[data-i18n=\"hero-action-tco\"]": "查看容量与成本方法 ↓",
   "[data-i18n=\"portrait-caption\"]": "Feihong Guo · 郭飞鸿<br>郑州大学 · AI Infrastructure",
   "[data-i18n=\"sglang-kicker\"]": "百度智能云 · SGLang",
-  "[data-i18n=\"sglang-title\"]": "推理服务性能。<br>运行时正确性。",
-  "[data-i18n=\"sglang-intro\"]": "通过受控负载复现服务异常，沿调度与设备执行链路定位根因，并把修复提交上游。四项本人合入的 PR 涉及 DP 路由、PP 张量生命周期、FP8 算子融合与 EPLB 配置校验。",
+  "[data-i18n=\"sglang-title\"]": "不只调吞吐，<br>更要定位运行时问题。",
+  "[data-i18n=\"sglang-intro\"]": "压测中的异常不一定来自慢算子：有些发生在控制面的请求路由，有些来自异步执行中的张量生命周期。我沿请求链路定位根因，通过受控 A/B 和回归测试验证修复，再将补丁提交上游。下面保留关键证据与适用边界。",
   "[data-i18n=\"all-records\"]": "展开公开 PR、Review 与故障调查索引",
   "[data-i18n=\"huawei-kicker\"]": "华为 ICT 学院 · 郑州大学超算团队",
-  "[data-i18n=\"huawei-title\"]": "把同一套方法，<br>带到 NPU 与 CPU。",
-  "[data-i18n=\"huawei-intro\"]": "在百度 SGLang 工作之外，另一条互补实践覆盖昇腾推理引擎与算子，以及鲲鹏内存和并行性能。硬件细节的价值，在于它如何改变实际服务路径。",
+  "[data-i18n=\"huawei-title\"]": "从昇腾推理到鲲鹏计算，<br>验证不同平台的性能路径。",
+  "[data-i18n=\"huawei-intro\"]": "除 NVIDIA 推理栈外，我还在昇腾 910B/910C 上做模型部署与算子优化，在鲲鹏 920 上做内存和并行计算调优。重点是确认优化能否进入实际执行路径，并在完整负载中体现收益。",
   "[data-i18n=\"huawei-serving-title\"]": "昇腾推理引擎",
   "[data-i18n=\"huawei-serving-copy\"]": "在<strong>昇腾 910B 上使用 xLLM 与 vLLM-Ascend</strong>，围绕模型适配、MTP、ACL Graph、缓存容量和压测配置推进优化。Qwen3.5-9B 在 C960 下从<strong>2,301 提升至 30,451 tok/s</strong>，属于组合配置对照。",
   "[data-i18n=\"huawei-serving-scope\"]": "独立的 Gemma 4 E2B 部署对照中，Full ACL Graph 对应吞吐 1,159.53 → 1,274.00 tok/s；与 Qwen 使用不同基线。",
@@ -952,8 +952,8 @@
   "[data-i18n=\"omni-title\"]": "昇腾 910C · MiniCPM-o",
   "[data-i18n=\"omni-copy\"]": "通过 DeepSpec 在 B300/DP8 上训练 DSpark 草稿模型，经 GGUF 导出部署到昇腾 910C。项目还覆盖固定前缀 KV 复用、ACL Graph 回放及 ggml-CANN 的 TileLang AOT 算子融合。同一 120 s 双工负载下，Core RTF 从 <strong>0.6754 降至 0.4829</strong>。<a class=\"inline-link\" href=\"https://github.com/Phoenix3334/minicpmo45-ascend\" target=\"_blank\" rel=\"noreferrer\">项目仓库 ↗</a> · <a class=\"inline-link\" href=\"https://github.com/tc-mb/llama.cpp-omni/pull/144\" target=\"_blank\" rel=\"noreferrer\">视觉 patch 投影 #144 · 开放中</a> · <a class=\"inline-link\" href=\"https://github.com/tc-mb/llama.cpp-omni/pull/146\" target=\"_blank\" rel=\"noreferrer\">Flow/Vocoder 流水线 #146 · 草稿</a>",
   "[data-i18n=\"economics-kicker\"]": "性能 → 容量 → 成本",
-  "[data-i18n=\"economics-title\"]": "性能选型、P/D 规划<br>与经济性评估",
-  "[data-i18n=\"economics-intro\"]": "面向指定 SLO，比较硬件与并行配置的服务性能、资源利用率和部署成本。用分阶段实测容量估算 P/D 配比，再验证组合部署。",
+  "[data-i18n=\"economics-title\"]": "从实测服务能力，<br>到部署容量估算。",
+  "[data-i18n=\"economics-intro\"]": "先根据满足延迟要求的 Prefill/Decode 吞吐、显存约束和资源余量估算实例数量与 P/D 配比。成本与 TCO 属于下一步场景核算：没有实际价格、功耗与线上流量数据，就不把估算写成已实现的节省。",
   "[data-i18n=\"cost-slo-title\"]": "找到满足目标的工作点",
   "[data-i18n=\"cost-slo-copy\"]": "针对目标请求分布，扫描并发与配置。共同检查 TTFT、TPOT、请求吞吐、显存压力、失败率和输出正确性，选择满足延迟、质量与稳定性要求的工作点。",
   "[data-i18n=\"cost-slo-formula\"]": "q_instance = 满足准出要求的配置下<br>实测单实例 requests/s",
@@ -971,8 +971,8 @@
   "[data-i18n=\"reference-cost\"]": "方法参考 · 容量与成本",
   "[data-i18n=\"reference-cost-copy\"]": "把延迟约束下的压测工作点，转成部署容量与成本模型。参考方法与本人具体负载下的实验结果分别呈现。",
   "[data-i18n=\"practice-kicker\"]": "推理工程实践",
-  "[data-i18n=\"practice-title\"]": "测清服务能力。<br>解释性能瓶颈。",
-  "[data-i18n=\"practice-intro\"]": "贯穿 SGLang、NVIDIA GPU 与昇腾的一套可重复流程：明确负载和执行路径，验证结果，再用证据作资源决策。",
+  "[data-i18n=\"practice-title\"]": "怎样判断一次优化<br>是否真的有效。",
+  "[data-i18n=\"practice-intro\"]": "算子更快、基准吞吐更高，不等于服务整体受益。我会固定负载、版本、资源边界和正确性检查，再判断改动是否真正改善端到端服务。",
   "[data-i18n=\"practice-question\"]": "这组配置在延迟与资源预算内，能交付多少<em>正确、可靠的服务能力</em>？",
   "[data-i18n=\"practice-deploy-title\"]": "部署与定义",
   "[data-i18n=\"practice-deploy-copy\"]": "固定模型和框架版本、拓扑、请求分布、缓存策略、精度与资源上限；确认实际使用的 backend 和通信路径。",
@@ -982,7 +982,7 @@
   "[data-i18n=\"practice-validate-copy\"]": "逐个检验因果假设，同时检查输出质量、失败行为、内存边界、可复现性和吞吐/延迟，把回归约束提交到上游。",
   "[data-i18n=\"practice-decide-title\"]": "规划与核算",
   "[data-i18n=\"practice-decide-copy\"]": "根据满足准出要求的服务容量，估算实例数量、GPU 资源与成本场景；明确哪些是实测结果、哪些是估计和待验证假设。",
-  "[data-i18n=\"practice-close\"]": "<strong>AI Infra 是贯通这些工作的层：</strong>模型行为和工作负载，在这里连接运行时调度、缓存状态、算子、互连与部署成本。我的重点是把这条连接做出来，并用实验验证。",
+  "[data-i18n=\"practice-close\"]": "<strong>这些工作的共同点是跨层证据：</strong>把请求表现和调度、缓存、通信、算子及硬件约束对应起来。先解释现象，再决定该修哪里，以及一次优化是否值得保留。",
   "[data-i18n=\"footer-title\"]": "推理服务性能，<br>以及每个决策背后的证据。",
   "[data-i18n=\"copyright\"]": "© 2026 郭飞鸿 · Feihong Guo · 更新于 2026 年 11 月 18 日",
   "[data-i18n=\"status-43786\"]": "本人实现 · 2026-11-04 合入",
