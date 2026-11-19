@@ -26,7 +26,7 @@ TCO 与单位有效 Token 成本
   ↓ 若提供商业服务，再单独考虑计费与 ROI
 ~~~
 
-本文将两类资料明确区分：一类是我在**公开 SGLang Pull Request** 中记录的工程实测，另一类是 [中国移动《昇腾 950DT 性能测试与经营效益测算汇报》（2026 年 10 月）](https://docs.google.com/presentation/d/1yk4OFibvnZds7NOBnzHpepghzqd-MmUv/edit?slide=id.p1#slide=id.p1) 的**具名案例与其 PPTX 内嵌 Excel 测算公式**。后者的数据及经营结论归属于原报告，不是我的实习压测数据，也不是我独立复测的跨平台成绩。原文件目前仅文件所有者可访问，外部读者可能需要申请权限。我的实际工作主要是性能评测、运行时排障和容量评估；完整 TCO 财务模型属于进一步学习的方法论。
+做推理压测时，我们经常盯着吞吐、TTFT 和 TPOT，但一个问题总会冒出来：**这些性能数字，最后怎么变成算力选型的依据？** 我想顺着这条线，结合自己在 [SGLang](https://github.com/sgl-project/sglang) 中做性能分析和 Runtime 排障的经历，再看看 [中国移动《昇腾 950DT 性能测试与经营效益测算汇报》（2026 年 10 月）](https://docs.google.com/presentation/d/1yk4OFibvnZds7NOBnzHpepghzqd-MmUv/edit?slide=id.p1#slide=id.p1) 是怎样把吞吐、产能和成本串起来的。汇报里还有内嵌的 Excel 测算表，正好可以沿着真实公式往下算，也看看 TCO 分析中哪些口径最容易被忽略。
 
 ## 1. 性能评测之前，先统一测量口径
 
