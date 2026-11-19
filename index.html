@@ -206,6 +206,23 @@
     .medical-boundary{font-size:11px;line-height:1.6;color:var(--muted);margin:17px 0 0}
     @media(max-width:900px){.medical-modules{grid-template-columns:1fr}.medical-project{padding:65px 0}.medical-modules article{padding:21px}}
 
+
+    .mini-feature{margin-top:37px;padding:27px 29px 24px;border:1px solid var(--line);background:rgba(255,255,255,.58)}
+    .mini-feature-head{display:flex;justify-content:space-between;gap:26px;align-items:end}
+    .mini-feature-label{font-size:10px;color:var(--teal);letter-spacing:.1em;font-weight:700;margin:0 0 10px}
+    .mini-feature-head h3{font-size:clamp(23px,2.5vw,30px);margin:0;line-height:1.25}
+    .mini-feature-link{font-size:12px;font-weight:700;color:var(--blue);text-decoration:underline;text-underline-offset:3px;white-space:nowrap}
+    .mini-feature-intro{font-size:13px;line-height:1.75;color:#46525c;max-width:880px;margin:19px 0 22px}
+    .mini-feature-stages{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px;border-top:1px solid var(--line);padding-top:20px}
+    .mini-feature-stages>div{min-width:0}
+    .mini-feature-stages span{display:block;font-size:10px;letter-spacing:.07em;color:var(--teal);font-weight:700;margin-bottom:9px}
+    .mini-feature-stages p{font-size:12px;line-height:1.72;color:var(--muted);margin:0}
+    .mini-feature-result{display:flex;align-items:baseline;justify-content:space-between;gap:25px;border-top:1px solid var(--line);margin-top:20px;padding-top:19px}
+    .mini-feature-result strong{font-size:16px;white-space:nowrap;color:var(--ink)}
+    .mini-feature-result p{font-size:11px;line-height:1.7;color:var(--muted);margin:0;max-width:645px}
+    @media(max-width:900px){.mini-feature-stages{grid-template-columns:1fr;gap:19px}.mini-feature-head,.mini-feature-result{flex-direction:column;align-items:start;gap:10px}.mini-feature-result strong{white-space:normal}}
+    @media(max-width:680px){.mini-feature{padding:22px 18px}.mini-feature-head h3{font-size:23px}}
+
   </style>
 </head>
 <body>
@@ -232,7 +249,7 @@
     <div class="hero wrap"><div>
       <p class="eyebrow" data-i18n="hero-kicker">AI Systems · LLM Serving & Heterogeneous Computing</p>
       <h1 data-i18n="hero-title">From models to infrastructure,<br><em>measured across the stack.</em></h1>
-      <p class="hero-lede" data-i18n="hero-lede">My central question is how a model moves beyond a working prototype to become an efficient, reliable and scalable system. ThermoPulse introduced me to vision models and medical-LLM adaptation; Ascend and Kunpeng work brought the accelerator and execution path into focus. At Baidu AI Cloud, I took this further into distributed SGLang serving, using Prefill/Decode benchmarks, runtime debugging and NVIDIA GPU capacity analysis to build evidence for deployment decisions.</p>
+      <p class="hero-lede" data-i18n="hero-lede">My central question is how a model moves beyond a working prototype to become an efficient, reliable and scalable system. ThermoPulse introduced me to vision models and medical-LLM adaptation; the MiniCPM-o full-duplex project on Ascend 910C and Kunpeng performance tuning brought the execution path into focus. At Baidu AI Cloud, I took this further into distributed SGLang serving, using Prefill/Decode benchmarks, runtime debugging and NVIDIA GPU capacity analysis to build evidence for deployment decisions.</p>
       <p class="hero-thesis" data-i18n="hero-thesis">Model behavior → serving performance → qualified capacity → infrastructure decisions.<br><em>Benchmark numbers matter only when workload, latency and correctness boundaries are clear.</em></p>
       <p class="hero-evidence" data-i18n="hero-upstream"><strong>Authored and merged in SGLang</strong> · <a href="https://github.com/sgl-project/sglang/pull/35721" target="_blank" rel="noreferrer">DP health routing #35721</a> · <a href="https://github.com/sgl-project/sglang/pull/47614" target="_blank" rel="noreferrer">PP stream lifetime #47614</a> · <a href="https://github.com/sgl-project/sglang/pull/43786" target="_blank" rel="noreferrer">FP8 fusion #43786</a> · <a href="https://github.com/sgl-project/sglang/pull/48404" target="_blank" rel="noreferrer">EPLB validation #48404</a></p>
       <div class="hero-actions"><a href="#opensource" data-i18n="hero-action-work">SGLang engineering work ↓</a><a href="#economics" data-i18n="hero-action-tco">Capacity and cost methodology ↓</a></div>
@@ -472,13 +489,32 @@
     </section>
 
     <section class="experience" id="huawei"><div class="wrap">
-      <div class="section-head"><div><p class="eyebrow" data-i18n="huawei-kicker">Huawei ICT Academy · ZZU Supercomputing</p><h2 data-i18n="huawei-title">Inference and performance,<br>across NPU and CPU.</h2></div><p data-i18n="huawei-intro">My work beyond NVIDIA serving includes model deployment and kernel paths on Ascend 910B/910C, and memory/parallel tuning on Kunpeng 920. In each case, an isolated kernel gain matters only if the framework reaches that path and the complete workload benefits.</p></div>
+      <div class="section-head"><div><p class="eyebrow" data-i18n="huawei-kicker">Huawei ICT Academy · ZZU Supercomputing</p><h2 data-i18n="huawei-title">Inference and performance,<br>across NPU and CPU.</h2></div><p data-i18n="huawei-intro">This work examines how models behave on heterogeneous hardware: serving with vLLM-Ascend/xLLM on Ascend 910B, MiniCPM-o full-duplex inference and kernel optimization on Ascend 910C, and CPU/NUMA tuning on Kunpeng 920. The result that matters is the complete workload, not only an isolated fast operator.</p></div>
       <div class="practice-grid">
         <article><h3 data-i18n="huawei-serving-title">Ascend serving engines</h3><p data-i18n="huawei-serving-copy">Worked with <strong>xLLM and vLLM-Ascend on Ascend 910B</strong>: model support, MTP, ACL Graph, cache capacity, and benchmark configuration. Qwen3.5-9B throughput moved <strong>2,301 → 30,451 tok/s at C960</strong> in a combined configuration comparison.</p><p class="scope" data-i18n="huawei-serving-scope">A separate Gemma 4 E2B deployment comparison measured 1,159.53 → 1,274.00 tok/s with Full ACL Graph. The two benchmarks have different baselines.</p></article>
         <article><h3 data-i18n="huawei-kernel-title">Kernels into a valid runtime path</h3><p data-i18n="huawei-kernel-copy">Used <strong>Ascend C, Triton, and TileLang</strong> to connect tiling and fusion to the Da Vinci data path: aligned transfers, on-chip buffers, compute, and synchronisation. Specialised paths need shape and layout checks, precision validation, and a fallback before serving integration.</p><p class="scope" data-i18n="huawei-kernel-scope">Kernel timing and system throughput are measured separately. A faster local operator needs a reachable engine path and an end-to-end comparison.</p></article>
         <article><h3 data-i18n="huawei-cpu-title">Kunpeng performance foundations</h3><p data-i18n="huawei-cpu-copy">On <strong>Kunpeng 920</strong>, tuned SVE/NEON, NUMA affinity, MPI/OpenMP and FFT plan reuse. The 256³ FFTW workload moved from <strong>80.97 to 555.00 GFLOP/s</strong>.</p><p class="scope" data-i18n="huawei-cpu-scope">CPU workloads are independent measurements, rather than evidence of an NPU or LLM serving speedup.</p></article>
       </div>
-      <div class="supporting-project"><h3 data-i18n="omni-title">Ascend 910C · MiniCPM-o</h3><p data-i18n="omni-copy">Trained a DSpark draft with DeepSpec on B300/DP8 and exported it via GGUF to Ascend 910C. The project also covered prefix KV reuse, ACL Graph replay and TileLang AOT fusion in ggml-CANN. Matched-harness Core RTF went from <strong>0.6754 to 0.4829</strong> on the same 120 s duplex workload. <a class="inline-link" href="https://github.com/Phoenix3334/minicpmo45-ascend" target="_blank" rel="noreferrer">Project ↗</a> · <a class="inline-link" href="https://github.com/tc-mb/llama.cpp-omni/pull/144" target="_blank" rel="noreferrer">Packed vision projection #144 · open</a> · <a class="inline-link" href="https://github.com/tc-mb/llama.cpp-omni/pull/146" target="_blank" rel="noreferrer">Flow/Vocoder overlap #146 · draft</a></p></div>
+      <div class="mini-feature" id="minicpm">
+        <div class="mini-feature-head">
+          <div><p class="mini-feature-label" data-i18n="omni-label">ASCEND 910C · CROSS-PLATFORM PROJECT</p>
+          <h3 data-i18n="omni-title">MiniCPM-o 4.5 · Full-duplex inference</h3></div>
+          <a href="https://github.com/Phoenix3334/minicpmo45-ascend" target="_blank" rel="noopener noreferrer" class="mini-feature-link" data-i18n="omni-project-link">Project repository ↗</a>
+        </div>
+        <p class="mini-feature-intro" data-i18n="omni-intro">Using the OpenBMB MiniCPM-o model, this project connects DSpark draft training on NVIDIA B300 with llama.cpp-omni deployment and runtime optimization on Huawei Ascend 910C.</p>
+        <div class="mini-feature-stages">
+          <div><span data-i18n="omni-step1-title">01 · TRAIN / B300</span>
+          <p data-i18n="omni-step1-copy">Trained a 5-layer DSpark draft on 8×B300 (DP8) with DeepSpec; fixed-set mean acceptance length increased from 3.49 to 3.86.</p></div>
+          <div><span data-i18n="omni-step2-title">02 · DEPLOY / ASCEND</span>
+          <p data-i18n="omni-step2-copy">Converted to mixed-precision GGUF, integrated with llama.cpp-omni / ggml-CANN on Ascend 910C, and checked KV position and streaming-state alignment.</p></div>
+          <div><span data-i18n="omni-step3-title">03 · OPTIMIZE / RUNTIME</span>
+          <p data-i18n="omni-step3-copy">Integrated TileLang AOT and QK-norm + RoPE fusion, used ACL Graph and prefix KV reuse, and improved Flow/Vocoder overlap.</p></div>
+        </div>
+        <div class="mini-feature-result">
+          <strong data-i18n="omni-result">Core RTF 0.6754 → 0.4829 (−28.5%)</strong>
+          <p data-i18n="omni-result-note">Paired 120 s full-duplex test; 4/4 accuracy checks passed. Standalone speculative speedups were measured separately; the final duplex path ran without speculation.</p>
+        </div>
+      </div>
     </div></section>
     <section class="medical-project" id="medical"><div class="wrap">
       <div class="section-head medical-section-head">
@@ -928,7 +964,7 @@
   "[data-i18n=\"learning-extra-desc-11\"]": "CUDA、Triton 与 NCCL 讲座及实践。",
   "[data-i18n=\"hero-kicker\"]": "AI SYSTEMS · 大模型推理与异构计算",
   "[data-i18n=\"hero-title\"]": "从模型到推理基础设施，<br>让<em>系统表现有据可依。</em>",
-  "[data-i18n=\"hero-lede\"]": "我关注的核心问题是：<strong>模型如何从“能够运行”，走向高效、可靠、可规模化的服务？</strong> 从 ThermoPulse 的视觉建模与医疗 LLM 训练，到昇腾、鲲鹏上的部署和性能优化，我逐步深入模型与计算系统的衔接；在百度智能云，进一步将重点放到 SGLang 分布式推理，通过 Prefill/Decode 压测、运行时排障与 NVIDIA GPU 容量评估，为后续算力选型提供可复现的性能依据。",
+  "[data-i18n=\"hero-lede\"]": "我关注的核心问题是：<strong>模型如何从“能够运行”，走向高效、可靠、可规模化的服务？</strong>从 ThermoPulse 的视觉建模与医疗 LLM 训练，到昇腾 910C 上 MiniCPM-o 全双工推理适配及鲲鹏性能调优，我逐步深入模型与执行系统的衔接；在百度智能云，进一步聚焦 SGLang 分布式推理，通过 Prefill/Decode 压测、运行时排障与 NVIDIA GPU 容量评估，为算力选型提供可复现的性能依据。",
   "[data-i18n=\"hero-thesis\"]": "模型行为 → 推理性能 → 达标产能 → 算力决策。<br><em>明确负载、延迟与正确性边界，才能让性能数据真正用于部署评估。</em>",
   "[data-i18n=\"hero-action-work\"]": "查看 SGLang 工程工作 ↓",
   "[data-i18n=\"hero-action-tco\"]": "查看容量与成本方法 ↓",
@@ -939,7 +975,18 @@
   "[data-i18n=\"all-records\"]": "展开公开 PR、Review 与故障调查索引",
   "[data-i18n=\"huawei-kicker\"]": "华为 ICT 学院 · 郑州大学超算团队",
   "[data-i18n=\"huawei-title\"]": "从昇腾推理到鲲鹏计算，<br>验证不同平台的性能路径。",
-  "[data-i18n=\"huawei-intro\"]": "除 NVIDIA 推理栈外，我还在昇腾 910B/910C 上做模型部署与算子优化，在鲲鹏 920 上做内存和并行计算调优。重点是确认优化能否进入实际执行路径，并在完整负载中体现收益。",
+  "[data-i18n=\"huawei-intro\"]": "这部分关注模型在异构硬件上的实际执行：昇腾 910B 的推理部署与压测、昇腾 910C 上 MiniCPM-o 的全双工运行时和算子优化，以及鲲鹏 920 的 CPU/NUMA 性能实践。重点是验证局部改动能否改善完整负载。",
+  "[data-i18n=\"omni-label\"]": "昇腾 910C · 跨平台推理项目",
+  "[data-i18n=\"omni-project-link\"]": "查看项目仓库 ↗",
+  "[data-i18n=\"omni-intro\"]": "基于 OpenBMB MiniCPM-o 4.5，将 NVIDIA B300 上的 DSpark 草稿训练，与华为昇腾 910C 上的 llama.cpp-omni / ggml-CANN 部署及全双工运行时优化串联起来。",
+  "[data-i18n=\"omni-step1-title\"]": "01 · B300 / 草稿训练",
+  "[data-i18n=\"omni-step1-copy\"]": "使用 DeepSpec 在 8×B300（DP8）训练 5 层 DSpark 草稿；固定集平均接收长度 3.49 → 3.86。",
+  "[data-i18n=\"omni-step2-title\"]": "02 · 昇腾 / 跨平台部署",
+  "[data-i18n=\"omni-step2-copy\"]": "完成混合精度 GGUF 转换与 910C 部署，并处理 KV 位置、流式状态对齐等运行时问题。",
+  "[data-i18n=\"omni-step3-title\"]": "03 · 算子 / 运行时优化",
+  "[data-i18n=\"omni-step3-copy\"]": "结合 TileLang AOT、QK-norm+RoPE 融合、ACL Graph、前缀 KV 复用及 Flow/Vocoder 重叠减少执行开销。",
+  "[data-i18n=\"omni-result\"]": "Core RTF 0.6754 → 0.4829（−28.5%）",
+  "[data-i18n=\"omni-result-note\"]": "同一 120 秒双工负载的配对测试，4/4 项精度验证通过；投机解码的独立加速另行评估，最终双工配置未开启该路径。",
   "[data-i18n=\"huawei-serving-title\"]": "昇腾推理引擎",
   "[data-i18n=\"huawei-serving-copy\"]": "在<strong>昇腾 910B 上使用 xLLM 与 vLLM-Ascend</strong>，围绕模型适配、MTP、ACL Graph、缓存容量和压测配置推进优化。Qwen3.5-9B 在 C960 下从<strong>2,301 提升至 30,451 tok/s</strong>，属于组合配置对照。",
   "[data-i18n=\"huawei-serving-scope\"]": "独立的 Gemma 4 E2B 部署对照中，Full ACL Graph 对应吞吐 1,159.53 → 1,274.00 tok/s；与 Qwen 使用不同基线。",
@@ -949,8 +996,7 @@
   "[data-i18n=\"huawei-cpu-title\"]": "鲲鹏性能工程基础",
   "[data-i18n=\"huawei-cpu-copy\"]": "在<strong>鲲鹏 920</strong>上调优 SVE/NEON、NUMA 亲和性、MPI/OpenMP 与 FFT 执行计划复用。256³ FFTW 工作负载从 <strong>80.97 提升至 555.00 GFLOP/s</strong>。",
   "[data-i18n=\"huawei-cpu-scope\"]": "CPU 工作负载独立评测，不作为 NPU 或 LLM serving 加速的证据。",
-  "[data-i18n=\"omni-title\"]": "昇腾 910C · MiniCPM-o",
-  "[data-i18n=\"omni-copy\"]": "通过 DeepSpec 在 B300/DP8 上训练 DSpark 草稿模型，经 GGUF 导出部署到昇腾 910C。项目还覆盖固定前缀 KV 复用、ACL Graph 回放及 ggml-CANN 的 TileLang AOT 算子融合。同一 120 s 双工负载下，Core RTF 从 <strong>0.6754 降至 0.4829</strong>。<a class=\"inline-link\" href=\"https://github.com/Phoenix3334/minicpmo45-ascend\" target=\"_blank\" rel=\"noreferrer\">项目仓库 ↗</a> · <a class=\"inline-link\" href=\"https://github.com/tc-mb/llama.cpp-omni/pull/144\" target=\"_blank\" rel=\"noreferrer\">视觉 patch 投影 #144 · 开放中</a> · <a class=\"inline-link\" href=\"https://github.com/tc-mb/llama.cpp-omni/pull/146\" target=\"_blank\" rel=\"noreferrer\">Flow/Vocoder 流水线 #146 · 草稿</a>",
+  "[data-i18n=\"omni-title\"]": "MiniCPM-o 4.5 · 全双工推理优化",
   "[data-i18n=\"economics-kicker\"]": "性能 → 容量 → 成本",
   "[data-i18n=\"economics-title\"]": "从实测服务能力，<br>到部署容量估算。",
   "[data-i18n=\"economics-intro\"]": "在百度，我完成的主要是 NVIDIA GPU 上的推理性能与容量基线评估：结合业务负载、Prefill/Decode 吞吐、TTFT/TPOT、并行配置及显存约束，判断可承接的服务容量。团队后续计划扩展到昆仑芯等平台，并结合利用率、功耗、硬件价格和真实业务流量推进 TCO 核算。跨平台对照与完整财务测算属于后续工作，而非我已完成的成果。",
