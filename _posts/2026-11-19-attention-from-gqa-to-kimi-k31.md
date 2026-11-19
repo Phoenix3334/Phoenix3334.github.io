@@ -256,7 +256,7 @@ MLA 压缩 KV 后还有个分布式推理的问题：**多个 Q Head 共享同�
 
 *图 3 · Attention 走 DP-A、MoE 走 EP；MegaMoE 优化 MoE 执行路径，而非替代 EP。*
 
-这也解释了为什么 DP-A 不只是数学上的并行配置，还涉及真实请求的路由与调度。我在 [《SGLang DP Health：一次没有报错的吞吐退化，根因却在请求路由》](/blog/2026/11/18/dp-health-routing-bug/) 中记录过：控制面探活错误地改变用户请求的 DP 路由状态，会让 Rank 负载失衡、有效 Batch 缩小，最终拖低吞吐。
+这也解释了为什么 DP-A 不只是数学上的并行配置，还涉及真实请求的路由与调度。我在 [《SGLang DP Health：一次没有报错的吞吐退化，根因却在请求路由》](/blog/2026/11/18/dp-health-routing-bug/)（[GitHub 原文备份](https://github.com/Phoenix3334/Phoenix3334.github.io/blob/main/_posts/2026-11-18-dp-health-routing-bug.md)） 中记录过：控制面探活错误地改变用户请求的 DP 路由状态，会让 Rank 负载失衡、有效 Batch 缩小，最终拖低吞吐。
 
 ### DCP：既然有 DP-A，为什么还要沿 Context 再切一次？
 
@@ -467,13 +467,15 @@ K3.1 Prefill → Decode：
 
 ## 参考阅读
 
+> **阅读说明：**如果 GitHub Pages 在当前网络下暂时打不开，可以直接阅读这篇文章的 [GitHub Markdown 原文](https://github.com/Phoenix3334/Phoenix3334.github.io/blob/main/_posts/2026-11-19-attention-from-gqa-to-kimi-k31.md)。
+
 - [SGLang v0.4 · Data Parallelism Attention for DeepSeek Models](https://www.lmsys.org/blog/2024-12-04-sglang-v0-4/#data-parallelism-attention-for-deepseek-models)
 - [SGLang · Deploying DeepSeek with P/D Disaggregation and Large-Scale EP](https://www.lmsys.org/blog/2025-05-05-large-scale-ep/)
 - [SGLang · More Than DeepInfer（DP Attention、EP、MegaMoE）](https://www.lmsys.org/blog/2026-10-24-dsv41-deepinfer/)
 - [SGLang · Decode Context Parallelism 设计与实现](https://github.com/sgl-project/sglang/blob/main/docs/docs/advanced_features/dcp.mdx)
 - [GQA · Ainslie et al. (EMNLP 2023)](https://aclanthology.org/2023.emnlp-main.298/)
 - [DeepSeek-V3.2 Sparse Attention / Transformers](https://huggingface.co/docs/transformers/en/model_doc/deepseek_v32)
-- [Kimi Linear 技术报告](https://yzhang.site/assets/pubs/techreport/2025/kda.pdf)
+- [Kimi Linear 技术报告（arXiv）](https://arxiv.org/abs/2510.26692) · [MoonshotAI 官方代码与 PDF](https://github.com/MoonshotAI/Kimi-Linear)
 - [Moonshot AI · Kimi K3 官方技术博客](https://www.kimi.com/en/blog/kimi-k3)
 - [Moonshot AI · Kimi K3.1 Pro 模型卡](https://huggingface.co/moonshotai/Kimi-K3.1-Pro)
 - [SGLang / LMSYS · K3 Day-0 与状态管理](https://www.lmsys.org/blog/2026-07-27-kimi-k3-day0-support)
