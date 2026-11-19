@@ -301,7 +301,7 @@ DCP 的并行分组必须满足对应版本的拓扑约束，不能在同一组�
   <img src="/assets/posts/attention-full-dsa-kda.svg" width="100%" alt="Full Attention访问全部有效历史，DSA用Indexer选Top-k，KDA递推固定形状State">
 </p>
 
-*图 3 · 三种不同的读取与更新方式；不代表实测的性能倍数。*
+*图 4 · 三种不同的读取与更新方式；不代表实测的性能倍数。*
 
 **Full Attention**：新 Query 可访问所有有效历史位置，读取和注意力工作通常随 L 增长。
 
@@ -336,7 +336,7 @@ Kimi K3 总计 **93 层**，其中 **69 层 KDA + 24 层 Gated MLA**。绝大多
   <img src="/assets/posts/attention-kimi-k3-k31-memory.svg" width="100%" alt="K3的69个KDA层加24个Dense MLA层，K3.1保留KDA并将24层换成带Indexer的Sparse MLA/DSA">
 </p>
 
-*图 4 · K3/K3.1 的结构变化：不是 KDA 被 DSA 替代，而是 MLA 的全历史读取被稀疏化。*
+*图 5 · K3/K3.1 的结构变化：不是 KDA 被 DSA 替代，而是 MLA 的全历史读取被稀疏化。*
 
 ~~~text
 K3：
