@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="525" viewBox="0 0 1200 525" role="img" aria-labelledby="title desc">
+<title id="title">Amdahl and DCP A2A kernel case</title><desc id="desc">Public SGLang PR 49455: kernel 15.0us per layer down to 6.9us; per decode step cumulative 0.361ms to 0.164ms, saving 0.197ms. Relative to about 59.6ms TPOT this is a roughly 0.33% potential magnitude, and E2E results are inside run-to-run noise.</desc>
+<defs><style>
+text{font-family:Inter,"Noto Sans CJK SC","PingFang SC","Microsoft YaHei",Arial,sans-serif}
+.kicker{fill:#197F79;font-size:12px;font-weight:700;letter-spacing:1.5px}
+.title{fill:#253641;font-size:26px;font-weight:700}
+.subtitle{fill:#657681;font-size:13px}
+.heading{fill:#253641;font-size:18px;font-weight:700}
+.body{fill:#253641;font-size:14px}
+.small{fill:#657681;font-size:12.5px}
+.number{fill:#253641;font-size:25px;font-weight:700}
+.value{fill:#253641;font-size:17px;font-weight:700}
+.note{fill:#B65334;font-size:14px;font-weight:700}
+.tag{fill:#197F79;font-size:13px;font-weight:700}
+</style>
+<marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M1 1 L9 5 L1 9" fill="none" stroke="#71828A" stroke-width="1.5"/></marker>
+</defs>
+<rect width="1200" height="525" fill="#FBFAF7"/>
+<text x="40" y="39" class="kicker" >AMDAHL'S LAW / SGLANG PUBLIC PR #49455</text>
+<text x="40" y="80" class="title" >Kernel -54%，为什么端到端吞吐几乎没变？</text>
+<text x="40" y="107" class="subtitle" >测试证据来自公开 PR；图中局部延迟与整体 TPOT 不能当作同一量纲的加速比。</text>
+<rect x="40" y="135" width="536" height="265" rx="8" fill="#FFFFFF" stroke="#D8D5CF" /><rect x="616" y="135" width="544" height="265" rx="8" fill="#FFFFFF" stroke="#D8D5CF" />
+<rect x="40" y="135" width="536" height="6" rx="5" fill="#197F79"/><rect x="616" y="135" width="544" height="6" rx="5" fill="#2457C5"/>
+<text x="64" y="174" class="heading" >目标 DCP 打包 Kernel / 单层</text>
+<text x="64" y="225" class="body" >Before</text><text x="64" y="311" class="body" >After</text>
+<rect x="163" y="200" width="275" height="36" rx="5" fill="#E8EFED"/><rect x="163" y="286" width="275" height="36" rx="5" fill="#E8EFED"/>
+<rect x="163" y="200" width="275" height="36" rx="5" fill="#197F79"/><rect x="163" y="286" width="127" height="36" rx="5" fill="#197F79"/>
+<text x="455" y="225" class="value" >15.0 μs</text><text x="455" y="311" class="value" >6.9 μs</text>
+<text x="64" y="363" class="tag" >-54% / 可复现的 Kernel 加速</text>
+<text x="637" y="177" class="heading" >每个 Decode step 的累计变化</text>
+<text x="640" y="224" class="body" >修改前</text><text x="1008" y="224" class="value" >0.361 ms</text>
+<text x="640" y="269" class="body" >修改后</text><text x="1008" y="269" class="value" >0.164 ms</text>
+<text x="640" y="321" class="tag" >节省约 0.197 ms / step</text>
+<text x="640" y="363" class="small" >与约 59.6 ms TPOT 相比：约 0.33% 量级</text>
+<rect x="40" y="427" width="1120" height="67" rx="8" fill="#FAF0EA" stroke="#E5C3B3" />
+<text x="64" y="456" class="note" >系统结论：E2E Output TPS 变化落在约 ±0.7% 的测试波动内，不能宣称稳定提速。</text>
+<text x="64" y="478" class="small" >仅关键路径被缩短的部分才能传导到整体收益；重叠执行、调度与通信还会改变这个上限。</text>
+
+</svg>
