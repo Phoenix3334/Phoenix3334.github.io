@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="440" viewBox="0 0 1200 440" role="img" aria-labelledby="title desc">
+<title id="title">Benchmark to Infrastructure Economics</title><desc id="desc">From workload, benchmarks and SLO-qualified service capacity to P/D capacity planning, total cost and business pricing.</desc>
+<defs><style>
+text{font-family:Inter,"Noto Sans CJK SC","PingFang SC","Microsoft YaHei",Arial,sans-serif}
+.kicker{fill:#197F79;font-size:12px;font-weight:700;letter-spacing:1.5px}
+.title{fill:#253641;font-size:26px;font-weight:700}
+.subtitle{fill:#657681;font-size:13px}
+.heading{fill:#253641;font-size:18px;font-weight:700}
+.body{fill:#253641;font-size:14px}
+.small{fill:#657681;font-size:12.5px}
+.number{fill:#253641;font-size:25px;font-weight:700}
+.value{fill:#253641;font-size:17px;font-weight:700}
+.note{fill:#B65334;font-size:14px;font-weight:700}
+.tag{fill:#197F79;font-size:13px;font-weight:700}
+</style>
+<marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M1 1 L9 5 L1 9" fill="none" stroke="#71828A" stroke-width="1.5"/></marker>
+</defs>
+<rect width="1200" height="440" fill="#FBFAF7"/>
+<text x="40" y="40" class="kicker" >INFERENCE ECONOMICS / DECISION CHAIN</text>
+<text x="40" y="80" class="title" >从一次压测，到算力选型与成本决策</text>
+<text x="40" y="107" class="subtitle" >每一层都改变下一层的分母：不能直接把峰值 TPS 当成实际售出的 Token。</text>
+<rect x="40" y="143" width="210" height="199" rx="8" fill="#FFFFFF" stroke="#D8D5CF" /><rect x="40" y="143" width="210" height="5" rx="5" fill="#2457C5"/>
+<text x="57" y="171" class="small" >01</text><text x="57" y="202" class="heading" >Benchmark</text>
+<text x="57" y="237" class="body" >确定模型与负载</text><text x="57" y="268" class="small" >ISL / OSL · Cache</text><text x="57" y="291" class="small" >吞吐—延迟曲线</text>
+<path d="M254 242 L267 242" stroke="#71828A" stroke-width="2.2" fill="none" marker-end="url(#arr)"/><rect x="270" y="143" width="210" height="199" rx="8" fill="#FFFFFF" stroke="#D8D5CF" /><rect x="270" y="143" width="210" height="5" rx="5" fill="#197F79"/>
+<text x="287" y="171" class="small" >02</text><text x="287" y="202" class="heading" >SLO Capacity</text>
+<text x="287" y="237" class="body" >筛选达标工作点</text><text x="287" y="268" class="small" >TTFT / TPOT / 正确性</text><text x="287" y="291" class="small" >有效 requests/s</text>
+<path d="M484 242 L497 242" stroke="#71828A" stroke-width="2.2" fill="none" marker-end="url(#arr)"/><rect x="500" y="143" width="210" height="199" rx="8" fill="#FFFFFF" stroke="#D8D5CF" /><rect x="500" y="143" width="210" height="5" rx="5" fill="#2457C5"/>
+<text x="517" y="171" class="small" >03</text><text x="517" y="202" class="heading" >P/D Sizing</text>
+<text x="517" y="237" class="body" >换算所需资源</text><text x="517" y="268" class="small" >实例数量 · KV 传输</text><text x="517" y="291" class="small" >并行 / 冗余</text>
+<path d="M714 242 L727 242" stroke="#71828A" stroke-width="2.2" fill="none" marker-end="url(#arr)"/><rect x="730" y="143" width="210" height="199" rx="8" fill="#FFFFFF" stroke="#D8D5CF" /><rect x="730" y="143" width="210" height="5" rx="5" fill="#B65334"/>
+<text x="747" y="171" class="small" >04</text><text x="747" y="202" class="heading" >TCO</text>
+<text x="747" y="237" class="body" >核算同周期成本</text><text x="747" y="268" class="small" >采购 / 租赁 / IDC</text><text x="747" y="291" class="small" >电力 / 运维</text>
+<path d="M944 242 L957 242" stroke="#71828A" stroke-width="2.2" fill="none" marker-end="url(#arr)"/><rect x="960" y="143" width="210" height="199" rx="8" fill="#FFFFFF" stroke="#D8D5CF" /><rect x="960" y="143" width="210" height="5" rx="5" fill="#197F79"/>
+<text x="977" y="171" class="small" >05</text><text x="977" y="202" class="heading" >Unit Economics</text>
+<text x="977" y="237" class="body" >考虑经营模型</text><text x="977" y="268" class="small" >输入 / 输出 / Cache 定价</text><text x="977" y="291" class="small" >售出率 · ROI</text>
+
+<rect x="40" y="368" width="1120" height="45" rx="6" fill="#EDF5F2" stroke="#CDDED9" />
+<text x="63" y="396" class="tag" >只有满足服务质量且正确交付的工作量，才能进入单位 Token 成本的分母。</text>
+
+</svg>
