@@ -19,10 +19,14 @@ tags: [LLM-Inference, Benchmarking, Capacity-Planning, TCO, Performance-Engineer
 
 
 <p align="center">
-  <img src="/assets/posts/tco-decision-chain.svg" width="100%" loading="lazy" alt="推理系统评估从请求分布与Benchmark出发，经过SLO有效容量、P/D资源配置、TCO与Token经营的五步流程">
+  <a href="/assets/posts/tco-decision-chain.svg" target="_blank" rel="noopener noreferrer" title="打开推理性能到 TCO 的全景总览图">
+    <img src="/assets/posts/tco-decision-chain.svg" width="100%" alt="全篇总览：从业务负载、Prefill/Decode、Benchmark、SLO有效容量、P/D配置、五年TCO、Token定价到硬件选型的九步分析框架；附950DT真实案例与常见统计口径问题">
+  </a>
 </p>
 
-*图 1 · 从性能数据到算力经济决策的完整链条。*
+*图 1 · 全文总览：性能测量、有效服务容量和经济决策三个层次；点击图片可查看完整 SVG 大图。*
+
+整篇文章围绕这张图展开：**先确认测量对象和系统瓶颈，再判断哪些吞吐能在 SLO 下稳定交付，最后把资源规模、五年成本与 Token 经营放在一致的计算口径里比较。**
 
 ## 1. 读懂一张压测表：吞吐首先取决于请求长什么样
 
