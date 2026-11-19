@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="590" viewBox="0 0 1200 590" role="img" aria-labelledby="title desc">
+<title id="title">Kimi K3 → K3.1：KDA 保留，24 层从 Dense MLA 变成 Sparse MLA</title><desc id="desc">93 层混合架构：Linear 和 Sparse 在同一个模型里共存；注意缓存与读取量分开看。</desc><defs><style>
+text{font-family:Inter,"PingFang SC","Microsoft YaHei","Noto Sans CJK SC",Arial,sans-serif}
+.kicker{font-size:12px;font-weight:700;fill:#178779;letter-spacing:1.8px}
+.title{font-size:26px;font-weight:720;fill:#263942}
+.sub{font-size:14px;fill:#667A84}
+.heading{font-size:20px;font-weight:700;fill:#263942}
+.body{font-size:16px;fill:#263942}
+.small{font-size:13.5px;fill:#667A84}
+.note{font-size:15px;font-weight:700;fill:#BA6946}
+.blue{font-size:16px;font-weight:700;fill:#315DB9}
+.teal{font-size:16px;font-weight:700;fill:#178779}
+.value{font-size:24px;font-weight:720;fill:#263942}
+</style></defs><rect width="1200" height="590" fill="#FBFAF7"/>
+<text x="38" y="40" class="kicker" >ATTENTION  /  INFERENCE SYSTEMS</text><text x="38" y="80" class="title" >Kimi K3 → K3.1：KDA 保留，24 层从 Dense MLA 变成 Sparse MLA</text><text x="38" y="106" class="sub" >93 层混合架构：Linear 和 Sparse 在同一个模型里共存；注意缓存与读取量分开看。</text>
+<rect x="40" y="144" width="545" height="325" rx="9" fill="#FFFFFF" stroke="#D9DEDA" stroke-width="1.2"/><rect x="40" y="144" width="545" height="5" rx="4" fill="#315DB9"/><text x="62" y="182" class="heading" >Kimi K3</text>
+<text x="62" y="220" class="blue" >69 × KDA</text><text x="286" y="220" class="blue" >24 × Gated MLA</text>
+<rect x="62" y="250" width="220" height="75" rx="7" fill="#EAF6F2" stroke="#C4DFD4" stroke-width="1.2"/><text x="80" y="283" class="body" >Recurrent State</text><text x="80" y="306" class="small" >按请求 · 固定形状</text>
+<rect x="303" y="250" width="255" height="75" rx="7" fill="#EEF3FC" stroke="#C6D7EE" stroke-width="1.2"/><text x="322" y="283" class="body" >MLA Latent KV</text><text x="322" y="306" class="small" >按 Token · 随 L 增长</text>
+<text x="62" y="369" class="body" >MLA Decode：对全历史 L 做 Attention</text>
+<text x="62" y="407" class="small" >没有 Index Key Cache</text>
+<text x="62" y="445" class="blue" >69 / 24 层：混合，而非二选一</text>
+<rect x="615" y="144" width="545" height="325" rx="9" fill="#FFFFFF" stroke="#D9DEDA" stroke-width="1.2"/><rect x="615" y="144" width="545" height="5" rx="4" fill="#178779"/><text x="637" y="182" class="heading" >Kimi K3.1 Pro</text>
+<text x="637" y="220" class="teal" >69 × KDA</text><text x="853" y="220" class="teal" >24 × Gated DSA</text>
+<rect x="637" y="250" width="223" height="75" rx="7" fill="#EAF6F2" stroke="#C4DFD4" stroke-width="1.2"/><text x="654" y="283" class="body" >Recurrent State</text><text x="654" y="306" class="small" >与 K3 同类状态</text>
+<rect x="877" y="250" width="258" height="75" rx="7" fill="#EEF3FC" stroke="#C6D7EE" stroke-width="1.2"/><text x="894" y="282" class="body" >MLA KV + Index Key</text><text x="894" y="306" class="small" >两种逐 Token 缓存</text>
+<text x="637" y="369" class="body" >Indexer 扫全长，主 Attention 取 Top-2048</text>
+<text x="637" y="407" class="small" >每层单独选 Token，仍使用 MLA 表示</text>
+<text x="637" y="445" class="teal" >保留 KDA；增加索引缓存与筛选开销</text>
+<rect x="40" y="492" width="1120" height="68" rx="8" fill="#FAF0E9" stroke="#E9D2C5" stroke-width="1.2"/>
+<text x="61" y="523" class="heading" >SGLang 服务层：两类状态逻辑上独立；内存池可以双池，也可以统一分配。</text>
+<text x="61" y="547" class="small" >P/D 传输要覆盖 MLA KV、KDA State；K3.1 还需要 Index Key。</text></svg>
