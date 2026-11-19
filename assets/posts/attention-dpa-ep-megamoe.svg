@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="575" viewBox="0 0 1200 575" role="img" aria-labelledby="title desc">
+<title id="title">Attention DP-A and MoE EP dataflow</title>
+<desc id="desc">同一组GPU在Attention层使用DP-A：各Rank独立服务不同请求和本地MLA KV；进入MoE层则按Expert Parallelism进行Dispatch、Expert计算和Combine。MegaMoE是MoE层的通信与GEMM融合后端，不等同DP-A或EP。</desc>
+<defs>
+ <style>text{font-family:Inter,"PingFang SC","Microsoft YaHei","Noto Sans CJK SC",sans-serif}.over{font-size:12px;letter-spacing:1.5px;font-weight:700;fill:#177F75}.title{font-size:28px;font-weight:700;fill:#233843}.sub{font-size:14px;fill:#667D85}.heading{font-size:20px;font-weight:700;fill:#233843}.small{font-size:13px;fill:#6C7F87}.tag{font-size:12px;letter-spacing:.5px;font-weight:700;fill:#687B82}.strong{font-size:16px;font-weight:700;fill:#233843}.label{font-size:15px;font-weight:700;fill:#176F66}.warn{font-size:14px;font-weight:600;fill:#A45A38}</style>
+ <marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M1 1 L9 5 L1 9" stroke="#78909A" fill="none" stroke-width="1.5"/></marker>
+</defs>
+<rect width="1200" height="575" fill="#FBFAF7"/>
+<text x="38" y="37" class="over" >DISTRIBUTED INFERENCE  /  HYBRID PARALLELISM</text>
+<text x="38" y="76" class="title" >同一组 GPU，两种不同的层内并行方式</text>
+<text x="38" y="103" class="sub" >MLA 让 Attention DP-A 更有价值；进入 MoE 时，Token 按 Expert 路由跨 Rank 流动。</text>
+<rect x="38" y="123" width="1124" height="39" rx="7" fill="#EBF5F2" stroke="#C8DFD7" stroke-width="1.3"/>
+<text x="56" y="149" class="heading" >ATTENTION · DP-A   /   各 Rank 处理自己的请求</text>
+<rect x="62" y="181" width="230" height="106" rx="8" fill="#FFFFFF" stroke="#DADFD9" stroke-width="1.3"/><rect x="62" y="181" width="230" height="5" rx="2" fill="#2B69B1"/>
+ <text x="77" y="209" class="tag" >GPU 0</text><text x="77" y="238" class="strong" >Request A</text>
+ <text x="77" y="263" class="small" >Local MLA KV</text><rect x="62" y="389" width="230" height="84" rx="8" fill="#FFFFFF" stroke="#DADFD9" stroke-width="1.3"/><rect x="62" y="389" width="230" height="5" rx="2" fill="#BB7753"/>
+ <text x="77" y="422" class="strong" >Expert shard 0</text>
+ <text x="77" y="448" class="small" >EP ownership</text><rect x="344" y="181" width="230" height="106" rx="8" fill="#FFFFFF" stroke="#DADFD9" stroke-width="1.3"/><rect x="344" y="181" width="230" height="5" rx="2" fill="#2A9C87"/>
+ <text x="359" y="209" class="tag" >GPU 1</text><text x="359" y="238" class="strong" >Request B</text>
+ <text x="359" y="263" class="small" >Local MLA KV</text><rect x="344" y="389" width="230" height="84" rx="8" fill="#FFFFFF" stroke="#DADFD9" stroke-width="1.3"/><rect x="344" y="389" width="230" height="5" rx="2" fill="#BB7753"/>
+ <text x="359" y="422" class="strong" >Expert shard 1</text>
+ <text x="359" y="448" class="small" >EP ownership</text><rect x="626" y="181" width="230" height="106" rx="8" fill="#FFFFFF" stroke="#DADFD9" stroke-width="1.3"/><rect x="626" y="181" width="230" height="5" rx="2" fill="#A15C96"/>
+ <text x="641" y="209" class="tag" >GPU 2</text><text x="641" y="238" class="strong" >Request C</text>
+ <text x="641" y="263" class="small" >Local MLA KV</text><rect x="626" y="389" width="230" height="84" rx="8" fill="#FFFFFF" stroke="#DADFD9" stroke-width="1.3"/><rect x="626" y="389" width="230" height="5" rx="2" fill="#BB7753"/>
+ <text x="641" y="422" class="strong" >Expert shard 2</text>
+ <text x="641" y="448" class="small" >EP ownership</text><rect x="908" y="181" width="230" height="106" rx="8" fill="#FFFFFF" stroke="#DADFD9" stroke-width="1.3"/><rect x="908" y="181" width="230" height="5" rx="2" fill="#BA744A"/>
+ <text x="923" y="209" class="tag" >GPU 3</text><text x="923" y="238" class="strong" >Request D</text>
+ <text x="923" y="263" class="small" >Local MLA KV</text><rect x="908" y="389" width="230" height="84" rx="8" fill="#FFFFFF" stroke="#DADFD9" stroke-width="1.3"/><rect x="908" y="389" width="230" height="5" rx="2" fill="#BB7753"/>
+ <text x="923" y="422" class="strong" >Expert shard 3</text>
+ <text x="923" y="448" class="small" >EP ownership</text>
+<path d="M177 287 L177 321 M459 287 L459 321 M741 287 L741 321 M1023 287 L1023 321" stroke="#8298A0" stroke-width="2" marker-end="url(#arr)" fill="none"/>
+<rect x="38" y="330" width="1124" height="42" rx="7" fill="#F8EEE8" stroke="#E3CBBB" stroke-width="1.3"/>
+<text x="56" y="357" class="heading" >MoE Router → All-to-All Dispatch → Expert Compute → Combine</text>
+<path d="M177 372 V385" stroke="#87969A" stroke-width="2" marker-end="url(#arr)"/><path d="M459 372 V385" stroke="#87969A" stroke-width="2" marker-end="url(#arr)"/><path d="M741 372 V385" stroke="#87969A" stroke-width="2" marker-end="url(#arr)"/><path d="M1023 372 V385" stroke="#87969A" stroke-width="2" marker-end="url(#arr)"/>
+<path d="M177 321 Q600 303 1023 321 M459 321 Q625 298 741 321 M741 321 Q450 298 177 321" fill="none" stroke="#BA775B" stroke-width="1.2" stroke-dasharray="6 6" opacity=".58"/>
+<rect x="38" y="497" width="1124" height="52" rx="7" fill="#FFFFFF" stroke="#DADFD9" stroke-width="1.3"/>
+<text x="54" y="529" class="warn" >MegaMoE：融合 MoE Dispatch + GEMM，优化 EP 执行路径；不是另一种 Attention DP。</text>
+</svg>
