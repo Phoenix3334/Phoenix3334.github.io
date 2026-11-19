@@ -70,60 +70,157 @@ MQA : Hkv = 1
 
 同理，GQA 不代表主 Attention 的 Q Head 计算量直接缩小为四分之一。它减少了 K/V 投影与历史数据的存储、读取，主 Attention 的 Q 输出头数仍然存在。
 
-### 手写一个最小的 MHA/GQA/MQA
+### 从最小示例手写 MHA / GQA / MQA
 
-以下代码省略了 RoPE、QK-Norm、Dropout，仅用于验证 Head 映射和缓存形状，不用于生产推理：
+先别急着看完整 forward。我们只用很小的维度：B=1、T=3、hidden=8、Q Head=4、head_dim=2。
+
+假设 KV Head=2，**4 个 Q Head 和 2 个 KV Head 的映射关系**就是：
+
+~~~text
+Q Head :   Q0   Q1  |  Q2   Q3
+                \  /        \  /
+KV Head:         KV0         KV1
+
+group_size = q_heads / kv_heads = 4 / 2 = 2
+
+MHA: q_heads=4, kv_heads=4 → 每个 Q 各有一组 KV
+GQA: q_heads=4, kv_heads=2 → 两个 Q 共用一组 KV
+MQA: q_heads=4, kv_heads=1 → 四个 Q 共用一组 KV
+~~~
+
+代码中下面三个变化最关键：
+
+~~~text
+① Projection + Reshape：从 [B, T, hidden] 得到
+   Q: [B, 4, T, 2]
+   K: [B, 2, T, 2]
+   V: [B, 2, T, 2]
+
+② repeat_interleave(2, dim=1)：计算时的逻辑映射
+   Q: [Q0, Q1, Q2, Q3]
+   K: [K0, K0, K1, K1]
+   V: [V0, V0, V1, V1]
+
+③ Attention
+   scores = Q @ Kᵀ            → [B, 4, T, L]
+   weights = softmax(scores)  → [B, 4, T, L]
+   output = weights @ V       → [B, 4, T, 2]
+~~~
+
+这里的 L 是**当前可以访问的历史 Token 总数**。一次性 Prefill 时 L=T；增量 Decode 时，传给 forward 的 T 可以是 1，但它仍要访问缓存里已有的 L-1 个 Token。
+
+接下来把代码写成六个清楚的步骤，故意使用非常小的 Tensor Shape；结构与前面 MHA/GQA 公式一致。**前四步决定注意力怎么算，第②步的缓存与第⑤步的 Causal Mask 是为了支持正确的自回归推理。**
 
 ~~~python
 import math
 import torch
-import torch.nn as nn
+from torch import nn
 
-class GroupedAttention(nn.Module):
-    def __init__(self, hidden=512, q_heads=8, kv_heads=2):
+
+class GQA(nn.Module):
+    def __init__(self, dim=8, q_heads=4, kv_heads=2):
         super().__init__()
+        assert dim % q_heads == 0
         assert q_heads % kv_heads == 0
-        self.q_heads, self.kv_heads = q_heads, kv_heads
-        self.dh = hidden // q_heads
-        self.group = q_heads // kv_heads
-        self.q_proj = nn.Linear(hidden, q_heads * self.dh, bias=False)
-        self.k_proj = nn.Linear(hidden, kv_heads * self.dh, bias=False)
-        self.v_proj = nn.Linear(hidden, kv_heads * self.dh, bias=False)
-        self.o_proj = nn.Linear(q_heads * self.dh, hidden, bias=False)
+
+        self.q_heads = q_heads
+        self.kv_heads = kv_heads
+        self.head_dim = dim // q_heads       # 8 / 4 = 2
+        self.group_size = q_heads // kv_heads  # 4 / 2 = 2
+
+        self.q_proj = nn.Linear(dim, q_heads * self.head_dim, bias=False)
+        self.k_proj = nn.Linear(dim, kv_heads * self.head_dim, bias=False)
+        self.v_proj = nn.Linear(dim, kv_heads * self.head_dim, bias=False)
+        self.o_proj = nn.Linear(q_heads * self.head_dim, dim, bias=False)
+
+    def split_heads(self, t, heads):
+        # [B, T, heads * d] → [B, heads, T, d]
+        B, T, _ = t.shape
+        return t.reshape(B, T, heads, self.head_dim).transpose(1, 2)
 
     def forward(self, x, cache=None):
         B, T, _ = x.shape
-        q = self.q_proj(x).view(B, T, self.q_heads, self.dh).transpose(1, 2)
-        k = self.k_proj(x).view(B, T, self.kv_heads, self.dh).transpose(1, 2)
-        v = self.v_proj(x).view(B, T, self.kv_heads, self.dh).transpose(1, 2)
-        if cache is not None:
+
+        # ① 线性投影：本次输入的 T 个 Token 产生新 Q/K/V
+        q = self.split_heads(self.q_proj(x), self.q_heads)   # [B, 4, T, 2]
+        k_new = self.split_heads(self.k_proj(x), self.kv_heads)  # [B, 2, T, 2]
+        v_new = self.split_heads(self.v_proj(x), self.kv_heads)
+
+        # ② 历史 KV：先拼接并缓存“真实的 kv_heads”，不要先 repeat
+        if cache is None:
+            k_all, v_all = k_new, v_new
+        else:
             if "k" in cache:
-                k = torch.cat([cache["k"], k], dim=2)
-                v = torch.cat([cache["v"], v], dim=2)
-            cache["k"], cache["v"] = k, v  # 只有 kv_heads 组
-        k = k.repeat_interleave(self.group, dim=1)
-        v = v.repeat_interleave(self.group, dim=1)
-        L = k.shape[2]
-        logits = q @ k.transpose(-1, -2) / math.sqrt(self.dh)
-        q_pos = torch.arange(L - T, L, device=x.device)[:, None]
-        k_pos = torch.arange(L, device=x.device)[None, :]
-        logits = logits.masked_fill(k_pos > q_pos, float("-inf"))
-        out = torch.softmax(logits, dim=-1) @ v
-        return self.o_proj(out.transpose(1, 2).reshape(B, T, -1))
+                k_all = torch.cat([cache["k"], k_new], dim=2)
+                v_all = torch.cat([cache["v"], v_new], dim=2)
+            else:
+                k_all, v_all = k_new, v_new
+            cache["k"], cache["v"] = k_all, v_all  # [B, 2, L, 2]
 
-for n_kv in (8, 2, 1):
-    model = GroupedAttention(q_heads=8, kv_heads=n_kv).eval()
-    cache = {}
+        # ③ 计算时把两个 Q 头映射到同一组 K/V（教学写法）
+        k = k_all.repeat_interleave(self.group_size, dim=1)  # [B, 4, L, 2]
+        v = v_all.repeat_interleave(self.group_size, dim=1)
+
+        # ④ QKᵀ：每个 Q Head 算自己的 Attention Score
+        L = k.size(2)
+        scores = (q @ k.transpose(-2, -1)) / math.sqrt(self.head_dim)
+        # scores: [B, 4, T, L]
+
+        # ⑤ Causal Mask：第 i 个 Token 不能看见它后面的 Token
+        old_len = L - T
+        q_pos = old_len + torch.arange(T, device=x.device)[:, None]  # [T, 1]
+        k_pos = torch.arange(L, device=x.device)[None, :]            # [1, L]
+        scores = scores.masked_fill(k_pos > q_pos, float("-inf"))
+
+        # ⑥ softmax 后加权求和，再把 Head 拼回 hidden
+        weights = torch.softmax(scores, dim=-1)
+        out = weights @ v                                   # [B, 4, T, 2]
+        out = out.transpose(1, 2).reshape(B, T, -1)        # [B, T, 8]
+        return self.o_proj(out)                            # [B, T, 8]
+
+
+# 同一段代码，仅修改 kv_heads 就能切换三种结构
+torch.manual_seed(0)
+x = torch.randn(1, 3, 8)  # 1 个请求，3 个 Token，每个 8 维
+
+for hkv in (4, 2, 1):
+    model = GQA(dim=8, q_heads=4, kv_heads=hkv).eval()
     with torch.no_grad():
-        _ = model(torch.randn(2, 16, 512), cache)
-    print(n_kv, tuple(cache["k"].shape))
+        full = model(x)              # 一次性处理 3 个 Token
+        cache = {}
+        first = model(x[:, :2], cache)  # Prefill 前 2 个 Token
+        last = model(x[:, 2:], cache)   # Decode 第 3 个 Token
+        joined = torch.cat([first, last], dim=1)
 
-# 8 → (2, 8, 16, 64) MHA
-# 2 → (2, 2, 16, 64) GQA
-# 1 → (2, 1, 16, 64) MQA
+    print(hkv, tuple(cache["k"].shape),
+          torch.allclose(full, joined, atol=1e-6))
+
+# 4 (1, 4, 3, 2) True   → MHA
+# 2 (1, 2, 3, 2) True   → GQA
+# 1 (1, 1, 3, 2) True   → MQA
 ~~~
 
-两处细节值得记住：用 repeat 替换 repeat_interleave 可能破坏连续分组映射，而且不一定报错；某些模型独立指定 head_dim，不一定等于 hidden_size / num_attention_heads。原始 [GQA 论文](https://aclanthology.org/2023.emnlp-main.298/) 还讨论了如何从 MHA Checkpoint 经 KV 头均值池化与继续训练得到 GQA，这是模型训练/转换方法，而非推理时简单改参数即可无损转换。
+观察这段代码，三种配置的 **Q Shape 完全不变，变化的只有真实 KV 的 Head 数**。
+
+另外，建议把 Causal Mask 作为独立知识点理解。它判断的是“**当前 Q 对应原序列中的哪个位置**”，因此增量 Decode 时不能简单对 T×L 矩阵直接使用普通上三角 Mask：
+
+~~~text
+一次性 Prefill，T=3，L=3：
+       K0 K1 K2
+  Q0    ✓  ×  ×
+  Q1    ✓  ✓  ×
+  Q2    ✓  ✓  ✓
+
+Prefix 已有 2 个 Token，再 Decode 1 个，T=1，L=3：
+       K0 K1 K2
+  Q2    ✓  ✓  ✓
+~~~
+
+这也是旧版代码里 old_len = L-T 的作用：让新增的 Q 从**整条历史中的正确位置**开始判断可见性，而不是误当成位置 0。
+
+**注意这仍是教学实现：**为了直观看到分组，它物理执行 repeat_interleave；实际 FlashAttention 等高性能实现可以直接处理 GQA 映射。缓存用 torch.cat 也会重复分配、复制历史，生产引擎通常改用分页 KV Cache（Paged KV）；RoPE、QK-Norm 和独立配置的 head_dim 也被省略。理解顺序建议是 **Projection → Head Mapping → Attention → Causal Mask → KV Cache**，不要一开始就把五件事混在一起。
+
+原始 [GQA 论文](https://aclanthology.org/2023.emnlp-main.298/) 还讨论了如何把 MHA Checkpoint 通过均值池化和 Uptraining 转成 GQA，这是训练/模型改造技术，不是上线时直接修改 kv_heads 就能无损获得的能力。
 
 ## 3. MLA：和 GQA 省 KV 的思路有什么不同？
 
