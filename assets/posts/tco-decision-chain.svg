@@ -1,41 +1,105 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="440" viewBox="0 0 1200 440" role="img" aria-labelledby="title desc">
-<title id="title">Benchmark to Infrastructure Economics</title><desc id="desc">From workload, benchmarks and SLO-qualified service capacity to P/D capacity planning, total cost and business pricing.</desc>
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1080" viewBox="0 0 1200 1080" role="img" aria-labelledby="title desc">
+<title id="title">推理系统 Benchmark 到 TCO 的全景总览图</title>
+<desc id="desc">九步分析框架：定义模型负载、研究推理系统瓶颈、测量吞吐时延、SLO 筛选、有效产能估算、P/D 部署规划、五年成本核算、Token 经营收入、跨平台硬件选型。数据源包括中国移动 950DT 报告的 7K/2K 结果 1882.57 total TPS、64 卡日均容量外推约 104 亿、70% 使用率约 73 亿、五年成本 381.66 万元、月摊销 6.36 万元、月定价与模型收入预测。强调不同测试口径与 30/26 天的财务周期差异。</desc>
 <defs><style>
-text{font-family:Inter,"Noto Sans CJK SC","PingFang SC","Microsoft YaHei",Arial,sans-serif}
-.kicker{fill:#197F79;font-size:12px;font-weight:700;letter-spacing:1.5px}
-.title{fill:#253641;font-size:26px;font-weight:700}
-.subtitle{fill:#657681;font-size:13px}
-.heading{fill:#253641;font-size:18px;font-weight:700}
-.body{fill:#253641;font-size:14px}
-.small{fill:#657681;font-size:12.5px}
-.number{fill:#253641;font-size:25px;font-weight:700}
-.value{fill:#253641;font-size:17px;font-weight:700}
-.note{fill:#B65334;font-size:14px;font-weight:700}
-.tag{fill:#197F79;font-size:13px;font-weight:700}
+text{font-family:Inter,"Noto Sans CJK SC","PingFang SC","Microsoft YaHei","Segoe UI",Arial,sans-serif}
+.overline{fill:#197F79;font-size:14px;font-weight:700;letter-spacing:1.6px}
+.title{fill:#243640;font-size:31px;font-weight:730}
+.subtitle{fill:#637681;font-size:18px}
+.rowLabel{fill:#243640;font-size:19px;font-weight:700}
+.kicker{fill:#637681;font-size:13px;font-weight:700;letter-spacing:0.6px}
+.panelHeading{fill:#243640;font-size:24px;font-weight:720}
+.body{fill:#243640;font-size:17px}
+.key{font-size:17px;font-weight:720}
+.small{fill:#637681;font-size:14px}
+.footerHead{fill:#A9543A;font-size:19px;font-weight:700}
+.footer{fill:#243640;font-size:17px}
 </style>
-<marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M1 1 L9 5 L1 9" fill="none" stroke="#71828A" stroke-width="1.5"/></marker>
+<marker id="arrow" viewBox="0 0 10 10" refX="7.5" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M1 1 L8 5 L1 9" fill="none" stroke="#718791" stroke-width="1.4"/></marker>
 </defs>
-<rect width="1200" height="440" fill="#FBFAF7"/>
-<text x="40" y="40" class="kicker" >INFERENCE ECONOMICS / DECISION CHAIN</text>
-<text x="40" y="80" class="title" >从一次压测，到算力选型与成本决策</text>
-<text x="40" y="107" class="subtitle" >每一层都改变下一层的分母：不能直接把峰值 TPS 当成实际售出的 Token。</text>
-<rect x="40" y="143" width="210" height="199" rx="8" fill="#FFFFFF" stroke="#D8D5CF" /><rect x="40" y="143" width="210" height="5" rx="5" fill="#2457C5"/>
-<text x="57" y="171" class="small" >01</text><text x="57" y="202" class="heading" >Benchmark</text>
-<text x="57" y="237" class="body" >确定模型与负载</text><text x="57" y="268" class="small" >ISL / OSL · Cache</text><text x="57" y="291" class="small" >吞吐—延迟曲线</text>
-<path d="M254 242 L267 242" stroke="#71828A" stroke-width="2.2" fill="none" marker-end="url(#arr)"/><rect x="270" y="143" width="210" height="199" rx="8" fill="#FFFFFF" stroke="#D8D5CF" /><rect x="270" y="143" width="210" height="5" rx="5" fill="#197F79"/>
-<text x="287" y="171" class="small" >02</text><text x="287" y="202" class="heading" >SLO Capacity</text>
-<text x="287" y="237" class="body" >筛选达标工作点</text><text x="287" y="268" class="small" >TTFT / TPOT / 正确性</text><text x="287" y="291" class="small" >有效 requests/s</text>
-<path d="M484 242 L497 242" stroke="#71828A" stroke-width="2.2" fill="none" marker-end="url(#arr)"/><rect x="500" y="143" width="210" height="199" rx="8" fill="#FFFFFF" stroke="#D8D5CF" /><rect x="500" y="143" width="210" height="5" rx="5" fill="#2457C5"/>
-<text x="517" y="171" class="small" >03</text><text x="517" y="202" class="heading" >P/D Sizing</text>
-<text x="517" y="237" class="body" >换算所需资源</text><text x="517" y="268" class="small" >实例数量 · KV 传输</text><text x="517" y="291" class="small" >并行 / 冗余</text>
-<path d="M714 242 L727 242" stroke="#71828A" stroke-width="2.2" fill="none" marker-end="url(#arr)"/><rect x="730" y="143" width="210" height="199" rx="8" fill="#FFFFFF" stroke="#D8D5CF" /><rect x="730" y="143" width="210" height="5" rx="5" fill="#B65334"/>
-<text x="747" y="171" class="small" >04</text><text x="747" y="202" class="heading" >TCO</text>
-<text x="747" y="237" class="body" >核算同周期成本</text><text x="747" y="268" class="small" >采购 / 租赁 / IDC</text><text x="747" y="291" class="small" >电力 / 运维</text>
-<path d="M944 242 L957 242" stroke="#71828A" stroke-width="2.2" fill="none" marker-end="url(#arr)"/><rect x="960" y="143" width="210" height="199" rx="8" fill="#FFFFFF" stroke="#D8D5CF" /><rect x="960" y="143" width="210" height="5" rx="5" fill="#197F79"/>
-<text x="977" y="171" class="small" >05</text><text x="977" y="202" class="heading" >Unit Economics</text>
-<text x="977" y="237" class="body" >考虑经营模型</text><text x="977" y="268" class="small" >输入 / 输出 / Cache 定价</text><text x="977" y="291" class="small" >售出率 · ROI</text>
+<rect width="1200" height="1080" fill="#FBFAF7"/>
 
-<rect x="40" y="368" width="1120" height="45" rx="6" fill="#EDF5F2" stroke="#CDDED9" />
-<text x="63" y="396" class="tag" >只有满足服务质量且正确交付的工作量，才能进入单位 Token 成本的分母。</text>
+<text x="40" y="40" class="overline" >ONE-PAGE MAP · LLM INFERENCE ECONOMICS</text>
+<text x="40" y="85" class="title" >从性能压测到单位 Token 成本：一张图串起来</text>
+<text x="40" y="116" class="subtitle" >业务负载 → 运行时执行 → SLO 有效产能 → 资源规模 → TCO / 定价 → 硬件选型</text>
+<rect x="40" y="141" width="1120" height="36" rx="6" fill="#F3F1ED" stroke="#E7E4DC" stroke-width="1.5"/>
+<text x="55" y="165" class="rowLabel" >第一层 · MEASURE  测到了什么？</text>
+<rect x="40" y="193" width="348" height="189" rx="11" fill="#FFFFFF" stroke="#D9DDDA" stroke-width="1.5"/><rect x="40" y="193" width="348" height="6" rx="3" fill="#2457C5"/>
+    <text x="62" y="227" class="kicker" >01 / WORKLOAD</text>
+    <text x="62" y="263" class="panelHeading" >定义业务请求</text>
+    <text x="62" y="293" class="body" >模型 / 量化 / 框架版本</text><text x="62" y="322" class="body" >ISL / OSL 与 Cache 命中</text><text x="62" y="351" class="body" >并发、QPS 与到达模式</text>
+    <text x="62" y="336" class="key" fill="#2457C5">不能脱离负载谈 TPS</text>
+    
+    
+<rect x="426" y="193" width="348" height="189" rx="11" fill="#FFFFFF" stroke="#D9DDDA" stroke-width="1.5"/><rect x="426" y="193" width="348" height="6" rx="3" fill="#2457C5"/>
+    <text x="448" y="227" class="kicker" >02 / RUNTIME</text>
+    <text x="448" y="263" class="panelHeading" >理解执行瓶颈</text>
+    <text x="448" y="293" class="body" >Prefill / Decode · Batching</text><text x="448" y="322" class="body" >Compute / HBM / 通信重叠</text><text x="448" y="351" class="body" >调度状态 · 显存生命周期</text>
+    <text x="448" y="336" class="key" fill="#2457C5">Amdahl：局部快 ≠ E2E 快</text>
+    
+    
+<rect x="812" y="193" width="348" height="189" rx="11" fill="#FFFFFF" stroke="#D9DDDA" stroke-width="1.5"/><rect x="812" y="193" width="348" height="6" rx="3" fill="#2457C5"/>
+    <text x="834" y="227" class="kicker" >03 / BENCHMARK</text>
+    <text x="834" y="263" class="panelHeading" >记录端到端实测</text>
+    <text x="834" y="293" class="body" >7K/2K · GLM5.2 · 单卡</text><text x="834" y="322" class="body" >Output TPS：417.80</text><text x="834" y="351" class="body" >Total TPS：1,882.57</text>
+    <text x="834" y="336" class="key" fill="#2457C5">TTFT P90 ≤ 4s · TPOT ≤ 35ms</text>
+    
+    
+<path d="M394 288H419" fill="none" stroke="#718791" stroke-width="2.2" marker-end="url(#arrow)"/><path d="M780 288H805" fill="none" stroke="#718791" stroke-width="2.2" marker-end="url(#arrow)"/>
+<path d="M986 385 V408" fill="none" stroke="#718791" stroke-width="2.4" marker-end="url(#arrow)"/>
+<rect x="40" y="414" width="1120" height="36" rx="6" fill="#E9F4F0" stroke="#D5E5DE" stroke-width="1.5"/>
+<text x="55" y="439" class="rowLabel" >第二层 · QUALIFY &amp; SIZE  哪些性能可以变成稳定服务？</text>
+<rect x="40" y="467" width="348" height="189" rx="11" fill="#FFFFFF" stroke="#D9DDDA" stroke-width="1.5"/><rect x="40" y="467" width="348" height="6" rx="3" fill="#197F79"/>
+    <text x="62" y="501" class="kicker" >04 / SLO GATE</text>
+    <text x="62" y="537" class="panelHeading" >筛出可交付工作点</text>
+    <text x="62" y="567" class="body" >TTFT / TPOT / E2EL 分位数</text><text x="62" y="596" class="body" >正确性、超时、失败与重试</text><text x="62" y="625" class="body" >128K 无 SLO 的峰值不可混入</text>
+    <text x="62" y="610" class="key" fill="#197F79">合格吞吐 ≠ 无约束峰值</text>
+    
+    
+<rect x="426" y="467" width="348" height="189" rx="11" fill="#FFFFFF" stroke="#D9DDDA" stroke-width="1.5"/><rect x="426" y="467" width="348" height="6" rx="3" fill="#197F79"/>
+    <text x="448" y="501" class="kicker" >05 / CAPACITY</text>
+    <text x="448" y="537" class="panelHeading" >换算集群产能</text>
+    <text x="448" y="567" class="body" >1,882.57 TPS × 64 卡 × 24h</text><text x="448" y="596" class="body" >满载外推 ≈ 104 亿 Token / 天</text><text x="448" y="625" class="body" >按 70% 利用率 ≈ 73 亿 / 天</text>
+    <text x="448" y="610" class="key" fill="#197F79">104 亿 / 73 亿均为推算值</text>
+    
+    
+<rect x="812" y="467" width="348" height="189" rx="11" fill="#FFFFFF" stroke="#D9DDDA" stroke-width="1.5"/><rect x="812" y="467" width="348" height="6" rx="3" fill="#197F79"/>
+    <text x="834" y="501" class="kicker" >06 / SIZING</text>
+    <text x="834" y="537" class="panelHeading" >决定部署规模</text>
+    <text x="834" y="567" class="body" >按业务 QPS 分别配置 P / D</text><text x="834" y="596" class="body" >KV 传输、网络、冗余与排队</text><text x="834" y="625" class="body" >整套系统重新验证 SLO</text>
+    <text x="834" y="610" class="key" fill="#197F79">用达标产能估算实例数</text>
+    
+    
+<path d="M394 560H419" fill="none" stroke="#718791" stroke-width="2.2" marker-end="url(#arrow)"/><path d="M780 560H805" fill="none" stroke="#718791" stroke-width="2.2" marker-end="url(#arrow)"/>
+<path d="M986 659 V680" fill="none" stroke="#718791" stroke-width="2.4" marker-end="url(#arrow)"/>
+<rect x="40" y="686" width="1120" height="36" rx="6" fill="#FBF0E9" stroke="#E7CFC4" stroke-width="1.5"/>
+<text x="55" y="711" class="rowLabel" >第三层 · COST &amp; DECIDE  交付这些服务需要多少钱？</text>
+<rect x="40" y="737" width="348" height="195" rx="11" fill="#FFFFFF" stroke="#D9DDDA" stroke-width="1.5"/><rect x="40" y="737" width="348" height="6" rx="3" fill="#A9543A"/>
+    <text x="62" y="771" class="kicker" >07 / TOTAL COST</text>
+    <text x="62" y="807" class="panelHeading" >算五年成本与月摊销</text>
+    <text x="62" y="837" class="body" >950DT 五年建设 381.66 万元</text><text x="62" y="866" class="body" >按 60 月分摊 ≈ 6.36 万 / 月</text><text x="62" y="895" class="body" >设备、配套、IDC 等同口径</text>
+    <text x="62" y="886" class="key" fill="#A9543A">先核算 TCO，再谈售价</text>
+    
+    
+<rect x="426" y="737" width="348" height="195" rx="11" fill="#FFFFFF" stroke="#D9DDDA" stroke-width="1.5"/><rect x="426" y="737" width="348" height="6" rx="3" fill="#A9543A"/>
+    <text x="448" y="771" class="kicker" >08 / TOKEN BUSINESS</text>
+    <text x="448" y="807" class="panelHeading" >从成本走到收入</text>
+    <text x="448" y="837" class="body" >裸金属参考报价 ≈ 8.43 万 / 月</text><text x="448" y="866" class="body" >Token 收入：GLM ≈ 10.07 万</text><text x="448" y="895" class="body" >DeepSeek ≈ 5.61 万 / 月</text>
+    <text x="448" y="886" class="key" fill="#A9543A">成本、价格和利润不能混用</text>
+    
+    
+<rect x="812" y="737" width="348" height="195" rx="11" fill="#FFFFFF" stroke="#D9DDDA" stroke-width="1.5"/><rect x="812" y="737" width="348" height="6" rx="3" fill="#A9543A"/>
+    <text x="834" y="771" class="kicker" >09 / SELECTION</text>
+    <text x="834" y="807" class="panelHeading" >比较单位有效成本</text>
+    <text x="834" y="837" class="body" >同模型、同负载、同 SLO</text><text x="834" y="866" class="body" >同投资/租赁与运营边界</text><text x="834" y="895" class="body" >正确交付量作成本分母</text>
+    <text x="834" y="886" class="key" fill="#A9543A">目标：SLO 下的 Cost / Token</text>
+    
+    
+<path d="M394 833H419" fill="none" stroke="#718791" stroke-width="2.2" marker-end="url(#arrow)"/><path d="M780 833H805" fill="none" stroke="#718791" stroke-width="2.2" marker-end="url(#arrow)"/>
+<rect x="40" y="952" width="1120" height="100" rx="9" fill="#FFFFFF" stroke="#D9DDDA" stroke-width="1.5"/>
+<text x="60" y="983" class="footerHead" >看图前后，都不要跨口径直接相除</text>
+<text x="60" y="1010" class="footer" >① 7K/2K 日产能案例 ≠ 16K/2K 跨代比价条件    ② Cache 逻辑 Token ≠ 新增计算 Token</text>
+<text x="60" y="1037" class="footer" >③ 内嵌 Excel：月产能按 30 天，月收入按 26 天    ④ 财务表应以稳定、正确且达标的服务容量为输入</text>
 
+<text x="1149" y="1073" fill="#637681" font-size="11" text-anchor="end">Report-based examples · methodological synthesis · values are workload-specific</text>
 </svg>
