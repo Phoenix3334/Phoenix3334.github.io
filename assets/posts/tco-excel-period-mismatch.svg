@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="518" viewBox="0 0 1200 518" role="img" aria-labelledby="title desc">
+<title id="title">Different period lengths in embedded Excel</title><desc id="desc">Embedded Excel workbook uses 30 days for monthly token capacity and 26 days for monthly revenue. Report GLM5.2 325.70 billion tokens and 100.7k CNY; DS 356.45 billion tokens and 56.1k CNY. Corrected 26-day capacity GLM 282.28 and DS 308.92 billion.</desc>
+<defs><style>
+text{font-family:Inter,"Noto Sans CJK SC","PingFang SC","Microsoft YaHei",Arial,sans-serif}
+.kicker{fill:#197F79;font-size:12px;font-weight:700;letter-spacing:1.5px}
+.title{fill:#253641;font-size:26px;font-weight:700}
+.subtitle{fill:#657681;font-size:13px}
+.heading{fill:#253641;font-size:18px;font-weight:700}
+.body{fill:#253641;font-size:14px}
+.small{fill:#657681;font-size:12.5px}
+.number{fill:#253641;font-size:25px;font-weight:700}
+.value{fill:#253641;font-size:17px;font-weight:700}
+.note{fill:#B65334;font-size:14px;font-weight:700}
+.tag{fill:#197F79;font-size:13px;font-weight:700}
+</style>
+<marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M1 1 L9 5 L1 9" fill="none" stroke="#71828A" stroke-width="1.5"/></marker>
+</defs>
+<rect width="1200" height="518" fill="#FBFAF7"/>
+<text x="40" y="39" class="kicker" >SPREADSHEET REVIEW / MATCH THE DENOMINATOR</text>
+<text x="40" y="79" class="title" >为什么不能拿“月产能”直接去除“月收入”？</text>
+<text x="40" y="105" class="subtitle" >PPTX 内嵌 Excel：同一个“月”，两列实际使用了不同天数。</text>
+<rect x="40" y="135" width="535" height="236" rx="8" fill="#FFFFFF" stroke="#D8D5CF" /><rect x="625" y="135" width="535" height="236" rx="8" fill="#FFFFFF" stroke="#D8D5CF" />
+<rect x="40" y="135" width="535" height="6" rx="5" fill="#2457C5"/><rect x="625" y="135" width="535" height="6" rx="5" fill="#B65334"/>
+<text x="63" y="177" class="heading" >月 Token 产能</text><text x="63" y="203" class="small" >公式按 30 天 × 8 卡</text>
+<text x="648" y="177" class="heading" >月 Token 收入</text><text x="648" y="203" class="small" >公式按 26 天 × 8 卡</text>
+<text x="63" y="247" class="body" >GLM5.2</text><text x="375" y="247" class="value" >325.70 亿</text>
+<text x="63" y="309" class="body" >DeepSeek V4 Pro</text><text x="375" y="309" class="value" >356.45 亿</text>
+<text x="648" y="247" class="body" >GLM5.2</text><text x="967" y="247" class="value" >10.07 万元</text>
+<text x="648" y="309" class="body" >DeepSeek V4 Pro</text><text x="967" y="309" class="value" >5.61 万元</text>
+<rect x="75" y="393" width="1050" height="85" rx="8" fill="#EDF5F2" stroke="#C7DAD3" />
+<text x="96" y="423" class="tag" >统一为 26 天的产能（仅替换公式天数，并非新压测）</text>
+<text x="96" y="457" class="body" >GLM5.2：282.28 亿 Token</text><text x="580" y="457" class="body" >DeepSeek V4 Pro：308.92 亿 Token</text>
+<text x="40" y="505" class="small" >要比较平均收入 / Token，先统一天数；还须区分未命中输入、Cache 命中输入和输出 Token 的计费口径。</text>
+
+</svg>
