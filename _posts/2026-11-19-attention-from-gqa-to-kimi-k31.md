@@ -271,42 +271,90 @@ KDA State Pool：已经没有新的活动请求槽位
 
 因此混合架构的容量问题并不只是“KV Cache 有多少 GB”，还要看状态槽位、前缀快照、状态复用和回滚机制。
 
-## 7. TP、DCP、DP 和 P/D：各自切分的对象是什么？
+## 7. DP-A 利用 MLA，DCP 再解决长上下文：为什么 MoE 还要走 EP？
 
-**TP（Tensor Parallelism）** 切模型张量或 Head 相关计算；**DP（Data Parallelism）** 把不同请求分到多份模型实例；**DCP（Decode Context Parallelism）** 则专门沿序列长度拆同一请求的历史 KV。三者不是不同名字的同一件事。
+如果只用一句话理解 DeepSeek / Kimi 这类 MLA + MoE 推理系统的混合并行：**Attention 用 DP-A 避免重复 KV，MoE 用 EP 分布专家；当单个 Attention 请求的上下文过长时，再用 DCP 把 KV 和读取工作拆到多个 Rank。**
 
-MLA 的 latent 被很多 Query Head 共同使用，仅切 Head 的 TP 并不保证一条请求的历史 KV 也被拆开。DCP 将历史分布在不同 GPU，做局部 Attention，最后通过含 Log-Sum-Exp（LSE）信息的合并保证全局 Softmax 的归一化正确。
+这里的 **DP-A（Data-Parallel Attention）不是普通完整模型 DP**。在 SGLang 中，前者通过 attention DP groups 处理不同请求，后面的 MoE/FFN 仍可以按 TP/EP 协同计算；传统 DP 则是复制模型实例，让各实例独立完成整个 Forward。
 
-在 K3.1，DCP 还需要处理 Index Key：
+### DP-A：把 MLA 的共享 latent 优势兑现成多请求并行
+
+MLA 把不同 Head 需要的历史压缩为共享 latent KV。在普通 TP-only Attention 中，各 GPU 虽可切 Q Head，却可能需要保存和读取**同一请求的完整 latent 历史**。例如 TP8 下，同一份历史可能在 8 个 Attention TP Rank 上重复保存。
+
+DP-A 不沿 Head 再切这份历史，而是**让不同 Rank/Attention 组处理不同请求**：Request A 的 MLA KV 放在其归属组，Request B 放在另一组。每组 Attention 能独立做 Prefill、Decode 或空闲，缓存无需在所有 Attention Rank 为同一个请求重复存储。这正是 MLA 特别适合 DP-A 的原因；但这不是 MLA 独有的数学要求，标准 Attention 模型也可以使用 DP-A。
+
+MoE 层又是另一回事。Experts 通过 **EP（Expert Parallelism）** 分布在 GPU 上。Attention 后的 Hidden States 根据 Expert Routing 跨 Rank 发送，经过 **Dispatch → Expert GEMM → Combine** 回到各自的请求。MegaMoE 属于融合式 MoE 执行后端，能把 Dispatch 与 GEMM 融合来改善这条路径上的执行效率，**不是 DP-A 或 EP 的同义词**。
+
+<p align="center">
+  <img src="/assets/posts/attention-dpa-ep-megamoe.svg" width="100%" alt="同一组GPU上Attention采用DP-A，各Rank管理不同请求和MLA KV；MoE阶段经EP Dispatch、Expert Compute和Combine跨Rank执行，MegaMoE优化MoE执行路径">
+</p>
+
+*图 5 · 同一组 GPU 上，Attention 和 MoE 可以采取不同的并行组织方式。*
+
+### DCP：解决“单个请求仍有很长的历史”这一瓶颈
+
+这时候把 DCP 看成“给 DP-A 补短板”，直觉上很准确：
+
+- **DP-A 按请求分**：解决同一份 MLA KV 被多个 TP Rank 重复存储，以及让不同请求独立调度的问题。
+- **DCP 按历史 Token 分**：即使请求已经归属于某个 Attention 组，超长上下文的 latent KV 仍然随长度增长，单 Rank 的容量与长历史读取可能成为瓶颈。
+- **DCP 把该请求的 Context 分片**到一个 DCP 组内的 GPU，各 Rank 对自己的历史分片算 Partial Attention，再通过 LSE（Log-Sum-Exp）完成正确的 Softmax 合并。
 
 ~~~text
-同一个 Decode Query
-    ├─ Rank 0：本地 Index Key → 本地候选
-    ├─ Rank 1：本地 Index Key → 本地候选
-    └─ Rank N：本地 Index Key → 本地候选
-                       ↓
-          交换候选 → Global Top-2048
-                       ↓
-       各 Rank 读取本地被选中的 latent KV
-                       ↓
-           Partial Attention + LSE Merge
-                       ↓
-                     Output
+TP-only MLA：
+  Rank 0 : Request A 的全部 KV
+  Rank 1 : Request A 的全部 KV
+  Rank 2 : Request A 的全部 KV
+  Rank 3 : Request A 的全部 KV
+  → 同一份历史重复存储
+
+DP-A：
+  Attention Rank/组 0 : Request A 的 KV
+  Attention Rank/组 1 : Request B 的 KV
+  → 不同请求分开管理，KV 不再跨组重复
+
+DP-A + DCP：
+  Attention Group 0，处理 Request A：
+       GPU 0 : A 的历史分片 0
+       GPU 1 : A 的历史分片 1
+             ↓ Partial Attention + LSE Merge
+  Attention Group 1，处理 Request B：
+       GPU 2 : B 的历史分片 0
+       GPU 3 : B 的历史分片 1
+             ↓ Partial Attention + LSE Merge
+  → 先按请求分，再在所属组内按 Context 分
 ~~~
 
-所以 **DSA 并没有取代 DCP**：DSA 决定读哪些 Token，DCP 决定它们在什么 GPU 上以及如何合并。KDA State 又是另外一种状态对象，不能直接照搬 MLA 历史的 Context Sharding 逻辑。
+所以 **DCP 不是拿另外几个 DP-A Rank 的整份 KV 拼起来**，而是为同一个请求建立 Context Parallel 组。它降低每 Rank 的 KV 容量和长上下文读取成本，代价是增加跨 Rank 通信、部分结果合并，以及可能的 Query 复制/同步。是否值得开启，需要看长度、DCP 规模、硬件互联和关键路径。
 
-当使用 P/D 分离时，同样不能只传一份传统的 KV Cache：
+一个不能省略的部署条件：**DCP 组必须放在兼容的 Attention TP 子组内**。例如 TP8 / DP-A4 / DCP2 是一种可理解的分组示意；但不能在只有 8 张卡、TP8 / DP-A8 已经每组 1 张卡的情况下，再凭空把 DCP8 套进去。具体还要符合目标 SGLang 版本的拓扑限制。
+
+我们之前优化的 DCP A2A pack Kernel，正好位于 **Partial Attention 输出交换与合并** 所在的数据路径。它减少了局部打包 Kernel 的时间，但能否提升端到端 Decode，还要看 A2A、Attention 和其他算子是否处在关键路径。这与“DCP 可以省显存、却可能引入通信成本”并不矛盾。
+
+### K3.1：DSA、DCP、KDA 如何同时存在？
+
+K3.1 的 DSA 会先扫描 Index Keys，再做 Global Top-k，随后对选中的 MLA latent KV 执行 Sparse Attention。**DSA 决定访问哪些历史位置；DCP 决定这些位置由哪个 GPU 持有并计算；DP-A 决定由哪组 GPU 承接哪条请求。** 它们是不同维度：
 
 ~~~text
-K3，Prefill → Decode：
-  MLA Paged KV + KDA Recurrent State（含必要的 Conv 状态）
-
-K3.1，Prefill → Decode：
-  MLA Latent KV + DSA Index Key + KDA Recurrent State
+Request A → DP-A Attention Group
+           → 各 DCP Rank 扫描自己持有的 Index Keys
+           → 交换候选，形成 Global Top-2048
+           → 对本地选中 KV 做 Partial Sparse MLA
+           → Partial Output + LSE Merge
+           → 得到 Request A 的 Attention Output
+           → MoE Router → EP Experts → Combine
 ~~~
 
-[SGLang K3 Cookbook](https://github.com/sgl-project/sglang/blob/main/docs/cookbook/autoregressive/Moonshotai/Kimi-K3.mdx)明确说明 P/D 传输包含 paged MLA KV 与 KDA Recurrent State。K3.1 在这基础上还要管理 Index Key Cache。只有这些状态完整一致，Decode 才能从 Prefill 的终点继续向前。
+而 KDA 的 **Recurrent State** 具有按请求更新的生命周期，并不天然采用 MLA KV 的 DCP 历史分片方式。在 P/D 分离时也不能只传 KV：
+
+~~~text
+K3 Prefill → Decode：
+  MLA Latent KV + KDA Recurrent State
+
+K3.1 Prefill → Decode：
+  MLA Latent KV + DSA Index Keys + KDA Recurrent State
+~~~
+
+因此，DCP 既是长上下文的容量/带宽优化，也是需要和 DP-A、EP、P/D 状态传输、Prefix Cache 一起设计的系统级并行策略。参考 [SGLang DP-A 指南](https://docs.sglang.ai/advanced_features/dp_dpa_router_guide.html) 和 [DCP 实现文档](https://github.com/sgl-project/sglang/blob/main/docs/docs/advanced_features/dcp.mdx)。
 
 ## 8. 回到推理工程，看到模型配置应该先问什么？
 
