@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "从 FFN、SwiGLU 到 DeepSeekMoE：专家怎么选，GPU 又怎样执行？"
-date: 2026-11-20 17:00:00 +0800
+date: 2026-11-20 15:30:00 +0800
 lang: zh-CN
 summary: "从 Transformer Block 与 SwiGLU 原理出发，手写 Top-k MoE，解释 DeepSeekMoE 的细粒度和共享专家、路由负载均衡，再连接 SGLang EP 与 MegaMoE 的通信计算重叠。"
 tags: [Transformer, FFN, SwiGLU, MoE, DeepSeekMoE, EP, MegaMoE, SGLang]
