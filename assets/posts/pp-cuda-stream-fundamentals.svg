@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="578" viewBox="0 0 1200 578" role="img" aria-labelledby="title desc">
+<title id="title">CUDA streams: host enqueue, event dependency, and allocator lifetime</title><desc id="desc">Educational multistream timeline. CPU asynchronously enqueues work, communication stream records an event after receive A, forward stream waits then consumes A. Tensor.record_stream informs the caching allocator of the forward stream's usage; event waiting and lifetime registration solve different problems.</desc>
+<defs><style>
+text{font-family:Inter,"PingFang SC","Microsoft YaHei","Noto Sans CJK SC",Arial,sans-serif}
+.kicker{font-size:12px;fill:#197F79;font-weight:700;letter-spacing:1.7px}
+.title{font-size:29px;fill:#253842;font-weight:720}
+.sub{font-size:14px;fill:#687A82}
+.section{font-size:19px;fill:#253842;font-weight:700}
+.body{font-size:15px;fill:#253842;font-weight:500}
+.small{font-size:12.5px;fill:#687A82}
+.key{font-size:16px;font-weight:700;fill:#253842}
+.number{font-size:13px;font-weight:700;fill:#197F79}
+.warn{font-size:13px;font-weight:700;fill:#B45E43}
+.label{font-size:13px;font-weight:700;fill:#345B9B}
+</style><marker id="arr" viewBox="0 0 10 10" markerWidth="7" markerHeight="7" refX="8" refY="5" orient="auto"><path d="M1 1L8 5L1 9" fill="none" stroke="#71868E" stroke-width="1.5"/></marker></defs>
+<rect width="1200" height="578" fill="#FBFAF7"/>
+<text x="40" y="38" class="kicker" >FOUNDATION  /  STREAM TIMELINE</text>
+<text x="40" y="80" class="title" >CUDA 多流异步：排队、等待与显存复用不是一回事</text>
+<text x="40" y="106" class="sub" >时间向右 →　CPU 可以先提交完；GPU 仍按各 Stream 的队列执行。</text>
+<line x1="225" y1="146" x2="225" y2="452" stroke="#D9DEDC" stroke-width="1" stroke-dasharray="3 7"/><line x1="415" y1="146" x2="415" y2="452" stroke="#D9DEDC" stroke-width="1" stroke-dasharray="3 7"/><line x1="605" y1="146" x2="605" y2="452" stroke="#D9DEDC" stroke-width="1" stroke-dasharray="3 7"/><line x1="795" y1="146" x2="795" y2="452" stroke="#D9DEDC" stroke-width="1" stroke-dasharray="3 7"/><line x1="985" y1="146" x2="985" y2="452" stroke="#D9DEDC" stroke-width="1" stroke-dasharray="3 7"/><line x1="1130" y1="146" x2="1130" y2="452" stroke="#D9DEDC" stroke-width="1" stroke-dasharray="3 7"/>
+<path d="M 220 211 H 1142" fill="none" stroke="#D9DEDC" stroke-width="1.1" stroke-linejoin="round" stroke-linecap="round" />,<path d="M 220 313 H 1142" fill="none" stroke="#D9DEDC" stroke-width="1.1" stroke-linejoin="round" stroke-linecap="round" />,<path d="M 220 415 H 1142" fill="none" stroke="#D9DEDC" stroke-width="1.1" stroke-linejoin="round" stroke-linecap="round" />
+<text x="44" y="192" class="section" >CPU / Python</text><text x="44" y="212" class="small" >Host 提交工作</text>
+<text x="44" y="294" class="section" >Comm Stream</text><text x="44" y="314" class="small" >生产者</text>
+<text x="44" y="396" class="section" >Forward Stream</text><text x="44" y="416" class="small" >消费者</text>
+<rect x="237" y="176" width="181" height="45" rx="7" fill="#FFFFFF" stroke="#C3D0DD" stroke-width="1.4"/>
+<text x="250" y="203" class="body" >enqueue recv(A)</text>
+<rect x="440" y="176" width="185" height="45" rx="7" fill="#FFFFFF" stroke="#C3D0DD" stroke-width="1.4"/>
+<text x="453" y="203" class="body" >enqueue forward(A)</text>
+<rect x="653" y="176" width="185" height="45" rx="7" fill="#FBF0E9" stroke="#E3C9BC" stroke-width="1.4"/>
+<text x="666" y="203" class="body" >Python 可释放 A 引用</text>
+<rect x="240" y="280" width="268" height="45" rx="7" fill="#EDF2FA" stroke="#C6D8EC" stroke-width="1.4"/>
+<text x="258" y="307" class="body" >recv(A) · 异步数据生产</text>
+<rect x="538" y="280" width="190" height="45" rx="7" fill="#EDF2FA" stroke="#C6D8EC" stroke-width="1.4"/>
+<text x="555" y="307" class="body" >event.record()</text>
+<rect x="552" y="382" width="198" height="45" rx="7" fill="#E9F5F0" stroke="#BEDCD2" stroke-width="1.4"/>
+<text x="566" y="409" class="body" >wait_event(ready)</text>
+<rect x="772" y="382" width="294" height="45" rx="7" fill="#E9F5F0" stroke="#BEDCD2" stroke-width="1.4"/>
+<text x="792" y="409" class="body" >run_forward(A) · GPU 读取 A</text>
+<path d="M 328 222 V 273" fill="none" stroke="#71868E" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#arr)" />
+<path d="M 521 222 L 620 372" fill="none" stroke="#71868E" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#arr)" />
+<path d="M 631 326 V 376" fill="none" stroke="#345B9B" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#arr)" />
+<path d="M 751 405 H 766" fill="none" stroke="#197F79" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#arr)" />
+<rect x="40" y="460" width="552" height="91" rx="8" fill="#EDF2FA" stroke="#C2D5E8" stroke-width="1.4"/>
+<text x="58" y="490" class="section" >Event / Wait · 执行顺序</text>
+<text x="58" y="517" class="small" >A 收完 → Forward(A) 才能读；不保护显存生命周期。</text>
+<rect x="608" y="460" width="552" height="91" rx="8" fill="#FBF0E9" stroke="#E6CABB" stroke-width="1.4"/>
+<text x="626" y="490" class="section" >record_stream · 存储生命周期</text>
+<text x="626" y="517" class="small" >记录 Forward 的异步使用；不建立生产→消费依赖。</text></svg>
