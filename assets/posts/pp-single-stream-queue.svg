@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="482" viewBox="0 0 1200 482" role="img" aria-labelledby="figTitle figDesc">
+<title id="figTitle">CUDA 单个 Stream 的有序队列与 CPU 异步提交</title>
+<desc id="figDesc">CPU 先后提交 H2D、Kernel 和 D2H，GPU 同一个显式 Stream 按 H2D、Kernel、D2H 顺序执行。CPU 的 cudaStreamSynchronize 等待指定队列完成后才读取结果。虚线仅表示提交关系，不是精确耗时图。</desc>
+<defs><style>
+text{font-family:Inter,"Noto Sans CJK SC","PingFang SC","Microsoft YaHei",Arial,sans-serif}
+.kicker{fill:#187E73;font-size:13px;letter-spacing:1.4px;font-weight:750}
+.title{fill:#273A45;font-size:29px;font-weight:750}
+.subtitle{fill:#647881;font-size:16px}
+.lane{fill:#273A45;font-size:23px;font-weight:740}
+.small{fill:#647881;font-size:16px}
+.task{font-size:19px;font-weight:720}
+.micro{fill:#647881;font-size:11px}
+.hint{font-size:17px;font-weight:730}
+</style>
+<marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M1 1 L8.3 5 L1 9" fill="none" stroke="#82969E" stroke-width="1.6" stroke-linecap="round"/></marker>
+</defs>
+<rect width="1200" height="482" fill="#FBFAF7"/>
+<text x="42" y="38" class="kicker" >CUDA FUNDAMENTALS / SINGLE STREAM</text>
+<text x="42" y="81" class="title" >同一 Stream：CPU 异步提交，GPU 有序执行</text>
+<text x="42" y="108" class="subtitle" >先理解这一条队列，再讨论 PP 中的双 Stream、Event 和显存生命周期。</text>
+<text x="42" y="197" class="lane" >CPU</text><text x="42" y="221" class="small" >提交操作</text>
+<text x="42" y="327" class="lane" >GPU</text><text x="42" y="352" class="small" >Stream S</text>
+<rect x="246" y="158" width="196" height="68" rx="9" fill="#EDF3FC" stroke="#285DA8" stroke-width="1.4"/><text x="344" y="198" class="task" text-anchor="middle" fill="#285DA8">提交 H2D</text>
+  <path d="M344 228 V288" stroke="#285DA8" stroke-width="1.8" stroke-dasharray="5 7" fill="none" opacity=".6"/>
+  <rect x="246" y="293" width="196" height="70" rx="9" fill="#FFFFFF" stroke="#D8DEDA" stroke-width="1.4"/><rect x="246" y="293" width="196" height="5" rx="2.5" fill="#285DA8"/>
+  <text x="344" y="336" class="task" text-anchor="middle" fill="#285DA8">H2D 拷贝</text>
+<rect x="523" y="158" width="196" height="68" rx="9" fill="#EAF5F0" stroke="#187E73" stroke-width="1.4"/><text x="621" y="198" class="task" text-anchor="middle" fill="#187E73">启动 Kernel</text>
+  <path d="M621 228 V288" stroke="#187E73" stroke-width="1.8" stroke-dasharray="5 7" fill="none" opacity=".6"/>
+  <rect x="523" y="293" width="196" height="70" rx="9" fill="#FFFFFF" stroke="#D8DEDA" stroke-width="1.4"/><rect x="523" y="293" width="196" height="5" rx="2.5" fill="#187E73"/>
+  <text x="621" y="336" class="task" text-anchor="middle" fill="#187E73">Kernel 计算</text>
+<rect x="800" y="158" width="196" height="68" rx="9" fill="#EDF3FC" stroke="#285DA8" stroke-width="1.4"/><text x="898" y="198" class="task" text-anchor="middle" fill="#285DA8">提交 D2H</text>
+  <path d="M898 228 V288" stroke="#285DA8" stroke-width="1.8" stroke-dasharray="5 7" fill="none" opacity=".6"/>
+  <rect x="800" y="293" width="196" height="70" rx="9" fill="#FFFFFF" stroke="#D8DEDA" stroke-width="1.4"/><rect x="800" y="293" width="196" height="5" rx="2.5" fill="#285DA8"/>
+  <text x="898" y="336" class="task" text-anchor="middle" fill="#285DA8">D2H 拷贝</text>
+<path d="M443 328 H513" stroke="#82969E" stroke-width="2.2" fill="none" marker-end="url(#arr)"/><path d="M720 328 H790" stroke="#82969E" stroke-width="2.2" fill="none" marker-end="url(#arr)"/>
+<path d="M443 192 H513" stroke="#82969E" stroke-width="2.2" fill="none" marker-end="url(#arr)"/><path d="M720 192 H790" stroke="#82969E" stroke-width="2.2" fill="none" marker-end="url(#arr)"/>
+<rect x="1015" y="158" width="148" height="68" rx="9" fill="#FBF0E8" stroke="#AF613D" stroke-width="1.4"/>
+<text x="1089" y="189" class="task" text-anchor="middle" fill="#AF613D">同步等待</text>
+<text x="1089" y="209" class="micro" text-anchor="middle">cudaStreamSync</text>
+<path d="M997 192 H1007" stroke="#82969E" stroke-width="2.2" fill="none" marker-end="url(#arr)"/>
+<path d="M1089 226 V330 H1003" stroke="#AF613D" stroke-width="2" fill="none" stroke-dasharray="5 7"/>
+<rect x="42" y="396" width="1120" height="64" rx="8" fill="#FFFFFF" stroke="#D8DEDA" stroke-width="1.4"/>
+<text x="64" y="420" class="hint" fill="#187E73">顺序保证</text>
+<text x="193" y="420" class="small" >H2D 完成 → Kernel 读取 → D2H 读取结果</text>
+<text x="64" y="447" class="hint" fill="#AF613D">同步边界</text>
+<text x="193" y="447" class="small" >CPU 在同步返回后，才能安全读取 D2H 的 Host 输出。</text>
+
+</svg>
