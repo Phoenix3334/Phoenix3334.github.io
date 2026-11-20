@@ -19,17 +19,9 @@ tags: [SGLang, Pipeline-Parallelism, CUDA, Correctness]
   </a>
 </p>
 
-*图 0 · 一眼看懂异步 PP：执行依赖与显存生命周期是两条独立约束。*
+*速览图 · 一眼看懂异步 PP：执行依赖与显存生命周期是两条独立约束。*
 
 修复对应 [SGLang PR #47614](https://github.com/sgl-project/sglang/pull/47614)，问题记录在 [Issue #47613](https://github.com/sgl-project/sglang/issues/47613)。这篇文章主要讲清楚它为什么会发生、如何被定位，以及一个容易混淆的事实：**<code>record_stream</code> 解决的是内存生命周期，不是 Stream 执行顺序。**
-
-<p align="center">
-  <a href="/assets/posts/pp-async-system-overview.svg" target="_blank" rel="noopener noreferrer" title="查看完整异步 PP 系统图">
-    <img src="/assets/posts/pp-async-system-overview.svg" width="100%" alt="异步PP系统全景：上游Stage在Forward Stream产生Hidden States，通过Comm Stream跨GPU传输，下游Comm Stream接收，Forward Stream消费后输出Token；CPU调度、执行顺序和显存生命周期是三个不同边界">
-  </a>
-</p>
-
-*图 1 · 异步 PP 的系统总览。先看一次 Microbatch 如何跨 Stage、跨 Stream，再讨论隐藏在交接处的生命周期问题。点击可以查看完整 SVG。*
 
 ## 01 · 先理解 CUDA Stream：为什么会有两条时间线
 
@@ -108,6 +100,15 @@ PP 在不同 Stage 间传递 Hidden States，通常把工作拆成 Microbatch，
 
 
 ## 02 · 把这次 Bug 放回完整的 PP Forward 链路
+
+<p align="center">
+  <a href="/assets/posts/pp-async-system-overview.svg" target="_blank" rel="noopener noreferrer" title="查看完整异步 PP 系统图">
+    <img src="/assets/posts/pp-async-system-overview.svg" width="100%" alt="异步PP系统全景：上游Stage在Forward Stream产生Hidden States，通过Comm Stream跨GPU传输，下游Comm Stream接收，Forward Stream消费后输出Token；CPU调度、执行顺序和显存生命周期是三个不同边界">
+  </a>
+</p>
+
+*图 1 · 异步 PP 的系统总览。先看一次 Microbatch 如何跨 Stage、跨 Stream，再讨论隐藏在交接处的生命周期问题。点击可以查看完整 SVG。*
+
 
 理解这次修复之前，需要先分清：**Stage 之间传递的模型中间结果**，和 **最后一个 Stage 生成、准备返回给请求管理层的 Token 结果**，不是同一种消息。
 
