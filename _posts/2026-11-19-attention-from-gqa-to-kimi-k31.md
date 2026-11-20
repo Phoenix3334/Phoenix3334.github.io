@@ -265,6 +265,15 @@ Prefix 已有 2 个 Token，再 Decode 1 个，T=1，L=3：
 
 GQA 减少**完整 K/V 的 Head 数**；MLA（Multi-head Latent Attention）换一个问题：**能不能不在缓存中保存每个 Head 的完整 K/V，而只保留可被各个 Head 共同使用的压缩表示？**
 
+<p align="center">
+  <a href="/assets/posts/attention-mha-mla-token-cache.svg" target="_blank" rel="noopener noreferrer" title="放大查看每 Token 每层 MHA 与 MLA 的 KV 缓存对比">
+    <img src="/assets/posts/attention-mha-mla-token-cache.svg" width="100%" loading="lazy" alt="以32个Query Head、head_dim128为例：MHA单个Head缓存K128维与V128维，32个KV Head总共8192元素；MLA所有Head共享512维Latent和64维RoPE Key共576元素，相差约14.22倍">
+  </a>
+</p>
+
+*补充图 · 先把每 Token、每层的缓存拆开：MHA 保存 32 份完整 K/V，MLA 缓存共享的 512 维 Latent 和 64 维解耦 RoPE Key。8,192 / 576 ≈ 14.22 倍是**元素数与同精度缓存大小之比**，不是吞吐加速倍数。*
+
+
 以 DeepSeek-V2 风格的设置为例，一个 Token 先生成低维 `c_KV`（512 维），各个 Head 的 Content K/V 可以由 `c_KV` 通过不同的上投影获得；另有一小份**解耦 RoPE Key**（64 维）单独携带位置相关信息。于是缓存不再按 `2 × Hkv × dh` 计，而按 `512 + 64 = 576` 个元素计：
 
 ~~~text
