@@ -11,6 +11,16 @@ tags: [SGLang, DP, Performance, Debugging]
 
 我在排查 SGLang 的一次 Prefill 吞吐异常时，最后定位到的根因并不在 Attention、MoE 或 CUDA Kernel，而是在更靠前的 **DataParallelController（DPC）**：健康检查请求错误地推进了属于真实用户流量的路由状态。
 
+**先说结论：** 这次 Prefill 吞吐波动不是 GPU 算子突然变慢，而是 generation-health 探活请求在经过 DPC 时改变了与真实用户共享的 RR/LB 路由状态，造成部分 DP Rank 请求不均、有效 Batch 缩小。通过“补丁前后 × Health 开关”的 2×2 对照，才把偶发性能退化和路由状态污染联系起来；修复的关键是**隔离探活与用户请求的状态所有权**，而不是关掉健康检查。以后看到 TPS 下降，应该先分清是请求分配出了问题，还是 GPU 执行真的变慢。
+
+<p align="center">
+  <a href="/assets/posts/dp-health-summary.svg" target="_blank" rel="noopener noreferrer" title="打开DP Health总结图">
+    <img src="/assets/posts/dp-health-summary.svg" width="100%" alt="DP Health 文章总览，突出核心机制与因果关系">
+  </a>
+</p>
+
+*图 0 · 一眼看懂 DP Health：异常路径和修复路径的区别。*
+
 修复对应 [SGLang PR #35721](https://github.com/sgl-project/sglang/pull/35721)，原始问题见 [Issue #35241](https://github.com/sgl-project/sglang/issues/35241)。这篇文章记录的不只是一个修复，更是一次**从吞吐症状追到控制面状态，再用受控实验确认因果**的过程。
 
 <p align="center">
