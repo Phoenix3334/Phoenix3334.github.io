@@ -11,6 +11,16 @@ tags: [Attention, GQA, MLA, DSA, KDA, Kimi-K3, Inference-Systems]
 
 我后来发现，问题出在分类方式：**有的方案决定一份历史要存成什么形状，有的决定这次 Query 访问哪些历史位置，还有的直接改变历史信息的更新方式**。把它们强行画成一条从 MHA 进化到 KDA 的链，就会越来越乱。
 
+**先说结论：** MHA/MQA/GQA、MLA、DSA 与 KDA 并不是互相取代的几代 Attention。它们分别在回答三个问题：历史 **怎么存**（共享 KV Head、压缩 KV 表示）、本次 Query **读哪些历史**（Full 或 DSA 稀疏选取）、历史 **怎么更新**（KDA 的 Recurrent State）。因此同一模型可以同时采用这些机制：Kimi K3/K3.1 的混合层就是例子。理解这些区别后，KV Cache、Recurrent State、DP-A、DCP 和 P/D 分离为何影响显存容量与 Decode 性能，也就更容易串起来。
+
+<p align="center">
+  <a href="/assets/posts/attention-summary.svg" target="_blank" rel="noopener noreferrer" title="打开Attention总结图">
+    <img src="/assets/posts/attention-summary.svg" width="100%" alt="Attention 文章总览，突出核心机制与因果关系">
+  </a>
+</p>
+
+*图 0 · 注意力机制三条轴：存储、读取和更新不是同一个维度。*
+
 这篇文章想沿着一个 Decode 请求往下看：历史信息怎么存、怎么读，最后又如何被 SGLang 一类推理引擎调度和分配显存。我们之前讨论过的 KV Cache、TP/DCP、Prefix Cache、Speculative Decode 和 Kimi K3/K3.1，也能放回同一张图里。
 
 <p align="center">
