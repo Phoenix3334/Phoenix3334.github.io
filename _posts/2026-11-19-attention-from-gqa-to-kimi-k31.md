@@ -3,7 +3,7 @@ layout: post
 title: "注意力机制到底在优化什么？从 MHA、MLA 到 KDA、DSA"
 date: 2026-11-19 22:15:00 +0800
 lang: zh-CN
-summary: "沿着缓存表示、历史读取和递推状态三个维度理解 MHA/MQA/GQA、MLA、DSA、Linear/KDA；再用 Kimi K3/K3.1 说明 KV Cache 与 Recurrent State、DCP、P/D 分离和推理容量。"
+summary: "从 Decode 的 KV Cache 账本出发，对比 MHA/MQA/GQA 的 Head 共享、MLA 的 Latent 压缩与权重吸收、Linear 到 KDA 的状态更新，再理解 DSA、Kimi K3/K3.1、DP-A 与 DCP 的系统含义。"
 tags: [Attention, GQA, MLA, DSA, KDA, Kimi-K3, Inference-Systems]
 ---
 
@@ -11,7 +11,7 @@ tags: [Attention, GQA, MLA, DSA, KDA, Kimi-K3, Inference-Systems]
 
 我后来发现，问题出在分类方式：**有的方案决定一份历史要存成什么形状，有的决定这次 Query 访问哪些历史位置，还有的直接改变历史信息的更新方式**。把它们强行画成一条从 MHA 进化到 KDA 的链，就会越来越乱。
 
-**先说结论：** MHA/MQA/GQA、MLA、DSA 与 KDA 并不是互相取代的几代 Attention。它们分别在回答三个问题：历史 **怎么存**（共享 KV Head、压缩 KV 表示）、本次 Query **读哪些历史**（Full 或 DSA 稀疏选取）、历史 **怎么更新**（KDA 的 Recurrent State）。因此同一模型可以同时采用这些机制：Kimi K3/K3.1 的混合层就是例子。理解这些区别后，KV Cache、Recurrent State、DP-A、DCP 和 P/D 分离为何影响显存容量与 Decode 性能，也就更容易串起来。
+**先说结论：** Attention 的优化并不是一条“新机制替代旧机制”的进化树。MHA → MQA/GQA 通过**共享 KV Head**减少存储；MLA 把 KV 压成共享的 **Latent + RoPE Key**，再通过权重吸收避免反复解压；DSA 用 Indexer 选取需要读取的历史；KDA 则用不断更新的 **Recurrent State** 代替逐 Token 保存全部 KV。以 32 层、4096 Token、BF16 的统一示例计算，MHA 的 KV Cache 为 2 GiB，GQA-8 为 512 MiB，MQA 为 64 MiB，而采用 512+64 维配置的 MLA 为 144 MiB。**这是一笔存储账，不是性能加速倍数**；真正决定服务吞吐的，还包括访存、Kernel、DP-A、DCP 和状态管理。
 
 <p align="center">
   <a href="/assets/posts/attention-summary.svg" target="_blank" rel="noopener noreferrer" title="打开Attention总结图">
@@ -48,6 +48,17 @@ new KV:                                      (Kₜ,Vₜ) → append
 
 所以以下机制不是都在“省 Attention 计算”：有些缩小缓存，有些只减少当前步要读取的历史，还有些改变状态表示本身。
 
+先把容易混在一起的四条优化路线分开：
+
+| 优化方向 | 改变的对象 | 典型方法 | 对推理系统的直接影响 |
+| --- | --- | --- | --- |
+| **存储表示** | 每个历史 Token 留什么 | MQA/GQA 共享 Head、MLA 低秩 KV；KV 量化 | 降低 KV 容量与部分历史读取带宽 |
+| **访问范围** | 当前 Query 读取哪些历史 | Full、SWA、DSA / Top-k | 降低主 Attention 访问量；可能增加索引开销 |
+| **状态更新** | 历史是否仍逐 Token 保存 | Linear、DeltaNet、GDN、KDA | 改为固定形状的 Recurrent State，与长度解耦 |
+| **硬件实现** | 相同计算怎样落到 GPU | FlashAttention、PagedAttention、专用 MLA Kernel | 降低 HBM IO、显存碎片、调度或 Kernel 开销 |
+
+这几条路线可以组合：**GQA + FlashAttention** 并不冲突，**MLA + DSA** 也不是两种互斥模型。这里还要分清，FlashAttention 通过分块与 Online Softmax 减少中间 Attention Matrix 的 HBM 读写，**不会因此自动把 Full Attention 的数学计算量从二次降为线性**；PagedAttention 则主要改变 KV 的分页存储和管理方式，不等于一种新的 Attention 数学公式。
+
 ## 2. MHA、MQA、GQA：保留多少个 KV Head？
 
 <p align="center">
@@ -57,29 +68,46 @@ new KV:                                      (Kₜ,Vₜ) → append
 *图 1 · 先分清维度，再讨论模型。MHA/GQA/MQA、MLA、DSA 和 KDA 并非一条互斥的进化树。*
 
 
-先假设一个注意力层有 8 个 Q Head。MHA 给每个 Q Head 独立 K/V；MQA 让所有 Q Head 共享一份 K/V；GQA 让几个连续 Q Head 共享一组 K/V。Q Head 数不必因为共享 KV 而减少。
+先用一个简化结构理解 Head 共享。假设有 **8 个 Q Head**：MHA 给它们各自配 8 份 K/V，MQA 让 8 个 Q Head 共用 1 份，GQA 则把 8 个 Q Head 分成若干组（例如每 4 个 Q 共用 1 个 KV Head）。注意**Q Head 并没有被砍掉**，变化的是历史里要保存多少组 K/V。
 
 <p align="center">
-  <img src="/assets/posts/attention-mha-gqa-mqa-heads.svg" width="100%" alt="同样八个Q Head，MHA保存8组KV，GQA示例保存2组KV，MQA保存1组KV">
+  <img src="/assets/posts/attention-mha-gqa-mqa-heads.svg" width="100%" alt="MHA 的每个 Q Head 对应独立 KV；GQA 多个 Q Head 共享一组 KV；MQA 所有 Q Head 共享一组 KV">
 </p>
 
-*图 2 · 改变的是缓存中真正保存的 KV Head 数量。*
+*图 2 · Head 共享是**缓存侧**的改变；Q Head 数和输出投影仍然保留。*
 
-设 Hq 为 Q Head 数、Hkv 为 KV Head 数、dh 为每个 Head 维度，单层每个历史 Token 的缓存量近似为：
+设 Q Head 数为 `Hq`、KV Head 数为 `Hkv`、Head 维度为 `dh`、历史长度为 `L`，单元素字节数为 `b`。普通 KV Cache 的大小为：
 
 ~~~text
-KV bytes / token / layer = 2 × Hkv × dh × bytes_per_element
+KV bytes / token / layer = 2 × Hkv × dh × b
+KV bytes (all layers)    = B × L × N_layers × 2 × Hkv × dh × b
 
-MHA : Hkv = Hq
-GQA : 1 < Hkv < Hq
-MQA : Hkv = 1
+MHA: Hkv = Hq
+GQA: 1 < Hkv < Hq，且 Hq 能被 Hkv 整除
+MQA: Hkv = 1
 ~~~
 
-例如 Hq=8、dh=128、BF16，每层每 Token 占用从 MHA 的 4096 bytes，变成 GQA（2 KV Head）的 1024 bytes，再变成 MQA 的 512 bytes。
+前一个系数 2 是因为 **K 和 V 各存一份**。为了给它一个直观的显存量级，我们固定一组教学参数：32 层、32 个 Q Head、`dh=128`、单条 4096 Token 请求、BF16（每元素 2 Bytes），只变化 `Hkv`：
 
-之前我们手写 GQA 时，最容易卡在 repeat_kv：明明计算时把 K/V 从 2 组扩展成 8 组，为什么还省显存？答案是**缓存更新在前，计算时的 Head 映射在后**。缓存只保存 2 组 KV；Eager 实现可以通过 repeat_interleave 临时展开，高效 Attention Kernel 也可以直接按映射关系访问，不必物理复制完整历史。运行时可能有临时 Tensor，但它不是随上下文常驻的那份 KV Cache。
+| 方案 | Q Head | KV Head | 整模型 KV Cache | 相对 MHA |
+| --- | ---: | ---: | ---: | ---: |
+| MHA | 32 | 32 | **2 GiB** | 100% |
+| GQA-8 | 32 | 8 | **512 MiB** | 25% |
+| MQA | 32 | 1 | **64 MiB** | 3.125% |
 
-同理，GQA 不代表主 Attention 的 Q Head 计算量直接缩小为四分之一。它减少了 K/V 投影与历史数据的存储、读取，主 Attention 的 Q 输出头数仍然存在。
+<p align="center">
+  <a href="/assets/posts/attention-kv-capacity-comparison.svg" target="_blank" rel="noopener noreferrer" title="查看四种 Attention 的 KV Cache 同口径对比">
+    <img src="/assets/posts/attention-kv-capacity-comparison.svg" width="100%" alt="32层4096 Token BF16 下，MHA 缓存 2048 MiB、GQA-8 512 MiB、MQA 64 MiB、MLA 的 512+64 压缩表示为 144 MiB">
+  </a>
+</p>
+
+*图 3 · 一组**统一假设下的理论容量**，不是某个模型或某张 GPU 的实测结果。MLA 的 144 MiB 会在下一节推导。*
+
+为什么容量下降还能改善 Decode？因为在单 Token 的 **Full Attention** 中，每层的 Query 通常仍需要访问历史 KV。假设全部缓存都必须从 HBM 读取，用 **2 TB/s 理论带宽**粗算，2 GiB、512 MiB、64 MiB 的理想读取时间下限分别约为 **1.07 ms、0.27 ms、0.034 ms**。这是整个 32 层 KV 数据的一次读取量级，**不包括权重读取、实际 Kernel 访存、计算与跨卡通信**，更不能直接转换成真实 TPOT。
+
+这里的收益与代价也需要分开看：共享 KV Head 降低了 KV 投影输出、缓存写入和后续历史读取量，但 Q Head 的数量、Softmax 和输出聚合并没有随 `Hkv` 同比例消失。更少的独立 KV 表示也可能影响模型质量，**不是简单把现有 Checkpoint 的 `num_key_value_heads` 改小就能无损升级**。原始 [GQA 论文](https://aclanthology.org/2023.emnlp-main.298/) 给出了从 MHA Checkpoint 转换并通过 Uptraining 适配的方案（实验采用原预训练计算量约 5% 的继续训练预算）。
+
+之前手写 GQA 时最容易混淆的，是 `repeat_kv`：**缓存更新在前，计算时映射在后**。缓存只保留 `Hkv` 组；Eager 实现用 `repeat_interleave` 可以临时展开，面向 GQA 的高效 Kernel 则可直接按组索引，不需要永久复制历史 KV。这也是“计算中看见 32 个 K Head”不代表“KV Cache 真的存了 32 份”的原因。
 
 ### 从最小示例手写 MHA / GQA / MQA
 
@@ -235,19 +263,60 @@ Prefix 已有 2 个 Token，再 Decode 1 个，T=1，L=3：
 
 ## 3. MLA：和 GQA 省 KV 的思路有什么不同？
 
-GQA 是减少完整的 K/V Head 数，**MLA（Multi-head Latent Attention）则换成一个低秩的共享 KV 表示**。
+GQA 减少**完整 K/V 的 Head 数**；MLA（Multi-head Latent Attention）换一个问题：**能不能不在缓存中保存每个 Head 的完整 K/V，而只保留可被各个 Head 共同使用的压缩表示？**
+
+以 DeepSeek-V2 风格的设置为例，一个 Token 先生成低维 `c_KV`（512 维），各个 Head 的 Content K/V 可以由 `c_KV` 通过不同的上投影获得；另有一小份**解耦 RoPE Key**（64 维）单独携带位置相关信息。于是缓存不再按 `2 × Hkv × dh` 计，而按 `512 + 64 = 576` 个元素计：
 
 ~~~text
-MHA / GQA：每个历史 Token → 多组 K/V → KV Cache
+c_KV = h × W_DKV                  # 下投影，只存这一份共享 latent
+K_content,h = c_KV × W_UK,h       # 各 Head 的 Content Key
+V_h         = c_KV × W_UV,h       # 各 Head 的 Value
+K_rope      = RoPE(h × W_KR)      # 独立的共享位置 Key
 
-MLA：每个历史 Token → KV 低秩压缩 → c_KV
-                                     + k_R（独立 RoPE Key）
-                                     → Latent KV Cache
+MLA cache / token / layer = (512 + 64) × bytes_per_element
+                         = 576 × 2 = 1152 Bytes（BF16）
 ~~~
 
-DeepSeek 系列常见的 MLA 配置缓存 512 维的 KV latent 和 64 维 RoPE Key，即每 Token、每层 576 个元素。解码时可以通过权重吸收等手段在压缩表示上计算，不必先把每个 Head 的完整 K/V 全部展开到显存。解耦出部分 RoPE 信息，是为了让位置旋转不会阻碍相关线性变换的吸收。
+仍然沿用上一节 **32 层、4096 Token、单请求**的教学负载，得到 `4096 × 32 × 576 × 2 = 144 MiB`。这相当于 MHA 的约 **1/14.2**、GQA-8 的约 **28.1%**。如果只用容量换算，它还相当于 `576 / (2×128) = 2.25` 个普通 KV Head；但这只是**元素数量的类比**，不是说 MLA 真有 2.25 个 Head，也不是“必然比 GQA 快四倍”。这里混用了教学模型的层数与 DeepSeek 风格的 MLA 配置，**并不是 DeepSeek-V2 整机缓存测量**。
 
-**MLA 不是 Linear Attention。** 经典 Dense MLA 仍然对有效历史 Token 执行 Softmax Attention，只是把每个 Token 的 KV 保存得更紧凑；它并没有把完整历史改写成一个每步覆盖的固定大小状态。
+### 为什么只缓存 Latent 还不够？Weight Absorption 才是关键
+
+如果每个 Decode step 都把全部 L 个历史 `c_KV` 升维还原成完整 K/V，再进行 Attention，那么虽然**常驻缓存**变小了，却会在计算过程中反复制造 `O(L)` 的大中间 Tensor。以本例的 32 个 Head、128 维、L=4096 为例，单层还原出的 K/V 合计就约 **64 MiB**，还要支付额外的上投影计算和中间访存。仅仅“先压缩再解压”并不足以兑现长上下文 Decode 的效率优势。
+
+MLA 利用**矩阵乘法结合律**重排了这两条计算路径。以下用行向量和某一个 Head `h` 表示，不考虑 RoPE 位置分量：
+
+~~~text
+K_j,h = c_j × W_UK,h
+
+score_h,j = q_h × K_j,hᵀ
+          = (q_h × W_UK,hᵀ) × c_jᵀ
+                ↑
+        先变换当前 Query，再直接读取历史 latent
+
+V_j,h = c_j × W_UV,h
+out_h = Σ_j attention_h,j × V_j,h
+      = (Σ_j attention_h,j × c_j) × W_UV,h
+                ↑
+        先在 latent 空间聚合，最后只升维一次
+~~~
+
+前者把固定的 `W_UK,h` 吸收到了 Query 一侧，后者让 `W_UV,h` 与输出投影按 Head 的块结构组合。**不同 Head 的 Attention 权重仍然不同**，不是把所有 Head 的聚合结果粗暴混成一份。这样便可以省掉“对所有历史 Token 反复恢复完整 K/V”的关键路径。
+
+<p align="center">
+  <a href="/assets/posts/attention-mla-weight-absorption.svg" target="_blank" rel="noopener noreferrer" title="查看 MLA 朴素 Decode 和 Weight Absorption 对比图">
+    <img src="/assets/posts/attention-mla-weight-absorption.svg" width="100%" alt="朴素MLA将历史latent全部展开为完整K/V；吸收版把K上投影变换到当前Query侧、V上投影推迟到聚合后，只读取压缩的历史表示">
+  </a>
+</p>
+
+*图 4 · Weight Absorption 的意义是**避免每一步 O(L) 的 K/V 重建**，而不是简单把两个 GPU Kernel 合在一起。*
+
+### 为什么 RoPE 要拆成独立的 64 维？
+
+上面的吸收能提前计算，是因为 `W_UK,h` 是对所有历史位置都相同的固定权重。而 RoPE 会对不同位置施加**不同的旋转**：若把 RoPE 直接施加在完整 K 上，这个随位置变化的运算会夹在 Query 与待吸收的 Key 上投影之间，无法再通过一份预先合成好的固定权重消除。
+
+DeepSeek MLA 因而把 **Content 与 Position 解耦**：Content Score 在压缩空间中计算，RoPE Score 使用额外缓存的 64 维共享位置 Key。两部分相加后仍然使用 Softmax。付出每 Token 每层额外 64 个缓存元素，就避免了每步重建全部历史 Content K。
+
+这也说明 **MLA 不是 Linear Attention**：Dense MLA 仍然对有效历史计算 Softmax，只是每条历史记录更紧凑；它并未将所有历史压缩进一个与长度无关、每步持续更新的单一 State。**Prefill 与 Decode 的算子最优实现也不一定相同**：Prefill 中大量 Query 同时计算，未吸收形式有时更便于利用高效矩阵 Kernel；Decode 则更看重减少历史 KV 的重建和读取。
 
 ### 从 MLA 到 DP-A：为什么 Attention 不继续按 Head 做 TP？
 
@@ -265,7 +334,7 @@ MLA 压缩 KV 后还有个分布式推理的问题：**多个 Q Head 共享同�
   <img src="/assets/posts/attention-dpa-ep-megamoe.svg" width="100%" alt="MLA Attention使用DP-A使不同Rank处理各自请求及KV，MoE阶段使用EP进行Dispatch、Expert GEMM与Combine，MegaMoE是融合执行后端">
 </p>
 
-*图 3 · Attention 走 DP-A、MoE 走 EP；MegaMoE 优化 MoE 执行路径，而非替代 EP。*
+*图 5 · Attention 走 DP-A、MoE 走 EP；MegaMoE 优化 MoE 执行路径，而非替代 EP。*
 
 这也解释了为什么 DP-A 不只是数学上的并行配置，还涉及真实请求的路由与调度。我在 [《SGLang DP Health：一次没有报错的吞吐退化，根因却在请求路由》](/blog/2026/11/18/dp-health-routing-bug/)（[GitHub 原文备份](https://github.com/Phoenix3334/Phoenix3334.github.io/blob/main/_posts/2026-11-18-dp-health-routing-bug.md)） 中记录过：控制面探活错误地改变用户请求的 DP 路由状态，会让 Rank 负载失衡、有效 Batch 缩小，最终拖低吞吐。
 
@@ -312,7 +381,7 @@ DCP 的并行分组必须满足对应版本的拓扑约束，不能在同一组�
   <img src="/assets/posts/attention-full-dsa-kda.svg" width="100%" alt="Full Attention访问全部有效历史，DSA用Indexer选Top-k，KDA递推固定形状State">
 </p>
 
-*图 4 · 三种不同的读取与更新方式；不代表实测的性能倍数。*
+*图 6 · Full / DSA / KDA 分别改变读取范围和历史状态表示；不是性能实测倍数。*
 
 **Full Attention**：新 Query 可访问所有有效历史位置，读取和注意力工作通常随 L 增长。
 
@@ -337,6 +406,53 @@ KDA：
 
 DSA 主要减少昂贵的 MLA 数据读取，KDA 改变历史存储和更新范式；它们与 KV 压缩技术并不天然互斥。
 
+### Linear → DeltaNet → GDN → KDA：状态究竟怎么更新？
+
+说“Linear/KDA 不保存完整历史”，还没解释它到底把历史变成了什么。先考虑最简单的线性注意力：使用一个可分解的特征映射 `φ`，利用乘法结合律，把全部历史对 Query 的聚合写成一张固定形状的矩阵 `S`（部分形式另有归一化状态 `z`）：
+
+~~~text
+S_t = Σ_{j≤t} v_j · φ(k_j)ᵀ
+z_t = Σ_{j≤t} φ(k_j)
+
+o_t = S_t · φ(q_t) / (φ(q_t)ᵀ · z_t)
+~~~
+
+与 Softmax 的逐历史 Key/Value 读取不同，`S` 的形状是 **[d_v, d_k]**，**不随已处理 Token 数 L 增长**。这里的“常数复杂度”仅指相对 L 而言，不代表矩阵的大小、每步计算量或并发请求数可以忽略。
+
+但固定容量状态会遇到新问题：新信息不断加入，旧信息什么时候纠正、什么时候遗忘？这促成了 Delta Rule、GDN 与 KDA 的演进。
+
+| 机制 | 当前步怎么处理旧 State | 关键变化 |
+| --- | --- | --- |
+| **普通线性累加** | `S ← S + v kᵀ` | 只累加，缺少纠错与主动遗忘 |
+| **DeltaNet** | `S ← S + β(v−Sk)kᵀ` | 先读出旧预测，再写入**残差** |
+| **GDN** | `S̄ ← αS`，然后做 Delta 更新 | 每个 Head 用一个标量 `α` 遗忘 |
+| **KDA** | `S̄ ← S Diag(α_vec)`，然后做 Delta 更新 | 每个 Key **通道**有独立的遗忘速度 |
+
+<p align="center">
+  <a href="/assets/posts/attention-kda-update-rules.svg" target="_blank" rel="noopener noreferrer" title="查看 Linear DeltaNet GDN KDA 状态更新对比图">
+    <img src="/assets/posts/attention-kda-update-rules.svg" width="100%" alt="Linear Attention仅累加，DeltaNet加入写入残差，GDN每头一个遗忘门，KDA每个Key通道具有独立遗忘门">
+  </a>
+</p>
+
+*图 7 · KDA 没有把 Recurrent State 变得无限大，而是让有限状态具备**更细粒度的遗忘与覆写机制**。*
+
+KDA 的核心更新可以归纳为（`β` 是写门、`α_vec` 是逐通道遗忘门）：
+
+~~~text
+S_bar = S_prev × Diag(α_vec)
+S_new = S_bar + β × (v - S_bar × k) × kᵀ
+~~~
+
+一项负责衰减旧记忆，一项负责写入当前 Key 对应的预测残差。相对于 GDN 的每 Head 一个 `α`，KDA 把遗忘粒度细化为每个 Key 通道，但它仍然面临有限状态的表达能力上限。因此 **Hybrid KDA + MLA/DSA** 可以让多数层以固定状态处理历史，少数层继续直接读取显式的历史 Token。
+
+还有一个 AI Infra 层面的关键问题：**既然 State 逐 Token 递推，Prefill 怎么并行？** KDA 可以把已知当前 Token 的门控和投影准备好，再把状态更新整理为对旧 State 的仿射形式：
+
+~~~text
+S_t = S_{t-1} × T_t + H_t
+~~~
+
+其中 `T_t` 是由门控和 Key 决定的转移，`H_t` 是新增项。Chunk-wise 算法利用这种结构，将块内部分操作变成矩阵计算；同一请求的块间状态传递仍需处理依赖，而不是“所有 Token 的递推状态都可以同时算完”。这也解释了 [Kimi Linear 论文](https://arxiv.org/abs/2510.26692) 为什么强调专用 Chunk-wise Kernel：**模型表达能力、并行度和状态读写成本必须一起权衡**。
+
 ## 5. Kimi K3 → K3.1：为什么同一个模型里既有 KDA 又有 DSA？
 
 Kimi K3 总计 **93 层**，其中 **69 层 KDA + 24 层 Gated MLA**。绝大多数层用 KDA 的递推状态处理历史，一部分层仍通过 MLA 直接访问历史 Token。这类混合结构的思路是让固定状态与显式历史访问各自发挥作用。
@@ -347,7 +463,7 @@ Kimi K3 总计 **93 层**，其中 **69 层 KDA + 24 层 Gated MLA**。绝大多
   <img src="/assets/posts/attention-kimi-k3-k31-memory.svg" width="100%" alt="K3的69个KDA层加24个Dense MLA层，K3.1保留KDA并将24层换成带Indexer的Sparse MLA/DSA">
 </p>
 
-*图 5 · K3/K3.1 的结构变化：不是 KDA 被 DSA 替代，而是 MLA 的全历史读取被稀疏化。*
+*图 8 · K3/K3.1 的结构变化：KDA 没有被 DSA 替代，稀疏化的是另一部分 MLA 层的历史访问。*
 
 ~~~text
 K3：
@@ -484,7 +600,11 @@ K3.1 Prefill → Decode：
 - [SGLang · Deploying DeepSeek with P/D Disaggregation and Large-Scale EP](https://www.lmsys.org/blog/2025-05-05-large-scale-ep/)
 - [SGLang · More Than DeepInfer（DP Attention、EP、MegaMoE）](https://www.lmsys.org/blog/2026-10-24-dsv41-deepinfer/)
 - [SGLang · Decode Context Parallelism 设计与实现](https://github.com/sgl-project/sglang/blob/main/docs/docs/advanced_features/dcp.mdx)
+- [Transformer · Attention Is All You Need（2017）](https://arxiv.org/abs/1706.03762)
+- [MQA · Fast Transformer Decoding: One Write-Head is All You Need（2019）](https://arxiv.org/abs/1911.02150)
 - [GQA · Ainslie et al. (EMNLP 2023)](https://aclanthology.org/2023.emnlp-main.298/)
+- [DeepSeek-V2 · Multi-head Latent Attention 与 Decoupled RoPE（2024）](https://arxiv.org/abs/2405.04434)
+- [Gated Delta Networks · GDN（2024）](https://arxiv.org/abs/2412.06464)
 - [DeepSeek-V3.2 Sparse Attention / Transformers](https://huggingface.co/docs/transformers/en/model_doc/deepseek_v32)
 - [Kimi Linear 技术报告（arXiv）](https://arxiv.org/abs/2510.26692) · [MoonshotAI 官方代码与 PDF](https://github.com/MoonshotAI/Kimi-Linear)
 - [Moonshot AI · Kimi K3 官方技术博客](https://www.kimi.com/en/blog/kimi-k3)
