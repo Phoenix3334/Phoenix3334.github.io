@@ -19,15 +19,9 @@ tags: [Attention, GQA, MLA, DSA, KDA, Kimi-K3, Inference-Systems]
   </a>
 </p>
 
-*图 0 · 注意力机制三条轴：存储、读取和更新不是同一个维度。*
+*速览图 · 注意力机制三条轴：存储、读取和更新不是同一个维度。*
 
 这篇文章想沿着一个 Decode 请求往下看：历史信息怎么存、怎么读，最后又如何被 SGLang 一类推理引擎调度和分配显存。我们之前讨论过的 KV Cache、TP/DCP、Prefix Cache、Speculative Decode 和 Kimi K3/K3.1，也能放回同一张图里。
-
-<p align="center">
-  <img src="/assets/posts/attention-three-axes.svg" width="100%" alt="注意力机制的三个维度：KV表示、历史读取范围、聚合与状态更新；K3与K3.1为混合架构">
-</p>
-
-*图 1 · 先分清维度，再讨论模型。MHA/GQA/MQA、MLA、DSA 和 KDA 并非一条互斥的进化树。*
 
 ## 1. 从一次 Decode 开始：为什么会有 KV Cache？
 
@@ -55,6 +49,13 @@ new KV:                                      (Kₜ,Vₜ) → append
 所以以下机制不是都在“省 Attention 计算”：有些缩小缓存，有些只减少当前步要读取的历史，还有些改变状态表示本身。
 
 ## 2. MHA、MQA、GQA：保留多少个 KV Head？
+
+<p align="center">
+  <img src="/assets/posts/attention-three-axes.svg" width="100%" alt="注意力机制的三个维度：KV表示、历史读取范围、聚合与状态更新；K3与K3.1为混合架构">
+</p>
+
+*图 1 · 先分清维度，再讨论模型。MHA/GQA/MQA、MLA、DSA 和 KDA 并非一条互斥的进化树。*
+
 
 先假设一个注意力层有 8 个 Q Head。MHA 给每个 Q Head 独立 K/V；MQA 让所有 Q Head 共享一份 K/V；GQA 让几个连续 Q Head 共享一组 K/V。Q Head 数不必因为共享 KV 而减少。
 
