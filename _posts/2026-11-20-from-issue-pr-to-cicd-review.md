@@ -19,19 +19,11 @@ tags: [Git, GitHub, CI-CD, Code-Review, Testing, Open-Source, AI-Engineering, SG
   </a>
 </p>
 
-*图 0 · 从 Issue 到上线的关键关口；CI 与 Review 是不同的保障。*
+*速览图 · 从 Issue 到上线的关键关口；CI 与 Review 是不同的保障。*
 
 尤其在 AI 可以很快生成代码的今天，难点越来越不是“能否写出一段实现”，而是**能否解释这段代码为什么正确、如何验证、适用边界是什么，以及出了问题由谁负责**。
 
 这篇文章先从基础说起，再把真实的 [SGLang PR #35721](https://github.com/sgl-project/sglang/pull/35721)、[#47614](https://github.com/sgl-project/sglang/pull/47614)、[#48404](https://github.com/sgl-project/sglang/pull/48404) 和 [#49455](https://github.com/sgl-project/sglang/pull/49455) 放回同一条工程链路。它们分别体现排障回归、异步正确性、兼容性与 CI、性能归因，刚好回答“这些流程究竟在防什么”。
-
-<p align="center">
-  <a href="/assets/posts/cicd-issue-pr-review-overview.svg" target="_blank" rel="noopener noreferrer" title="放大查看从 Issue 到部署的工程协作总览">
-    <img src="/assets/posts/cicd-issue-pr-review-overview.svg" width="100%" alt="系统总览：Issue和复现，Branch与Commit，Pull Request，随后CI自动检查和人工Code Review并行反馈，满足条件后Merge，继续Release/CD和生产运行观测">
-  </a>
-</p>
-
-*图 1 · 一次代码变更的完整生命周期。CI 和 Review 是并行反馈环；Merge 之后仍有 Release、部署和运行时验证。*
 
 ## 01 · 先把 Git、GitHub、Issue、Commit、PR 分清
 
@@ -93,6 +85,15 @@ git push -u origin fix/my-bug
 后续代码改动可以继续 Commit 并 Push 到同一个分支，PR 会自动更新。实际仓库可能对 Commit 或 PR Title 有专门规范：**Git 本身不规定必须使用某一种标题格式；仓库的 CI/Lint 或 Maintainer 可以要求。**
 
 ## 02 · Issue 与 PR：先把问题描述清楚，再谈修复
+
+<p align="center">
+  <a href="/assets/posts/cicd-issue-pr-review-overview.svg" target="_blank" rel="noopener noreferrer" title="放大查看从 Issue 到部署的工程协作总览">
+    <img src="/assets/posts/cicd-issue-pr-review-overview.svg" width="100%" alt="系统总览：Issue和复现，Branch与Commit，Pull Request，随后CI自动检查和人工Code Review并行反馈，满足条件后Merge，继续Release/CD和生产运行观测">
+  </a>
+</p>
+
+*图 1 · 一次代码变更的完整生命周期。CI 和 Review 是并行反馈环；Merge 之后仍有 Release、部署和运行时验证。*
+
 
 Issue 更像一份公开、可讨论的问题记录。一份能让维护者开始行动的 Bug Issue，通常至少要让人知道：**预期行为、实际行为、复现环境、触发步骤，以及影响范围**。如果没有把握根因，可以明确标注假设，不必先下一个错误结论。
 
