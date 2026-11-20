@@ -13,6 +13,12 @@ tags: [SGLang, DP, Performance, Debugging]
 
 修复对应 [SGLang PR #35721](https://github.com/sgl-project/sglang/pull/35721)，原始问题见 [Issue #35241](https://github.com/sgl-project/sglang/issues/35241)。这篇文章记录的不只是一个修复，更是一次**从吞吐症状追到控制面状态，再用受控实验确认因果**的过程。
 
+<p align="center">
+  <img src="/assets/posts/dp-serving-lifecycle.svg" width="100%" alt="用户请求与生成健康检查经过 TokenizerManager、DPC、Scheduler 和 Model Runner 的完整路由链路">
+</p>
+
+*系统总览 · 一次请求从 TokenizerManager 经 DPC、Scheduler 到 Model Runner；异常发生在执行之前的路由控制面。*
+
 ## 01 · 一个看起来不像 Bug 的性能问题
 
 测试环境是 DeepSeek-V4-Pro、8×B300，使用 TP8/DP8、DP Attention、MegaMoE 与 PrefillDelayer。工作负载固定为 **60k 输入 / 1 输出、C16、160 个请求**，主要用于观察 Prefill 处理能力。
@@ -50,11 +56,9 @@ Client / Generation-Health
       Client
 ~~~
 
-<p align="center">
-  <img src="/assets/posts/dp-serving-lifecycle.svg" width="100%" alt="用户请求与生成健康检查经过 TokenizerManager、DPC、Scheduler 和 Model Runner 的完整路由链路">
-</p>
 
-**这张图体现了两个相互独立的边界**：DPC 负责把请求路由到某个 DP rank，Scheduler 决定该 rank 上的请求如何组织、何时进入执行。一个请求在 Scheduler 被跳过，不代表它先前经过 DPC 时就没有产生副作用。
+
+**文首的系统图体现了两个相互独立的边界**：DPC 负责把请求路由到某个 DP rank，Scheduler 决定该 rank 上的请求如何组织、何时进入执行。一个请求在 Scheduler 被跳过，不代表它先前经过 DPC 时就没有产生副作用。
 
 正常的用户生成请求在进入 GPU 后，还会沿着 Model Runner、Logits/Sampling、Scheduler、Detokenizer 等路径把新 Token 逐步交回请求管理层。**本次修复位于 TokenizerManager 之后、Scheduler 之前的路由控制面**，而不是 Transformer 的 Attention、LM Head 或采样后处理。
 
