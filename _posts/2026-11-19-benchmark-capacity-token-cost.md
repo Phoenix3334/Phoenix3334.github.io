@@ -88,6 +88,8 @@ tags: [LLM-Inference, Benchmarking, Capacity-Planning, TCO, Performance-Engineer
 
 这里可以把 **Goodput** 引进来。普通吞吐说的是服务每秒处理多少工作，而 Goodput 关心的是**在约定 TTFT、TPOT 和成功率下真正完成了多少合格请求**。[DistServe（OSDI 2024）](https://www.usenix.org/conference/osdi24/presentation/zhong-yinmin)正是用 TTFT/TPOT 共同约束下的单位 GPU 最大请求率来评价分离式部署：在论文实验条件下，相对对照系统最多可服务 **7.4 倍请求量**，或在相同请求规模下满足更加严格的 SLO。这个结果不能直接理解成现实运营成本下降 7.4 倍，但它解释了为什么 **Goodput 比无约束峰值更适合作为容量规划的分母**。
 
+另一个很直观的例子是 [Sarathi-Serve（OSDI 2024）](https://www.usenix.org/conference/osdi24/presentation/agrawal)：通过 Chunked Prefill 和减少 Decode 被 Prefill 打断的问题，在其 Mistral-7B、单卡 A100 的对比中，满足尾延迟限制时的服务容量相对 vLLM 最高提高 **2.6 倍**。它和 vLLM 的 KV 管理、DistServe 的 P/D 分离一样，都是通过**系统级调度或资源组织**改变 SLO 下能交付的请求量，而不仅是加速某个算子。
+
 所以从压测数据到部署规模，中间至少隔着两个问题：**这条吞吐曲线的哪些点真正满足服务要求？这些达标工作点在完整 P/D 系统里还成立吗？**
 
 ## 3. 为什么系统层面要看瓶颈，而不是只盯一个 Kernel
@@ -277,7 +279,7 @@ s：这部分自身的加速倍数
 
 到这一步，计价方式就不只是市场策略了，也反映了模型执行的资源结构。**Prefill** 要并行处理输入上下文，往往受到计算吞吐、Attention 访存和长上下文规模的共同影响；**Decode** 持续生成新 Token，权重读取、KV Cache 带宽和批内并发更加关键。这里的“Prefill 偏计算、Decode 偏访存”只是常见工作点的近似，不能当作所有模型和 Batch 下的定律。
 
-再加上请求长度分布不同，统一的 Token 单价会掩盖大量差异。读一次很长的材料、只生成几句摘要，和给出短提示后连续生成上千 Token，对 P/D 的资源占用截然不同；而重复前缀命中缓存后，逻辑输入 Token 依旧存在，却不需要把相同 Prefill 重新做一遍。因此对外 API 通常至少区分**未命中输入、缓存命中输入、输出**，某些平台还单独设置缓存写入和批量优惠。
+再加上请求长度分布不同，统一的 Token 单价会掩盖大量差异。Splitwise 论文分析的生产 Trace 中，一类 Coding 负载的输入中位长度约 **1,500 Token**、输出中位长度约 **13 Token**；另一类 Conversation 负载的输入中位长度约 **1,020 Token**、输出中位长度约 **129 Token**。这些分布恰好说明了：读一次很长的材料、只生成几句摘要，和给出短提示后连续生成上千 Token，对 P/D 的资源占用截然不同；而重复前缀命中缓存后，逻辑输入 Token 依旧存在，却不需要把相同 Prefill 重新做一遍。因此对外 API 通常至少区分**未命中输入、缓存命中输入、输出**，某些平台还单独设置缓存写入和批量优惠。
 
 举三个截至 **2026 年 11 月 20 日**可以在官方文档查到的价格例子（美元 / 百万 Token，**仅用于说明计价结构，并非原 950DT 报告采用的 GLM/DS 模型价格**）：
 
@@ -361,6 +363,7 @@ PPT 正文写的是每月按 **26 个工作日**测算。我检查内嵌的经�
 
 ## 参考资料
 
+- [Sarathi-Serve · Taming Throughput–Latency Tradeoff in LLM Inference（OSDI 2024）](https://www.usenix.org/conference/osdi24/presentation/agrawal)
 - [vLLM · Efficient Memory Management for Large Language Model Serving with PagedAttention（SOSP 2023）](https://arxiv.org/abs/2309.06180)
 - [Splitwise · Efficient Generative LLM Inference Using Phase Splitting（ISCA 2024）](https://www.microsoft.com/en-us/research/publication/splitwise-efficient-generative-llm-inference-using-phase-splitting/)
 - [DistServe · Disaggregating Prefill and Decoding for Goodput-optimized LLM Serving（OSDI 2024）](https://www.usenix.org/conference/osdi24/presentation/zhong-yinmin)
