@@ -52,8 +52,7 @@ text{font-family:Inter,"PingFang SC","Microsoft YaHei","Noto Sans CJK SC",Arial,
 <text x="57" y="543" class="lane" >03  /  合并、交付与运行</text>
 <path d="M329 466 V497 H321 V557" fill="none" stroke="#167E71" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arr)"/>
 <path d="M870 466 V497 H321" fill="none" stroke="#B65739" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" />
-<text x="530" y="488" class="tiny" fill="#167E71">通过后合并</text>
-<text x="736" y="488" class="tiny" fill="#B65739">不通过 → 修改并重验</text>
+<text x="554" y="488" class="tiny" fill="#167E71">CI 与 Review 均通过 → Merge</text>
 <rect x="42" y="558" width="338" height="102" rx="11" fill="#FFFFFF" stroke="#D6DEDA" stroke-width="1.45"/><rect x="42" y="558" width="338" height="5" rx="2.5" fill="#B65739"/>
  <text x="61" y="587" class="step" >05</text><text x="61" y="627" class="cardTitle" >Merge</text>
  <text x="61" y="641" class="caption" >合入目标分支</text>
