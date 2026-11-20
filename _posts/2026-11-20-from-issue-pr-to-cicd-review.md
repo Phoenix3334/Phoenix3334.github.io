@@ -11,6 +11,16 @@ tags: [Git, GitHub, CI-CD, Code-Review, Testing, Open-Source, AI-Engineering, SG
 
 但真正参与过几次 SGLang 的 PR 后，会发现这些动作背后是**不同层次的工程保障**：Issue 帮团队共享问题；Git 记录变更；PR 让变更进入公共审查；自动化 CI 保证一组预先定义的检查能重复执行；测试提供可复核的行为证据；Code Review 检查测试之外的设计与风险；Merge、Release 和生产部署又是另外几个关口。
 
+**先说结论：** 一次工程改动并不是“写完代码 → 提 PR → CI 变绿”就结束，而是从 Issue 和复现开始，经过 Git 分支与 Commit、PR、自动化测试和人工 Review，再到 Merge、Release、部署、监控与回滚。**CI 通过只证明配置好的检查通过，不能替代真实 GPU/E2E 验证；Merge 也不等于代码已经上线。** 无论实现由谁编写、是否使用 AI 辅助，提交者都需要解释修改机制、验证证据、风险边界，并对交付负责。
+
+<p align="center">
+  <a href="/assets/posts/cicd-summary.svg" target="_blank" rel="noopener noreferrer" title="打开Git CI/CD总结图">
+    <img src="/assets/posts/cicd-summary.svg" width="100%" alt="Git CI/CD 文章总览，突出核心机制与因果关系">
+  </a>
+</p>
+
+*图 0 · 从 Issue 到上线的关键关口；CI 与 Review 是不同的保障。*
+
 尤其在 AI 可以很快生成代码的今天，难点越来越不是“能否写出一段实现”，而是**能否解释这段代码为什么正确、如何验证、适用边界是什么，以及出了问题由谁负责**。
 
 这篇文章先从基础说起，再把真实的 [SGLang PR #35721](https://github.com/sgl-project/sglang/pull/35721)、[#47614](https://github.com/sgl-project/sglang/pull/47614)、[#48404](https://github.com/sgl-project/sglang/pull/48404) 和 [#49455](https://github.com/sgl-project/sglang/pull/49455) 放回同一条工程链路。它们分别体现排障回归、异步正确性、兼容性与 CI、性能归因，刚好回答“这些流程究竟在防什么”。
