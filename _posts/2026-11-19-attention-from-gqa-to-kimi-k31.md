@@ -25,6 +25,8 @@ tags: [Attention, GQA, MLA, DSA, KDA, Kimi-K3, Inference-Systems]
 
 ## 1. 从一次 Decode 开始：为什么会有 KV Cache？
 
+理解 Attention 前，可以先把它放回完整 Transformer Block：典型 Pre-Norm Decoder 层会执行 **x ← x + Attention(Norm(x))**，再执行 **x ← x + FFN(Norm(x))**。前者决定当前 Token 如何读取历史，后者对得到的 Token 表示做逐位置非线性变换。**MLA 主要优化的是前者的 KV 表示，不是把 FFN 变成 MoE。** FFN 如何由 SwiGLU 发展到 DeepSeekMoE、EP 与 MegaMoE，单独放在 [《从 FFN、SwiGLU 到 DeepSeekMoE》](/blog/2026/11/20/ffn-swiglu-deepseekmoe-megamoe/) 里详细讲解。
+
 传统 Self-Attention 可以写成：
 
 ~~~text
