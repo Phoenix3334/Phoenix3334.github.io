@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="520" viewBox="0 0 1200 520" role="img" aria-labelledby="svgTitle svgDesc"><title id="svgTitle">Test evidence levels from local checks to performance benchmarks</title><desc id="svgDesc">Compare lint/static, unit, integration, GPU end-to-end, and benchmark evidence. Test type must match claim; code changes must be verified for the same commit SHA and target runtime.</desc>
+<defs><style>
+text{font-family:Inter,"PingFang SC","Microsoft YaHei","Noto Sans CJK SC",Arial,sans-serif}
+.kicker{font-size:12px;font-weight:750;letter-spacing:1.6px;fill:#177F77}
+.title{font-size:29px;font-weight:750;fill:#273944}
+.subtitle{font-size:14px;fill:#617681}
+.lane{font-size:13px;font-weight:700;letter-spacing:.5px;fill:#617681}
+.heading{font-size:19px;font-weight:740;fill:#273944}
+.body{font-size:16px;fill:#273944}
+.small{font-size:13px;fill:#617681}
+.tag{font-size:13px;font-weight:700;fill:#177F77}
+.warn{font-size:15px;font-weight:700;fill:#B76040}
+.metric{font-size:25px;font-weight:750;fill:#273944}
+</style>
+<marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M1 1 L8 5 L1 9" fill="none" stroke="#82999C" stroke-width="1.6"/></marker>
+</defs><rect width="1200" height="520" fill="#FBFAF7"/><text x="40" y="39" class="kicker" >TESTING  /  MATCH EVIDENCE TO CLAIM</text>
+<text x="40" y="79" class="title" >从“代码能跑”到“行为可信”：测试分层</text>
+<text x="40" y="106" class="subtitle" >不同验证回答不同问题；跑过一个测试，不等于证明了全部性质。</text>
+<rect x="40" y="137" width="1118" height="58" rx="11" fill="#FFFFFF" stroke="#D7DDDA" stroke-width="1.4"/>
+<rect x="40" y="137" width="7" height="58" rx="3" fill="#3066B2"/>
+<text x="60" y="173" class="heading" >Lint / Static</text><text x="383" y="172" class="body" >格式、类型、基础规范</text><text x="850" y="172" class="small" >最快，发现低层次问题</text><rect x="40" y="203" width="1118" height="58" rx="11" fill="#FFFFFF" stroke="#D7DDDA" stroke-width="1.4"/>
+<rect x="40" y="203" width="7" height="58" rx="3" fill="#177F77"/>
+<text x="60" y="239" class="heading" >Unit Test</text><text x="383" y="238" class="body" >函数边界、状态不变量</text><text x="850" y="238" class="small" >能够快速回归</text><rect x="40" y="269" width="1118" height="58" rx="11" fill="#FFFFFF" stroke="#D7DDDA" stroke-width="1.4"/>
+<rect x="40" y="269" width="7" height="58" rx="3" fill="#177F77"/>
+<text x="60" y="305" class="heading" >Integration / GPU</text><text x="383" y="304" class="body" >真实模块、流与显存行为</text><text x="850" y="304" class="small" >验证组合路径</text><rect x="40" y="335" width="1118" height="58" rx="11" fill="#FFFFFF" stroke="#D7DDDA" stroke-width="1.4"/>
+<rect x="40" y="335" width="7" height="58" rx="3" fill="#B76040"/>
+<text x="60" y="371" class="heading" >E2E / Regression</text><text x="383" y="370" class="body" >业务输出、故障重现</text><text x="850" y="370" class="small" >验证症状是否消失</text><rect x="40" y="401" width="1118" height="58" rx="11" fill="#FFFFFF" stroke="#D7DDDA" stroke-width="1.4"/>
+<rect x="40" y="401" width="7" height="58" rx="3" fill="#B76040"/>
+<text x="60" y="437" class="heading" >Benchmark / SLO</text><text x="383" y="436" class="body" >时延、吞吐、正确性</text><text x="850" y="436" class="small" >有对照才可归因</text>
+<rect x="40" y="478" width="1118" height="33" rx="6" fill="#EEF3FC" stroke="#C3D7EA" stroke-width="1.4"/>
+<text x="58" y="500" class="small" >证据必须绑定：代码 SHA × 软件版本 × 硬件/环境 × 负载 × 判据；不要把历史 CI 当作当前 Head 的完整证明。</text>
+</svg>
