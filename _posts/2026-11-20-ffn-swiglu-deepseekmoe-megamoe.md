@@ -1,17 +1,19 @@
 ---
 layout: post
-title: "从 FFN、SwiGLU 到 DeepSeekMoE：专家怎么选，GPU 又怎样执行？"
+title: "从 SwiGLU 到 MoE 推理系统：细粒度、LatentMoE、负载均衡与 MegaMoE"
 date: 2026-11-20 15:30:00 +0800
 lang: zh-CN
-summary: "从 Transformer Block 与 SwiGLU 原理出发，手写 Top-k MoE，解释 DeepSeekMoE 的细粒度和共享专家、路由负载均衡，再连接 SGLang EP 与 MegaMoE 的通信计算重叠。"
-tags: [Transformer, FFN, SwiGLU, MoE, DeepSeekMoE, EP, MegaMoE, SGLang]
+summary: "从 Dense FFN 与 DeepSeekMoE 的细粒度专家，走到 LatentMoE/Kimi K3、训练期路由平衡和推理期 EPLB；以 DSV4-Pro、V4.1-Flash 的模拟均衡和 MegaMoE 实验解释为何平衡度不能直接等同吞吐。"
+tags: [MoE, DeepSeekMoE, LatentMoE, EPLB, MegaMoE, FFN, SGLang, Inference-Systems]
 ---
 
-之前写 [Attention 演进](/blog/2026/11/19/attention-from-gqa-to-kimi-k31/) 时，我一直在追问 KV Cache 如何存储、读取和更新。但 Transformer Block 并不只有 Attention：拿常见的 Decoder-only、Pre-Norm 架构来说，另一半就是 **FFN（Feed-Forward Network）**。我们讨论 DeepSeekMoE、Expert Parallelism、MegaMoE 时，主要是在改这一半。
+从前面的 [Attention / MLA / KDA](/blog/2026/11/19/attention-from-gqa-to-kimi-k31/) 继续往下看，Transformer Block 的另一半是 **FFN**。学习 CS336 时，只要理解 SwiGLU 的 Gate、Up、Down 三个 Linear，就可以写出 Dense FFN；但到了 DeepSeek、Kimi 这类万亿级 MoE，为什么还要把 FFN 切成细粒度 Expert、设置 Shared Expert、把 Routed 路径压到 Latent Space，然后让不同 GPU 之间做 EP Dispatch？
 
-最近读的 CS336 Transformer 学习材料，从 Linear、SwiGLU 一步步实现了 Dense Transformer Block。它很适合用来建立原理，但**附件本身没有实现 MLA 或 MoE**。所以下面先沿用它的 FFN 数学结构，再结合 DeepSeekMoE、DeepSeek-V3 的论文和 DeepGEMM/SGLang 公开实现解释专家与执行后端。
+更重要的是，模型侧的路由负载均衡与推理 Runtime 的 EPLB 经常被混为一谈。我在 DeepSeek-V4-Pro、V4.1-Flash 上做过 EPLB / MegaMoE 受控对照，一开始看到专家负载不均，直觉就是「把 Expert 放得更均匀就会更快」。实测却多出一道必须解释的因果链：**Logical Expert 的 Token 计数 → Physical Rank 的负载 → Grouped GEMM 的有效工作量与通信 → 真正的关键路径 → 端到端 TPS。**
 
-**先说结论：** **Attention** 负责让 Token 读取上下文；**SwiGLU FFN** 用 Gate、Up、Down 三组矩阵分别变换每个 Token；**MoE** 将一个 Dense FFN 换成多个 Expert，Router 只为每个 Token 选择少数专家；**DeepSeekMoE** 用细粒度 Routed Expert 和始终激活的 Shared Expert 改进专家分工；**EP** 决定专家存在哪张 GPU、Token 怎样跨 Rank 发送；**MegaMoE** 则把跨卡 Dispatch、专家 GEMM、激活和 Combine 协同组织，尽量重叠 NVLink 通信与 Tensor Core 计算。**MoE 是模型结构，EP 是分布式并行策略，MegaMoE 是 Kernel 执行后端。**
+**先说结论：** Fine-Grained MoE 把一个大专家的中间维拆细，增加专家组合；Shared Expert 让公共变换不再由 Routed Expert 重复学习；LatentMoE 把 Routed Expert 的输入/输出通路压到低维空间，直接降低 EP 数据载荷与专家权重宽度；Aux Loss、Aux-Free Bias 和 Quantile Balancing 改变**如何选择 Logical Expert**；EPLB 则在 Router 之后改变 **Logical Expert → Physical Rank/Replica** 的映射；MegaMoE 决定**如何融合执行这些专家计算与通信**。
+
+本文会一直追到真实压测。V4.1-Flash 的实测对照里，**模拟均衡 +1.01%、离线冻结 r0 +0.95%、离线 r32 + Dynamic Dispatch +1.02%**，三者几乎触到同一个约 +1% 的参考收益区间；而**在线 EPLB −3.77%**。这不代表「均衡没有价值」，而是说明我们必须先测出**在当前 Kernel / 负载下，改善负载实际能兑现多少端到端收益**。模拟均衡是诊断用的参考对照，不能直接部署替换真实 Router。
 
 <p align="center">
   <a href="/assets/posts/ffn-moe-execution-layers.svg" target="_blank" rel="noopener noreferrer" title="查看 FFN MoE EP MegaMoE 总览">
@@ -157,73 +159,250 @@ assert moe(x).shape == x.shape
 
 这段代码表达 Router → Token-to-Expert Dispatch → Expert FFN → Combine 的**数学语义**；实际生产系统不会这样逐 Expert 循环 Python 和使用大量动态索引，而是使用 Packing、Grouped GEMM、All-to-All 及融合执行。这里的简化权重归一化和 Shared Expert 也**不是对 DeepSeek-V3 的精确复刻**。
 
-## 4. DeepSeekMoE 的两个关键设计
 
-[DeepSeekMoE（ACL 2024）](https://aclanthology.org/2024.acl-long.70/)强调的是两项结构优化。
+## 4. DeepSeekMoE：细粒度解决知识杂糅，Shared Expert 解决公共知识冗余
 
-**Fine-Grained Expert Segmentation（细粒度专家）**：把原先较大的专家切分为更多、更小的专家，配合每 Token 激活更多个小专家。可以用 N→mN、K→mK 的概念理解：在保持总/激活参数预算大致可比的前提下，允许更多样的专家组合，让 Routed Expert 更有机会形成专长。这不是单纯地“专家数翻倍，计算也翻倍”。
+[DeepSeekMoE（ACL 2024）](https://aclanthology.org/2024.acl-long.70/)给出两项互补的架构设计，分别针对粗粒度 MoE 的 **Knowledge Hybridity**（一个大专家被迫混学太多无关模式）和 **Knowledge Redundancy**（多个 Expert 重复学共同功能）。
 
-**Shared Expert Isolation（共享专家隔离）**：有些通用知识没必要由所有 Routed Expert 重复学习，因此安排一部分始终激活的 Shared Expert；其他由 Router 挑选的 Routed Expert 则负责更有区别的特征。常见结构可以记成：
+### 4.1 Fine-Grained Expert Segmentation 到底切了哪一维？
+
+切的是 **FFN 的中间维度 M**，不是 Token 的 Hidden Size H，也不是把一个 Token 的向量切成几段送给不同 Rank。
 
 ~~~text
-x
-├── Shared Expert（固定参与）
-│      └── shared_output
-└── Router → Routed Top-k Experts
-       └── weighted_combine → routed_output
+粗粒度：
+    N 个 Routed Experts × 每个 Expert 的中间维 M
+    每个 Token 激活 K 个 Expert
 
-y = shared_output + routed_output
+细粒度（粒度倍数 m）：
+    mN 个 Routed Experts × 每个 Expert 的中间维 M/m
+    每个 Token 激活 mK 个 Expert
 ~~~
 
-Shared Expert 会消耗每 Token 的计算预算，并不是免费的。它与 Routed Expert 的参数分布、具体个数取决于模型版本。
-
-### 为什么 Expert 负载均衡会成为推理系统问题？
-
-Token 路由很容易不均匀：有些 Expert 吸收大量 Token，另一些 Expert 几乎没工作。即使同一张卡的 GEMM 很快，**跨 Rank 的 Expert Skew**也会拉长同步等待，降低实际可服务吞吐。
-
-[DeepSeek-V3 Technical Report](https://arxiv.org/abs/2412.19437)引入 **Auxiliary-Loss-Free Load Balancing**：为每个专家的 Affinity Score 加动态 Bias 来影响 **Top-k 选择**，但计算实际路由权重时仍使用未加 Bias 的原始 Affinity。这样可以调节专家选择，而不直接把负载修正量混进模型输出权重。
-
-另外要区分：训练期的 Routing Bias、推理期单窗口 Expert Skew，与系统层的 **EPLB（Expert Parallel Load Balancing）** 并不是一回事。EPLB 可以涉及 Expert Replica 或重排的运行时策略，需要按具体版本分析。
-
-## 5. MoE、EP、MegaMoE 是三个不同层次
-
-| 层次 | 决定什么 | 关键组成 |
-| --- | --- | --- |
-| **MoE** | 哪些 Expert 被激活，输出怎样组合 | Router、Shared/Routed、Top-k |
-| **EP** | Expert 存在哪个 GPU Rank，Token 如何交换 | Dispatch、All-to-All、Combine |
-| **执行后端** | GEMM、通信、同步能否融合和重叠 | Grouped GEMM、MegaMoE |
-
-当多个 Expert 分布在不同 GPU 上时，执行通常会经历：
+对标准 SwiGLU FFN 而言，单个 Expert 的权重规模近似为 **3HM**。在这个理想化切分下：
 
 ~~~text
-Token hidden states
-  → Router / Top-k Expert IDs
-  → Pack / Dispatch
-  → EP All-to-All
-  → 本地 Expert GEMM 1 → SwiGLU → GEMM 2
-  → EP All-to-All / Combine
+总 Expert 参数：
+  (mN) × 3H × (M/m) = N × 3HM
+
+每 Token 激活的 Expert 参数与主要 FLOPs：
+  (mK) × 3H × (M/m) = K × 3HM
+~~~
+
+因此**同参数预算、同激活 GEMM 计算预算**下，专家的组合能力增加。例如 16 个 Expert 选 2 个，可能的 Expert 组合为 C(16,2)=120；若分成 64 个小 Expert、选 8 个，则有 C(64,8)=4,426,165,368 种组合。**组合数变大不自动代表模型精度提升**，但给了 Router 更细的选择粒度。
+
+这也带来推理开销：一个 Token 激活更多 Expert，意味着更多逻辑 Dispatch/Combine 项、分组 GEMM 段和潜在 Padding。因此我们不能只从模型精度看细粒度，还要问 **M-block、Token Packing、EP 消息数能否处理得足够高效**。
+
+### 4.2 Shared Expert Isolation：为什么要永远运行一条 FFN？
+
+把少数 Expert 变成始终激活的 Shared Expert，使它们学习公共变换，Routed Expert 负责差异化部分。
+
+~~~text
+x ──→ Shared Expert（不参与 Routed Top-k）────────────┐
+│                                                     +
+└──→ Router → Top-k Routed Expert → Weighted Combine ┘
+                              ↓
+                         MoE 输出 [N,H]
+~~~
+
+Shared Expert 不是免费的：它每个 Token 都运行，也占用显存。在 EP 部署时，共享专家可以采用与 Routed Expert 不同的 TP/复制策略。**EPLB 通常主要处理 Routed Expert 的物理放置，并不等于会把 Shared Expert 一起迁移。**
+
+DeepSeekMoE 的细粒度和 Shared Expert 两项设计是模型结构；到了 DeepSeek-V3、V4 系列，还会叠加路由分组、负载平衡和具体的 EP Runtime。
+
+进一步阅读：[LLM Infra Atlas · 细粒度 MoE](https://llm-infra-atlas.github.io/moe/02_fine_grained/)。
+
+
+## 5. LatentMoE：细粒度以后，为什么还要压缩 Hidden Width？
+
+**Fine-Grained MoE 切小了 Expert 的中间维 M，但 EP Dispatch 发送的仍可能是满宽 Hidden State H。** 如果 Top-k 增大，逻辑通信量仍然大致随 **Token 数 × Top-k × H × Dtype** 增加。单 Expert 的权重读取也依赖 H × M。
+
+LatentMoE 换了切分维度：保留 Router 对满宽 H 的判断，把 Routed 路径投影成 **较窄的 Latent 向量 ℓ（ℓ < H）**，在低维空间 Dispatch、执行 Experts、Combine，再升维回 H。Shared Expert 仍可在满宽空间独立处理。
+
+~~~text
+Token x [H]
+ ├── Router(x [H]) ───────────→ Top-k Expert IDs
+ ├── Shared Expert(x [H]) ────→ y_shared [H]
+ └── Routed Path：
+       W_down: [H] → [ℓ]
+       EP Dispatch: 发送 [ℓ] 而不是 [H]
+       Routed Expert GEMM：ℓ → M → ℓ
+       Weighted Combine: [ℓ]
+       W_up: [ℓ] → [H]
+                ↓
+     y = y_shared + y_routed
+~~~
+
+所以要明确区分 **MLA 压的是 Attention 的 KV 历史表示**，而 **LatentMoE 压的是 FFN/MoE 当前 Token 的 Routed 数据通路**。这两个 Latent 不是同一个缓存。
+
+### Kimi K3 的 Stable LatentMoE
+
+根据 [LatentMoE 与 Kimi K3 的结构整理](https://llm-infra-atlas.github.io/moe/03_latentmoe/)，K3 采用 **H=7168、Routed Latent ℓ=3584、896 Routed Experts、Top-16、2 个 Shared Experts**。相对于发送 7168 维 Hidden State，Routed Dispatch 的每份 Token 载荷宽度减半；与此同时 Top-k 更大，所以完整 EP 通信是否下降，必须把两者相乘评估。
+
+K3 在 Routed Combine 后、升维前加入 RMSNorm，并通过改进的激活和路由平衡机制稳定训练；这里不要把它写成「DeepSeekMoE 直接等于 K3」，它属于后续的模型架构扩展。
+
+| 维度 | Fine-Grained MoE | LatentMoE |
+| --- | --- | --- |
+| 切分对象 | Expert 中间维 M | Routed 输入/输出宽 H → ℓ |
+| 主要目的 | 提升专家专门化与组合多样性 | 降低 Routed 权重与 EP 每份 Token 载荷 |
+| 是否直接降低 A2A 单份 Hidden 宽度 | 否 | 是 |
+| 主要代价 | 更多 Expert/Top-k、Padding | Down/Up Projection、低维瓶颈与稳定性约束 |
+
+## 6. 路由负载均衡：Aux、Aux-Free、QB，与 EPLB 不在一个控制层
+
+先把两个映射分开：
+
+~~~text
+模型算法：Token → Top-k Logical Experts
+                  [路由选择：Aux / Aux-Free / QB]
+
+系统执行：Logical Expert → Physical Expert Slots / GPU Ranks
+                  [放置：EPLB / Replica / Dispatch]
+~~~
+
+训练时，Router 可能发生 Expert Collapse（大量 Token 挤到少数 Expert）。常见算法侧思路如下：
+
+| 方案 | 调整的对象 | 基本思想 | 特别注意 |
+| --- | --- | --- | --- |
+| Auxiliary Loss | 训练目标函数 | 对不均匀的专家分配增加惩罚 | 系数太大可能与语言模型主目标冲突 |
+| Aux-Loss-Free Bias | Expert 的路由选择偏置 | 对过载 Expert 减小 Bias、欠载 Expert 增大 Bias | Bias 影响 Top-k 选择，实际加权仍按原始 Affinity |
+| Quantile Balancing（QB） | Expert 选择 Bias 的求解方式 | 用分位数/阈值估计目标负载，不仅固定步长修正 | 当前 Batch 的更新不能反过来作弊地重选当前 Batch |
+
+DeepSeek-V3 的 Aux-Free Bias 是训练期的负载调节机制，不意味着任意推理输入都会均匀；Kimi K3 将 QB 用于更大规模 Expert 结构。它们主要处理「给 Token 选谁」。
+
+相比之下，**EPLB（Expert Parallel Load Balancing）**在已有 Router 结果上重新考虑「这些 Expert 放到哪张卡，热点是否需要 Replica」。它可以做工作负载感知的冻结布局、为热点建立冗余副本，也可以在线根据一段时间的记录重新放置。只调整放置而不改 Logical Top-k，应保持模型计算语义；但 Replica 和同步需要额外的显存、通信及管理成本。
+
+Runtime 最终不是优化路由 CV 这个数字，而是优化更贴近关键路径的目标：
+
+~~~text
+每个 Rank 的执行成本
+ ≈ 本地 Expert GEMM / M-block / Padding
+   + 不可重叠的 EP 通信
+   + 等待其他 Rank 的同步成本
+
+Step 关键路径 ≈ max(各 Rank 的实际完成时间)
+                 + 额外的 Runtime 开销
+~~~
+
+因此 **Expert Count CV 下降不等于每个 Rank 的 MegaMoE 时延一定同比下降**；比如某些 Kernel 会按固定 Token Cap/形状 Padding，或者通信已经被计算隐藏，减小 Count 并不改变真正执行的 Tile 数。
+
+进一步阅读：[LLM Infra Atlas · 算法侧负载均衡](https://llm-infra-atlas.github.io/moe/04_load_balancing/) 和 [系统侧 EPLB/LPLB](https://llm-infra-atlas.github.io/parallel/05_ep/04_system_load_balancing/)。
+
+## 7. MoE、EP、MegaMoE：从 Token 选择到 GPU 执行路径
+
+| 层次 | 核心决策 | 直接影响 |
+| --- | --- | --- |
+| MoE 结构 | Shared/Routed、细粒度、Latent Width | 模型容量、激活算力、每 Token 载荷 |
+| Router 平衡 | Aux-Free、QB、Group-Limited Routing | Logical Expert 激活分布 |
+| EP/EPLB | Expert Placement、Replica、Dispatch | 物理 Rank 负载、通信模式 |
+| GPU Kernel | Grouped GEMM、MegaMoE、同步与 Padding | 真实的 Kernel 关键路径 |
+
+典型推理的 Routed 路径：
+
+~~~text
+Token Hidden State
+  → Router Top-k
+  → Expert ID + Token Pack
+  → EP Dispatch / All-to-All
+  → Expert GEMM1 → SwiGLU → GEMM2
+  → Combine / All-to-All
   → 恢复原 Token 顺序
 ~~~
 
-这条路径里最容易被忽略的开销是动态 Token 分布、无效 Padding、大量小 GEMM、网络交换和 Rank 等待。**EP 可以减少单卡需要持有的专家权重，但通信并不免费。**
+[DeepGEMM MegaMoE](https://github.com/deepseek-ai/DeepGEMM) 把部分 Dispatch、专家 GEMM、激活和 Combine 协同组织为融合执行路径，让 NVLink 通信与 Tensor Core 计算尽可能重叠。**这不是没有 EP 通信，而是要判断多少通信仍暴露在关键路径上。**
 
-[DeepGEMM 的 MegaMoE](https://github.com/deepseek-ai/DeepGEMM)进一步将 Dispatch、Linear1、SwiGLU、Linear2 和 Combine 协同组织到融合的 GPU 执行路径，通过相应硬件能力让 **NVLink 通信与 Tensor Core 计算重叠**。它不是 MoE 的另一种数学公式，也不是简单多开两个 CUDA Stream。能隐藏多少通信，仍受网络带宽、Expert Skew、Kernel 资源占用和工作负载限制。
+在部分实现里，固定形状、Rank 级 Barrier 和 Padding 能够提升 Kernel 可调度性，却也可能让物理负载均衡的收益弱于原始 Token 数的不均衡程度。接下来两轮实验正是为了验证这一层。
 
-对比 H200 与 B300 时要格外留意：[SGLang DeepSeek-V4 Recipe](https://github.com/sgl-project/sglang/blob/main/docs/cookbook/autoregressive/DeepSeek/DeepSeek-V4.mdx) 区分了 Blackwell 的 W4A8/W4A4 路径与 Hopper 的独立全 FP8 实验路径。不能仅凭功能名称就假设不同 GPU 运行相同 Kernel 或得到相同收益。
 
-之前的 [《H200/B300、昇腾 910B、鲲鹏 920：数据搬运如何协同？》](/blog/2026/11/20/gpu-npu-cpu-inference-systems/) 从 TMA、MTE、NVLink 等硬件路径解释 MegaMoE；这一篇主要从 **FFN/Router/Expert 的模型层级**解释它。两者可以互相对照。
+## 8. DSV4-Pro：激进在线 EPLB 为什么显著负优化？
 
-## 6. 回到 SGLang：局部 Kernel 快不等于 E2E 吞吐高
+先看较早的一轮 V4-Pro Prefill 主导压测（ShareGPT 实际输入、60K/1、C16），把 **Placement / Replica / 在线更新 / Dispatch Backend** 作为独立实验轴。曾在模拟不均衡请求里看到明显的 Expert Skew，但这还不是收益结论。
 
-MoE 的运行时至少涉及三个需要区分的性能问题。
+在 **REBALANCE_ITERS=10** 的受控矩阵里：
 
-首先是 **计算问题**：Expert GEMM 的 Shape、Batch 与量化精度决定 GEMM 的效率。其次是 **通信问题**：All-to-All、Token Packing、网络和 Expert 数据布局是否位于关键路径。最后是 **调度问题**：Router 的 Expert 分布是否引起 Rank 不均衡，是否使实际有效 Batch 小于预期。
+| 实验 Arm | Input TPS（tok/s） | 说明 |
+| --- | ---: | --- |
+| EPLB off + Static Dispatch + r8 | **93,683** | 本轮相对较快的对照 |
+| EPLB on + Dynamic Dispatch + r8 | 87,029 | 在线重排，吞吐下降 |
+| EPLB on + Dynamic Dispatch + r0 | 55,219 | 重排开销显著 |
+| EPLB on + Static Dispatch + r0 | 54,669 | 同样受在线重排拖累 |
+| EPLB on + Static Dispatch + r8 | 52,651 | 本轮最慢 |
 
-我在 [DCP A2A Send Packing PR #49455](https://github.com/sgl-project/sglang/pull/49455) 中将过多的细粒度 Program 改为按 Peer Block 聚合。在 B300 的 nsys 结果里，目标 Kernel 单层从 **15.0 μs 降到 6.9 μs**，相关每步累计耗时由 **0.361 ms 降到 0.164 ms**，但端到端吞吐仍在噪声内。它不是 MegaMoE 的实现，而是说明同一条系统规律：**Kernel 加速倍数不能直接等同于整个服务加速倍数**。
+96 个正式请求的窗口里触发了 **120–176 次 Rebalance**，Nsight 观察到权重重分发相关 NCCL SendRecv 占到约 **8–10%**。因此这组数据说明的是**过于激进的在线重排很贵**，而不是「所有 EPLB、所有 Static Placement 都会下降约 40%」。
 
-在 MoE 场景里，要判断 MegaMoE、EPLB 和传统 A2A 的收益，应当固定模型、量化、TP/EP/DP、Batch、请求长度及 SLO，再检查 nsys 的通信时间是否被真实重叠、Expert 是否均衡，最后看端到端的 Output TPS、TPOT 与稳定性。
+另一轮更低重排频率、冻结布局的实验中，**无冗余 Static Placement 可以由 94,437 提升到 96,711 tok/s（+2.41%）**，且与更均衡的 M-block / MegaMoE 工作形态相符。两轮的负载、重排频率和实验口径不同，不应把这个 +2.41% 与上表直接相减。
 
-## 7. 回到整条 Transformer Forward
+这一层验证了一个重要区分：
+
+- **更合理的 Expert Placement 本身可以有收益。**
+- **在线维持这套 Placement 的代价可能比收益大得多。**
+- **额外 Replica 会改变 Grouped GEMM 形状和显存预算，并不是免费平衡。**
+
+## 9. DSV4.1-Flash：模拟均衡、r32 和真实端到端收益上限
+
+后续 V4.1-Flash 一轮的对照更完整：先用模拟均衡作为**诊断参考**，再测试可以维持原模型语义的 Frozen Placement / Replica，以及在线重排。
+
+**同口径：真实 ShareGPT 64K 输入、C32、TP4 / EP4 / Attention DP4、MegaMoE，v0.5.22-patch-deepinfer。**
+
+<p align="center">
+  <a href="/assets/posts/moe-v41-real-eplb-ceiling.svg" target="_blank" rel="noopener noreferrer" title="查看 V4.1 EPLB 模拟均衡与 r32 对照">
+    <img src="/assets/posts/moe-v41-real-eplb-ceiling.svg" width="100%" loading="lazy" alt="DSV4.1-Flash 真实64K C32下模拟均衡约+1.01%、冻结r0约+0.95%、冻结动态Dispatch r32约+1.02%、在线EPLB约-3.77%的对比">
+  </a>
+</p>
+
+*图 3 · 模拟均衡是诊断参考对照，不是保证结果精度不变的部署策略，也不构成严格数学上界。*
+
+| 方案 | Input TPS | vs Baseline |
+| --- | ---: | ---: |
+| Trivial Placement（基线） | **369,749** | — |
+| 模拟均衡（诊断对照） | **373,467** | **+1.01%** |
+| Offline Frozen Placement，r0 | 373,261 | +0.95% |
+| Offline Placement + Dynamic Dispatch，r32 | **373,524** | **+1.02%** |
+| Online EPLB | 355,815 | **−3.77%** |
+
+最值得讨论的不是表格最大的数字，而是**对照之间的差距**：
+
+1. **Frozen r0 与模拟均衡非常接近。** 这说明在这轮真实负载下，不增加冗余专家的放置优化，已经能兑现大部分可观察的平衡收益。
+2. **r32 比模拟均衡仅高 57 tok/s（约 0.015%）。** 这属于测量波动尺度，不能据此宣称 32 个副本超越了模拟均衡理论上限，更不能说 r32 带来额外 1% 的收益。
+3. **更均衡未继续提高吞吐。** 有记录的 Rank 负载 CV 从基线 **0.149**，降到 Frozen r0 的 **0.047**、r32 Dynamic Dispatch 的 **0.033**；Count 分布变好，但额外 E2E 收益没有随之扩大。
+4. **Online EPLB 的 −3.77% 是另一种开销。** 动态 Dispatch Backend 与周期性在线重分配 Expert 权重不是一件事，不能因为 r32 使用 Dynamic Dispatch 就把它归入 Online EPLB。
+
+同一主题早期使用 **随机 Token** 的测试里，离线冻结布局曾出现 **+6.5%～8.2%**，在线优化也曾有 +1%～4%；但换成真实 64K 输入后，冻结通常只剩约 +1%，在线反而负优化。**输入分布改变了 Expert Activation，Random Token 的路由不均衡不能直接当成真实服务负载。**
+
+Nsight 结果帮助解释差异：该轮 MegaMoE 相关 Kernel 占被观测 Kernel 时间约 **47.1%**，冻结布局使局部 MegaMoE 时间改善约 1.9%～2.9%，对应的 E2E 收益却只有约 1%；在线方案额外引入多次小调用/迁移操作，侵占了本来要优化的路径。
+
+**因此更准确的工程结论是：在这轮 V4.1-Flash 真实 64K/C32/MegaMoE 口径下，模拟均衡显示的可观察 E2E 收益空间只有约 1%；离线冻结无冗余方案已经基本触顶，r32 没有值得追求的额外增益，而在线重排的运行时成本明显超过所得收益。** 这是该工作点的实测结论，不可外推到所有 Batch、Decode 或其他模型。
+
+## 10. 把 Kernel、EPLB 与 End-to-End TPS 重新串起来
+
+我们已经有了完整的因果链：
+
+~~~text
+模型结构（Expert Size、Latent Width、Top-k、Shared）
+    ↓
+Router 产生 Logical Expert 激活分布
+    ↓
+EPLB / Replica / Placement 决定 Physical Expert 排布
+    ↓
+Token Packing + EP All-to-All
+    ↓
+Grouped GEMM / MegaMoE 的 M-block、Padding 与通信重叠
+    ↓
+真正不可隐藏的 Step Critical Path
+    ↓
+TTFT / TPOT / End-to-End Input TPS、Output TPS 与 SLO
+~~~
+
+因此应该区分四种完全不同的「上限」：
+
+| 对照 | 它回答什么 | 它不能证明什么 |
+| --- | --- | --- |
+| Simulated Balance | 路由均衡后，当前系统可能改变多少执行时间 | 不能证明是真实可部署、语义等价的优化 |
+| Frozen Placement | 不持续迁移权重时，物理放置可以兑现多少收益 | 不能证明换流量后仍然适用 |
+| r8 / r32 Replica | 用额外权重显存能否分担热点 | 不能因为 CV 更低就推断 E2E 必定更好 |
+| Online EPLB | 动态适应减去迁移与调度成本后的净收益 | 不能与 Dynamic Dispatch Backend 混为一谈 |
+
+另外，在 [DCP Pack A2A Send 的公开 PR #49455](https://github.com/sgl-project/sglang/pull/49455) 中，目标 Kernel 的单层时间从 15.0 μs 降到 6.9 μs，但完整服务的吞吐收益仍在波动内。它并非 MegaMoE/EPLB，但再次验证同一个判断：**局部优化只有落在未被隐藏的关键路径上，才能按相应比例转化为端到端收益**。
+
+## 11. 回到整条 Transformer Forward
 
 ~~~text
 Transformer Block
@@ -239,7 +418,7 @@ Transformer Block
 整个系统还要由 Scheduler、显存管理、通信与并行拓扑保证正确交付。
 ~~~
 
-**Attention 决定怎么利用上下文，FFN/MoE 决定当前 Token 如何经过模型权重，而推理 Runtime 决定这些计算是否能高效、正确地跑在硬件上。** 理解这一条链，才能把模型架构变化和 SGLang 的 EP、DCP、MegaMoE 以及端到端压测放进同一个系统视角。
+**Attention 决定怎样访问历史，MoE 决定如何选择当前 Token 要经过的专家，而推理 Runtime 决定这些专家如何映射到物理硬件并在通信与计算之间找到真正的关键路径。** V4.1 的模拟均衡实验提醒我们：不能只问「Expert 有没有被分平」，还必须回答「已经平到哪里，剩下还有多少可兑现的 E2E 收益，以及为此要付出多少运行时成本」。
 
 ---
 
@@ -253,3 +432,9 @@ Transformer Block
 - [SGLang · DeepSeek V4 推理 Recipe](https://github.com/sgl-project/sglang/blob/main/docs/cookbook/autoregressive/DeepSeek/DeepSeek-V4.mdx)
 - [Attention 演进：MHA/MLA/KDA/DSA](/blog/2026/11/19/attention-from-gqa-to-kimi-k31/)
 - [GPU/NPU/CPU 数据搬运与 MegaMoE](/blog/2026/11/20/gpu-npu-cpu-inference-systems/)
+
+- [LLM Infra Atlas · 细粒度 MoE / Shared Experts](https://llm-infra-atlas.github.io/moe/02_fine_grained/)
+- [LLM Infra Atlas · LatentMoE / Kimi K3 Stable LatentMoE](https://llm-infra-atlas.github.io/moe/03_latentmoe/)
+- [LLM Infra Atlas · Auxiliary / Aux-Free / Quantile Balancing](https://llm-infra-atlas.github.io/moe/04_load_balancing/)
+- [LLM Infra Atlas · 系统侧 EPLB、LPLB](https://llm-infra-atlas.github.io/parallel/05_ep/04_system_load_balancing/)
+- [LatentMoE · 论文](https://arxiv.org/abs/2601.18089)
