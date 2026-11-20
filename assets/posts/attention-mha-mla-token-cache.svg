@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="706" viewBox="0 0 1200 706" role="img" aria-labelledby="figTitle figDesc">
+<title id="figTitle">MHA 与 MLA：每个 Token、每层需要缓存多少个元素</title>
+<desc id="figDesc">同一口径下，32 个 Q Heads、head_dim 为128。MHA 每 Head 的 K 和 V 分别128维，总计32乘256等于8192个缓存元素；DeepSeek风格 MLA 各 Head 共享512维的压缩KV latent及64维的解耦RoPE Key，总计576个元素。比值8192除以576约14.22倍，只代表KV元素数量，不代表端到端加速。</desc>
+<defs><style>
+text{font-family:Inter,"PingFang SC","Microsoft YaHei","Noto Sans CJK SC",Arial,sans-serif}
+.kicker{fill:#178173;font-size:13px;font-weight:750;letter-spacing:1.4px}
+.title{fill:#263A45;font-size:29px;font-weight:750}
+.sub{fill:#697B84;font-size:16px}
+.cardTitle{fill:#263A45;font-size:22px;font-weight:750}
+.label{fill:#263A45;font-size:18px;font-weight:660}
+.value{font-size:27px;font-weight:750}
+.small{fill:#697B84;font-size:15px}
+.bigLabel{fill:#263A45;font-size:19px;font-weight:720}
+.foot{fill:#647783;font-size:15px}
+</style></defs>
+<rect width="1200" height="706" fill="#FBFAF7"/>
+<text x="42" y="39" class="kicker">KV CACHE / PER TOKEN · PER LAYER</text>
+<text x="42" y="82" class="title">MHA 与 MLA：为什么共享 Latent 能显著压缩 KV？</text>
+<text x="42" y="113" class="sub">统一假设：32 个 Q Head · head_dim = 128 · 对比缓存元素数（非性能实测）</text>
+
+<rect x="42" y="142" width="533" height="302" rx="12" fill="#FFFFFF" stroke="#D9DFDB" stroke-width="1.5"/>
+<rect x="42" y="142" width="533" height="6" rx="3" fill="#2457C5"/>
+<text x="67" y="187" class="cardTitle">MHA · 每个 Head 独立 K/V</text>
+<text x="67" y="212" class="small">展示单个 Head，缓存时需乘以 32</text>
+<rect x="68" y="232" width="293" height="66" rx="8" fill="#EAF2FC" stroke="#C5D6F1" stroke-width="1.4"/>
+<text x="91" y="274" class="label">Key</text><text x="338" y="274" class="label" text-anchor="end">128 维</text>
+<rect x="68" y="307" width="293" height="66" rx="8" fill="#EAF2FC" stroke="#C5D6F1" stroke-width="1.4"/>
+<text x="91" y="349" class="label">Value</text><text x="338" y="349" class="label" text-anchor="end">128 维</text>
+<rect x="394" y="264" width="142" height="75" rx="10" fill="#EDF3FC" stroke="#D0DFF2"/>
+<text x="465" y="301" class="value" text-anchor="middle" fill="#2457C5">× 32</text>
+<text x="465" y="325" class="small" text-anchor="middle">KV Heads</text>
+<text x="68" y="413" class="label">256 × 32 = <tspan fill="#2457C5" font-weight="750">8,192 个元素</tspan></text>
+
+<rect x="625" y="142" width="533" height="302" rx="12" fill="#FFFFFF" stroke="#D9DFDB" stroke-width="1.5"/>
+<rect x="625" y="142" width="533" height="6" rx="3" fill="#178173"/>
+<text x="650" y="187" class="cardTitle">MLA · 所有 Head 共享一份</text>
+<text x="650" y="212" class="small">以 DeepSeek 风格的 512 + 64 维配置为例</text>
+<rect x="651" y="232" width="481" height="66" rx="8" fill="#E9F5EF" stroke="#CEE5DA" stroke-width="1.4"/>
+<text x="674" y="274" class="label">压缩 KV Latent</text><text x="1107" y="274" class="label" text-anchor="end">512 维</text>
+<rect x="651" y="307" width="481" height="66" rx="8" fill="#E9F5EF" stroke="#CEE5DA" stroke-width="1.4"/>
+<text x="674" y="349" class="label">解耦 RoPE Key</text><text x="1107" y="349" class="label" text-anchor="end">64 维</text>
+<text x="651" y="413" class="label">512 + 64 = <tspan fill="#178173" font-weight="750">576 个元素</tspan></text>
+
+<text x="42" y="486" class="bigLabel">同一尺度比较：每 Token · 每层</text>
+<text x="42" y="532" class="label">MHA</text>
+<rect x="171" y="510" width="861" height="33" rx="6" fill="#EBEFEC"/>
+<rect x="171" y="510" width="861" height="33" rx="6" fill="#A9CAE9"/>
+<text x="1051" y="532" class="label" fill="#2457C5">8,192</text>
+<text x="42" y="597" class="label">MLA</text>
+<rect x="171" y="574" width="861" height="33" rx="6" fill="#EBEFEC"/>
+<rect x="171" y="574" width="60.54" height="33" rx="6" fill="#68B7A0"/>
+<text x="249" y="597" class="label" fill="#178173">576</text>
+
+<rect x="42" y="631" width="1116" height="48" rx="9" fill="#FFFFFF" stroke="#D9DFDB"/>
+<text x="67" y="662" class="bigLabel">MHA / MLA ≈ <tspan fill="#178173">14.22 倍</tspan></text>
+<text x="448" y="662" class="foot">仅比较常驻 KV 元素数；相同 dtype 下存储字节数同比减少。</text>
+</svg>
