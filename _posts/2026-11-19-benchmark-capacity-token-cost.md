@@ -3,7 +3,7 @@ layout: post
 title: "从推理压测到 TCO：一套算力到底值不值得用？"
 date: 2026-11-19 13:00:00 +0800
 lang: zh-CN
-summary: "借中国移动 950DT 的真实测算，串起 NVIDIA 的吞吐—延迟—成本方法和 Databricks 的性能工程实践：从一张压测表读懂有效产能、系统瓶颈、五年成本、Token 经营与硬件选型。"
+summary: "借中国移动 950DT 的实测与 Excel 测算，串起 NVIDIA、Databricks、vLLM、Splitwise、DistServe：从 SLO 有效产能、单位百万 Token 成本、冗余系数，到 P/D 分离和 API 输入输出计价。"
 tags: [LLM-Inference, Benchmarking, Capacity-Planning, TCO, Performance-Engineering]
 ---
 
@@ -11,7 +11,7 @@ tags: [LLM-Inference, Benchmarking, Capacity-Planning, TCO, Performance-Engineer
 
 可当问题从“这个配置跑得怎么样”变成“要为一项业务部署多少资源”时，仅靠这些数字就不够了。**同样一台机器，长输入和短输入的吞吐不是一回事；同样的吞吐，延迟不达标就不能拿来承接业务；即使服务能力相同，设备与运营成本不同，最终每百万 Token 的成本也不同。**
 
-之前读 [Databricks 的 LLM Inference Performance Engineering](https://www.databricks.com/blog/llm-inference-performance-engineering-best-practices)，我更多在理解 *为什么* 一个推理服务会快或慢：Prefill、Decode、Batching、显存带宽与并行策略怎样影响请求表现。再看 [NVIDIA 的推理 Benchmark 与 TCO 分析](https://developer.nvidia.com/blog/llm-inference-benchmarking-how-much-does-your-llm-inference-cost/)，问题就从性能归因延伸到了资源规划：**先在延迟约束内找出可交付的吞吐，再计算达到目标流量需要多少实例，最后才谈成本。**
+之前读 [Databricks 的 LLM Inference Performance Engineering](https://www.databricks.com/blog/llm-inference-performance-engineering-best-practices)，我更多在理解 *为什么* 一个推理服务会快或慢：Prefill、Decode、Batching、显存带宽与并行策略怎样影响请求表现。再看 [NVIDIA 的推理 Benchmark 与 TCO 分析](https://developer.nvidia.com/blog/llm-inference-benchmarking-how-much-does-your-llm-inference-cost/)，问题就从性能归因延伸到了资源规划：**先在延迟约束内找出可交付的吞吐，再计算达到目标流量需要多少实例，最后才谈成本。** 再往后读 vLLM、Splitwise 和 DistServe，才发现 KV 管理、P/D 分离与 Goodput 并不是孤立的推理技巧：它们最终都会改变同一张容量与成本账单。
 
 最近看到 [中国移动《昇腾 950DT 性能测试与经营效益测算汇报》（2026 年 10 月）](https://docs.google.com/presentation/d/1yk4OFibvnZds7NOBnzHpepghzqd-MmUv/edit?slide=id.p1#slide=id.p1)，这条链路恰好有了一组具体数字：报告从实测 TPS 出发，估算集群 Token 产能，对比几代硬件的投入产出，又通过 PPTX 内嵌的 Excel 算出五年成本、裸金属报价和 Token 运营收入。
 
@@ -86,6 +86,8 @@ tags: [LLM-Inference, Benchmarking, Capacity-Planning, TCO, Performance-Engineer
 
 实际部署往往还采用 P/D 分离。此时单独测 Prefill 的 input tok/s 和 Decode 的 output tok/s，可以帮助估计各自需要多少实例，但不能把两种不同口径的 TPS 直接相除得出资源配比。需要先依据业务的输入/输出长度分布把它们换算为可承接的请求速率，再加入 KV 传输、排队、显存和冗余，最后以端到端测试确认 TTFT/TPOT 仍然满足要求。
 
+这里可以把 **Goodput** 引进来。普通吞吐说的是服务每秒处理多少工作，而 Goodput 关心的是**在约定 TTFT、TPOT 和成功率下真正完成了多少合格请求**。[DistServe（OSDI 2024）](https://www.usenix.org/conference/osdi24/presentation/zhong-yinmin)正是用 TTFT/TPOT 共同约束下的单位 GPU 最大请求率来评价分离式部署：在论文实验条件下，相对对照系统最多可服务 **7.4 倍请求量**，或在相同请求规模下满足更加严格的 SLO。这个结果不能直接理解成现实运营成本下降 7.4 倍，但它解释了为什么 **Goodput 比无约束峰值更适合作为容量规划的分母**。
+
 所以从压测数据到部署规模，中间至少隔着两个问题：**这条吞吐曲线的哪些点真正满足服务要求？这些达标工作点在完整 P/D 系统里还成立吗？**
 
 ## 3. 为什么系统层面要看瓶颈，而不是只盯一个 Kernel
@@ -121,6 +123,8 @@ s：这部分自身的加速倍数
 也并非所有产能问题都来自算子。我在 [《SGLang DP Health：一次没有报错的吞吐退化，根因却在请求路由》](/blog/2026/11/18/dp-health-routing-bug/) 中复盘过一个例子：探活请求干扰了真实用户共用的 DP 路由状态，导致部分 rank 负载失衡、有效 Batch 下降，最终影响吞吐。对应的修复是 [SGLang PR #35721](https://github.com/sgl-project/sglang/pull/35721)。另一个例子是 [《SGLang 异步 PP 静默输出错误：一次跨 CUDA Stream 的生命周期竞态》](/blog/2026/11/18/pp-stream-lifetime-bug/)：通信 Stream 接收的 Tensor 在 Forward Stream 消费前，其显存可能被提前复用，造成静默输出错误，修复见 [PR #47614](https://github.com/sgl-project/sglang/pull/47614)。前者说明**调度状态会影响实际能跑多满**，后者说明**算得再快，结果不正确也不算有效交付**。
 
 把这三个例子放在一起，系统优化的目标就清楚了：**缩短真正的关键路径，维持合理的有效 Batch，并保证请求结果正确。** 只有当这些变化反映在可持续、符合 SLO 的端到端容量上时，下一步的设备成本比较才有意义。
+
+从论文的角度看，[vLLM / PagedAttention（SOSP 2023）](https://arxiv.org/abs/2309.06180)在其评测条件下实现了相对 FasterTransformer、Orca 等基线 **2–4 倍**的吞吐提升，并保持相近时延。其核心不是让每个 GEMM 都快 2–4 倍，而是改善 KV Cache 的内存管理，使更多请求可以稳定组成 Batch。**理论上，固定成本下 Goodput 增加会降低单位请求或 Token 成本；实际降幅仍取决于瓶颈是否转移、冗余、流量与新增开销。** 这是下一节成本模型要解决的事。
 
 ## 4. 11 倍的吞吐从哪里来？系统效率比纸面算力更值得研究
 
@@ -185,6 +189,67 @@ s：这部分自身的加速倍数
 
 这里还可以多算一笔**能耗账**。报告给出的参考值是 950DT 约 **0.28 kWh/百万 Token**、910B 约 **1.47 kWh/百万 Token**，相差约 5.25 倍。基本公式并不神秘：若知道测量窗口内的平均功率 P（kW）、时间 t（小时）和处理的 Token 数 N，则电耗强度为 **P × t ÷ (N / 1,000,000)**。但要特别小心：两者必须采用一致的 Token 统计方式、功率测量边界、模型与 SLO；单凭这张报告的最终数值还不能完成独立的能耗归因。何况电费是 TCO 的一部分，能耗优势不能和月成本摊销不加辨别地相加。
 
+### 从卡时费到每百万 Token 成本，真正的分母是什么？
+
+有了每月建设成本和有效 Token 产能，现在终于能把二者放进同一个式子。如果按实例租赁计费，先令实例每小时费用为 \(R\)，单位时间真正交付的吞吐为 \(Q\)（Token/s），那么最直接的公式是：
+
+\[
+C_{1M}=\frac{R\times10^6}{3600\times Q}
+\]
+
+这里 \(R\) 必须覆盖**计算这个 \(Q\) 所用的全部实例**。如果按单卡吞吐计算，就用单卡费率；如果用一整台 8 卡服务器的吞吐，就应该放入整台服务器的费用，而不能用“单卡价格 ÷ 整机吞吐”。
+
+为了从**理想满载吞吐**推算真实成本，还经常引入一个资源冗余系数 \(\alpha\)：
+
+\[
+C_{1M}^{\mathrm{actual}}\approx
+\frac{R\times10^6}{3600\times Q_{\mathrm{ideal}}}\times\alpha,
+\qquad
+\alpha=\frac{Q_{\mathrm{ideal}}}{Q_{\mathrm{delivered}}}\ge1.
+\]
+
+说白了，设备的钱付了整整一小时，但有效 Token 不一定能持续打满一小时。这里面有几类典型的折损：**峰谷波动**造成空转，**高峰预留和 P/D 资源配比失衡**让部分设备长期吃不满，**请求抢占、重算与失败重试**又消耗了算力却没有对应的成功交付。对照这些问题，资源冗余系数反映的正是“标称产能”到“真实产出”之间的距离。
+
+<p align="center">
+  <img src="/assets/posts/tco-unit-cost-equation.svg" width="100%" loading="lazy" alt="每百万 Token 成本拆解：小时费用除以每秒有效吞吐，乘冗余系数；如吞吐已反映实际空转重算则不能重复扣减">
+</p>
+
+*图 5 · 单位 Token 成本公式。分母的工作负载、SLO、计时边界与分子的成本周期必须一致。*
+
+但千万别把折损算两次：**如果 \(Q\) 已经是包含排队、低利用率、错误重试后按整段计费时间统计的实际平均 Goodput，冗余系数就应取 1。** 只有分母拿的是理论满载或理想达标点时，才需要另外折算空转和冗余。Goodput 既可以用请求/s，也可以按同一个请求长度分布换算成有效 Token/s；混用两种口径也会把成本算错。
+
+就用前面的中国移动数字复算一次，不额外构造一组硬件 Benchmark。GLM5.2 在 **7K/2K** 条件下，单卡总吞吐 **1,882.57 TPS**；按 8 卡服务器算，约为 **15,060.56 Total TPS**。报告中每台服务器的月投资建设成本摊销约 **6.36 万元**。若假定这一个测试点能够在每月 **30 天 × 24 小时**持续维持，则：
+
+~~~text
+理想 30 天 Token 产能
+= 1,882.57 × 8 × 3,600 × 24 × 30
+≈ 390.37 亿个逻辑总 Token
+
+仅建设成本摊销 / 百万总 Token
+= 63,600 元 ÷ (390.37 亿 / 100 万)
+≈ 1.63 元 / 百万 Token
+~~~
+
+如果沿用报告**同一 7K/2K 场景**的 70% 产能利用率作为简单线性假设，\(\alpha=1/0.7\approx1.43\)，该比值会变为 **约 2.33 元 / 百万逻辑总 Token**。
+
+**1.63 元和 2.33 元都不是实际生产结算价，也不是完整 TCO。** 它们只包含报告已有的月建设成本、固定负载的 Total TPS 和不同利用率假设；还没有充分处理长时间稳定性、其他成本项及可售 Token 的区别。但这已经清楚展示了为什么：同样一台设备，压测结果相同，**利用率不同，单位产出成本也会不同**。
+
+### P/D 分离为什么也可能改变成本，而不仅是 TTFT？
+
+如果 Prefill/Decode 的工作形态不同，硬把两阶段塞进相同资源池，就可能出现资源结构不匹配：一边计算单元紧张，另一边的带宽或者显存容量成为瓶颈。分离式部署允许分别选择硬件、并行方式和实例数量，从而把闲置能力变成可用容量。
+
+[Splitwise（ISCA 2024）](https://www.microsoft.com/en-us/research/publication/splitwise-efficient-generative-llm-inference-using-phase-splitting/)在论文工作负载和成本模型下报告：一种配置相对基线实现 **1.4 倍吞吐、同时降低 20% 成本**；另一种配置在相同功率及成本预算下实现 **2.35 倍吞吐**。这是论文特定集群设计的结果，并不等于现实中的任何 P/D 分离都天然省钱。它还引入 KV 状态跨实例传输、网络成本、控制面调度、故障恢复和容量弹性的问题。
+
+因此，P/D 分离优化的不是单一指标，而是整条成本链：
+
+~~~text
+阶段分离 → 更匹配的 P/D 资源配置 → 更高的 SLO 达标产能
+          ↘ KV 传输、网络、运维与空闲池的额外成本
+最终比较：同一工作负载和服务要求下的单位有效成本
+~~~
+
+这个视角也有助于理解为什么某次独立 P/D 压测很漂亮，生产部署仍不一定更便宜：两个资源池的有效负载能否同时饱和，以及多出来的资源和链路开销有多大，都必须进账。
+
 接下来，报告问了一个经营问题：如果把整台服务器作为裸金属出租，月租应该卖多少？
 
 它在约 **6.36 万元/月**建设摊销上，加入约 **0.76 万元**垫资成本、**0.19 万元**人力分摊，以及约 **0.64 万元**目标利润，形成约 **7.95 万元/月**的综合测算口径，再考虑税费得到约 **8.43 万元/台月**的建议含税报价。
@@ -210,6 +275,26 @@ s：这部分自身的加速倍数
 
 整机出租主要看设备月租是否覆盖投入；按 Token 收费，则必须先回答客户实际用什么模型、发什么长度的请求，以及什么时候使用。输出 Token、普通输入 Token、Cache 命中输入 Token 的定价可能不同，不能直接把 Total TPS 乘一个统一价格。
 
+### 为什么 API 要把输入、输出与缓存 Token 分开定价？
+
+到这一步，计价方式就不只是市场策略了，也反映了模型执行的资源结构。**Prefill** 要并行处理输入上下文，往往受到计算吞吐、Attention 访存和长上下文规模的共同影响；**Decode** 持续生成新 Token，权重读取、KV Cache 带宽和批内并发更加关键。这里的“Prefill 偏计算、Decode 偏访存”只是常见工作点的近似，不能当作所有模型和 Batch 下的定律。
+
+再加上请求长度分布不同，统一的 Token 单价会掩盖大量差异。读一次很长的材料、只生成几句摘要，和给出短提示后连续生成上千 Token，对 P/D 的资源占用截然不同；而重复前缀命中缓存后，逻辑输入 Token 依旧存在，却不需要把相同 Prefill 重新做一遍。因此对外 API 通常至少区分**未命中输入、缓存命中输入、输出**，某些平台还单独设置缓存写入和批量优惠。
+
+举三个截至 **2026 年 11 月 20 日**可以在官方文档查到的价格例子（美元 / 百万 Token，**仅用于说明计价结构，并非原 950DT 报告采用的 GLM/DS 模型价格**）：
+
+| API 模型与计价情景 | 普通输入 | Cache 读取输入 | 输出 |
+| --- | ---: | ---: | ---: |
+| [OpenAI GPT-5.5](https://developers.openai.com/api/docs/models/gpt-5.5) · 标准文本 | $5.00 | $0.50 | $30.00 |
+| [Claude Sonnet 4.5](https://platform.claude.com/docs/en/build-with-claude/prompt-caching) · 基础价/缓存命中 | $3.00 | $0.30 | $15.00 |
+| [DeepSeek Flash](https://api-docs.deepseek.com/quick_start/pricing/) · 峰时价 | $0.30 | $0.006 | $1.20 |
+
+这张表的真正信息不是谁便宜，而是**同一家模型的输入与输出单价可以差好几倍，缓存输入又可能远低于未命中输入**。Claude Sonnet 4.5 的 5 分钟缓存写入价格还按普通输入的 **1.25 倍**计算，提醒我们：缓存读取便宜，不代表创建和维护缓存完全免费。OpenAI 的 GPT-5.5 超过 272K 输入长度时另有更高的长上下文价格分档；DeepSeek 的峰时/闲时价格也不同，闲时按其当前官方定价为峰时的 50%。上述价格随版本和时间变化，应以使用当天官方页面为准。
+
+进一步看，Batch API 把“可延后处理”换成较低的计费价格；错峰定价把需求引导到闲置时间；Prefix Caching 则利用前缀复用降低重复计算。这三种折扣看起来都叫“便宜”，实际上解决的分别是**实时性要求、峰谷利用率与重复计算**。
+
+如果从自建服务的角度估算一条请求的成本，不能仅将整台设备的 Total TPS 和一个平均单价相除。更合理的是分别统计输入未命中量、缓存读取/写入量、输出量，再联系 P/D 的实例成本率、吞吐、KV 驻留和实际到达模式；商业侧的收入计算则按对应计费规则求和。**API 的售价不是提供商的实际成本**，不能拿平台输出 Token 价格直接和自己的理想满载计算成本相减，把差值叫作“利润”。
+
 为此，报告把一天的流量分为 **7 小时忙时（90% 使用率）**和 **11 小时闲时（60% 使用率）**。对于 GLM5.2，它还把四类负载按 **30% / 30% / 30% / 10%** 加权；DeepSeek V4 Pro 则采用另一组业务比例 **40% / 30% / 10% / 20%**。四类场景分别是 7K/2K、16K/2K、128K/1K 和带 90% Cache 命中的 128K/1K。
 
 有了每类请求的吞吐、时间占比和价格，Excel 才能估算月产能与收入。报告中的结果是：
@@ -232,7 +317,7 @@ PPT 正文写的是每月按 **26 个工作日**测算。我检查内嵌的经�
   <img src="/assets/posts/tco-excel-period-mismatch.svg" width="100%" loading="lazy" alt="中国移动PPT内嵌Excel按30天计算月Token产能，却按26天计算月收入；统一26天后GLM与DeepSeek对应282.28亿和308.92亿Token">
 </p>
 
-*图 5 · Excel 公式复核：先统一时间周期，再讨论单位 Token 经济性。*
+*图 6 · Excel 公式复核：先统一时间周期，再讨论单位 Token 经济性。*
 
 这意味着不能直接用“10.07 万元 ÷ 325.70 亿 Token”倒推平均收费单价，因为分子和分母并不是同一个核算周期。如果仅把产能公式统一成 26 天，其他参数保持原样，那么 GLM5.2、DeepSeek 对应的 Token 产能分别约为 **282.28 亿**和 **308.92 亿**。这是依据报告公式进行的周期统一复算，**不是新的硬件实测**。
 
@@ -278,6 +363,12 @@ PPT 正文写的是每月按 **26 个工作日**测算。我检查内嵌的经�
 
 ## 参考资料
 
+- [vLLM · Efficient Memory Management for Large Language Model Serving with PagedAttention（SOSP 2023）](https://arxiv.org/abs/2309.06180)
+- [Splitwise · Efficient Generative LLM Inference Using Phase Splitting（ISCA 2024）](https://www.microsoft.com/en-us/research/publication/splitwise-efficient-generative-llm-inference-using-phase-splitting/)
+- [DistServe · Disaggregating Prefill and Decoding for Goodput-optimized LLM Serving（OSDI 2024）](https://www.usenix.org/conference/osdi24/presentation/zhong-yinmin)
+- [OpenAI · GPT-5.5 API 定价（2026-11-20 查阅）](https://developers.openai.com/api/docs/models/gpt-5.5)
+- [Anthropic · Claude Prompt Caching 定价（2026-11-20 查阅）](https://platform.claude.com/docs/en/build-with-claude/prompt-caching)
+- [DeepSeek · Models & Pricing（2026-11-20 查阅）](https://api-docs.deepseek.com/quick_start/pricing/)
 - [华为 · 昇腾 950 超节点真机发布与架构规格（2026 年 7 月）](https://www.huawei.com/cn/news/2026/7/atlas-950-superpod)
 - [华为云 · Atlas 950 SuperPoD / 昇腾 950DT 规格](https://support.huaweicloud.com/resmgmt-modelarts/resmgmt-a5_0002.html)
 - [中国移动超节点集采公示相关报道（2026 年 10 月）](https://finance.sina.com.cn/roll/2026-10-29/doc-iniwwpnu6095322.shtml)
