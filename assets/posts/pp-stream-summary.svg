@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="556" viewBox="0 0 1200 556" role="img" aria-labelledby="title desc"><title id="title">异步 PP：顺序正确，还要防止显存提前复用</title><desc id="desc">Event / Wait 管执行依赖；record_stream 管内存生命周期</desc>
+<defs><style>text{font-family:Inter,"PingFang SC","Microsoft YaHei","Noto Sans CJK SC",Arial,sans-serif}
+.title{font-size:28px;font-weight:750;fill:#263A45}.subtitle{font-size:16px;fill:#667985}
+.kicker{font-size:13px;letter-spacing:1.2px;font-weight:750;fill:#168273}
+.heading{font-size:21px;font-weight:730;fill:#263A45}.body{font-size:17px;fill:#263A45}
+.small{font-size:15px;fill:#667985}.tag{font-size:18px;font-weight:730}
+.emphasis{font-size:18px;font-weight:740;fill:#263A45}</style>
+<marker id="arrow" markerWidth="9" markerHeight="9" refX="8" refY="4.5" viewBox="0 0 9 9" orient="auto"><path d="M1 1 L8 4.5 L1 8" stroke="#8197A2" stroke-width="1.5" fill="none"/></marker></defs>
+<rect x="0" y="0" width="1200" height="556" rx="0" fill="#FBFAF7" stroke="#FBFAF7" stroke-width="1.5"/>
+<text x="40" y="38" class="kicker" >AT A GLANCE  /  系统总览</text><text x="40" y="83" class="title" >异步 PP：顺序正确，还要防止显存提前复用</text>
+<text x="40" y="117" class="subtitle" >Event / Wait 管执行依赖；record_stream 管内存生命周期</text>
+<path d="M40 138 H1160" stroke="#D7DDDA" stroke-width="1.2"/>
+
+<text x="42" y="175" class="heading" >跨 Stream 消费同一块显存</text>
+<rect x="42" y="196" width="1116" height="221" rx="10" fill="#FFFFFF" stroke="#D7DDDA" stroke-width="1.5"/>
+<text x="65" y="244" class="emphasis" fill="#2457C5">Comm Stream</text>
+<rect x="300" y="216" width="245" height="65" rx="10" fill="#ECF2FB" stroke="#ECF2FB" stroke-width="1.5"/><text x="422.5" y="254.5" class="tag" text-anchor="middle" fill="#2457C5">接收 Hidden States</text>
+<path d="M546 248 L605 248" stroke="#8197A2" stroke-width="2.3" fill="none" marker-end="url(#arrow)"/>
+<rect x="617" y="216" width="178" height="65" rx="10" fill="#ECF2FB" stroke="#ECF2FB" stroke-width="1.5"/><text x="706" y="254.5" class="tag" text-anchor="middle" fill="#2457C5">记录 Event</text>
+<path d="M706 282 L706 317" stroke="#8197A2" stroke-width="2.3" fill="none" marker-end="url(#arrow)"/>
+<text x="65" y="350" class="emphasis" fill="#168273">Forward Stream</text>
+<rect x="617" y="323" width="178" height="65" rx="10" fill="#EAF5F0" stroke="#EAF5F0" stroke-width="1.5"/><text x="706" y="361.5" class="tag" text-anchor="middle" fill="#168273">等待 Event</text>
+<path d="M795 356 L856 356" stroke="#8197A2" stroke-width="2.3" fill="none" marker-end="url(#arrow)"/>
+<rect x="866" y="323" width="265" height="65" rx="10" fill="#EAF5F0" stroke="#EAF5F0" stroke-width="1.5"/><text x="998.5" y="361.5" class="tag" text-anchor="middle" fill="#168273">读取 / 计算 Tensor</text>
+<rect x="42" y="440" width="510" height="64" rx="10" fill="#ECF2FB" stroke="#ECF2FB" stroke-width="1.5"/><text x="297" y="478" class="tag" text-anchor="middle" fill="#2457C5">Event / Wait：控制执行顺序</text>
+<rect x="579" y="440" width="579" height="64" rx="10" fill="#FCF0E9" stroke="#FCF0E9" stroke-width="1.5"/><text x="868.5" y="478" class="tag" text-anchor="middle" fill="#B45D3C">record_stream：保护显存生命周期</text>
+<text x="43" y="535" class="small" >CPU 返回不等于 GPU 消费完成；Allocator 必须知道这块显存仍在被使用。</text>
+</svg>
