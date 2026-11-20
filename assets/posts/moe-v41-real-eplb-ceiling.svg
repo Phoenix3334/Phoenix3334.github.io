@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="620" viewBox="0 0 1200 620" role="img" aria-labelledby="title desc">
+<title id="title">V4.1-Flash real 64K C32 EPLB: measured gains relative to baseline</title>
+<desc id="desc">At the same real ShareGPT 64K C32 workload, baseline 369749 input tokens per second; simulated balanced 373467 plus 1.01%; frozen r0 373261 plus 0.95%; offline placement with dynamic dispatch and 32 replicas 373524 plus 1.02%; online EPLB 355815 minus 3.77%. The simulated route is a reference control, not a deployable routing strategy.</desc>
+<rect width="1200" height="620" fill="#FBFAF7"/>
+<g font-family="Inter,PingFang SC,Microsoft YaHei,sans-serif">
+<text x="45" y="45" fill="#168171" font-size="14" font-weight="750" letter-spacing="1.3">EPLB / DEEPSEEK V4.1-FLASH · REAL 64K, C32</text>
+<text x="45" y="91" fill="#253943" font-size="29" font-weight="750">模拟均衡给出了约 1% 的参考收益空间</text>
+<text x="45" y="123" fill="#687A84" font-size="16">r32 与模拟均衡 TPS 几乎重合；在线 EPLB 的运行时开销抵消了收益。</text>
+<rect x="45" y="153" width="1110" height="357" rx="12" fill="#FFFFFF" stroke="#D9DFDC" stroke-width="1.3"/>
+<line x1="560" y1="187" x2="560" y2="476" stroke="#9AA9AD" stroke-width="2" stroke-dasharray="6 6"/>
+<text x="560" y="179" fill="#667982" font-size="15" text-anchor="middle">0% 基线</text>
+<text x="1150" y="179" fill="#667982" font-size="15" text-anchor="end">相对基线变化</text><text x="65" y="214" fill="#253943" font-size="16" font-weight="590">Online EPLB</text>
+<rect x="145.3" y="191" width="414.7" height="28" rx="4" fill="#B95A3A"/>
+<circle cx="145.3" cy="205" r="6.7" fill="#B95A3A" stroke="white" stroke-width="2"/>
+<text x="712" y="213" fill="#253943" font-size="18" font-weight="760">-3.77%</text>
+<text x="862" y="213" fill="#667982" font-size="16">355,815 tok/s</text><text x="65" y="275" fill="#253943" font-size="16" font-weight="590">Trivial baseline</text>
+<rect x="560" y="252" width="4" height="28" rx="4" fill="#9BA9AF"/>
+<circle cx="560" cy="266" r="6.7" fill="#9BA9AF" stroke="white" stroke-width="2"/>
+<text x="712" y="274" fill="#253943" font-size="18" font-weight="760">0.00%</text>
+<text x="862" y="274" fill="#667982" font-size="16">369,749 tok/s</text><text x="65" y="336" fill="#253943" font-size="16" font-weight="590">Frozen placement, r0</text>
+<rect x="560" y="313" width="104.5" height="28" rx="4" fill="#2457C5"/>
+<circle cx="664.5" cy="327" r="6.7" fill="#2457C5" stroke="white" stroke-width="2"/>
+<text x="712" y="335" fill="#253943" font-size="18" font-weight="760">+0.95%</text>
+<text x="862" y="335" fill="#667982" font-size="16">373,261 tok/s</text><text x="65" y="397" fill="#253943" font-size="16" font-weight="590">Simulated balance</text>
+<rect x="560" y="374" width="111.10000000000002" height="28" rx="4" fill="#168171"/>
+<circle cx="671.1" cy="388" r="6.7" fill="#168171" stroke="white" stroke-width="2"/>
+<text x="712" y="396" fill="#253943" font-size="18" font-weight="760">+1.01%</text>
+<text x="862" y="396" fill="#667982" font-size="16">373,467 tok/s</text><text x="65" y="458" fill="#253943" font-size="16" font-weight="590">Frozen + dynamic dispatch, r32</text>
+<rect x="560" y="435" width="112.20000000000005" height="28" rx="4" fill="#168171"/>
+<circle cx="672.2" cy="449" r="6.7" fill="#168171" stroke="white" stroke-width="2"/>
+<text x="712" y="457" fill="#253943" font-size="18" font-weight="760">+1.02%</text>
+<text x="862" y="457" fill="#667982" font-size="16">373,524 tok/s</text><rect x="45" y="528" width="1110" height="63" rx="10" fill="#E9F5EF" stroke="#D5E6DB"/>
+<text x="66" y="553" fill="#176D62" font-size="18" font-weight="720">r32 vs 模拟均衡：仅相差 57 tok/s（约 0.015%）</text>
+<text x="66" y="578" fill="#687A84" font-size="15">图示为实测相对值；模拟均衡是参考对照，不能当作真实可部署方案或严格数学上界。</text>
+</g></svg>
