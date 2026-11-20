@@ -11,6 +11,8 @@ tags: [LLM-Inference, Benchmarking, Capacity-Planning, TCO, Performance-Engineer
 
 可当问题从“这个配置跑得怎么样”变成“要为一项业务部署多少资源”时，仅靠这些数字就不够了。**同样一台机器，长输入和短输入的吞吐不是一回事；同样的吞吐，延迟不达标就不能拿来承接业务；即使服务能力相同，设备与运营成本不同，最终每百万 Token 的成本也不同。**
 
+**先说结论：** 大模型推理的性价比，不是拿峰值 TPS 除以机器价格。先统一模型、请求长度、Cache 与 TTFT/TPOT 约束，测出正确、稳定且满足 SLO 的有效吞吐（Goodput）；再结合 P/D 配比、峰谷流量和资源冗余，换算真正能交付的 Token；最后把设备、IDC、运维等成本摊成**每百万有效 Token 成本**，如果对外提供 API，还得分别考虑输入、输出、缓存 Token 的价格和实际需求。中国移动的 950DT 报告正好展示了这条测算链：7K/2K 场景下单卡总吞吐 1,882.57 TPS，64 卡满载外推约 104 亿 Token/天，按 70% 利用率约 73 亿；风冷设备五年建设成本约 381.66 万元，月摊销约 6.36 万元。**峰值性能、有效产能、单位成本和经营收入，其实是四笔不同的账**：Kernel 快了不等于服务一定变快，Token 产得多也不代表最后一定赚钱。
+
 之前读 [Databricks 的 LLM Inference Performance Engineering](https://www.databricks.com/blog/llm-inference-performance-engineering-best-practices)，我更多在理解 *为什么* 一个推理服务会快或慢：Prefill、Decode、Batching、显存带宽与并行策略怎样影响请求表现。再看 [NVIDIA 的推理 Benchmark 与 TCO 分析](https://developer.nvidia.com/blog/llm-inference-benchmarking-how-much-does-your-llm-inference-cost/)，问题就从性能归因延伸到了资源规划：**先在延迟约束内找出可交付的吞吐，再计算达到目标流量需要多少实例，最后才谈成本。** 再往后读 vLLM、Splitwise 和 DistServe，才发现 KV 管理、P/D 分离与 Goodput 并不是孤立的推理技巧：它们最终都会改变同一张容量与成本账单。
 
 最近看到 [中国移动《昇腾 950DT 性能测试与经营效益测算汇报》（2026 年 10 月）](https://docs.google.com/presentation/d/1yk4OFibvnZds7NOBnzHpepghzqd-MmUv/edit?slide=id.p1#slide=id.p1)，这条链路恰好有了一组具体数字：报告从实测 TPS 出发，估算集群 Token 产能，对比几代硬件的投入产出，又通过 PPTX 内嵌的 Excel 算出五年成本、裸金属报价和 Token 运营收入。
@@ -27,8 +29,6 @@ tags: [LLM-Inference, Benchmarking, Capacity-Planning, TCO, Performance-Engineer
 </p>
 
 *图 1 · 从 Benchmark 到 SLO 有效产能，再到单位 Token 成本。*
-
-整篇文章围绕这三个环节展开：**先确认性能数据测量了什么，再判断哪些吞吐可以稳定交付，最后把资源规模和运营成本放在统一口径里比较。**
 
 ## 1. 读懂一张压测表：吞吐首先取决于请求长什么样
 
