@@ -11,6 +11,16 @@ tags: [SGLang, Pipeline-Parallelism, CUDA, Correctness]
 
 我在 Kimi-K3、8×B300 的异步 Pipeline Parallel（PP）Decode 场景里遇到过这样的问题。最后发现，模型和算子本身并不是主要原因：**一个在通信 Stream 上接收的 Tensor，随后在 Forward Stream 上消费，却没有把这段异步使用关系正确登记给 CUDA Caching Allocator。**
 
+**先说结论：** 异步 PP 为了重叠通信与计算，让接收 Hidden States 和后续 Forward 运行在不同 CUDA Stream 上。但 CPU 提交操作后，GPU 不一定已经消费完 Tensor；如果 Caching Allocator 不知道它仍在另一条 Stream 上被使用，就可能提前复用显存，造成没有 Crash 的静默输出错误。**Event/Wait 负责生产者与消费者的执行顺序，`record_stream` 负责显存生命周期，两者不能互相替代。** 这次修复在已覆盖的测试组合中将异常请求降至 0/192；正确性是有效吞吐的前提。
+
+<p align="center">
+  <a href="/assets/posts/pp-stream-summary.svg" target="_blank" rel="noopener noreferrer" title="打开PP Stream总结图">
+    <img src="/assets/posts/pp-stream-summary.svg" width="100%" alt="PP Stream 文章总览，突出核心机制与因果关系">
+  </a>
+</p>
+
+*图 0 · 一眼看懂异步 PP：执行依赖与显存生命周期是两条独立约束。*
+
 修复对应 [SGLang PR #47614](https://github.com/sgl-project/sglang/pull/47614)，问题记录在 [Issue #47613](https://github.com/sgl-project/sglang/issues/47613)。这篇文章主要讲清楚它为什么会发生、如何被定位，以及一个容易混淆的事实：**<code>record_stream</code> 解决的是内存生命周期，不是 Stream 执行顺序。**
 
 <p align="center">
