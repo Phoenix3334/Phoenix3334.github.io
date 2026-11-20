@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="384" viewBox="0 0 1200 384" role="img" aria-labelledby="title desc">
+<title id="title">单位 Token 成本：费用、产能与冗余系数</title>
+<desc id="desc">浅色简洁示意。每百万 Token 成本等于周期资源费用，除以周期合格交付的百万 Token 数。若使用理想满载吞吐作分母，则需乘资源冗余系数 alpha；实例费率、有效吞吐、利用率是三个变量，必须防止重复计算损失。</desc>
+<defs><style>
+text{font-family:Inter,"PingFang SC","Microsoft YaHei","Noto Sans CJK SC",Arial,sans-serif}
+.kicker{font-size:14px;font-weight:700;fill:#197F79;letter-spacing:1.4px}
+.heading{font-size:27px;font-weight:700;fill:#253641}
+.label{font-size:19px;font-weight:700;fill:#253641}
+.value{font-size:21px;font-weight:700}
+.small{font-size:15px;fill:#677A83}
+.equation{font-size:22px;font-weight:700;fill:#253641}
+</style></defs>
+<rect width="1200" height="384" fill="#FBFAF7"/>
+<text x="42" y="39" class="kicker" >UNIT ECONOMICS / COST PER MILLION TOKENS</text>
+<text x="42" y="84" class="heading" >把硬件账单摊到真正交付的 Token 上</text>
+<rect x="42" y="119" width="352" height="128" rx="12" fill="#EFF3FA" stroke="#C6D3E8" stroke-width="1.6"/>
+<rect x="424" y="119" width="352" height="128" rx="12" fill="#EBF6F1" stroke="#C7E0D6" stroke-width="1.6"/>
+<rect x="806" y="119" width="352" height="128" rx="12" fill="#F9F0EA" stroke="#E8CFC1" stroke-width="1.6"/>
+<text x="62" y="150" class="label" >资源成本率</text>
+<text x="62" y="190" class="value" fill="#2457C5">元 / 小时</text>
+<text x="62" y="224" class="small" >卡时费或自建 TCO 折算</text>
+<text x="444" y="150" class="label" >有效吞吐</text>
+<text x="444" y="190" class="value" fill="#197F79">Token / 秒</text>
+<text x="444" y="224" class="small" >相同业务与 SLO 下的产出</text>
+<text x="826" y="150" class="label" >冗余系数 α</text>
+<text x="826" y="190" class="value" fill="#B65334">峰谷 · 冗余 · 重算</text>
+<text x="826" y="224" class="small" >理想吞吐与交付量之差</text>
+<text x="400" y="195" class="equation" >÷</text><text x="783" y="195" class="equation" >×</text>
+<path d="M42 285 H1158" stroke="#D5DBD8" stroke-width="1.5"/>
+<text x="57" y="322" class="equation" >元 / 百万 Token = (元 / 小时) ÷ (Token / 秒 × 3600) × 10⁶ × α</text>
+<text x="57" y="354" class="small" >若分母已经是含空转与失败的真实平均有效吞吐，则 α = 1，不能重复扣减。</text>
+</svg>
