@@ -24,7 +24,7 @@
 <path d="M42 378 H1158" stroke="#D7DDDA" stroke-width="1.4"/>
 <text x="42" y="417" class="heading" fill="#168273">修复路径</text>
 <rect x="42" y="439" width="183" height="59" rx="10" fill="#ECF2FB" stroke="#ECF2FB" stroke-width="1.5"/><text x="133.5" y="474.5" class="tag" text-anchor="middle" fill="#2457C5">Health RR 独立</text>
-<rect x="265" y="439" width="206" height="59" rx="10" fill="#EAF5F0" stroke="#EAF5F0" stroke-width="1.5"/><text x="368" y="474.5" class="tag" text-anchor="middle" fill="#168273">用户 RR / LB</text>
+<path d="M245 440 V498" fill="none" stroke="#B7C6C1" stroke-width="1.8" stroke-dasharray="4 6"/><rect x="265" y="439" width="206" height="59" rx="10" fill="#EAF5F0" stroke="#EAF5F0" stroke-width="1.5"/><text x="368" y="474.5" class="tag" text-anchor="middle" fill="#168273">用户 RR / LB</text>
 <path d="M471 470 L540 470" stroke="#8197A2" stroke-width="2.3" fill="none" marker-end="url(#arrow)"/><rect x="552" y="439" width="253" height="59" rx="10" fill="#EAF5F0" stroke="#EAF5F0" stroke-width="1.5"/><text x="678.5" y="474.5" class="tag" text-anchor="middle" fill="#168273">各 Rank 负载均衡</text>
 <path d="M806 470 L870 470" stroke="#8197A2" stroke-width="2.3" fill="none" marker-end="url(#arrow)"/><rect x="880" y="439" width="278" height="59" rx="10" fill="#EAF5F0" stroke="#EAF5F0" stroke-width="1.5"/><text x="1019" y="474.5" class="tag" text-anchor="middle" fill="#168273">有效 Batch 恢复</text>
 <text x="43" y="528" class="small" >探活可以被路由，但不能修改真实用户流量的调度状态。</text>
