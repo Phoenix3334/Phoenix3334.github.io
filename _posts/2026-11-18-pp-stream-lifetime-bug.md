@@ -23,23 +23,50 @@ tags: [SGLang, Pipeline-Parallelism, CUDA, Correctness]
 
 修复对应 [SGLang PR #47614](https://github.com/sgl-project/sglang/pull/47614)，问题记录在 [Issue #47613](https://github.com/sgl-project/sglang/issues/47613)。这篇文章主要讲清楚它为什么会发生、如何被定位，以及一个容易混淆的事实：**<code>record_stream</code> 解决的是内存生命周期，不是 Stream 执行顺序。**
 
-## 01 · 先理解 CUDA Stream：为什么会有两条时间线
+## 01 · 从单 Stream 到多 Stream：为什么会有两条时间线
 
 如果只熟悉普通的同步 Python 代码，这个 Bug 最不直观的一点是：**Python 已经执行到下一行，但 GPU 可能还没完成上一行提交的计算。** 要看懂异步 PP，先把 CUDA Stream、事件依赖和显存管理区分开。
 
-### 一个 Stream 是什么？
+### 从一条显式 Stream 开始：异步是对谁异步？
 
-可以把 CUDA Stream 理解为**向 GPU 提交操作的一条有序队列**。Kernel Launch、支持的异步数据拷贝和通信操作都可以按 Stream 排队。同一 Stream 中，操作按照提交顺序执行；但 CPU 发起一个异步 Kernel 并返回，通常不意味着 GPU 已经执行完成。
+可以把 Stream 理解为**向 GPU 提交的一条有序工作序列**，而不是 CPU Thread、GPU Thread、SM 或 Copy Engine。CPU 调用 CUDA Runtime 提交操作；真正的数据复制由合适的传输引擎承担，Kernel 由 GPU 的计算资源执行。Stream 描述的是这些操作的**先后依赖**，而不是把某个硬件单元固定分配给一个任务队列。
 
-~~~text
-CPU / Python：
-    launch A → launch B → launch C → 继续执行 Python
-    （提交完成，不等于 GPU 执行完成）
+先只使用一条显式 Stream，把 **H2D（Host → Device）→ Kernel → D2H（Device → Host）** 连起来：
 
-GPU / Stream S：
-    A ─────────→ B ─────────→ C
-    （同一 Stream 按顺序执行）
+<p align="center">
+  <a href="/assets/posts/pp-single-stream-queue.svg" target="_blank" rel="noopener noreferrer" title="放大查看单个 CUDA Stream 的提交与执行">
+    <img src="/assets/posts/pp-single-stream-queue.svg" width="100%" alt="CPU 依次提交 H2D、Kernel 和 D2H；同一 CUDA Stream 按顺序执行，CPU 在 cudaStreamSynchronize 返回后才能读取结果">
+  </a>
+</p>
+
+*图 1 · 单 Stream 的最小心智模型：CPU 提交不等于 GPU 完成；同一队列内部无需为 H2D、Kernel、D2H 逐项插入 CPU 同步。箭头表达顺序，不代表严格的耗时比例。*
+
+代码里对应的关键 API 其实不多：
+
+~~~cpp
+// 只展示 Stream 的关键调用，省略错误检查、内存申请与 Kernel 定义
+// h_x：cudaMallocHost 得到的 Pinned Host Memory
+// d_x：cudaMalloc 得到的 Device Memory
+cudaStream_t s;
+cudaStreamCreate(&s);
+
+cudaMemcpyAsync(d_x, h_x, bytes, cudaMemcpyHostToDevice, s);
+add_one<<<grid, block, 0, s>>>(d_x, count);
+cudaMemcpyAsync(h_x, d_x, bytes, cudaMemcpyDeviceToHost, s);
+
+cudaStreamSynchronize(s);  // CPU 等待此前提交的这条 Stream 的工作完成
+// 从这里开始，CPU 才能安全读取 D2H 写回的 h_x
+cudaStreamDestroy(s);
 ~~~
+
+这里有四个值得牢牢记住的边界。
+
+- **提交与完成不同**：`cudaMemcpyAsync` 和 Kernel Launch 通常会在 GPU 操作完成前返回；API 带 Async 不代表绝不发生 Host 阻塞，也不意味着复制必然和计算重叠。
+- **同一 Stream 自带顺序**：前面的 H2D 完成之后才轮到依赖它的 Kernel，Kernel 结束之后才轮到后面的 D2H。无需在三项工作之间分别调用 `cudaDeviceSynchronize`。
+- **Pinned Memory 与同步各管一件事**：使用 `cudaMallocHost` 提供的锁页内存，更适合可预期的 Host/Device 异步 DMA；读取 D2H 结果前仍要等待完成。在异步 H2D 使用源数据期间，CPU 也不能擅自修改这份 Host 输入。
+- **同步范围不能混淆**：`cudaStreamSynchronize(s)` 等待指定 Stream 中此前的工作；`cudaDeviceSynchronize()` 的等待范围更大。`cudaGetLastError()` 可检查 Kernel 启动相关错误，但执行期错误还可能在同步时暴露。完整可编译版本应检查每个 CUDA API 的返回值。
+
+这一步还没有 PP，也不涉及多个 Stream。它只说明：**GPU 能按 Stream 中的顺序工作，同时 CPU 不必在每次提交后停下来等 GPU。** 接下来 PP 做的事，是将一部分工作放到通信 Stream，另一部分放到 Forward Stream；跨队列之后，单 Stream 的自动有序保证便不再足够。
 
 当程序有两条不同的 Stream，例如 Comm Stream 和 Forward Stream，工作**可能**重叠：GPU 在执行 Microbatch A 的 Forward 时，通信引擎或其他计算资源可以为 Microbatch B 工作。但这不是两个 Stream 就保证翻倍吞吐；是否真正并发还取决于硬件资源、Kernel/Collective 的实现、默认 Stream 语义、依赖关系和调度。
 
@@ -61,7 +88,7 @@ GPU / Stream S：
   </a>
 </p>
 
-*图 2 · 同时建立「先生产再消费」与「消费结束前不能复用显存」两个约束。*
+*图 2 · 跨流后出现两种独立约束：Event/Wait 负责执行顺序，`record_stream` 负责存储复用时机。*
 
 把概念写成伪代码，比只记 API 名字更容易理解：
 
@@ -107,7 +134,7 @@ PP 在不同 Stage 间传递 Hidden States，通常把工作拆成 Microbatch，
   </a>
 </p>
 
-*图 1 · 异步 PP 的系统总览。先看一次 Microbatch 如何跨 Stage、跨 Stream，再讨论隐藏在交接处的生命周期问题。点击可以查看完整 SVG。*
+*图 3 · 异步 PP 系统总览：Microbatch 跨 Stage 传递 Hidden States，真正需要保护的边界在接收后的 Forward 消费。*
 
 
 理解这次修复之前，需要先分清：**Stage 之间传递的模型中间结果**，和 **最后一个 Stage 生成、准备返回给请求管理层的 Token 结果**，不是同一种消息。
@@ -176,7 +203,7 @@ CPU 端事件循环并不会等这个 Forward 做完：它可能很快释放上�
   <img src="/assets/posts/pp-stream-lifetime.svg" width="100%" alt="CPU、Comm Stream、Forward Stream 与 Allocator 之间的异步 Tensor 生命周期时间线">
 </p>
 
-*图 3 · 原始故障时间线：A 的存储在 GPU 消费结束前被 B 复用，与前面的正确跨流执行示意形成对照。*
+*图 4 · 故障时间线：A 的存储在 Forward 读取结束前被 B 复用，导致合法地址中的数据已经被覆盖。*
 
 这解释了为什么它可能产生 Silent Corruption，而不是 Crash：访问不是越界，而是**在错误时刻读取了被复用的内存内容**。从 Kernel 看，输入地址仍然有效；从模型计算语义看，这个 microbatch 的 hidden states 已经被污染。
 
