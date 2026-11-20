@@ -19,15 +19,9 @@ tags: [SGLang, DP, Performance, Debugging]
   </a>
 </p>
 
-*图 0 · 一眼看懂 DP Health：异常路径和修复路径的区别。*
+*速览图 · 一眼看懂 DP Health：异常路径和修复路径的区别。*
 
 修复对应 [SGLang PR #35721](https://github.com/sgl-project/sglang/pull/35721)，原始问题见 [Issue #35241](https://github.com/sgl-project/sglang/issues/35241)。这篇文章记录的不只是一个修复，更是一次**从吞吐症状追到控制面状态，再用受控实验确认因果**的过程。
-
-<p align="center">
-  <img src="/assets/posts/dp-serving-lifecycle.svg" width="100%" alt="用户请求与生成健康检查经过 TokenizerManager、DPC、Scheduler 和 Model Runner 的完整路由链路">
-</p>
-
-*系统总览 · 一次请求从 TokenizerManager 经 DPC、Scheduler 到 Model Runner；异常发生在执行之前的路由控制面。*
 
 ## 01 · 一个看起来不像 Bug 的性能问题
 
@@ -38,6 +32,13 @@ tags: [SGLang, DP, Performance, Debugging]
 这个观察改变了排查顺序。如果是纯算子退化，我预期相同工作量下每次执行都更慢；但这里更像是**工作进入 GPU 之前，分配方式就已经发生变化**。
 
 ## 02 · 一条在 Scheduler 之前出错的请求路径
+
+<p align="center">
+  <img src="/assets/posts/dp-serving-lifecycle.svg" width="100%" alt="用户请求与生成健康检查经过 TokenizerManager、DPC、Scheduler 和 Model Runner 的完整路由链路">
+</p>
+
+*系统总览 · 一次请求从 TokenizerManager 经 DPC、Scheduler 到 Model Runner；异常发生在执行之前的路由控制面。*
+
 
 我们可以把相关请求生命周期压缩成：
 
