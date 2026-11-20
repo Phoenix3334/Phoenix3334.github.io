@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="559" viewBox="0 0 1200 559" role="img" aria-labelledby="title desc"><title id="title">Attention：存多少、读哪些、怎么更新？</title><desc id="desc">MHA / GQA / MLA、DSA、KDA 是不同维度，可以在同一模型里组合</desc>
+<defs><style>text{font-family:Inter,"PingFang SC","Microsoft YaHei","Noto Sans CJK SC",Arial,sans-serif}
+.title{font-size:28px;font-weight:750;fill:#263A45}.subtitle{font-size:16px;fill:#667985}
+.kicker{font-size:13px;letter-spacing:1.2px;font-weight:750;fill:#168273}
+.heading{font-size:21px;font-weight:730;fill:#263A45}.body{font-size:17px;fill:#263A45}
+.small{font-size:15px;fill:#667985}.tag{font-size:18px;font-weight:730}
+.emphasis{font-size:18px;font-weight:740;fill:#263A45}</style>
+<marker id="arrow" markerWidth="9" markerHeight="9" refX="8" refY="4.5" viewBox="0 0 9 9" orient="auto"><path d="M1 1 L8 4.5 L1 8" stroke="#8197A2" stroke-width="1.5" fill="none"/></marker></defs>
+<rect x="0" y="0" width="1200" height="559" rx="0" fill="#FBFAF7" stroke="#FBFAF7" stroke-width="1.5"/>
+<text x="40" y="38" class="kicker" >AT A GLANCE  /  系统总览</text><text x="40" y="83" class="title" >Attention：存多少、读哪些、怎么更新？</text>
+<text x="40" y="117" class="subtitle" >MHA / GQA / MLA、DSA、KDA 是不同维度，可以在同一模型里组合</text>
+<path d="M40 138 H1160" stroke="#D7DDDA" stroke-width="1.2"/>
+
+<text x="40" y="177" class="heading" >不是替代关系，而是三个不同问题</text>
+<rect x="40" y="198" width="350" height="222" rx="10" fill="#FFFFFF" stroke="#D7DDDA" stroke-width="1.5"/><rect x="424" y="198" width="350" height="222" rx="10" fill="#FFFFFF" stroke="#D7DDDA" stroke-width="1.5"/><rect x="808" y="198" width="350" height="222" rx="10" fill="#FFFFFF" stroke="#D7DDDA" stroke-width="1.5"/>
+<text x="62" y="238" class="heading" >历史怎么存？</text><text x="445" y="238" class="heading" >本步读哪些？</text><text x="830" y="238" class="heading" >历史怎么更新？</text>
+<text x="62" y="275" class="body" >MHA / MQA / GQA</text><text x="62" y="308" class="body" >MLA 压缩 KV</text>
+<text x="445" y="275" class="body" >Full：读取完整历史</text><text x="445" y="308" class="body" >DSA：Indexer + Top-k</text>
+<text x="830" y="275" class="body" >KDA：递推 State</text><text x="830" y="308" class="body" >不用每步读取全部 KV</text>
+<rect x="64" y="346" width="23" height="36" rx="4" fill="#2457C5"/><rect x="97" y="346" width="23" height="36" rx="4" fill="#2457C5"/><rect x="130" y="346" width="23" height="36" rx="4" fill="#CCDDF2"/><rect x="163" y="346" width="23" height="36" rx="4" fill="#CCDDF2"/><rect x="196" y="346" width="23" height="36" rx="4" fill="#CCDDF2"/><rect x="229" y="346" width="23" height="36" rx="4" fill="#CCDDF2"/><rect x="262" y="346" width="23" height="36" rx="4" fill="#CCDDF2"/><rect x="295" y="346" width="23" height="36" rx="4" fill="#CCDDF2"/>
+<circle cx="469" cy="363" r="11" fill="#DCEFE9"/><circle cx="501" cy="363" r="11" fill="#168273"/><circle cx="533" cy="363" r="11" fill="#DCEFE9"/><circle cx="565" cy="363" r="11" fill="#DCEFE9"/><circle cx="597" cy="363" r="11" fill="#168273"/><circle cx="629" cy="363" r="11" fill="#DCEFE9"/><circle cx="661" cy="363" r="11" fill="#DCEFE9"/><circle cx="693" cy="363" r="11" fill="#168273"/>
+<path d="M967 341 C1033 305 1101 360 1054 391 C1026 410 988 391 986 373" fill="none" stroke="#B45D3C" stroke-width="5" stroke-linecap="round"/>
+<rect x="40" y="451" width="510" height="64" rx="10" fill="#ECF2FB" stroke="#ECF2FB" stroke-width="1.5"/><text x="295" y="489" class="tag" text-anchor="middle" fill="#2457C5">Kimi K3：69 KDA + 24 MLA</text>
+<path d="M551 483 L627 483" stroke="#8197A2" stroke-width="2.3" fill="none" marker-end="url(#arrow)"/>
+<rect x="641" y="451" width="518" height="64" rx="10" fill="#EAF5F0" stroke="#EAF5F0" stroke-width="1.5"/><text x="900" y="489" class="tag" text-anchor="middle" fill="#168273">K3.1：69 KDA + 24 DSA</text>
+<text x="42" y="537" class="small" >先区分 KV 存储、历史读取和递推更新，再讨论容量和并行。</text>
+</svg>
