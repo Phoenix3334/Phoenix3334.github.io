@@ -91,6 +91,8 @@ GPU 的 **CUDA Stream** 又是另一层：它组织 Host 提交到 GPU 的有序
 
 ## 4. MegaMoE：为什么它不只是融合算子或多 CUDA Stream？
 
+如果还没建立 FFN 的数学基础，可以先看 [《从 FFN、SwiGLU 到 DeepSeekMoE：专家怎么选，GPU 又怎样执行？》](/blog/2026/11/20/ffn-swiglu-deepseekmoe-megamoe/)：它从三组 Linear、Top-k Router 和 Shared Expert 解释 MoE；本节只聚焦 EP 与 MegaMoE 如何映射到多 GPU 硬件执行。
+
 到 MoE 时，问题从片上 Tile 延伸到**跨 GPU 专家的数据交换**。一个 Token 经过 Top-k Router 后，可能要发送到其他 EP Rank，执行 Expert GEMM，再把结果 Combine 回来。常见分阶段路径是：
 
 ~~~text
