@@ -57,7 +57,7 @@ new KV:                                      (Kₜ,Vₜ) → append
 | **状态更新** | 历史是否仍逐 Token 保存 | Linear、DeltaNet、GDN、KDA | 改为固定形状的 Recurrent State，与长度解耦 |
 | **硬件实现** | 相同计算怎样落到 GPU | FlashAttention、PagedAttention、专用 MLA Kernel | 降低 HBM IO、显存碎片、调度或 Kernel 开销 |
 
-这几条路线可以组合：**GQA + FlashAttention** 并不冲突，**MLA + DSA** 也不是两种互斥模型。这里还要分清，FlashAttention 通过分块与 Online Softmax 减少中间 Attention Matrix 的 HBM 读写，**不会因此自动把 Full Attention 的数学计算量从二次降为线性**；PagedAttention 则主要改变 KV 的分页存储和管理方式，不等于一种新的 Attention 数学公式。
+这几条路线可以组合：**GQA + FlashAttention** 并不冲突，**MLA + DSA** 也不是两种互斥模型。如果只细分“Softmax Attention 怎么压缩历史表示”，还可以按**跨 Head 共享（MQA/GQA）、沿特征通道压缩（MLA）、跨层共享或复用**三个方向理解；跨层复用涉及不同 Transformer 层之间的架构约定，不是继续减小 `Hkv` 就能得到。这里还要分清，FlashAttention 通过分块与 Online Softmax 减少中间 Attention Matrix 的 HBM 读写，**不会因此自动把 Full Attention 的数学计算量从二次降为线性**；PagedAttention 则主要改变 KV 的分页存储和管理方式，不等于一种新的 Attention 数学公式。
 
 ## 2. MHA、MQA、GQA：保留多少个 KV Head？
 
