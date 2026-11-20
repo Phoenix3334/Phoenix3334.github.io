@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="492" viewBox="0 0 1200 492" role="img" aria-labelledby="svgTitle svgDesc"><title id="svgTitle">AI code contributions: responsibility remains with the submitter</title><desc id="svgDesc">AI suggests implementation/tests/PR text, but the contributor must verify the diff, expected behavior, testing, privacy, security and licensing; CI and peer reviewers provide extra independent checks rather than transferring responsibility.</desc>
+<defs><style>
+text{font-family:Inter,"PingFang SC","Microsoft YaHei","Noto Sans CJK SC",Arial,sans-serif}
+.kicker{font-size:12px;font-weight:750;letter-spacing:1.6px;fill:#177F77}
+.title{font-size:29px;font-weight:750;fill:#273944}
+.subtitle{font-size:14px;fill:#617681}
+.lane{font-size:13px;font-weight:700;letter-spacing:.5px;fill:#617681}
+.heading{font-size:19px;font-weight:740;fill:#273944}
+.body{font-size:16px;fill:#273944}
+.small{font-size:13px;fill:#617681}
+.tag{font-size:13px;font-weight:700;fill:#177F77}
+.warn{font-size:15px;font-weight:700;fill:#B76040}
+.metric{font-size:25px;font-weight:750;fill:#273944}
+</style>
+<marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M1 1 L8 5 L1 9" fill="none" stroke="#82999C" stroke-width="1.6"/></marker>
+</defs><rect width="1200" height="492" fill="#FBFAF7"/><text x="40" y="39" class="kicker" >AI-ASSISTED DEVELOPMENT  /  RESPONSIBILITY</text>
+<text x="40" y="79" class="title" >AI 可以写实现，但不能替你签收正确性</text>
+<text x="40" y="107" class="subtitle" >生成速度提升后，更需要把验证与责任留在明确的人身上。</text>
+<rect x="40" y="143" width="336" height="232" rx="12" fill="#EEF3FC" stroke="#C4D6EA" stroke-width="1.4"/>
+<text x="60" y="184" class="heading" >AI / Agent</text>
+<text x="60" y="227" class="body" >生成候选代码</text>
+<text x="60" y="263" class="body" >建议测试和重构</text>
+<text x="60" y="299" class="body" >整理 PR 描述</text>
+<text x="60" y="347" class="small" >建议 ≠ 已验证</text>
+<path d="M 378 255 H 418" fill="none" stroke="#82999C" stroke-width="2.2" marker-end="url(#arr)" stroke-linecap="round" />
+<rect x="421" y="143" width="336" height="232" rx="12" fill="#EBF5F1" stroke="#BFDED3" stroke-width="1.4"/>
+<text x="443" y="184" class="heading" >Contributor / 提交者</text>
+<text x="443" y="227" class="body" >理解每个关键 Diff</text>
+<text x="443" y="263" class="body" >运行针对性测试</text>
+<text x="443" y="299" class="body" >解释风险与证据边界</text>
+<text x="443" y="347" class="tag" >对最终提交负责</text>
+<path d="M 759 255 H 799" fill="none" stroke="#82999C" stroke-width="2.2" marker-end="url(#arr)" stroke-linecap="round" />
+<rect x="802" y="143" width="358" height="232" rx="12" fill="#FBF0E8" stroke="#E9CFC2" stroke-width="1.4"/>
+<text x="825" y="184" class="heading" >CI + Reviewer</text>
+<text x="825" y="227" class="body" >自动回归和集成检查</text>
+<text x="825" y="263" class="body" >人工质疑测试盲区</text>
+<text x="825" y="299" class="body" >复核跨平台与兼容性</text>
+<text x="825" y="347" class="small" >二次把关 ≠ 接管责任</text>
+<rect x="40" y="402" width="1120" height="56" rx="8" fill="#FFFFFF" stroke="#D7DDDA" stroke-width="1.4"/>
+<text x="60" y="437" class="heading" >能否回答：改了什么？为什么正确？如何证明？哪些情况尚未验证？</text>
+</svg>
