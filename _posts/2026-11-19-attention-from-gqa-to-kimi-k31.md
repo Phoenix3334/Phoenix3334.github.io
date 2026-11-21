@@ -3,8 +3,8 @@ layout: post
 title: "注意力机制到底在优化什么？从 MHA、MLA 到 KDA、DSA"
 date: 2026-11-19 22:15:00 +0800
 lang: zh-CN
-summary: "从 Decode 的 KV Cache 账本出发，对比 MHA/MQA/GQA 的 Head 共享、MLA 的 Latent 压缩与权重吸收、Linear 到 KDA 的状态更新，再理解 DSA、Kimi K3/K3.1、DP-A 与 DCP 的系统含义。"
-tags: [Attention, GQA, MLA, DSA, KDA, Kimi-K3, Inference-Systems]
+summary: "从 MHA、MLA、DSA、KDA 到 FlashAttention、FlashMLA、FlashKDA，理解注意力机制、Kernel 执行排布、Online Softmax 与 DCP LSE 合并如何共同决定推理性能。"
+tags: [Attention, FlashAttention, FlashMLA, FlashKDA, GQA, MLA, DSA, KDA, Kimi-K3, GPU-Kernels, Inference-Systems]
 ---
 
 最近从手写 MHA、GQA 一路看到 MLA、Linear Attention、KDA 和 DSA，最困惑的地方并不是某一个公式，而是**它们似乎都在优化长上下文，却又能同时出现在同一个模型里**。例如 Kimi K3 有 69 层 KDA 和 24 层 MLA；K3.1 又在保留 KDA 的同时把那 24 层变成带 Indexer 的 DSA。MLA、KDA 和 DSA 到底是什么关系？
@@ -603,6 +603,198 @@ K3.1 Prefill → Decode：
 
 ---
 
+
+## 9. FlashAttention、FlashMLA、FlashKDA：模型定义不变，Kernel 怎样适配硬件？
+
+前面几节讨论的是 **模型采用什么注意力或状态更新机制**。现在再往下走一层：当模型已经确定使用 Full Attention、MLA/DSA 或 KDA，GPU/NPU 上的 Kernel 应该怎样执行，才能减少数据搬运、提高计算单元利用率？
+
+这里必须把三个层次分开：
+
+| 层次 | 代表技术 | 主要改变什么 | 是否改变模型定义 |
+| --- | --- | --- | --- |
+| **模型 / 注意力机制** | MHA、GQA、MLA、DSA、KDA | KV 表示、历史访问范围或 Recurrent State 更新规则 | 会改变模型采用的计算机制或状态表示 |
+| **Kernel / 算子实现** | FlashAttention、FlashMLA、FlashKDA | Tile、循环顺序、数据布局、指令流水、片上存储与并行映射 | 目标是保持既定算子语义，不重新定义模型机制 |
+| **Runtime / 分布式执行** | TP、DCP、EP、PP | 工作分配、状态放置、通信和局部结果合并 | 不改变模型定义，但会改变执行与通信路径 |
+
+所以你可以把它理解为：**MLA、KDA 主要回答“模型怎么算、历史如何表示”；FlashAttention 一类工作回答“既定计算怎样更高效地落到硬件上”。** 更严谨地说，这不只是物理层面的改动，而是 IO-aware 的分块算法与硬件感知的执行调度。它们保持数学目标和模型语义，但会改变计算顺序；浮点加法顺序变化也可能带来很小的数值差异。
+
+### 9.1 FlashAttention：不保存完整 Attention Matrix，而是边算边归约
+
+标准 Attention 的表达式没有变化：
+
+~~~text
+Attention(Q, K, V) = softmax(QKᵀ / √d) V
+~~~
+
+朴素实现容易显式生成完整的 Score Matrix 和 Probability Matrix。对一个长度为 `S` 的序列，这些中间矩阵的规模会随 `S²` 增长；它们被写入 HBM、再读回来，产生大量不必要的数据搬运。**FlashAttention 的关键不是把 Full Attention 的二次计算量变成线性，而是避免把完整的中间矩阵反复写回 HBM。**
+
+它把 Q、K、V 切成 Tile。以一个 Q Tile 为例，Kernel 将 Q Tile 和当前 K/V Tile 搬到片上存储，计算局部 Score，再用 Online Softmax 更新当前的最大值、归一化因子和输出累加器；随后丢弃当前 Score Tile，继续处理下一块 K/V。
+
+~~~text
+Q Tile ─────────────────────────────────────────────┐
+                                                    │ 保留在片上
+                                                    ▼
+KV Tile 0 → QKᵀ → Online Softmax → 更新 O 累加器
+KV Tile 1 → QKᵀ → Online Softmax → 更新 O 累加器
+KV Tile 2 → QKᵀ → Online Softmax → 更新 O 累加器
+   ...                                              │
+                                                    ▼
+                                          归一化并写回 Output
+
+不再物化完整的 [Sequence_Q, Sequence_KV] Score / Probability Matrix
+~~~
+
+Online Softmax 为什么能够做到这一点？对每一行 Score，维护三个量：当前最大值 `m`、指数和 `l`，以及未归一化的输出累加器 `u`。新 Tile 到来时，更新为：
+
+~~~text
+m_new = max(m_old, rowmax(S_tile))
+alpha = exp(m_old - m_new)
+P = exp(S_tile - m_new)
+
+l_new = alpha * l_old + rowsum(P)
+u_new = alpha * u_old + P @ V_tile
+output = u_new / l_new
+~~~
+
+每次都把历史累加结果缩放到新的最大值基准下，因此不需要一次性看到全部 Key，也能得到与全量 Softmax Attention 数学等价的结果。这里的 `P` 只对应当前 Tile，而不是整条序列的概率矩阵。
+
+### 9.2 Tile、循环顺序与 SRAM：为什么不是越大越快？
+
+分块大小不是一个孤立的超参数，它同时决定数据复用、矩阵乘法效率、循环次数和片上资源占用。以 `BLOCK_M` 个 Query、`BLOCK_N` 个 Key/Value 为例：
+
+| 设计选择 | 可能的收益 | 可能的代价 |
+| --- | --- | --- |
+| 增大 `BLOCK_M` | 一个 Q Tile 可覆盖更多 Query，增加 Q 的复用 | Q 与输出累加器占用更多寄存器 / Shared Memory，可能降低 Occupancy |
+| 增大 `BLOCK_N` | KV Tile 更大，循环次数减少，矩阵乘法更容易形成高效工作块 | 单次 Score Tile 和 KV 缓冲更大，可能挤压片上空间或造成寄存器溢出 |
+| 减小 Tile | 单个 CTA 资源占用较低，容易并行铺开 | 循环与调度开销增多，数据复用变差，可能让矩阵单元吃不饱 |
+
+**循环顺序决定复用谁。** 如果一个 Q Tile 留在片上，循环遍历多个 KV Tile，Q 可以被重复使用；如果换一种循环组织，让 KV Tile 服务多个 Q Tile，则可能提高 KV 的复用，但要考虑多个 Q Tile 的驻留、输出累加器数量和调度复杂度。哪种更好，取决于 Prefill/Decode、序列长度、Head Dimension、因果 Mask、数据类型和目标硬件。
+
+**SRAM 容量决定同时能留下多少中间数据。** GPU 上通常要具体看 Register 与 Shared Memory；昇腾 AI Core 则要看 UB、L1、L0 等不同层级，不能把它们简单视作一个统一的 SRAM 池。Tile 太大可能让每个 CTA 占用过多片上资源，导致同时驻留的 CTA 变少；Tile 太小又可能让数据重复搬运和循环开销占主导。真正的目标是在数据复用、计算吞吐、Occupancy 与流水深度之间找到平衡。
+
+这也是为什么 Kernel 调优不能只看 FLOPs。需要同时观察 HBM/L2 流量、Shared Memory、寄存器、Occupancy、访存等待、矩阵单元利用率和 Kernel 时间。**Tile 选型必须跟着硬件资源预算和实际 Workload 走，而不是照搬别的 GPU 或 NPU 的参数。**
+
+### 9.3 FlashMLA：为 MLA / DSA 的数据表示和访问模式做专用 Kernel
+
+FlashMLA 不是一种新的 Attention 数学机制，也不是 MLA 的替代品。它是围绕 MLA/DSA 的 KV 表示、稀疏索引和执行特点实现的高性能 Kernel 库。模型仍然按照 MLA 或 DSA 的定义计算；Kernel 负责把 Latent、RoPE Key、选中的 KV、量化格式和 Attention 归约映射到硬件。
+
+它需要处理的并不只是一个 `QKᵀ`：
+
+~~~text
+MLA / DSA 模型定义
+      │
+      ├── Latent KV + RoPE Key
+      │
+      ├── DSA Indexer / Top-k（稀疏路径）
+      │
+      ▼
+FlashMLA Kernel
+      ├── 按索引读取 KV / 处理 FP8、FP4 Cache
+      ├── Tile 化 QK 与 Value 聚合
+      ├── Online Softmax / 输出累加
+      └── 按目标 GPU / NPU 组织访存与流水
+      │
+      ▼
+Attention Output
+~~~
+
+DeepSeek 的 [FlashMLA 仓库](https://github.com/deepseek-ai/FlashMLA)同时包含稀疏 Attention Prefill/Decode Kernel、Dense Attention Kernel，以及融合 Norm、RoPE、Attention 和 Cast 的实现。其 2026 年 9 月 30 日更新还发布了面向 Ascend 950 的稀疏 Attention Kernel 与技术报告。需要注意版本边界：当前 README 的 NVIDIA 路径面向 SM100/SM103，并要求 CUDA 13.1+、PyTorch 2.10+；同一轮更新移除了 Hopper 与早期模型支持，并调整了 FP8/FP4 KV Cache 格式。Ascend 路径则要求 Ascend 950 与相应 CANN 版本，**不能据此推断 910B/910C 可以直接使用当前分支**。部署前必须核对模型、硬件、Cache 格式和代码版本。
+
+### 9.4 FlashKDA：优化的是 KDA 的分块递推，不是 Softmax Attention
+
+FlashKDA 需要单独理解：**KDA 本身是带门控和 Delta Rule 的 Recurrent State 更新机制，不是标准的 QKᵀ + Softmax Attention。** FlashKDA 并没有把 KDA 改造成另一种数学机制，而是把既定的 KDA 更新过程组织成更适合 GPU 的 Chunk-wise Kernel。
+
+以 FlashKDA v1 的设计为例，它使用 `CHUNK = 16`，并将工作拆成两个 Kernel：
+
+~~~text
+K1 · Token-parallel
+  Gate 激活 / 归一化 / Decay
+  构造 L、Mqk 并完成小矩阵求逆
+             │
+             ▼
+K2 · Head-parallel
+  按 Chunk 顺序执行 Delta Rule Recurrence
+  输出投影 / 更新并累积 Recurrent State
+~~~
+
+为什么不把所有步骤塞进一个大 Kernel？因为 K1 的 Token-parallel 工作并行度较高，而 K2 的递推阶段并行度相对低。早期单 Kernel 设计会被递推阶段的较低并行度限制，让一部分 SM 空闲。FlashKDA v1 将两段拆开后，维护者报告相对早期单 Kernel 原型取得至少 15% 的端到端 Kernel 路径提升，并能分别调优两个阶段。这个数字是其技术报告中的实现对比，不等于所有模型、GPU 或线上服务都能获得 15% 提升。
+
+Chunk 大小也不是越大越好。FlashKDA 的技术报告选择 16，考虑了门控指数的数值范围、`16 × 16` 矩阵求逆成本，以及将计算映射到 MMA 指令的方式。它还通过 Shared Memory 生命周期复用提高 K1 Occupancy，并用寄存器内转置减少 K2 中间 Shared Memory 往返。可以看到，**即使模型递推公式不变，Chunk Size、Kernel 切分、寄存器和 Shared Memory 的分配也会明显改变执行效率。**
+
+当前 [FlashKDA](https://github.com/MoonshotAI/FlashKDA) 要求 SM90+、CUDA 12.9+ 和 PyTorch 2.4+，并可作为 `flash-linear-attention` 的 KDA Backend 自动分发。它有自己的 Kernel API 与参数约束，不能仅凭“模型使用 KDA”就假设任意 KDA 实现会自动走到 FlashKDA。
+
+### 9.5 把 Online Softmax 放回两个不同的位置：LM Head Sampling 与 DCP
+
+Online Softmax 是一种稳定的分块归约方法，但它会出现在不同阶段，不能因为名字相同就把它们当成同一个 Kernel。
+
+**第一处：LM Head 之后的 Sampling。** Transformer 最后一层输出 Hidden State，LM Head 将它投影成词表维度的 Logits；随后才进行 Temperature、Softmax、Top-k/Top-p 和采样：
+
+~~~text
+最后一层 Hidden State [B, H]
+          │
+          ▼
+LM Head Projection
+          │
+          ▼
+Logits [B, V]
+          │
+          ▼
+Temperature：logits / T
+          │
+          ▼
+Softmax（沿 Vocabulary 维度 V）
+          │
+          ▼
+Top-k / Top-p / Sampling
+~~~
+
+在你做的 Triton-Ascend Sampling 路径里，Temperature 与 Online Softmax 融合，处理的是 **LM Head 产生的 Vocabulary Logits**。这里的归约维度是词表 `V`，目标是减少独立 Kernel、中间概率张量的读写和重复访存；它不是在计算 Query 对历史 Key 的 Attention，也不能直接称作 FlashAttention。两者复用的是稳定 Softmax 的分块思想，处理的张量、归约轴和所在阶段都不同。
+
+**第二处：SGLang DCP 的跨 Rank LSE Merge。** DCP 将同一请求的 Context/KV 分散到多个 Rank。每个 Rank 先对本地 KV 分片计算局部 Attention Output `O_r` 和对应的 `LSE_r`，随后用 Log-Sum-Exp 把局部结果合并为全局 Attention：
+
+~~~text
+Rank 0: Local KV → Partial Attention → O₀, LSE₀
+Rank 1: Local KV → Partial Attention → O₁, LSE₁
+Rank 2: Local KV → Partial Attention → O₂, LSE₂
+                         │
+                         ▼
+                Cross-Rank LSE Merge
+                         │
+                         ▼
+                 Global Attention Output
+~~~
+
+若每个 Rank 的局部输出已经按自己的局部 Softmax 归一化，则全局合并可以写成：
+
+~~~text
+LSE = logsumexp(LSE₀, LSE₁, ..., LSEᵣ)
+
+O = Σᵣ exp(LSEᵣ - LSE) · Oᵣ
+~~~
+
+这不是把多个 Rank 的 Output 直接做平均，而是根据每个分片的归一化因子重新加权。它在数学上恢复了对所有 Context 分片一起做 Softmax Attention 的结果。这里的 LSE Merge 属于**分布式 Attention 的归约与通信阶段**，与单卡 FlashAttention 的 Tile 内 Online Softmax 使用同一类 Log-Sum-Exp 数学工具，但它还要承担跨 Rank 通信成本。
+
+### 9.6 最后把它们放在一张图里
+
+~~~text
+模型机制：决定计算什么
+  MLA / DSA ── 保存什么 KV、读取哪些历史
+  KDA       ── 怎样递推更新 Recurrent State
+
+Kernel：决定单个设备怎样高效执行
+  FlashAttention ── Dense Attention 的 IO-aware 分块
+  FlashMLA       ── MLA / DSA 的专用数据布局与 Attention Kernel
+  FlashKDA       ── KDA 的 Chunk-wise State Update Kernel
+  Triton Sampling── LM Head Logits 上的 Temperature + Online Softmax
+
+Runtime：决定多设备怎样协同
+  DCP ── Context 分片、局部 Attention、跨 Rank LSE Merge
+~~~
+
+因此，**FlashAttention、FlashMLA、FlashKDA 不是与 MLA、KDA 并列的新模型结构，而是把既定模型机制映射到 GPU/NPU 的工程实现。** 真正值得分析的，是数学语义是否保持、数据搬运减少了多少、片上资源是否足够、通信是否进入关键路径，以及 Kernel 的局部收益最终有没有反映到服务吞吐和延迟上。
+
+这也把前面几篇内容连起来了：第 06 篇的显存访问量告诉我们数据从哪里来，第 07 篇的 Online Softmax 告诉我们如何分块归约，第 08 篇的 Kernel 执行排布则回答 Tile、循环顺序、寄存器和 SRAM/片上存储怎样决定实际性能。**模型公式只是起点，数据如何流动、计算如何排布，才决定它能否在真实硬件上高效运行。**
+
 ## 参考阅读
 
 > **阅读说明：**如果 GitHub Pages 在当前网络下暂时打不开，可以直接阅读这篇文章的 [GitHub Markdown 原文](https://github.com/Phoenix3334/Phoenix3334.github.io/blob/main/_posts/2026-11-19-attention-from-gqa-to-kimi-k31.md)。
@@ -624,3 +816,7 @@ K3.1 Prefill → Decode：
 - [SGLang · Kimi K3 Cookbook](https://github.com/sgl-project/sglang/blob/main/docs/cookbook/autoregressive/Moonshotai/Kimi-K3.mdx)
 - [vLLM · K3.1 Pro Day-0（Indexer、Cache 布局与 DCP）](https://vllm.ai/blog/2026-11-04-kimi-k31-pro)
 - [LightSeek · K3.1 Sparse Attention 工程实践](https://lightseek.org/blog/tokenspeed-kimi-k3-1)
+- [FlashAttention · IO-Aware Exact Attention 与官方 Kernel](https://github.com/Dao-AILab/flash-attention) · [原始论文](https://arxiv.org/abs/2205.14135)
+- [FlashMLA · DeepSeek 官方 MLA / DSA Kernel](https://github.com/deepseek-ai/FlashMLA) · [Ascend 950 Kernel 技术报告](https://github.com/deepseek-ai/FlashMLA/blob/main/docs/20260930-ascend-prefill-deep-dive-zh.md)
+- [FlashKDA · Kimi Delta Attention Kernel](https://github.com/MoonshotAI/FlashKDA) · [FlashKDA v1 技术报告](https://github.com/MoonshotAI/FlashKDA/blob/master/docs/20260420-flashkda-v1-deep-dive.md)
+- [FlashKDA · flash-linear-attention Backend Integration](https://github.com/fla-org/flash-linear-attention/pull/852)
