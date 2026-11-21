@@ -283,23 +283,20 @@
     <div class="hero wrap"><div>
       <p class="eyebrow" data-i18n="hero-kicker">AI Systems · LLM Serving & Heterogeneous Computing</p>
       <h1 data-i18n="hero-title">From models to infrastructure,<br><em>measured across the stack.</em></h1>
-      <p class="hero-lede" data-i18n="hero-lede">My central question is how a model moves beyond a working prototype to become an efficient, reliable and scalable system. ThermoPulse introduced me to vision models and medical-LLM adaptation; the MiniCPM-o full-duplex project on Ascend 910C and Kunpeng performance tuning brought the execution path into focus. At Baidu AI Cloud, I took this further into distributed SGLang serving, using Prefill/Decode benchmarks, runtime debugging and NVIDIA GPU capacity analysis to build evidence for deployment decisions.</p>
-      <p class="hero-thesis" data-i18n="hero-thesis">Model behavior → serving performance → qualified capacity → infrastructure decisions.<br><em>Benchmark numbers matter only when workload, latency and correctness boundaries are clear.</em></p>
-      <p class="hero-evidence" data-i18n="hero-upstream"><strong>Authored and merged in SGLang</strong> · <a href="https://github.com/sgl-project/sglang/pull/35721" target="_blank" rel="noreferrer">DP health routing #35721</a> · <a href="https://github.com/sgl-project/sglang/pull/47614" target="_blank" rel="noreferrer">PP stream lifetime #47614</a> · <a href="https://github.com/sgl-project/sglang/pull/43786" target="_blank" rel="noreferrer">FP8 fusion #43786</a> · <a href="https://github.com/sgl-project/sglang/pull/48404" target="_blank" rel="noreferrer">EPLB validation #48404</a></p>
+      <p class="hero-lede" data-i18n="hero-lede">I work on the systems that turn large language models into reliable, efficient inference services—from distributed runtime behavior to accelerator execution and performance evaluation.</p>
+      <p class="hero-thesis" data-i18n="hero-thesis">Trace the request → isolate the bottleneck → validate correctness → measure the service-level result.<br><em>Performance only counts when workload and latency constraints are explicit.</em></p>
       <div class="hero-actions"><a href="#opensource" data-i18n="hero-action-work">SGLang engineering work ↓</a><a href="#economics" data-i18n="hero-action-tco">Capacity and cost methodology ↓</a></div>
       <div class="hero-line"><span class="tag">SGLang</span><span class="tag">Distributed LLM Serving</span><span class="tag">GPU / NPU Performance</span><span class="tag">Capacity &amp; TCO</span></div>
-    </div><figure class="portrait"><img src="https://avatars.githubusercontent.com/u/174691475?v=4" alt="Feihong Guo"><figcaption data-i18n="portrait-caption">Feihong Guo · 郭飞鸿<br>Zhengzhou University · AI Infrastructure</figcaption></figure></div>
+    </div><figure class="portrait"><img src="https://avatars.githubusercontent.com/u/174691475?v=4" alt="Feihong Guo"><figcaption data-i18n="portrait-caption">Feihong Guo · 郭飞鸿<br>AI Infrastructure · LLM Systems</figcaption></figure></div>
     <section id="about" class="about-section">
       <div class="wrap">
         <div class="section-head">
           <div><p class="eyebrow" data-i18n="about-kicker">ABOUT ME · AI INFRASTRUCTURE</p><h2 data-i18n="about-title">Building reliable<br>LLM systems.</h2></div>
-          <p data-i18n="about-intro">I am an undergraduate student in Internet of Things Engineering at Zhengzhou University, working on AI infrastructure and large language model inference. I focus on the systems path from model computation to production serving: runtime behavior, distributed execution, accelerator kernels, and measurable service performance.</p>
+          <p data-i18n="about-intro">I study Internet of Things Engineering at Zhengzhou University and focus on AI infrastructure and distributed LLM inference.</p>
         </div>
         <div class="about-grid">
           <div class="about-copy">
-            <p data-i18n="about-copy-1">My current work is centered on distributed LLM inference with SGLang. At Baidu AI Cloud, I work on B300/GB300 serving, tracing issues across request routing, scheduling, CUDA streams, tensor lifetimes, inter-GPU communication and kernels. I use controlled experiments and upstream code contributions to distinguish a local kernel improvement from a real service-level gain.</p>
-            <p data-i18n="about-copy-2">I have also worked across heterogeneous platforms: inference deployment and kernel optimization on Ascend 910B/910C, and CPU/HPC performance tuning on Kunpeng 920. ThermoPulse, a medical-AI prototype, connected thermal sensing, computer vision, GPU inference and medical-language adaptation into an end-to-end workflow.</p>
-            <p data-i18n="about-copy-3">I am interested in building efficient and dependable AI systems across hardware generations and execution environments—where model architecture, memory movement, communication, scheduling and correctness must be designed and evaluated together.</p>
+            <p data-i18n="about-copy-1">The systems question behind my work is how routing, scheduling, memory movement, communication and accelerator kernels combine to determine end-to-end serving performance.</p>
             <div class="about-meta">
               <div><span data-i18n="about-education-label">EDUCATION</span><strong data-i18n="about-education-value">Zhengzhou University · Internet of Things Engineering</strong></div>
               <div><span data-i18n="about-current-label">CURRENT EXPERIENCE</span><strong data-i18n="about-current-value">AI Infrastructure Engineering Intern · Baidu AI Cloud</strong></div>
@@ -870,7 +867,6 @@
     const backTop=document.querySelector('.back-top');
     const sections=[...document.querySelectorAll('main section[id]')];
     const zh={
-  "[data-i18n=\"hero-upstream\"]": "<strong>本人编写并合入 SGLang</strong> · <a href=\"https://github.com/sgl-project/sglang/pull/35721\" target=\"_blank\" rel=\"noreferrer\">DP 健康检查路由 #35721</a> · <a href=\"https://github.com/sgl-project/sglang/pull/47614\" target=\"_blank\" rel=\"noreferrer\">PP Stream 生命周期 #47614</a> · <a href=\"https://github.com/sgl-project/sglang/pull/43786\" target=\"_blank\" rel=\"noreferrer\">FP8 融合 #43786</a> · <a href=\"https://github.com/sgl-project/sglang/pull/48404\" target=\"_blank\" rel=\"noreferrer\">EPLB 配置校验 #48404</a>",
   "[data-i18n=\"summary-authored\"]": "本人修复 · 已合入",
   "[data-i18n=\"summary-authored-copy\"]": "<a href=\"https://github.com/sgl-project/sglang/pull/35721\" target=\"_blank\" rel=\"noreferrer\">#35721</a> DP 健康检查路由<br><a href=\"https://github.com/sgl-project/sglang/pull/47614\" target=\"_blank\" rel=\"noreferrer\">#47614</a> PP Stream 生命周期<br><a href=\"https://github.com/sgl-project/sglang/pull/43786\" target=\"_blank\" rel=\"noreferrer\">#43786</a> FP8 融合<br><a href=\"https://github.com/sgl-project/sglang/pull/48404\" target=\"_blank\" rel=\"noreferrer\">#48404</a> EPLB 配置校验",
   "[data-i18n=\"summary-review\"]": "正式技术 Review",
@@ -992,10 +988,8 @@
   "[data-i18n=\"nav-about\"]": "关于我",
   "[data-i18n=\"about-kicker\"]": "关于我 · AI 基础设施",
   "[data-i18n=\"about-title\"]": "构建高效、可靠的<br>大模型系统。",
-  "[data-i18n=\"about-intro\"]": "我目前就读于郑州大学物联网工程专业，关注 AI 基础设施与大语言模型推理。我的工作聚焦从模型计算到生产服务的系统链路：运行时行为、分布式执行、加速器算子，以及可验证的服务性能。",
-  "[data-i18n=\"about-copy-1\"]": "我目前主要参与基于 SGLang 的分布式大模型推理工程。在百度智能云，我围绕 B300/GB300 服务栈分析请求路由、调度、CUDA Stream、张量生命周期、跨 GPU 通信与 Kernel 等问题，并通过受控实验和上游代码贡献，区分局部算子提速与真正的服务级收益。",
-  "[data-i18n=\"about-copy-2\"]": "我也在不同异构平台上开展过实践：在昇腾 910B/910C 上进行推理部署与 Kernel 优化，在鲲鹏 920 上进行 CPU/HPC 性能调优。ThermoPulse 医疗 AI 原型则串联了红外测量、计算机视觉、GPU 推理与医疗语言模型适配，帮助我理解端到端系统的工程边界。",
-  "[data-i18n=\"about-copy-3\"]": "我希望继续探索跨硬件代际与执行环境的高效、可靠 AI 系统，尤其关注模型结构、内存搬运、通信、调度和正确性如何共同决定端到端表现。",
+  "[data-i18n=\"about-intro\"]": "我就读于郑州大学物联网工程专业，目前聚焦 AI 基础设施与分布式大模型推理。",
+  "[data-i18n=\"about-copy-1\"]": "我关注的系统问题是：请求路由、调度、内存搬运、通信与加速器 Kernel，如何共同决定端到端推理服务表现？",
   "[data-i18n=\"about-education-label\"]": "教育背景",
   "[data-i18n=\"about-education-value\"]": "郑州大学 · 物联网工程",
   "[data-i18n=\"about-current-label\"]": "当前经历",
@@ -1090,11 +1084,11 @@
   "[data-i18n=\"learning-extra-desc-11\"]": "CUDA、Triton 与 NCCL 讲座及实践。",
   "[data-i18n=\"hero-kicker\"]": "AI SYSTEMS · 大模型推理与异构计算",
   "[data-i18n=\"hero-title\"]": "从模型到推理基础设施，<br>让<em>系统表现有据可依。</em>",
-  "[data-i18n=\"hero-lede\"]": "我关注的核心问题是：<strong>模型如何从“能够运行”，走向高效、可靠、可规模化的服务？</strong>从 ThermoPulse 的视觉建模与医疗 LLM 训练，到昇腾 910C 上 MiniCPM-o 全双工推理适配及鲲鹏性能调优，我逐步深入模型与执行系统的衔接；在百度智能云，进一步聚焦 SGLang 分布式推理，通过 Prefill/Decode 压测、运行时排障与 NVIDIA GPU 容量评估，为算力选型提供可复现的性能依据。",
-  "[data-i18n=\"hero-thesis\"]": "模型行为 → 推理性能 → 达标产能 → 算力决策。<br><em>明确负载、延迟与正确性边界，才能让性能数据真正用于部署评估。</em>",
+  "[data-i18n=\"hero-lede\"]": "我关注如何把大语言模型转化为高效、可靠的推理服务，工作覆盖分布式运行时、加速器执行与性能评估。",
+  "[data-i18n=\"hero-thesis\"]": "沿请求链路追踪 → 隔离瓶颈 → 验证正确性 → 测量服务级结果。<br><em>只有明确负载与延迟约束，性能数据才有部署意义。</em>",
   "[data-i18n=\"hero-action-work\"]": "查看 SGLang 工程工作 ↓",
   "[data-i18n=\"hero-action-tco\"]": "查看容量与成本方法 ↓",
-  "[data-i18n=\"portrait-caption\"]": "Feihong Guo · 郭飞鸿<br>郑州大学 · AI Infrastructure",
+  "[data-i18n=\"portrait-caption\"]": "Feihong Guo · 郭飞鸿<br>AI 基础设施 · 大模型系统",
   "[data-i18n=\"sglang-kicker\"]": "百度智能云 · SGLang",
   "[data-i18n=\"sglang-title\"]": "不只调吞吐，<br>更要定位运行时问题。",
   "[data-i18n=\"sglang-intro\"]": "压测中的异常不一定来自慢算子：有些发生在控制面的请求路由，有些来自异步执行中的张量生命周期。我沿请求链路定位根因，通过受控 A/B 和回归测试验证修复，再将补丁提交上游。下面保留关键证据与适用边界。",
