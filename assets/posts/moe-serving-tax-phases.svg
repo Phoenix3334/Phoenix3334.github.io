@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="760" viewBox="0 0 1200 760" role="img" aria-labelledby="title desc">
+<title id="title">MoE Serving Tax: different effects of routing skew in prefill and decode</title>
+<desc id="desc">Prefill is compute-bound: uneven token counts across ranks increase straggler time, padding and uneven all-to-all tails. Decode is memory-bound: skew may activate fewer experts, reducing distinct expert weight loads and improving reuse. The lower panel maps tokens to experts to GPUs and distinguishes raw rank token count Rg from padded work Pg.</desc>
+<rect width="1200" height="760" fill="#FBFAF7"/>
+<g font-family="Inter,PingFang SC,Microsoft YaHei,sans-serif">
+<text x="48" y="48" fill="#168171" font-size="14" font-weight="750" letter-spacing="1.4">MOE SERVING TAX / PHASE-DEPENDENT ROUTING</text>
+<text x="48" y="94" fill="#253943" font-size="29" font-weight="760">同一份路由偏斜，在 Prefill 与 Decode 的成本符号可能相反</text>
+<text x="48" y="126" fill="#687A84" font-size="16">关键不是只看 Expert Count，而是看当前阶段由什么资源决定关键路径。</text>
+
+<rect x="48" y="158" width="536" height="330" rx="14" fill="#F1F5FC" stroke="#D3DDEB" stroke-width="1.5"/>
+<rect x="616" y="158" width="536" height="330" rx="14" fill="#F0F6F2" stroke="#D4E4D9" stroke-width="1.5"/>
+
+<text x="78" y="200" fill="#2457C5" font-size="22" font-weight="760">Prefill · 计算受限 / 大批量</text>
+<text x="78" y="229" fill="#526879" font-size="15">每个 Expert 收到的 token 数决定 GroupGEMM 的实际形状</text>
+<rect x="80" y="254" width="138" height="56" rx="8" fill="#FFFFFF" stroke="#8FA8D8"/>
+<text x="149" y="288" fill="#253943" font-size="17" text-anchor="middle" font-weight="650">Token Batch</text>
+<path d="M218 282 H258" stroke="#71869B" stroke-width="2.5" fill="none"/><path d="M250 274 L260 282 L250 290" stroke="#71869B" stroke-width="2.5" fill="none"/>
+<rect x="262" y="254" width="126" height="56" rx="8" fill="#FFFFFF" stroke="#8FA8D8"/>
+<text x="325" y="288" fill="#253943" font-size="17" text-anchor="middle" font-weight="650">Router Top-k</text>
+<path d="M388 282 H428" stroke="#71869B" stroke-width="2.5" fill="none"/><path d="M420 274 L430 282 L420 290" stroke="#71869B" stroke-width="2.5" fill="none"/>
+<rect x="432" y="254" width="122" height="56" rx="8" fill="#FFFFFF" stroke="#8FA8D8"/>
+<text x="493" y="278" fill="#253943" font-size="16" text-anchor="middle" font-weight="650">Grouped</text><text x="493" y="298" fill="#253943" font-size="16" text-anchor="middle" font-weight="650">GEMM</text>
+
+<text x="82" y="350" fill="#253943" font-size="17" font-weight="700">偏斜的代价</text>
+<text x="82" y="380" fill="#526879" font-size="16">• Rank token 数 Rg 不均 → 最慢 GPU 拖住整轮</text>
+<text x="82" y="410" fill="#526879" font-size="16">• Expert 输入形状参差 → Padding / M-block 浪费</text>
+<text x="82" y="440" fill="#526879" font-size="16">• AllToAll 发送与接收量不均 → 尾部等待</text>
+<rect x="80" y="454" width="474" height="24" rx="6" fill="#DCE6F8"/>
+<text x="317" y="472" fill="#2457C5" font-size="14" font-weight="750" text-anchor="middle">Skew ↑  通常使 Prefill 关键路径变长</text>
+
+<text x="646" y="200" fill="#168171" font-size="22" font-weight="760">Decode · 访存受限 / 小到中批量</text>
+<text x="646" y="229" fill="#526879" font-size="15">权重从 HBM 读入的范围，决定每步的访存成本</text>
+<rect x="648" y="254" width="138" height="56" rx="8" fill="#FFFFFF" stroke="#8DB9A1"/>
+<text x="717" y="288" fill="#253943" font-size="17" text-anchor="middle" font-weight="650">Token Batch</text>
+<path d="M786 282 H826" stroke="#71869B" stroke-width="2.5" fill="none"/><path d="M818 274 L828 282 L818 290" stroke="#71869B" stroke-width="2.5" fill="none"/>
+<rect x="830" y="254" width="126" height="56" rx="8" fill="#FFFFFF" stroke="#8DB9A1"/>
+<text x="893" y="288" fill="#253943" font-size="17" text-anchor="middle" font-weight="650">Router Top-k</text>
+<path d="M956 282 H996" stroke="#71869B" stroke-width="2.5" fill="none"/><path d="M988 274 L998 282 L988 290" stroke="#71869B" stroke-width="2.5" fill="none"/>
+<rect x="1000" y="254" width="122" height="56" rx="8" fill="#FFFFFF" stroke="#8DB9A1"/>
+<text x="1061" y="278" fill="#253943" font-size="16" text-anchor="middle" font-weight="650">HBM Weight</text><text x="1061" y="298" fill="#253943" font-size="16" text-anchor="middle" font-weight="650">Loads</text>
+
+<text x="650" y="350" fill="#253943" font-size="17" font-weight="700">偏斜可能带来的收益</text>
+<text x="650" y="380" fill="#526879" font-size="16">• 更多 token 复用同一批 Expert 权重</text>
+<text x="650" y="410" fill="#526879" font-size="16">• 激活专家数 Eactive 下降 → HBM 权重读取减少</text>
+<text x="650" y="440" fill="#526879" font-size="16">• 但批量增大后 Expert 很快饱和，收益会消失</text>
+<rect x="648" y="454" width="474" height="24" rx="6" fill="#DCEEE2"/>
+<text x="885" y="472" fill="#168171" font-size="14" font-weight="750" text-anchor="middle">Skew ↑  在未饱和时可能降低 Decode 权重放大税</text>
+
+<rect x="48" y="514" width="1104" height="194" rx="14" fill="#FFFFFF" stroke="#D9DFDC" stroke-width="1.5"/>
+<text x="78" y="552" fill="#253943" font-size="21" font-weight="740">Balls · Bins · Buckets：把负载不均拆成两层</text>
+<rect x="82" y="580" width="205" height="74" rx="9" fill="#F5F7F8" stroke="#BFCBD0"/>
+<text x="184" y="609" fill="#253943" font-size="17" font-weight="700" text-anchor="middle">Balls</text><text x="184" y="634" fill="#687A84" font-size="15" text-anchor="middle">Tokens / assignments</text>
+<path d="M287 617 H337" stroke="#71869B" stroke-width="2.5" fill="none"/><path d="M329 609 L339 617 L329 625" stroke="#71869B" stroke-width="2.5" fill="none"/>
+<rect x="342" y="580" width="205" height="74" rx="9" fill="#F5F7F8" stroke="#BFCBD0"/>
+<text x="444" y="609" fill="#253943" font-size="17" font-weight="700" text-anchor="middle">Bins</text><text x="444" y="634" fill="#687A84" font-size="15" text-anchor="middle">Logical Experts · Ni</text>
+<path d="M547 617 H597" stroke="#71869B" stroke-width="2.5" fill="none"/><path d="M589 609 L599 617 L589 625" stroke="#71869B" stroke-width="2.5" fill="none"/>
+<rect x="602" y="580" width="205" height="74" rx="9" fill="#F5F7F8" stroke="#BFCBD0"/>
+<text x="704" y="609" fill="#253943" font-size="17" font-weight="700" text-anchor="middle">Buckets</text><text x="704" y="634" fill="#687A84" font-size="15" text-anchor="middle">GPU Ranks · Rg</text>
+<path d="M807 617 H857" stroke="#71869B" stroke-width="2.5" fill="none"/><path d="M849 609 L859 617 L849 625" stroke="#71869B" stroke-width="2.5" fill="none"/>
+<rect x="862" y="580" width="252" height="74" rx="9" fill="#E9F5EF" stroke="#B7D8C2"/>
+<text x="988" y="609" fill="#176D62" font-size="17" font-weight="740" text-anchor="middle">Padded Work · Pg</text><text x="988" y="634" fill="#526879" font-size="15" text-anchor="middle">ηg × Rg / actual tile work</text>
+<text x="82" y="681" fill="#526879" font-size="15">EPLB 若只平衡原始 Rg，可能仍留下 Pg 的差异；Padding 方案不同，最坏分布也不同。</text>
+</g></svg>
