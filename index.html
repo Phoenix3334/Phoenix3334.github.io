@@ -13,7 +13,7 @@
   <meta property="og:image" content="https://phoenix3334.github.io/og.jpg">
   <style>
     :root{
-      --paper:#fbfaf7;--paper2:#f2efe9;--ink:#18232d;--muted:#6f7c88;--line:#d8d5cf;
+      --paper:#fbfaf7;--paper2:#f2efe9;--ink:#18232d;--muted:#586570;--line:#d8d5cf;
       --rust:#b65334;--teal:#197f79;--blue:#2457c5;--purple:#6e58b7;--white:#fff;
       --serif:Georgia,"Times New Roman",serif;--sans:Arial,Helvetica,sans-serif
     }
@@ -26,7 +26,7 @@
     nav{display:flex;align-items:center;gap:26px;color:var(--muted);font-size:12px}.github-link{color:var(--blue);font-weight:700}
     nav a:hover{color:var(--ink)}.header-actions{display:flex;gap:10px;align-items:center}
     .lang-button,.menu-button{border:1px solid var(--line);background:transparent;color:var(--ink);cursor:pointer}.lang-button{height:34px;padding:0 11px;font:700 10px/1 var(--sans);letter-spacing:.08em}.menu-button{display:none;width:40px;height:40px;font-size:18px}
-    .hero{min-height:680px;padding:88px 0 76px;display:grid;grid-template-columns:minmax(0,1.45fr) 300px;gap:100px;align-items:center}
+    .hero{min-height:620px;padding:68px 0 64px;display:grid;grid-template-columns:minmax(0,1.65fr) 240px;gap:64px;align-items:center}
     h1,h2,h3{font-family:var(--serif)} h1{max-width:820px;margin:0;font-size:clamp(48px,6.1vw,76px);line-height:1.02;letter-spacing:-.045em}
     h1 em{font-style:normal;color:var(--rust)}.hero-lede{max-width:760px;margin:28px 0 0;color:#34404a;font-size:17px;line-height:1.75}
     .hero-thesis{margin-top:30px;padding:18px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);font:700 15px/1.55 var(--serif)}
@@ -36,17 +36,17 @@
     .affiliation{min-width:max-content;height:40px;padding:0 12px;display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);color:var(--muted);background:rgba(255,255,255,.42);font-size:10px;font-weight:700}
     .affiliation img{width:19px;height:19px;object-fit:contain;filter:grayscale(1);opacity:.7}.logo-type{width:22px;height:22px;display:grid;place-items:center;background:var(--ink);color:#fff;font-size:8px}
     .portrait{margin:0}.portrait img{width:100%;aspect-ratio:4/5;object-fit:cover;filter:saturate(.84) contrast(1.03)}.portrait figcaption{margin-top:13px;padding-top:11px;border-top:3px solid var(--teal);color:var(--muted);font-size:11px;line-height:1.5}
-    section{padding:104px 0;border-top:1px solid var(--line)}.section-head{display:grid;grid-template-columns:minmax(0,1fr) 390px;gap:80px;align-items:end;margin-bottom:58px}
+    section{padding:88px 0;border-top:1px solid var(--line)}.section-head{display:grid;grid-template-columns:minmax(0,1fr) 390px;gap:60px;align-items:end;margin-bottom:38px}
     .section-head h2{margin:0;font-size:clamp(34px,4.1vw,50px);line-height:1.08;letter-spacing:-.03em}.section-head>p{margin:0;color:var(--muted);font-size:15px;line-height:1.75}
     .lens-grid{display:grid;grid-template-columns:1fr 80px 1fr;gap:28px;align-items:stretch}.thread{padding:30px;border:1px solid var(--line);background:rgba(255,255,255,.46)}
     .thread.real{border-top:4px solid var(--rust)}.thread.sys{border-top:4px solid var(--blue)}.thread h3{margin:0 0 18px;font-size:25px}.thread p{margin:0;color:#46525c;line-height:1.72;font-size:14px}
     .thread-list{margin-top:24px;border-top:1px solid var(--line)}.thread-row{padding:15px 0;border-bottom:1px solid var(--line)}.thread-row strong{display:block;font-size:13px}.thread-row span{display:block;margin-top:5px;color:var(--muted);font-size:11px;line-height:1.45}
     .converge{display:grid;place-items:center;text-align:center;color:var(--purple);font-weight:700;font-size:11px;letter-spacing:.08em}.converge span{writing-mode:vertical-rl;transform:rotate(180deg)}
     .co-design{margin-top:26px;padding:24px 28px;border-left:5px solid var(--purple);background:#f4f1fb;display:grid;grid-template-columns:220px 1fr;gap:28px;align-items:center}.co-design h3{margin:0;font-size:22px}.co-design p{margin:0;color:#4e5864;font-size:13px;line-height:1.65}
-    .experience{background:var(--paper2)}.experience-list{border-top:2px solid var(--ink)}.experience-row{display:grid;grid-template-columns:130px minmax(240px,.9fr) 1.55fr;gap:42px;padding:32px 0 36px;border-bottom:1px solid #cbc7bf}
+    .experience{background:var(--paper2)}.experience-list{border-top:2px solid var(--ink)}.experience-row{display:grid;grid-template-columns:110px minmax(220px,.9fr) 1.55fr;gap:32px;padding:28px 0 32px;border-bottom:1px solid #cbc7bf}
     .year{color:var(--rust);font-size:11px;font-weight:700;letter-spacing:.08em}.experience-row h3{margin:0;font-size:24px;line-height:1.2}.experience-row h3 small{display:block;margin-top:7px;color:var(--muted);font:400 11px/1.5 var(--sans)}
     .experience-row p{margin:0;color:#46525c;font-size:14px;line-height:1.75}.experience-row strong{color:var(--ink)}
-    .open-project{display:grid;grid-template-columns:145px minmax(0,1fr) 245px;gap:38px;padding:31px 0 36px;border-top:1px solid var(--line)}.open-project:first-of-type{border-top:2px solid var(--ink)}
+    .open-project{display:grid;grid-template-columns:130px minmax(0,1fr) 220px;gap:30px;padding:27px 0 31px;border-top:1px solid var(--line)}.open-project:first-of-type{border-top:2px solid var(--ink)}
     .open-project-index{color:var(--rust);font-size:10px;font-weight:700;letter-spacing:.1em}.project-title{display:flex;gap:14px;align-items:flex-start}.project-logo{width:42px;height:42px;object-fit:contain;padding:6px;border:1px solid var(--line);background:#fff}
     .open-project h3{margin:0;font-size:23px;line-height:1.25}.open-project h3 a:hover{color:var(--blue)}.open-project-copy>p{margin:13px 0 0;color:#46525c;font-size:14px;line-height:1.75}
     .open-project-proof{padding-left:22px;border-left:3px solid var(--teal)}.open-project-proof strong{display:block;font:700 23px/1.1 var(--serif)}.open-project-proof strong+strong{margin-top:18px}.open-project-proof span{display:block;margin-top:7px;color:var(--muted);font-size:10px;line-height:1.45}
@@ -62,17 +62,17 @@
     footer{min-height:245px;padding:66px 0}.footer-grid{display:grid;grid-template-columns:1fr auto;gap:40px;align-items:end}footer h2{max-width:800px;margin:0;font-size:clamp(32px,4.2vw,48px);line-height:1.1}.footer-links{display:flex;gap:20px;color:var(--blue);font-size:12px;font-weight:700}.copyright{margin-top:56px;padding-top:18px;border-top:1px solid var(--line);color:var(--muted);font-size:10px}
     .back-top{position:fixed;right:24px;bottom:24px;width:44px;height:44px;display:grid;place-items:center;border:1px solid var(--line);background:rgba(251,250,247,.92);opacity:0;pointer-events:none;transition:.2s}.back-top.visible{opacity:1;pointer-events:auto}
     @media(max-width:900px){.hero{grid-template-columns:1fr 240px;gap:50px}.section-head{grid-template-columns:1fr;gap:22px}.lens-grid{grid-template-columns:1fr}.converge{min-height:54px}.converge span{writing-mode:horizontal-tb;transform:none}.co-design{grid-template-columns:1fr}.experience-row{grid-template-columns:1fr;gap:13px}.open-project{grid-template-columns:115px 1fr}.open-project-proof{grid-column:2}.evidence-grid{grid-template-columns:1fr}}
-    @media(max-width:680px){.wrap{width:min(100% - 32px,1180px)}header{height:68px}.menu-button{display:block}nav{position:absolute;top:68px;left:16px;right:16px;display:none;padding:10px 18px;border:1px solid var(--line);background:rgba(251,250,247,.98);flex-direction:column;align-items:stretch;gap:0}nav.open{display:flex}nav a{padding:13px 0;border-bottom:1px solid var(--line)}.hero{min-height:auto;padding:64px 0;grid-template-columns:1fr}h1{font-size:42px}.portrait img{max-height:420px;object-position:center 28%}section{padding:76px 0}.open-project{grid-template-columns:1fr;gap:13px}.open-project-proof{grid-column:auto}.method,.metrics-band,.research-steps{grid-template-columns:repeat(2,1fr)}.metrics-band div:nth-child(2){border-right:0}.footer-grid{grid-template-columns:1fr}}
+    @media(max-width:680px){.wrap{width:min(100% - 32px,1180px)}header{height:68px}.menu-button{display:block}nav{position:absolute;top:68px;left:16px;right:16px;display:none;padding:10px 18px;border:1px solid var(--line);background:rgba(251,250,247,.98);flex-direction:column;align-items:stretch;gap:0}nav.open{display:flex}nav a{padding:13px 0;border-bottom:1px solid var(--line)}.hero{min-height:auto;padding:64px 0;grid-template-columns:1fr}h1{font-size:42px}.portrait img{max-height:420px;object-position:center 28%}section{padding:64px 0}.open-project{grid-template-columns:1fr;gap:13px}.open-project-proof{grid-column:auto}.method,.metrics-band,.research-steps{grid-template-columns:repeat(2,1fr)}.metrics-band div:nth-child(2){border-right:0}.footer-grid{grid-template-columns:1fr}}
     @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
 
-    :root{--muted:#586570}
+    
     a:focus-visible,button:focus-visible,summary:focus-visible,[tabindex]:focus-visible{outline:2px solid var(--teal);outline-offset:5px}
     section,[id]{scroll-margin-top:92px}.inline-link{color:var(--blue);text-decoration:underline;text-underline-offset:3px;font-size:12px}.experience-row .inline-link{display:inline-block;margin-top:8px}
     .work-detail{margin-top:18px;border-top:1px solid var(--line);font-size:12px;line-height:1.7}.work-detail summary{padding:13px 0;cursor:pointer;color:var(--teal);font-weight:700}.work-detail summary:hover{color:var(--ink)}
     .detail-body{padding:2px 0 14px}.detail-body p{margin:0 0 14px!important;font-size:12px!important;line-height:1.75!important}.experience-detail{grid-column:3;margin-top:0}.boundary{color:var(--muted)!important;font-size:12px!important;line-height:1.75!important}
     .lab-note{padding:26px 0;border-top:2px solid var(--ink)}.note-heading{display:flex;align-items:baseline;gap:17px}.note-number{color:var(--rust);font-size:11px;font-weight:700}.note-heading h3{margin:0;font-size:26px;line-height:1.25}.lab-note>p{max-width:930px;margin:18px 0;color:#46525c;font-size:14px;line-height:1.75}
     .note-grid{display:grid;grid-template-columns:1fr 1fr;gap:60px;margin-top:24px}.note-grid .lab-note{border-top:1px solid var(--line)}.table-scroll{overflow-x:auto;margin:24px 0}.result-table{width:100%;border-collapse:collapse;text-align:left;font-size:12px;line-height:1.6}.result-table caption{text-align:left;color:var(--muted);font-size:10px;padding-bottom:12px}.result-table th,.result-table td{padding:13px 14px 13px 0;border-bottom:1px solid var(--line);vertical-align:top}.result-table thead th{font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}.result-table tbody th{font-weight:700}.contribution-meta{flex-wrap:wrap;line-height:1.5}.contribution-meta span:last-child{color:var(--teal)}.contribution-meta .status-merged{color:var(--purple);font-weight:700}
-    .github-icon{width:14px;height:14px;vertical-align:-2px;margin-right:5px;fill:currentColor}.hero-lede{font-size:16px}.section-head{margin-bottom:42px}
+    .github-icon{width:14px;height:14px;vertical-align:-2px;margin-right:5px;fill:currentColor}.hero-lede{font-size:16px}
     .experience-visuals{grid-column:1/-1;justify-self:center;width:min(100%,960px);display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:32px;margin:12px auto 0}.medical-visuals{width:min(100%,800px);grid-template-columns:repeat(2,minmax(0,1fr))}
     .project-figure{margin:0;min-width:0;text-align:center}.project-figure a{--figure-height:185px;display:flex;justify-content:center;align-items:center;height:var(--figure-height);background:transparent;padding:0}.project-figure img{display:block;width:auto;height:auto;max-width:100%;max-height:100%;object-fit:contain;object-position:center}.medical-visuals a{--figure-height:235px}.project-figure figcaption{margin-top:10px;color:var(--muted);font-size:11px;line-height:1.65;text-align:center}.project-figure figcaption strong{display:block;color:var(--ink);font-size:12px}
     .inspection-crop{position:relative;display:block;width:min(100%,calc(var(--figure-height)*1.25686245));aspect-ratio:1589.93/1265;overflow:hidden}.inspection-crop img{position:absolute;left:0;top:0;width:138.18262%;height:100%;max-width:none;max-height:none;object-fit:fill}
@@ -86,17 +86,17 @@
     .contribution-group{margin:0;padding:20px 0 10px;color:var(--rust);font:700 10px/1.5 var(--sans);letter-spacing:.1em;text-transform:uppercase}.contributions .contribution-group:first-child{padding-top:14px}.record-note{font-size:11px;line-height:1.7;color:var(--muted)}
     @media(max-width:680px){.upstream-summary{grid-template-columns:1fr;gap:22px}.hero-evidence{font-size:12px}}
 
-    .hero{min-height:690px;grid-template-columns:minmax(0,1.65fr) 240px;gap:80px;padding-top:78px}h1{font-size:clamp(44px,5.6vw,69px);line-height:1.07}.hero-lede{max-width:750px}.hero-thesis{font-family:var(--sans);font-size:13px;font-weight:600;line-height:1.8}.portrait img{aspect-ratio:1/1}
+    h1{font-size:clamp(44px,5.6vw,69px);line-height:1.07}.hero-lede{max-width:750px}.hero-thesis{font-family:var(--sans);font-size:13px;font-weight:600;line-height:1.8}.portrait img{aspect-ratio:1/1}
     .hero-actions{display:flex;flex-wrap:wrap;gap:20px;margin-top:26px}.hero-actions a{font-size:12px;font-weight:700;color:var(--blue);text-decoration:underline;text-underline-offset:5px}
-    .practice-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:30px;border-top:2px solid var(--ink);padding-top:28px}.practice-grid article{min-width:0}.practice-grid h3{margin:0 0 14px;font-size:24px;line-height:1.25}.practice-grid p{margin:0 0 14px;font-size:13px;color:#46525c;line-height:1.8}.practice-grid .scope{font-size:11px;color:var(--muted)}
+    .practice-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:28px}.practice-grid article{min-width:0;border-top:2px solid var(--ink);padding-top:18px}.practice-grid h3{margin:0 0 14px;font-size:24px;line-height:1.25}.practice-grid p{margin:0 0 14px;font-size:13px;color:#46525c;line-height:1.8}.practice-grid .scope{font-size:11px;color:var(--muted)}
     .supporting-project{display:flex;gap:30px;align-items:baseline;margin-top:34px;padding-top:25px;border-top:1px solid var(--line)}.supporting-project h3{margin:0;min-width:170px;font-size:20px}.supporting-project p{margin:0;color:var(--muted);font-size:13px;line-height:1.8}
     .records-detail{margin-top:42px;border-top:1px solid var(--line)}.records-detail>summary{padding:22px 0;color:var(--teal);font-weight:700;font-size:13px;cursor:pointer}.records-detail .evidence-grid{margin-top:20px}.records-detail .group-label{margin-top:0}
     .economics{background:var(--paper2)}.cost-chain{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:28px}.cost-step{min-width:0;border-top:3px solid var(--blue);padding-top:20px}.cost-step .step-index{color:var(--rust);font:700 11px/1 var(--sans);letter-spacing:.1em}.cost-step h3{font-size:25px;line-height:1.2;margin:17px 0}.cost-step p{font-size:13px;color:#46525c;line-height:1.8;margin:12px 0}.formula{padding:14px 15px;border:1px solid var(--line);background:rgba(255,255,255,.55);font:12px/1.8 monospace;overflow-wrap:anywhere}.cost-scope{margin-top:30px;padding:20px 24px;border-left:3px solid var(--teal);font-size:13px;line-height:1.85;color:#46525c;background:rgba(255,255,255,.5)}
     .reference-grid{display:grid;grid-template-columns:1fr 1fr;gap:35px;margin-top:36px;padding-top:25px;border-top:1px solid var(--line)}.reference-grid h3{font:700 11px/1.5 var(--sans);text-transform:uppercase;letter-spacing:.1em;margin:0 0 12px;color:var(--rust)}.reference-grid a{color:var(--blue);font-size:13px;line-height:1.6;text-decoration:underline;text-underline-offset:3px}.reference-grid p{margin:12px 0 0;color:var(--muted);font-size:12px;line-height:1.8}
     #practice .research-steps h3{font-size:23px}.inference-scope{margin:25px 0 0;font-size:12px;line-height:1.8;color:var(--muted)}
     @media(max-width:1080px){.hero{gap:45px;grid-template-columns:minmax(0,1fr) 210px}nav{gap:18px}}
-    @media(max-width:900px){.cost-chain,.practice-grid{grid-template-columns:1fr;gap:30px}.reference-grid{gap:24px}.supporting-project{flex-direction:column;gap:14px}.hero{gap:36px}}
-    @media(max-width:680px){.hero{grid-template-columns:1fr;padding:54px 0;gap:35px;min-height:auto}h1{font-size:42px}.portrait{display:none}.reference-grid{grid-template-columns:1fr}.hero-actions{gap:20px}.hero-lede{font-size:15px}.cost-scope{padding:16px 18px}.research-steps{gap:10px}}
+    @media(max-width:900px){.cost-chain,.practice-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:26px}.reference-grid{gap:24px}.supporting-project{flex-direction:column;gap:14px}.hero{gap:36px}}
+    @media(max-width:680px){.hero{grid-template-columns:1fr;padding:54px 0;gap:24px;min-height:auto}h1{font-size:42px}.portrait{display:grid;grid-template-columns:76px minmax(0,1fr);align-items:center;gap:14px;max-width:360px;margin-top:4px}.portrait img{width:76px;height:76px;aspect-ratio:1;border-radius:50%}.portrait figcaption{margin:0;padding:0;border:0}.reference-grid{grid-template-columns:1fr}.hero-actions{gap:16px}.hero-lede{font-size:15px}.cost-chain,.practice-grid{grid-template-columns:1fr}.cost-scope{padding:16px 18px}.research-steps{gap:10px}}
     @media(max-width:680px){html[lang="zh-CN"] h1{font-size:32px}}
     .phase-benchmarks{max-width:760px}.phase-benchmarks .table-scroll{margin:2px 0 14px}.phase-compact{table-layout:fixed}.phase-compact th:first-child{width:28%}.phase-compact td{overflow-wrap:anywhere}.phase-compact th,.phase-compact td{padding:6px 12px 6px 0}.phase-compact caption{padding-bottom:4px}
     @media(max-width:480px){.phase-compact th,.phase-compact td{padding-right:6px}}
@@ -143,8 +143,8 @@
     .learning-link-arrow{position:absolute;top:18px;right:22px;font-size:16px;color:var(--teal)}
     .learning-bottom{display:flex;justify-content:space-between;align-items:center;gap:18px;flex-wrap:wrap;border-top:1px solid var(--line);margin-top:28px;padding-top:18px;font-size:12px;color:var(--muted)}
     .learning-bottom a{color:var(--blue);text-decoration:underline;text-underline-offset:4px}
-    @media(max-width:900px){.learning-groups{grid-template-columns:1fr;gap:15px}.learning-group-head{min-height:0}.learning-links{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.learning-link:nth-child(odd){border-right:1px solid var(--line)}.learning-link:nth-last-child(2){border-bottom:0}}
-    @media(max-width:680px){.learning-links{grid-template-columns:1fr}.learning-link:nth-child(odd){border-right:0}.learning-link:nth-last-child(2){border-bottom:1px solid var(--line)}.learning-group-head h3{font-size:22px}.learning-link{min-height:0}}
+    @media(max-width:900px){.learning-groups{grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}.learning-group:last-child{grid-column:1/-1}.learning-group-head{min-height:0}.learning-links{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.learning-link:nth-child(odd){border-right:1px solid var(--line)}.learning-link:nth-last-child(2){border-bottom:0}}
+    @media(max-width:680px){.learning-groups{grid-template-columns:1fr}.learning-group:last-child{grid-column:auto}.learning-links{grid-template-columns:1fr}.learning-link:nth-child(odd){border-right:0}.learning-link:nth-last-child(2){border-bottom:1px solid var(--line)}.learning-group-head h3{font-size:22px}.learning-link{min-height:0}}
 
 
     /* Direct link to the user's own GitHub curated AI Infra star list */
@@ -259,7 +259,7 @@
     .about-focus article{padding:17px 0;border-bottom:1px solid var(--line)}
     .about-focus h3{margin:0;font-size:20px;line-height:1.3}
     .about-focus p{margin:8px 0 0;color:var(--muted);font-size:12px;line-height:1.75}
-    @media(max-width:900px){.about-grid{grid-template-columns:1fr;gap:36px}}
+    @media(max-width:820px){.about-grid{grid-template-columns:1fr;gap:32px}}
     @media(max-width:680px){.about-meta{grid-template-columns:1fr;gap:16px}.about-focus h3{font-size:19px}}
 
   </style>
@@ -289,23 +289,23 @@
     <div class="hero wrap"><div>
       <p class="eyebrow" data-i18n="hero-kicker">AI Systems · LLM Serving & Heterogeneous Computing</p>
       <h1 data-i18n="hero-title">From models to infrastructure,<br><em>measured across the stack.</em></h1>
-      <p class="hero-lede" data-i18n="hero-lede">I work on the systems that turn large language models into reliable, efficient inference services—from distributed runtime behavior to accelerator execution and performance evaluation.</p>
+      <p class="hero-lede" data-i18n="hero-lede">I work on distributed LLM serving and heterogeneous accelerator systems, spanning runtime scheduling, kernel execution and performance evaluation.</p>
       <p class="hero-thesis" data-i18n="hero-thesis">Trace the request → isolate the bottleneck → validate correctness → measure the service-level result.<br><em>Performance only counts when workload and latency constraints are explicit.</em></p>
-      <div class="hero-actions"><a href="#opensource" data-i18n="hero-action-work">SGLang engineering work ↓</a><a href="#economics" data-i18n="hero-action-tco">Capacity and cost methodology ↓</a></div>
+      <div class="hero-actions"><a href="#opensource" data-i18n="hero-action-work">SGLang runtime work ↓</a><a href="#huawei" data-i18n="hero-action-huawei">Ascend &amp; Kunpeng work ↓</a><a href="#economics" data-i18n="hero-action-tco">Capacity &amp; cost methodology ↓</a></div>
       <div class="hero-line"><span class="tag">SGLang</span><span class="tag">Distributed LLM Serving</span><span class="tag">GPU / NPU Performance</span><span class="tag">Capacity &amp; TCO</span></div>
     </div><figure class="portrait"><img src="https://avatars.githubusercontent.com/u/174691475?v=4" alt="Feihong Guo"><figcaption data-i18n="portrait-caption">Feihong Guo · 郭飞鸿<br>AI Infrastructure · LLM Systems</figcaption></figure></div>
     <section id="about" class="about-section">
       <div class="wrap">
         <div class="section-head">
-          <div><p class="eyebrow" data-i18n="about-kicker">ABOUT ME · AI INFRASTRUCTURE</p><h2 data-i18n="about-title">Building reliable<br>LLM systems.</h2></div>
-          <p data-i18n="about-intro">I study Internet of Things Engineering at Zhengzhou University and focus on AI infrastructure and distributed LLM inference.</p>
+          <div><p class="eyebrow" data-i18n="about-kicker">ABOUT ME · AI INFRASTRUCTURE</p><h2 data-i18n="about-title">A systems path across<br>runtimes and accelerators.</h2></div>
+          <p data-i18n="about-intro">I study Internet of Things Engineering at Zhengzhou University. My engineering work spans SGLang runtime development and inference optimization across heterogeneous accelerators.</p>
         </div>
         <div class="about-grid">
           <div class="about-copy">
-            <p data-i18n="about-copy-1">The systems question behind my work is how routing, scheduling, memory movement, communication and accelerator kernels combine to determine end-to-end serving performance.</p>
+            <p data-i18n="about-copy-1">I focus on the path from request scheduling and memory movement to kernel execution, and on whether local changes improve end-to-end service behavior.</p>
             <div class="about-meta">
               <div><span data-i18n="about-education-label">EDUCATION</span><strong data-i18n="about-education-value">Zhengzhou University · Internet of Things Engineering</strong></div>
-              <div><span data-i18n="about-current-label">ENGINEERING EXPERIENCE</span><div class="about-experience-list" data-i18n="about-current-value"><div class="about-experience-item"><strong>Baidu AI Cloud</strong><span>AI Infrastructure Intern</span></div><div class="about-experience-item"><strong>Huawei Ascend</strong><span>910B / 910C · Inference &amp; Kernel Optimization</span></div></div></div>
+              <div><span data-i18n="about-current-label">ENGINEERING PRACTICE</span><div class="about-experience-list" data-i18n="about-current-value"><div class="about-experience-item"><strong>Baidu AI Cloud</strong><span>AI Infrastructure Intern</span></div><div class="about-experience-item"><strong>Huawei Ascend</strong><span>910B / 910C · Inference &amp; Kernel Optimization</span></div></div></div>
             </div>
           </div>
           <div class="about-focus">
@@ -497,7 +497,7 @@
     <section id="internship">
       <div class="wrap">
         <div class="section-head">
-          <div><p class="eyebrow" data-i18n="internship-eyebrow">SGLang deployment &amp; performance</p><h2 data-i18n="internship-title">Benchmark the workload.<br>Choose the serving configuration.</h2></div>
+          <div><p class="eyebrow" data-i18n="internship-eyebrow">BAIDU AI CLOUD · SERVING BENCHMARKS</p><h2 data-i18n="internship-title">Benchmark the workload.<br>Choose the serving configuration.</h2></div>
           <p data-i18n="internship-intro">I compare Prefill, Decode and end-to-end serving under explicit request lengths and concurrency, rather than treating peak tokens/s as a universal result. Parallel layout, KV/SSM memory budgets, graph replay and communication overhead all change the usable operating point. The goal is to identify configurations that meet latency and correctness constraints.</p>
         </div>
         <article class="lab-note phase-note" id="long-context-results">
@@ -553,7 +553,7 @@
     </section>
 
     <section class="experience" id="huawei"><div class="wrap">
-      <div class="section-head"><div><p class="eyebrow" data-i18n="huawei-kicker">Huawei ICT Academy · ZZU Supercomputing</p><h2 data-i18n="huawei-title">Inference and performance,<br>across NPU and CPU.</h2></div><p data-i18n="huawei-intro">This work examines how models behave on heterogeneous hardware: serving with vLLM-Ascend/xLLM on Ascend 910B, MiniCPM-o full-duplex inference and kernel optimization on Ascend 910C, and CPU/NUMA tuning on Kunpeng 920. The result that matters is the complete workload, not only an isolated fast operator.</p></div>
+      <div class="section-head"><div><p class="eyebrow" data-i18n="huawei-kicker">HUAWEI ASCEND &amp; KUNPENG · HETEROGENEOUS COMPUTING</p><h2 data-i18n="huawei-title">Inference and performance,<br>across NPU and CPU.</h2></div><p data-i18n="huawei-intro">This work examines how models behave on heterogeneous hardware: serving with vLLM-Ascend/xLLM on Ascend 910B, MiniCPM-o full-duplex inference and kernel optimization on Ascend 910C, and CPU/NUMA tuning on Kunpeng 920. The result that matters is the complete workload, not only an isolated fast operator.</p></div>
       <div class="practice-grid">
         <article><h3 data-i18n="huawei-serving-title">Ascend serving engines</h3><p data-i18n="huawei-serving-copy">Worked with <strong>xLLM and vLLM-Ascend on Ascend 910B</strong>: model support, MTP, ACL Graph, cache capacity, and benchmark configuration. Qwen3.5-9B throughput moved <strong>2,301 → 30,451 tok/s at C960</strong> in a combined configuration comparison.</p><p class="scope" data-i18n="huawei-serving-scope">A separate Gemma 4 E2B deployment comparison measured 1,159.53 → 1,274.00 tok/s with Full ACL Graph. The two benchmarks have different baselines.</p></article>
         <article><h3 data-i18n="huawei-kernel-title">Kernels into a valid runtime path</h3><p data-i18n="huawei-kernel-copy">Used <strong>Ascend C, Triton, and TileLang</strong> to connect tiling and fusion to the Da Vinci data path: aligned transfers, on-chip buffers, compute, and synchronisation. Specialised paths need shape and layout checks, precision validation, and a fallback before serving integration.</p><p class="scope" data-i18n="huawei-kernel-scope">Kernel timing and system throughput are measured separately. A faster local operator needs a reachable engine path and an end-to-end comparison.</p></article>
@@ -938,7 +938,7 @@
   ".contribution[data-record=\"pr-35721\"] h3": "将 generation-health 状态从用户调度中隔离",
   ".contribution[data-record=\"pr-34410\"] h3": "固定 P/D Decode draft-input 交接契约",
   ".contribution[data-record=\"pr-34286\"] h3": "最后一次 warmup 后、capture 前同步图构建",
-  "[data-i18n=\"internship-eyebrow\"]": "SGLang 部署与性能工程",
+  "[data-i18n=\"internship-eyebrow\"]": "百度智能云 · 推理部署与性能评测",
   "[data-i18n=\"internship-title\"]": "按真实负载压测，<br>再选择部署配置。",
   "[data-i18n=\"internship-intro\"]": "先明确输入输出长度、并发和目标 SLO，再分别测试 Prefill、Decode 与端到端服务。对照 TP/PP/EP、DCP、KV/SSM 容量、Graph Replay 和通信开销，找出可稳定运行的配置，而不是只比较最高 tok/s。",
   "[data-i18n=\"capacity-title\"]": "全节点测试前先估算容量",
@@ -993,12 +993,12 @@
   "[data-i18n=\"nav-home\"]": "主页",
   "[data-i18n=\"nav-about\"]": "关于我",
   "[data-i18n=\"about-kicker\"]": "关于我 · AI 基础设施",
-  "[data-i18n=\"about-title\"]": "构建高效、可靠的<br>大模型系统。",
-  "[data-i18n=\"about-intro\"]": "我就读于郑州大学物联网工程专业，目前聚焦 AI 基础设施与分布式大模型推理。",
-  "[data-i18n=\"about-copy-1\"]": "我关注的系统问题是：请求路由、调度、内存搬运、通信与加速器 Kernel，如何共同决定端到端推理服务表现？",
+  "[data-i18n=\"about-title\"]": "围绕运行时与加速器，<br>开展系统级工程实践。",
+  "[data-i18n=\"about-intro\"]": "我就读于郑州大学物联网工程专业，工程实践涵盖 SGLang Runtime 与异构加速器上的推理优化。",
+  "[data-i18n=\"about-copy-1\"]": "我关注请求调度、数据搬运到 Kernel 执行的完整链路，以及局部优化能否转化为端到端服务收益。",
   "[data-i18n=\"about-education-label\"]": "教育背景",
   "[data-i18n=\"about-education-value\"]": "郑州大学 · 物联网工程",
-  "[data-i18n=\"about-current-label\"]": "工程经历与实践",
+  "[data-i18n=\"about-current-label\"]": "工程实践",
   "[data-i18n=\"about-current-value\"]": "<div class=\"about-experience-item\"><strong>百度智能云</strong><span>AI Infra 工程实习</span></div><div class=\"about-experience-item\"><strong>华为昇腾</strong><span>910B / 910C · 推理与 Kernel 优化实践</span></div>",
   "[data-i18n=\"about-focus-label\"]": "研究兴趣",
   "[data-i18n=\"about-interest-1-title\"]": "分布式大模型系统",
@@ -1090,16 +1090,17 @@
   "[data-i18n=\"learning-extra-desc-11\"]": "CUDA、Triton 与 NCCL 讲座及实践。",
   "[data-i18n=\"hero-kicker\"]": "AI SYSTEMS · 大模型推理与异构计算",
   "[data-i18n=\"hero-title\"]": "从模型到推理基础设施，<br>让<em>系统表现有据可依。</em>",
-  "[data-i18n=\"hero-lede\"]": "我关注如何把大语言模型转化为高效、可靠的推理服务，工作覆盖分布式运行时、加速器执行与性能评估。",
+  "[data-i18n=\"hero-lede\"]": "我关注分布式大模型推理与异构加速器系统，覆盖运行时调度、Kernel 执行和性能评估。",
   "[data-i18n=\"hero-thesis\"]": "沿请求链路追踪 → 隔离瓶颈 → 验证正确性 → 测量服务级结果。<br><em>只有明确负载与延迟约束，性能数据才有部署意义。</em>",
-  "[data-i18n=\"hero-action-work\"]": "查看 SGLang 工程工作 ↓",
-  "[data-i18n=\"hero-action-tco\"]": "查看容量与成本方法 ↓",
+  "[data-i18n=\"hero-action-work\"]": "SGLang Runtime 工程 ↓",
+  "[data-i18n=\"hero-action-huawei\"]": "昇腾与鲲鹏实践 ↓",
+  "[data-i18n=\"hero-action-tco\"]": "容量与成本方法 ↓",
   "[data-i18n=\"portrait-caption\"]": "Feihong Guo · 郭飞鸿<br>AI 基础设施 · 大模型系统",
   "[data-i18n=\"sglang-kicker\"]": "百度智能云 · SGLang",
   "[data-i18n=\"sglang-title\"]": "不只调吞吐，<br>更要定位运行时问题。",
   "[data-i18n=\"sglang-intro\"]": "压测中的异常不一定来自慢算子：有些发生在控制面的请求路由，有些来自异步执行中的张量生命周期。我沿请求链路定位根因，通过受控 A/B 和回归测试验证修复，再将补丁提交上游。下面保留关键证据与适用边界。",
   "[data-i18n=\"all-records\"]": "展开公开 PR、Review 与故障调查索引",
-  "[data-i18n=\"huawei-kicker\"]": "华为 ICT 学院 · 郑州大学超算团队",
+  "[data-i18n=\"huawei-kicker\"]": "华为昇腾与鲲鹏 · 异构计算实践",
   "[data-i18n=\"huawei-title\"]": "从昇腾推理到鲲鹏计算，<br>验证不同平台的性能路径。",
   "[data-i18n=\"huawei-intro\"]": "这部分关注模型在异构硬件上的实际执行：昇腾 910B 的推理部署与压测、昇腾 910C 上 MiniCPM-o 的全双工运行时和算子优化，以及鲲鹏 920 的 CPU/NUMA 性能实践。重点是验证局部改动能否改善完整负载。",
   "[data-i18n=\"omni-label\"]": "昇腾 910C · 跨平台推理项目",
