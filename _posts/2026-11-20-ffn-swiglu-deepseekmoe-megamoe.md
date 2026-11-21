@@ -3,8 +3,8 @@ layout: post
 title: "从 SwiGLU 到 MoE 推理系统：细粒度、LatentMoE、负载均衡与 MegaMoE"
 date: 2026-11-20 15:30:00 +0800
 lang: zh-CN
-summary: "从 Dense FFN 与 DeepSeekMoE 的细粒度专家，走到 LatentMoE/Kimi K3、训练期路由平衡和推理期 EPLB；以 DSV4-Pro、V4.1-Flash 的模拟均衡和 MegaMoE 实验解释为何平衡度不能直接等同吞吐。"
-tags: [MoE, DeepSeekMoE, LatentMoE, EPLB, MegaMoE, FFN, SGLang, Inference-Systems]
+summary: "从 Dense FFN、细粒度 MoE 与 LatentMoE，走到 MLSys 2026 的 MoE Serving Tax、Padding-aware EPLB 和 MegaMoE；结合 DSV4-Pro、V4.1-Flash 实验解释 Prefill/Decode 的不同瓶颈。"
+tags: [MoE, DeepSeekMoE, LatentMoE, EPLB, MegaMoE, MoE-Serving-Tax, MLSys-2026, FFN, SGLang, Inference-Systems]
 ---
 
 从前面的 [Attention / MLA / KDA](/blog/2026/11/19/attention-from-gqa-to-kimi-k31/) 继续往下看，Transformer Block 的另一半是 **FFN**。学习 CS336 时，只要理解 SwiGLU 的 Gate、Up、Down 三个 Linear，就可以写出 Dense FFN；但到了 DeepSeek、Kimi 这类万亿级 MoE，为什么还要把 FFN 切成细粒度 Expert、设置 Shared Expert、把 Routed 路径压到 Latent Space，然后让不同 GPU 之间做 EP Dispatch？
@@ -330,9 +330,9 @@ Token Hidden State
 
 **MoE Tax 定义为相对 DenseFA 的延迟比，而不是云厂商报价比：**
 
-$
+$$
 \tau(b) = \frac{T(\mathrm{MoE}, b)}{T(\mathrm{DenseFA}, b)}
-$
+$$
 
 \(\tau=1\) 表示达到 FLOP 对齐 DenseFA 的延迟；\(\tau=2\) 表示相同口径下 MoE 的迭代延迟是 DenseFA 的两倍。论文 Figure 1 中 DeepInfra 的价格差异（2.5–10×）是市场定价现象，不能与论文测得的 2–3× 延迟税混为一谈。
 
@@ -358,15 +358,15 @@ $
 
 DenseFA 把全部 \(m\) 个 Token 放进一个较大的 Dense FFN；MoE 则把 \(mK\) 个 Token-Expert assignment 分散给 \(E_{\mathrm{active}}\) 个 Expert。平均每个激活 Expert 只处理：
 
-$
+$$
 \frac{mK}{E_{\mathrm{active}}}
-$
+$$
 
 个 Token。于是 MoE 的 Expert GEMM 算术强度近似只有 DenseFA 的：
 
-$
+$$
 \frac{K}{E_{\mathrm{active}}}
-$
+$$
 
 这不是说 FLOPs 增加了，而是**同样的计算被切成了更多小矩阵，权重在每个矩阵里被复用得更少**。
 
@@ -376,6 +376,49 @@ $
 当 Batch 足够大、几乎所有 Expert 都被激活时，\(E_{\mathrm{active}}\to E\)，Decode 的权重放大税就会接近 \(E/K\)，表现得像一个参数量很大的 Dense 模型（DensePA）。
 
 这也解释了论文观察到的 Decode Tax **钟形曲线**：单请求时只触发少数 Expert，税较低；Batch 增大后，活跃 Expert 很快饱和，权重读取量上升，税达到峰值；再继续增大 Batch，计算逐渐追上访存，延迟比开始回落。
+
+
+#### 用 Roofline 变量把计算区间写出来
+
+论文把单个 Expert 的权重读取时间记为 \(\alpha\)，每个 Token-Expert assignment 的激活 I/O 时间记为 \(\alpha_{act}\)，对应计算时间记为 \(\beta\)，Padding 放大系数记为 \(\eta\)。在 **TP+TP、MoE 与 DenseFA 使用相同 TP 度数**的计算模型中：
+
+$$
+T_{\mathrm{FFN},c}
+= \frac{1}{n_{tp}}
+\max\left(
+\alpha K + \alpha_{act}mK,\;
+\beta mK
+\right)
+$$
+
+$$
+T_{\mathrm{MoE},c}
+= \frac{1}{n_{tp}}
+\max\left(
+\alpha E_{\mathrm{active}} + \alpha_{act}\eta mK,\;
+\beta\eta mK
+\right)
+$$
+
+两者的差别很直观：DenseFA 加载 K 份等价权重；MoE 要加载实际激活的 \(E_{\mathrm{active}}\) 份权重，而且 Padding 会把有效的 \(mK\) 个 assignment 放大到 \(\eta mK\)。
+
+由此得到三个区间：
+
+| 区间 | 典型阶段 | MoE / DenseFA 的 FFN 时间比 | 主导原因 |
+| --- | --- | --- | --- |
+| Memory-bound | Decode、小 Batch | 约 \(E_{\mathrm{active}}/K\) | 权重读取量不同 |
+| Compute-bound | Prefill、大 Batch | 约 \(\eta\) | FLOPs 对齐，差异主要来自 Padding |
+| Transition | 中间区域 | 约 \(\alpha E_{\mathrm{active}}/(\beta mK)\) | MoE 仍受访存限制，DenseFA 已逐渐转为计算受限 |
+
+再乘上 FFN 在整个 DenseFA Forward 中的时间占比 \(f\)，可得到整层模型的延迟税：
+
+$$
+\tau
+= \frac{T_{other}+T_{MoE}}{T_{other}+T_{FFN}}
+= 1 + \left(\frac{T_{MoE}}{T_{FFN}}-1\right)f
+$$
+
+其中 \(f=T_{FFN}/(T_{other}+T_{FFN})\)。这意味着：即使 FFN 子层的 MoE Tax 很高，如果 Attention 等非 FFN 部分占据了更大比例，折算到整个 Forward 的税也会变小。长上下文下尤其不能只看 MoE Kernel 的局部倍率。
 
 ### 8.3 为什么路由倾斜 Prefill 不喜欢，Decode 却可能喜欢？
 
@@ -387,9 +430,9 @@ $
 
 **Prefill 看最慢的 Rank。** EP 中所有 Rank 要协同完成一轮 Expert 计算。若 Rank 0 收到很多 Token，Rank 1 收到很少 Token，整体完成时间仍要等 Rank 0。论文用 \(R_g\) 表示 GPU \(g\) 收到的原始 Routed Token 数，均衡情况下每卡平均值约为 \(mK/n_{ep}\)，最慢 Rank 的负载比例可以写成：
 
-$
+$$
 \frac{\max_g R_g}{mK/n_{ep}}
-$
+$$
 
 这个比例越大，Straggler Tax 越明显。论文在所测配置中观察到，Prefill 的落后者开销可使 MoE Kernel 延迟上升约 40%–80%。
 
@@ -407,21 +450,21 @@ MoE Router 产生的是 Ragged Shape：不同 Expert 收到的 Token 数不同�
 
 **Blockwise Padding：每个 Expert 独立向上取整。**
 
-$
+$$
 P_g^{\mathrm{block}}
 = \sum_{i\in E_g}
 \left\lceil\frac{N_i}{B}\right\rceil B
-$
+$$
 
 这种方式怕 Token 分散：很多 Expert 各自只收到少量 Token，每个 Expert 都可能被补到一个完整 Block。论文指出 FusedMoE 与 DeepGEMM 的 Prefill 路径采用这种类型。
 
 **Max Padding：所有 Expert 对齐到同一个最大长度。**
 
-$
+$$
 P_g^{\mathrm{max}}
 = E_g
 \left\lceil\frac{\max_i N_i}{B}\right\rceil B
-$
+$$
 
 这种方式怕 Token 集中：一个热点 Expert 的最大 Token 数会抬高所有 Expert 的共同执行维度。论文指出 DeepGEMM Decode 使用这种类型。
 
@@ -458,10 +501,10 @@ Buckets：Physical GPU Ranks
 
 在均匀随机路由假设下，批量 \(m\) 中期望激活的 Expert 数为：
 
-$
+$$
 \mathbb{E}[E_{\mathrm{active}}]
 = E\left(1-\left(1-\frac{K}{E}\right)^m\right)
-$
+$$
 
 它随 Batch 增大而快速接近 E。论文还发现，细粒度 Expert 可能加剧 Expert 级别的相对倾斜，但在 Expert 被分配到 GPU 后，多个 Expert 的负载会在 GPU 级别进行平均，GPU 级 skew 不一定同比恶化。相反，论文的模拟显示，加入 DP Attention 的配置可能提高最坏 GPU 负载，因此需要结合 EPLB 等机制观察。
 
@@ -475,10 +518,10 @@ $
 
 论文对 DeepSeek-V3 的通信量做了一个量级估算：AllToAll 的 API 级 Dispatch Buffer 约为 \(m_g K d_{model}\)，而 AllReduce 的输入规模为 \(m d_{model}\)，前者随 K 线性增长。考虑 Ring AllReduce 每卡实际传输约 \(2(n-1)/n\) 倍输入，以及 AllToAll 中约 \(1/n\) 的本地 Expert assignment 不经过网络，网络传输量之比约为：
 
-$
+$$
 \frac{V_{\mathrm{A2A}}}{V_{\mathrm{AR}}}
 \approx \frac{K n}{2(n-1)}
-$
+$$
 
 当 \(K=8,n=8\) 时约为 **4.6×**。这是论文设定下的网络流量量级估算，不是所有实现、所有精度下的固定延迟比。论文测得单机 H200 上 AllToAll / AllReduce 延迟比在 Decode 约 2×、大 Batch Prefill 约 3–4×；跨两节点则达到约 7–15×，RDMA 互联成为更明显的瓶颈。
 
@@ -532,9 +575,9 @@ r32 的 Rank Count CV 更低，但它相对模拟均衡只多 57 tok/s，约 0.0
 
 现在用论文的视角重新看：**CV 只描述某一层的原始计数分布，不等于 Padding 后的执行工作量，更不等于关键路径时延。** 论文指出，传统 EPLB 主要平衡原始 Rank Token 数 \(R_g\)，而真正决定 Prefill 计算时间的还包括补齐后的工作量：
 
-$
+$$
 P_g = \eta_g R_g
-$
+$$
 
 其中 \(\eta_g\) 由该 Rank 上的 Expert 分布和 Kernel Padding 机制决定。论文因此提出一个更有针对性的方向：**Padding-aware + Activation-aware EPLB**，即在考虑原始 Token 数的同时，也考虑补齐后要执行多少行，以及 Decode 要加载多少个不同 Expert 的权重。
 
@@ -546,7 +589,7 @@ $
 4. **通信级：** Dispatch / Combine 的实际字节数、Rank 间最大传输量与 p95 延迟。
 5. **阶段级：** 分开测 Prefill 与 Decode，尤其关注 Replica 是否降低 Prefill Straggler，却增加 Decode 的活跃权重集合。
 
-还有一个重要边界：论文的主要测量对象是 vLLM 的 FusedMoE / DeepGEMM 等路径，端到端测试使用 8×A100 和 8×B200，通信微基准另用 8/16×H200；它不是在我们的 B300 + SGLang MegaMoE 上直接测出来的 2–3×。论文的解析模型用于拆分主导税源、解释趋势，模型预测本身在多数配置下仍有约 10%–30% 误差，也不能替代我们对计算—通信重叠后真实关键路径的测量。
+还有一个重要边界：论文的主要测量对象是 vLLM 的 FusedMoE / DeepGEMM 等路径，端到端测试使用 8×A100 和 8×B200，通信微基准另用 8/16×H200；它不是在我们的 B300 + SGLang MegaMoE 上直接测出来的 2–3×。论文的解析模型用于拆分主导税源、解释趋势；它没有把 Compute–Communication Overlap 纳入完整时序模型，预测本身在多数配置下仍有约 10%–30% 误差。因此不能把通信、GEMM 和 Padding 的分项延迟直接相加成 MegaMoE 的端到端时间，也不能替代我们对重叠执行后真实关键路径的测量。
 
 **所以这篇论文对我们的价值不是给出一个新的 EPLB 开关，而是改变 EPLB 的优化目标：从「让 Expert / Rank 的原始计数更均匀」，推进到「让 Prefill 的补齐后关键路径更短，同时不把 Decode 的权重读取成本抬高」。**
 
