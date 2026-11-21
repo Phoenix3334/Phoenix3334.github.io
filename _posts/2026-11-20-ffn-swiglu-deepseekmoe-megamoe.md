@@ -639,15 +639,15 @@ DeepEP 的异步接口允许调用方把“通信已提交”与“接收结果�
 
 如果通信和计算能够充分重叠，单段关键路径才可能接近：
 
-\[
+$
 T_{\mathrm{stage}} \approx \max(T_{\mathrm{comm}},T_{\mathrm{compute}})
-\]
+$
 
 而不是简单相加：
 
-\[
+$
 T_{\mathrm{stage}} = T_{\mathrm{comm}} + T_{\mathrm{compute}}
-\]
+$
 
 但这个上界需要满足条件，并不是打开异步接口就自动获得：
 
