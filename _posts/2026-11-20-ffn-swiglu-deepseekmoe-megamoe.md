@@ -3,8 +3,8 @@ layout: post
 title: "从 SwiGLU 到 MoE 推理系统：细粒度、LatentMoE、负载均衡与 MegaMoE"
 date: 2026-11-20 15:30:00 +0800
 lang: zh-CN
-summary: "从 Dense FFN、细粒度 MoE 与 LatentMoE，走到 MLSys 2026 的 MoE Serving Tax、Padding-aware EPLB 和 MegaMoE；结合 DSV4-Pro、V4.1-Flash 实验解释 Prefill/Decode 的不同瓶颈。"
-tags: [MoE, DeepSeekMoE, LatentMoE, EPLB, MegaMoE, MoE-Serving-Tax, MLSys-2026, FFN, SGLang, Inference-Systems]
+summary: "从 Dense FFN、细粒度 MoE 与 LatentMoE，走到 DeepEP、MLSys 2026 MoE Serving Tax、Padding-aware EPLB 和 MegaMoE；结合 DSV4-Pro、V4.1-Flash 实验解释 Prefill/Decode 的不同瓶颈。"
+tags: [MoE, DeepSeekMoE, LatentMoE, DeepEP, EPLB, MegaMoE, MoE-Serving-Tax, MLSys-2026, FFN, SGLang, Inference-Systems]
 ---
 
 从前面的 [Attention / MLA / KDA](/blog/2026/11/19/attention-from-gqa-to-kimi-k31/) 继续往下看，Transformer Block 的另一半是 **FFN**。学习 CS336 时，只要理解 SwiGLU 的 Gate、Up、Down 三个 Linear，就可以写出 Dense FFN；但到了 DeepSeek、Kimi 这类万亿级 MoE，为什么还要把 FFN 切成细粒度 Expert、设置 Shared Expert、把 Routed 路径压到 Latent Space，然后让不同 GPU 之间做 EP Dispatch？
