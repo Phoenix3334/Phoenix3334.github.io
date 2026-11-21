@@ -527,7 +527,149 @@ $$
 
 另一个细节是 DeepSeek-V3 Dispatch 使用 FP8，而 Combine 使用 BF16，Combine 的单 Token 传输量接近翻倍。论文在每 Rank 128 Token 的测试点观察到，路由分布导致的 p95 Combine 开销约 2.7×，Dispatch 约 1.9×。因此不能只测 Dispatch，也不能默认两段通信完全对称。
 
-### 8.7 论文的实测：Prefill 税下降，Decode 税呈钟形
+### 8.7 DeepEP：把论文里的 AllToAll Tax 落到真实 EP 通信路径
+
+前面讲的是论文对 AllToAll 通信税的抽象建模。落到工程实现，需要看 **DeepEP**。它不是 Router，也不是 Expert GEMM Kernel，而是面向 MoE Expert Parallel 的通信库：根据上游给出的 Top-K 路由结果，完成 Token 的 Dispatch、跨设备传输、接收布局组织，以及 Combine 回传。它把 MoE 不规则的 Token-to-Expert 映射做成专用 GPU 通信路径，而不是简单调用一个固定分块的通用 AllToAll。
+
+先把几个组件的职责分开：
+
+| 组件 | 负责什么 | 不负责什么 |
+| --- | --- | --- |
+| Router | 计算每个 Token 的 Top-K Expert 及路由权重 | 不负责跨 GPU 搬运 Token |
+| DeepEP | Dispatch / Combine、跨 Rank 搬运、通信缓冲与数据布局 | 不执行 Expert FFN 的两层 GEMM |
+| DeepGEMM / Grouped GEMM | 执行各 Expert 的矩阵乘与激活 | 不决定 Token 应该发往哪个 Rank |
+| EPLB | 调整 Expert Placement / Replica，改变负载落在哪些 Rank | 不替代 Dispatch / Combine 通信 |
+| MegaMoE | 在特定执行路径中融合通信与 Expert 计算，形成更紧密的流水 | 不是 DeepEP 的另一个普通 AllToAll API |
+
+普通的 EP 执行链路可以先记成：
+
+~~~text
+Router Top-K
+    │ 生成 routing map
+    ▼
+DeepEP Dispatch
+    │ Token hidden states + routing metadata
+    ▼
+目标 Rank 的 Expert 输入布局
+    │
+    ▼
+Grouped GEMM / Expert FFN
+    │ Expert 输出
+    ▼
+DeepEP Combine
+    │ 反向传输 + 按原 Token 聚合
+    ▼
+恢复原始 Token 顺序，进入后续 Transformer
+~~~
+
+因此，论文的 AllToAll Tax 对应 DeepEP 路径中的通信成本，但两者不是同一层描述：论文解释为什么通信量、Rank 不均和传输尾部会形成延迟；DeepEP 解释这些数据具体如何被打包、分发、接收和送回。
+
+#### EPV1 Normal：跨节点 RDMA 去重，再通过节点内 NVLink 扇出
+
+结合我们分析的 EPV1 Normal，跨节点路径不是简单地把每个 Token 的每个 Top-K assignment 都独立发一次。它采用两级转发：
+
+1. **Scale-out：** 按目标节点对同一个 Token 去重。同一个 Token 即使命中同一远端节点上的多个 Expert，跨节点 RDMA 通常只需要把这份 Token 数据送到该节点一次。
+2. **Scale-up：** 数据到达目标节点后，再通过 NVLink / NVSwitch 分发到节点内真正承载目标 Expert 的 GPU。
+
+可以把路径画成：
+
+~~~text
+Source GPU
+    │
+    │ IBGDA / RDMA
+    │ 每个 Token-目标节点只发送一份
+    ▼
+Destination Node 的 RDMA Receive Buffer
+    │
+    │ NVLink / NVSwitch
+    │ 节点内按 Expert Rank 扇出
+    ▼
+Target GPU 的 Expert Input
+    │
+    ▼
+Expert GEMM
+~~~
+
+EPV1 Normal 基于 NVSHMEM IBGDA。Kernel 会通过 P2P 地址判断目标 Rank 是否处于可直接访问的 NVLink 域：可达时走对端显存访问，不可达时走 IBGDA RDMA。Combine 则沿反方向把 Expert 输出扇入源 Rank，并完成对应的累加。
+
+这会带来一个对 MoE Tax 很重要的测量区别：论文给出的 Top-K 通信量公式适合分析路由扇出的量级，但**不能直接把 Token 数 × Top-K 当作 EPV1 Normal 的跨节点 RDMA 线上字节数**。同一个 Token 命中同一远端节点上的多个 Expert 时，Normal 路径会做节点级去重；真正的 RDMA 字节数应按实际的 (token, destination_node) 对统计，节点内 NVLink 流量则单独核算。否则会把跨节点流量估高，也会把 NVLink 与 RDMA 两个通信域混在一起。
+
+#### Chunk、Channel 与 Head/Tail：Normal 如何把大批量通信做成流水线
+
+Normal 面向 Prefill / 训练的大吞吐场景。它把 Token 按 Chunk 切分，再通过多个 Channel 并行搬运。每条 Channel 使用环形缓冲区，发送端维护 Tail，接收端维护 Head：
+
+- Tail 表示发送端已经推进到哪个槽位；
+- Head 表示接收端已经消费到哪个槽位；
+- 当 Tail - Head 接近接收环容量时，发送端必须等待接收端释放空间，避免覆盖尚未消费的数据。
+
+这套机制的意义不只是“把数据切小”：它允许发送、接收和消费在不同 Chunk 上流水执行，同时用背压约束缓冲区占用。RDMA 与 NVLink 的反馈成本不同，所以两侧的 Chunk / Ring 深度约束也不能简单视为同一个参数。
+
+我们之前重点讨论的 **rdma_chunk_size** 与 **nvl_chunk_size**，本质上是在调节两个通信域的批量粒度。Chunk 太小，单次传输有效载荷不足，控制、doorbell 和调度开销更难摊薄；Chunk 太大，又可能增加缓冲需求、等待粒度和尾部延迟。因此 Dispatch 与 Combine、RDMA 与 NVLink 都应该分开测，不能用一个“最佳 Chunk”覆盖所有路径。EPV1 Normal 的具体默认值和可调字段还要以所用分支为准，不应把某一版配置当成通用常数。
+
+#### Normal 与 Low-Latency 不是同一条路径简单改小 Chunk
+
+EPV1 还区分 Normal 与 Low-Latency：
+
+| 模式 | 主要目标 | 典型实现取舍 |
+| --- | --- | --- |
+| Normal | Prefill / 训练的高吞吐 | Chunk 聚合、节点级去重、RDMA → NVLink 两级转发、环形缓冲与 Head/Tail 背压 |
+| Low-Latency | Decode 小 Batch 的低延迟 | 更直接的 Token / Top-K 发送路径、静态槽位与双缓冲，减少批量等待和部分控制开销 |
+
+Low-Latency 的直接发送路径不应被理解成 Normal 的“更小 Chunk 版本”：它在数据复制、缓冲区预留和通信次数上有不同取舍。小 Batch 下减少聚合等待可能更重要；大 Batch 下，逐 Token 发送又可能带来更多请求与资源压力。具体选型要看阶段、Batch、Top-K、拓扑和实际通信量。
+
+#### 通信计算重叠：DeepEP 解决的是可流水，不是自动消除通信
+
+DeepEP 的 Dispatch / Combine API 可以通过延迟等待的 Hook 形式，把“发送已提交”和“接收结果可消费”分开。调用方先提交通信，再安排独立计算，最后在真正需要接收结果时等待 Hook。调度正确时，通信等待可以被计算覆盖：
+
+$
+T_{step} \approx \max(T_{comm}, T_{compute})
+$
+
+而不是机械地变成：
+
+$
+T_{step} = T_{comm} + T_{compute}
+$
+
+但这只是理想重叠关系，不是打开一个 Hook 就必然获得的收益。实际效果取决于：
+- 是否存在足够长、且不依赖待接收数据的计算；
+- Hook 的等待点是否放在消费者真正读取数据之前；
+- 通信 Kernel 使用了多少 SM，是否与 Expert GEMM 争抢计算资源；
+- 双 Microbatch 的切分是否让每个 Expert 的 GEMM 变得过小；
+- CUDA Stream、Event 与 Tensor 生命周期是否正确。
+
+这也解释了为什么不能把 Dispatch、GEMM、Combine 的独立耗时直接相加，当作 MegaMoE 的端到端关键路径。要用 Nsight Systems 看真实时间线，区分通信被隐藏的部分和最终暴露出来的等待。
+
+#### DeepEP 与 MegaMoE：一个是通信库，一个是融合执行路径
+
+我们之前讨论的普通执行方式是：
+
+~~~text
+DeepEP Dispatch
+    → Grouped GEMM / Activation
+    → DeepEP Combine
+~~~
+
+通信与计算可以通过 Chunk、Hook、双 Microbatch 等方式重叠，但通信和 Expert GEMM 仍然是相对独立的执行阶段。
+
+MegaMoE 则进一步把 Dispatch、Expert GEMM、激活、第二层 GEMM 和 Combine 放进更紧密的融合流水中，利用目标硬件上的对称内存与 NVLink 访问，让搬运和计算以更细的粒度协同推进。它优化的不只是 AllToAll 本身，还包括中间数据落地、Kernel Launch、数据布局转换，以及通信与 GEMM 之间的空隙。
+
+所以二者不能简单归纳成“DeepEP 和 MegaMoE 是两个同类通信库”：
+
+- **DeepEP：** 专用 EP 通信数据面，重点是怎样高效地完成 Dispatch / Combine。
+- **MegaMoE：** 融合通信与专家计算的执行路径，重点是怎样减少阶段边界并提高端到端重叠。
+
+这也给我们的压测一个明确的对照思路：比较 DeepEP + Grouped GEMM 与 MegaMoE 时，要固定模型、路由、Batch、并行拓扑和精度；分别记录 Dispatch / Combine、Expert GEMM、数据布局转换与端到端时间。最终比较的是关键路径，而不是只比较某一个通信 Kernel 的峰值带宽。
+
+#### 版本边界：这里讲的是 EPV1，不能与当前 DeepEP V2 混为一谈
+
+上面关于 NVSHMEM IBGDA、Normal 的两级转发、Chunk / Channel、Head/Tail 环形背压，以及 Low-Latency 静态槽位的内容，针对的是我们分析过的 **EPV1 实现**。
+
+DeepEP 上游当前主线已经演进到 V2：官方 README 说明 V2 使用 NCCL GIN，统一高吞吐与低延迟 API，并将 V1 API 和 NVSHMEM 后端从当前主线移除。因此，不能把 EPV1 的 NVSHMEM / IBGDA 数据路径直接套到 V2 的 EPBuffer / GIN 实现上。阅读源码、复现实验或讨论部署时，必须先锁定具体 commit / 分支和 API 版本。
+
+最后要强调：**这篇 MLSys 论文并没有把 DeepEP 当作自己的对比对象，也没有证明 DeepEP 能消除 2–3× 的 MoE Tax。** 这里补充 DeepEP，是把论文的抽象通信税映射到我们实际使用和分析过的 EP 通信实现，帮助判断哪些成本来自路由与数据分布，哪些来自具体通信路径和执行调度。
+
+### 8.8 论文的实测：Prefill 税下降，Decode 税呈钟形
 
 论文的端到端测试覆盖 Mixtral-8x7B、Qwen2-MoE 与 DeepSeek-V3。Mixtral / Qwen2 使用 8×A100，DeepSeek-V3 使用 8×B200；另有 Mixtral / Qwen 的 H200 Kernel microbenchmark，以及 DeepSeek-V3 的 H200 通信 microbenchmark。不同实验平台不能混成一个端到端结论。
 
@@ -541,7 +683,7 @@ $$
 
 这些数值说明，**MoE Tax 不只是一个固定的模型属性，它随 Batch、模型稀疏度、并行策略和 Token 分布而变化。** 论文用解析模型复现了 Prefill Tax 下降和 Decode Tax 钟形两种趋势；大多数配置的预测与实测仍有约 10%–30% 差距，因此它更适合定位主导税源，而不是直接当成精确延迟计算器。
 
-### 8.8 论文给出的优化方向：Prefill 与 Decode 应该分开考虑
+### 8.9 论文给出的优化方向：Prefill 与 Decode 应该分开考虑
 
 | 阶段 | 主导税源 | 优化方向 | 需要支付的代价 |
 | --- | --- | --- | --- |
@@ -557,7 +699,7 @@ $$
 - **双 Batch Overlap：** 通信与计算可以重叠，但若把每个 Microbatch 切得过小，也可能降低 Expert 权重复用，加重 Decode 的权重放大。
 - **P/D Disaggregation：** 两阶段瓶颈不同，分离部署后可以分别优化；极端情况下，Decode 甚至可以考虑另一种稠密执行路径，但需要评估输出质量与服务复杂度。
 
-### 8.9 把 Serving Tax 框架放回我们的 EPLB / MegaMoE 实验
+### 8.10 把 Serving Tax 框架放回我们的 EPLB / MegaMoE 实验
 
 这篇论文给我们之前的实验补上了一个更完整的解释框架，但不能把论文的绝对倍数直接套到我们的 B300 / SGLang MegaMoE 环境。
 
@@ -712,6 +854,7 @@ Transformer Block
 - [DeepGEMM · MegaMoE](https://github.com/deepseek-ai/DeepGEMM)
 - [Demystifying the Mixture of Experts Serving Tax · MLSys 2026（OpenReview PDF）](https://openreview.net/pdf?id=lELxqcgrsN)
 - [Demystifying the Mixture of Experts Serving Tax · MLSys 2026（论文主页）](https://mlsys.org/virtual/2026/oral/3764)
+- [DeepEP · Official Repository / README（当前主线版本说明）](https://github.com/deepseek-ai/DeepEP)
 - [SGLang · DeepSeek V4 推理 Recipe](https://github.com/sgl-project/sglang/blob/main/docs/cookbook/autoregressive/DeepSeek/DeepSeek-V4.mdx)
 - [Attention 演进：MHA/MLA/KDA/DSA](/blog/2026/11/19/attention-from-gqa-to-kimi-k31/)
 - [GPU/NPU/CPU 数据搬运与 MegaMoE](/blog/2026/11/20/gpu-npu-cpu-inference-systems/)
