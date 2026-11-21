@@ -11,268 +11,35 @@
   <meta property="og:title" content="Feihong Guo | AI Infrastructure &amp; LLM Inference">
   <meta property="og:description" content="SGLang serving engineering: measure performance, repair runtime failures, establish capacity, and support infrastructure and cost decisions.">
   <meta property="og:image" content="https://phoenix3334.github.io/og.jpg">
-  <style>
-    :root{
-      --paper:#fbfaf7;--paper2:#f2efe9;--ink:#18232d;--muted:#586570;--line:#d8d5cf;
-      --rust:#b65334;--teal:#197f79;--blue:#2457c5;--purple:#6e58b7;--white:#fff;
-      --serif:Georgia,"Times New Roman",serif;--sans:Arial,Helvetica,sans-serif
-    }
-    *{box-sizing:border-box} html{scroll-behavior:smooth} body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);-webkit-font-smoothing:antialiased}
-    a{color:inherit;text-decoration:none}.wrap{width:min(1180px,calc(100% - 64px));margin:auto}
-    .eyebrow{margin:0 0 16px;color:var(--rust);font-size:11px;font-weight:700;letter-spacing:.15em;text-transform:uppercase}
-    .progress{position:fixed;left:0;top:0;width:0;height:3px;z-index:100;background:linear-gradient(90deg,var(--rust),var(--teal),var(--blue))}
-    .site-header{position:sticky;top:0;z-index:90;background:rgba(251,250,247,.9);border-bottom:1px solid rgba(216,213,207,.82);backdrop-filter:blur(14px)}
-    header{height:76px;display:flex;align-items:center;justify-content:space-between}.wordmark{font:700 20px/1 var(--serif)}
-    nav{display:flex;align-items:center;gap:26px;color:var(--muted);font-size:12px}.github-link{color:var(--blue);font-weight:700}
-    nav a:hover{color:var(--ink)}.header-actions{display:flex;gap:10px;align-items:center}
-    .lang-button,.menu-button{border:1px solid var(--line);background:transparent;color:var(--ink);cursor:pointer}.lang-button{height:34px;padding:0 11px;font:700 10px/1 var(--sans);letter-spacing:.08em}.menu-button{display:none;width:40px;height:40px;font-size:18px}
-    .hero{min-height:620px;padding:68px 0 64px;display:grid;grid-template-columns:minmax(0,1.65fr) 240px;gap:64px;align-items:center}
-    h1,h2,h3{font-family:var(--serif)} h1{max-width:820px;margin:0;font-size:clamp(48px,6.1vw,76px);line-height:1.02;letter-spacing:-.045em}
-    h1 em{font-style:normal;color:var(--rust)}.hero-lede{max-width:760px;margin:28px 0 0;color:#34404a;font-size:17px;line-height:1.75}
-    .hero-thesis{margin-top:30px;padding:18px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);font:700 15px/1.55 var(--serif)}
-    .hero-thesis em{color:var(--teal);font-style:normal}
-    .hero-line{margin-top:22px;display:flex;flex-wrap:wrap;gap:10px}.tag{padding:8px 10px;border:1px solid var(--line);color:var(--muted);font-size:10px;font-weight:700;letter-spacing:.05em;background:rgba(255,255,255,.4)}
-    .affiliations{margin-top:24px;display:flex;align-items:center;gap:9px;overflow-x:auto;scrollbar-width:none}.affiliations::-webkit-scrollbar{display:none}
-    .affiliation{min-width:max-content;height:40px;padding:0 12px;display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);color:var(--muted);background:rgba(255,255,255,.42);font-size:10px;font-weight:700}
-    .affiliation img{width:19px;height:19px;object-fit:contain;filter:grayscale(1);opacity:.7}.logo-type{width:22px;height:22px;display:grid;place-items:center;background:var(--ink);color:#fff;font-size:8px}
-    .portrait{margin:0}.portrait img{width:100%;aspect-ratio:4/5;object-fit:cover;filter:saturate(.84) contrast(1.03)}.portrait figcaption{margin-top:13px;padding-top:11px;border-top:3px solid var(--teal);color:var(--muted);font-size:11px;line-height:1.5}
-    section{padding:88px 0;border-top:1px solid var(--line)}.section-head{display:grid;grid-template-columns:minmax(0,1fr) 390px;gap:60px;align-items:end;margin-bottom:38px}
-    .section-head h2{margin:0;font-size:clamp(34px,4.1vw,50px);line-height:1.08;letter-spacing:-.03em}.section-head>p{margin:0;color:var(--muted);font-size:15px;line-height:1.75}
-    .lens-grid{display:grid;grid-template-columns:1fr 80px 1fr;gap:28px;align-items:stretch}.thread{padding:30px;border:1px solid var(--line);background:rgba(255,255,255,.46)}
-    .thread.real{border-top:4px solid var(--rust)}.thread.sys{border-top:4px solid var(--blue)}.thread h3{margin:0 0 18px;font-size:25px}.thread p{margin:0;color:#46525c;line-height:1.72;font-size:14px}
-    .thread-list{margin-top:24px;border-top:1px solid var(--line)}.thread-row{padding:15px 0;border-bottom:1px solid var(--line)}.thread-row strong{display:block;font-size:13px}.thread-row span{display:block;margin-top:5px;color:var(--muted);font-size:11px;line-height:1.45}
-    .converge{display:grid;place-items:center;text-align:center;color:var(--purple);font-weight:700;font-size:11px;letter-spacing:.08em}.converge span{writing-mode:vertical-rl;transform:rotate(180deg)}
-    .co-design{margin-top:26px;padding:24px 28px;border-left:5px solid var(--purple);background:#f4f1fb;display:grid;grid-template-columns:220px 1fr;gap:28px;align-items:center}.co-design h3{margin:0;font-size:22px}.co-design p{margin:0;color:#4e5864;font-size:13px;line-height:1.65}
-    .experience{background:var(--paper2)}.experience-list{border-top:2px solid var(--ink)}.experience-row{display:grid;grid-template-columns:110px minmax(220px,.9fr) 1.55fr;gap:32px;padding:28px 0 32px;border-bottom:1px solid #cbc7bf}
-    .year{color:var(--rust);font-size:11px;font-weight:700;letter-spacing:.08em}.experience-row h3{margin:0;font-size:24px;line-height:1.2}.experience-row h3 small{display:block;margin-top:7px;color:var(--muted);font:400 11px/1.5 var(--sans)}
-    .experience-row p{margin:0;color:#46525c;font-size:14px;line-height:1.75}.experience-row strong{color:var(--ink)}
-    .open-project{display:grid;grid-template-columns:130px minmax(0,1fr) 220px;gap:30px;padding:27px 0 31px;border-top:1px solid var(--line)}.open-project:first-of-type{border-top:2px solid var(--ink)}
-    .open-project-index{color:var(--rust);font-size:10px;font-weight:700;letter-spacing:.1em}.project-title{display:flex;gap:14px;align-items:flex-start}.project-logo{width:42px;height:42px;object-fit:contain;padding:6px;border:1px solid var(--line);background:#fff}
-    .open-project h3{margin:0;font-size:23px;line-height:1.25}.open-project h3 a:hover{color:var(--blue)}.open-project-copy>p{margin:13px 0 0;color:#46525c;font-size:14px;line-height:1.75}
-    .open-project-proof{padding-left:22px;border-left:3px solid var(--teal)}.open-project-proof strong{display:block;font:700 23px/1.1 var(--serif)}.open-project-proof strong+strong{margin-top:18px}.open-project-proof span{display:block;margin-top:7px;color:var(--muted);font-size:10px;line-height:1.45}
-    .group-label{margin:60px 0 17px;color:var(--muted);font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase}
-    .evidence-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:66px}.evidence-main{padding-top:26px;border-top:5px solid var(--blue)}.evidence-main h3{margin:0;font-size:29px}.evidence-main p{margin:16px 0 28px;color:var(--muted);font-size:14px;line-height:1.72}
-    .method{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--line)}.method div{padding:17px 10px 0 0}.method span{color:var(--blue);font-size:10px;font-weight:700}.method strong{display:block;margin-top:10px;font-size:12px}
-    .contributions{border-top:2px solid var(--ink)}.contribution{display:block;padding:17px 0;border-bottom:1px solid var(--line)}.contribution:hover h3{color:var(--blue)}.contribution-meta{display:flex;justify-content:space-between;gap:14px;color:var(--muted);font-size:9px;text-transform:uppercase;letter-spacing:.07em}.contribution h3{margin:8px 0 0;font:700 14px/1.4 var(--sans)}
-    .metrics-band{display:grid;grid-template-columns:repeat(4,1fr);margin-top:62px;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}.metrics-band div{padding:25px 22px 27px 0;border-right:1px solid var(--line)}.metrics-band div+div{padding-left:22px}.metrics-band div:last-child{border-right:0}.metrics-band strong{display:block;color:var(--rust);font:700 30px/1 var(--serif)}.metrics-band span{display:block;margin-top:9px;color:var(--muted);font-size:10px;line-height:1.45}
-    .research{background:var(--ink);color:#fff}.research .eyebrow{color:#df8163}.research .section-head>p{color:#b6c0c7}.research-question{max-width:980px;margin:0;font:400 clamp(27px,3.5vw,43px)/1.28 var(--serif)}.research-question em{color:#7bc5bf;font-style:normal}
-    .research-sub{margin:42px 0 0;padding-top:24px;border-top:1px solid #55616a;color:#cad1d6;font-size:13px;line-height:1.7}.research-sub strong{color:#fff}
-    .research-steps{display:grid;grid-template-columns:repeat(4,1fr);margin-top:32px;border-top:1px solid #55616a}.research-steps div{padding:22px 22px 0 0}.research-steps span{color:#df8163;font-size:10px;font-weight:700}.research-steps h3{margin:17px 0 9px;font-size:19px}.research-steps p{margin:0;color:#aeb8bf;font-size:11px;line-height:1.58}
-    .scope-note{margin-top:34px;padding:18px 20px;border:1px solid #55616a;color:#bac4cb;font-size:11px;line-height:1.65}.scope-note strong{color:#fff}
-    footer{min-height:245px;padding:66px 0}.footer-grid{display:grid;grid-template-columns:1fr auto;gap:40px;align-items:end}footer h2{max-width:800px;margin:0;font-size:clamp(32px,4.2vw,48px);line-height:1.1}.footer-links{display:flex;gap:20px;color:var(--blue);font-size:12px;font-weight:700}.copyright{margin-top:56px;padding-top:18px;border-top:1px solid var(--line);color:var(--muted);font-size:10px}
-    .back-top{position:fixed;right:24px;bottom:24px;width:44px;height:44px;display:grid;place-items:center;border:1px solid var(--line);background:rgba(251,250,247,.92);opacity:0;pointer-events:none;transition:.2s}.back-top.visible{opacity:1;pointer-events:auto}
-    @media(max-width:900px){.hero{grid-template-columns:1fr 240px;gap:50px}.section-head{grid-template-columns:1fr;gap:22px}.lens-grid{grid-template-columns:1fr}.converge{min-height:54px}.converge span{writing-mode:horizontal-tb;transform:none}.co-design{grid-template-columns:1fr}.experience-row{grid-template-columns:1fr;gap:13px}.open-project{grid-template-columns:115px 1fr}.open-project-proof{grid-column:2}.evidence-grid{grid-template-columns:1fr}}
-    @media(max-width:680px){.wrap{width:min(100% - 32px,1180px)}header{height:68px}.menu-button{display:block}nav{position:absolute;top:68px;left:16px;right:16px;display:none;padding:10px 18px;border:1px solid var(--line);background:rgba(251,250,247,.98);flex-direction:column;align-items:stretch;gap:0}nav.open{display:flex}nav a{padding:13px 0;border-bottom:1px solid var(--line)}.hero{min-height:auto;padding:64px 0;grid-template-columns:1fr}h1{font-size:42px}.portrait img{max-height:420px;object-position:center 28%}section{padding:64px 0}.open-project{grid-template-columns:1fr;gap:13px}.open-project-proof{grid-column:auto}.method,.metrics-band,.research-steps{grid-template-columns:repeat(2,1fr)}.metrics-band div:nth-child(2){border-right:0}.footer-grid{grid-template-columns:1fr}}
-    @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
-
-    
-    a:focus-visible,button:focus-visible,summary:focus-visible,[tabindex]:focus-visible{outline:2px solid var(--teal);outline-offset:5px}
-    section,[id]{scroll-margin-top:92px}.inline-link{color:var(--blue);text-decoration:underline;text-underline-offset:3px;font-size:12px}.experience-row .inline-link{display:inline-block;margin-top:8px}
-    .work-detail{margin-top:18px;border-top:1px solid var(--line);font-size:12px;line-height:1.7}.work-detail summary{padding:13px 0;cursor:pointer;color:var(--teal);font-weight:700}.work-detail summary:hover{color:var(--ink)}
-    .detail-body{padding:2px 0 14px}.detail-body p{margin:0 0 14px!important;font-size:12px!important;line-height:1.75!important}.experience-detail{grid-column:3;margin-top:0}.boundary{color:var(--muted)!important;font-size:12px!important;line-height:1.75!important}
-    .lab-note{padding:26px 0;border-top:2px solid var(--ink)}.note-heading{display:flex;align-items:baseline;gap:17px}.note-number{color:var(--rust);font-size:11px;font-weight:700}.note-heading h3{margin:0;font-size:26px;line-height:1.25}.lab-note>p{max-width:930px;margin:18px 0;color:#46525c;font-size:14px;line-height:1.75}
-    .note-grid{display:grid;grid-template-columns:1fr 1fr;gap:60px;margin-top:24px}.note-grid .lab-note{border-top:1px solid var(--line)}.table-scroll{overflow-x:auto;margin:24px 0}.result-table{width:100%;border-collapse:collapse;text-align:left;font-size:12px;line-height:1.6}.result-table caption{text-align:left;color:var(--muted);font-size:10px;padding-bottom:12px}.result-table th,.result-table td{padding:13px 14px 13px 0;border-bottom:1px solid var(--line);vertical-align:top}.result-table thead th{font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}.result-table tbody th{font-weight:700}.contribution-meta{flex-wrap:wrap;line-height:1.5}.contribution-meta span:last-child{color:var(--teal)}.contribution-meta .status-merged{color:var(--purple);font-weight:700}
-    .github-icon{width:14px;height:14px;vertical-align:-2px;margin-right:5px;fill:currentColor}.hero-lede{font-size:16px}
-    .experience-visuals{grid-column:1/-1;justify-self:center;width:min(100%,960px);display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:32px;margin:12px auto 0}.medical-visuals{width:min(100%,800px);grid-template-columns:repeat(2,minmax(0,1fr))}
-    .project-figure{margin:0;min-width:0;text-align:center}.project-figure a{--figure-height:185px;display:flex;justify-content:center;align-items:center;height:var(--figure-height);background:transparent;padding:0}.project-figure img{display:block;width:auto;height:auto;max-width:100%;max-height:100%;object-fit:contain;object-position:center}.medical-visuals a{--figure-height:235px}.project-figure figcaption{margin-top:10px;color:var(--muted);font-size:11px;line-height:1.65;text-align:center}.project-figure figcaption strong{display:block;color:var(--ink);font-size:12px}
-    .inspection-crop{position:relative;display:block;width:min(100%,calc(var(--figure-height)*1.25686245));aspect-ratio:1589.93/1265;overflow:hidden}.inspection-crop img{position:absolute;left:0;top:0;width:138.18262%;height:100%;max-width:none;max-height:none;object-fit:fill}
-    .runtime-logos{display:flex;justify-content:center;align-items:center;flex-wrap:wrap;gap:24px;padding:15px 0 20px}.runtime-logos img{height:28px;width:auto;max-width:100%;object-fit:contain}
-    @media(max-width:1080px){nav{gap:16px;font-size:11px}.hero{gap:50px}.experience-row{gap:28px}}
-    @media(max-width:900px){.experience-detail{grid-column:auto}.note-grid{gap:32px}.note-heading h3{font-size:23px}.menu-button{display:block}nav{position:absolute;top:76px;left:32px;right:32px;display:none;padding:10px 18px;border:1px solid var(--line);background:rgba(251,250,247,.98);flex-direction:column;align-items:stretch;gap:0}nav.open{display:flex}nav a{padding:13px 0;border-bottom:1px solid var(--line)}}
-    @media(max-width:680px){nav{top:68px;left:16px;right:16px}.note-grid{grid-template-columns:1fr;gap:10px}.result-table{font-size:11px}.contribution-meta{font-size:9px}.open-project-proof strong{font-size:22px}.metrics-band strong{font-size:26px}.metrics-band div:nth-child(3){padding-left:0}.metrics-band div{border-bottom:1px solid var(--line)}.metrics-band div:nth-child(n+3){border-bottom:0}.experience-visuals{grid-template-columns:1fr;gap:24px}.project-figure a,.medical-visuals a{--figure-height:220px}.runtime-logos{gap:18px}.runtime-logos img{height:24px}}
-
-    .hero-evidence{margin:20px 0 0;max-width:720px;font-size:12px;line-height:1.8;color:var(--muted)}.hero-evidence strong{color:var(--teal)}.hero-evidence a{color:var(--blue);text-decoration:underline;text-underline-offset:3px}
-    .upstream-summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:28px;margin:0 0 36px;padding:24px 0;border-top:2px solid var(--ink);border-bottom:1px solid var(--line)}.upstream-summary>div{min-width:0}.upstream-summary h3{margin:0 0 9px;font:700 18px/1.3 var(--serif)}.upstream-summary p{margin:0;color:var(--muted);font-size:12px;line-height:1.75}.upstream-summary a{color:var(--blue);text-decoration:underline;text-underline-offset:3px}
-    .contribution-group{margin:0;padding:20px 0 10px;color:var(--rust);font:700 10px/1.5 var(--sans);letter-spacing:.1em;text-transform:uppercase}.contributions .contribution-group:first-child{padding-top:14px}.record-note{font-size:11px;line-height:1.7;color:var(--muted)}
-    @media(max-width:680px){.upstream-summary{grid-template-columns:1fr;gap:22px}.hero-evidence{font-size:12px}}
-
-    h1{font-size:clamp(44px,5.6vw,69px);line-height:1.07}.hero-lede{max-width:750px}.hero-thesis{font-family:var(--sans);font-size:13px;font-weight:600;line-height:1.8}.portrait img{aspect-ratio:1/1}
-    .hero-actions{display:flex;flex-wrap:wrap;gap:20px;margin-top:26px}.hero-actions a{font-size:12px;font-weight:700;color:var(--blue);text-decoration:underline;text-underline-offset:5px}
-    .practice-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:28px}.practice-grid article{min-width:0;border-top:2px solid var(--ink);padding-top:18px}.practice-grid h3{margin:0 0 14px;font-size:24px;line-height:1.25}.practice-grid p{margin:0 0 14px;font-size:13px;color:#46525c;line-height:1.8}.practice-grid .scope{font-size:11px;color:var(--muted)}
-    .supporting-project{display:flex;gap:30px;align-items:baseline;margin-top:34px;padding-top:25px;border-top:1px solid var(--line)}.supporting-project h3{margin:0;min-width:170px;font-size:20px}.supporting-project p{margin:0;color:var(--muted);font-size:13px;line-height:1.8}
-    .records-detail{margin-top:42px;border-top:1px solid var(--line)}.records-detail>summary{padding:22px 0;color:var(--teal);font-weight:700;font-size:13px;cursor:pointer}.records-detail .evidence-grid{margin-top:20px}.records-detail .group-label{margin-top:0}
-    .economics{background:var(--paper2)}.cost-chain{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:28px}.cost-step{min-width:0;border-top:3px solid var(--blue);padding-top:20px}.cost-step .step-index{color:var(--rust);font:700 11px/1 var(--sans);letter-spacing:.1em}.cost-step h3{font-size:25px;line-height:1.2;margin:17px 0}.cost-step p{font-size:13px;color:#46525c;line-height:1.8;margin:12px 0}.formula{padding:14px 15px;border:1px solid var(--line);background:rgba(255,255,255,.55);font:12px/1.8 monospace;overflow-wrap:anywhere}.cost-scope{margin-top:30px;padding:20px 24px;border-left:3px solid var(--teal);font-size:13px;line-height:1.85;color:#46525c;background:rgba(255,255,255,.5)}
-    .reference-grid{display:grid;grid-template-columns:1fr 1fr;gap:35px;margin-top:36px;padding-top:25px;border-top:1px solid var(--line)}.reference-grid h3{font:700 11px/1.5 var(--sans);text-transform:uppercase;letter-spacing:.1em;margin:0 0 12px;color:var(--rust)}.reference-grid a{color:var(--blue);font-size:13px;line-height:1.6;text-decoration:underline;text-underline-offset:3px}.reference-grid p{margin:12px 0 0;color:var(--muted);font-size:12px;line-height:1.8}
-    #practice .research-steps h3{font-size:23px}.inference-scope{margin:25px 0 0;font-size:12px;line-height:1.8;color:var(--muted)}
-    @media(max-width:1080px){.hero{gap:45px;grid-template-columns:minmax(0,1fr) 210px}nav{gap:18px}}
-    @media(max-width:900px){.cost-chain,.practice-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:26px}.reference-grid{gap:24px}.supporting-project{flex-direction:column;gap:14px}.hero{gap:36px}}
-    @media(max-width:680px){.hero{grid-template-columns:1fr;padding:54px 0;gap:24px;min-height:auto}h1{font-size:42px}.portrait{display:grid;grid-template-columns:76px minmax(0,1fr);align-items:center;gap:14px;max-width:360px;margin-top:4px}.portrait img{width:76px;height:76px;aspect-ratio:1;border-radius:50%}.portrait figcaption{margin:0;padding:0;border:0}.reference-grid{grid-template-columns:1fr}.hero-actions{gap:16px}.hero-lede{font-size:15px}.cost-chain,.practice-grid{grid-template-columns:1fr}.cost-scope{padding:16px 18px}.research-steps{gap:10px}}
-    @media(max-width:680px){html[lang="zh-CN"] h1{font-size:32px}}
-    .phase-benchmarks{max-width:760px}.phase-benchmarks .table-scroll{margin:2px 0 14px}.phase-compact{table-layout:fixed}.phase-compact th:first-child{width:28%}.phase-compact td{overflow-wrap:anywhere}.phase-compact th,.phase-compact td{padding:6px 12px 6px 0}.phase-compact caption{padding-bottom:4px}
-    @media(max-width:480px){.phase-compact th,.phase-compact td{padding-right:6px}}
-
-    /* Homepage TOC, matching the article section navigation */
-    #site-nav a[aria-current="page"]{color:var(--teal);font-weight:700}
-    .home-toc-side{display:none;position:fixed;right:25px;top:126px;width:215px;max-height:calc(100vh - 150px);z-index:15;padding:15px 0;background:rgba(251,250,247,.94);border-left:1px solid var(--line);backdrop-filter:blur(8px)}
-    .home-toc-side-title{display:flex;justify-content:space-between;gap:6px;padding:0 12px 15px;border-bottom:1px solid var(--line);font-size:10px;letter-spacing:.1em;font-weight:700}
-    .home-toc-count{font-size:10px;letter-spacing:0;font-weight:400;color:var(--muted);white-space:nowrap}
-    .home-toc-side nav{display:block;max-height:calc(100vh - 258px);overflow-y:auto;padding:10px 0;scrollbar-width:thin}
-    .home-toc-list{list-style:none;margin:0;padding:0}
-    .home-toc-list li{margin:0;padding:0}
-    .home-toc-list a{display:block;padding:9px 12px;border-left:3px solid transparent;color:var(--muted);font-size:12px;line-height:1.6;overflow-wrap:anywhere;text-decoration:none}
-    .home-toc-list a:hover{color:var(--ink);background:rgba(25,127,121,.04)}
-    .home-toc-list a.is-active{color:var(--teal);border-left-color:var(--teal);font-weight:700;background:rgba(25,127,121,.055)}
-    .home-toc-top{display:block;color:var(--teal);font-size:12px;border-top:1px solid var(--line);margin:12px 12px 0;padding-top:13px}
-    .home-toc-compact{position:sticky;top:76px;z-index:18;background:rgba(251,250,247,.98);border-bottom:1px solid var(--line)}
-    .home-toc-compact summary{display:flex;align-items:center;justify-content:space-between;gap:12px;cursor:pointer;padding:12px max(32px,calc((100vw - 1180px)/2));font-size:12px;font-weight:700;color:var(--teal);list-style:none}
-    .home-toc-compact summary::-webkit-details-marker{display:none}
-    .home-toc-compact-indicator{font-size:19px;line-height:1;font-weight:400}
-    .home-toc-compact[open] .home-toc-compact-indicator{transform:rotate(45deg)}
-    .home-toc-compact nav{display:block;padding:0 max(32px,calc((100vw - 1180px)/2)) 12px}
-    .home-toc-compact .home-toc-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:2px 16px}
-    @media(min-width:1700px){.home-toc-side{display:block}.home-toc-compact{display:none}}
-    @media(max-width:900px){.home-toc-compact summary,.home-toc-compact nav{padding-left:32px;padding-right:32px}}
-    @media(max-width:680px){.home-toc-compact{top:68px}.home-toc-compact summary,.home-toc-compact nav{padding-left:16px;padding-right:16px}.home-toc-compact .home-toc-list{grid-template-columns:1fr}}
-
-
-    /* Curated reading shelf: direct upstream links, not a repository-card catalog. */
-    .learning-section{background:var(--paper);color:var(--ink)}
-    .learning-section .section-head{margin-bottom:50px}
-    .learning-groups{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:23px}
-    .learning-group{background:rgba(255,255,255,.62);border:1px solid var(--line);min-width:0}
-    .learning-group-head{padding:23px 24px 20px;min-height:145px;border-bottom:1px solid var(--line)}
-    .learning-num{display:block;font-size:11px;letter-spacing:.15em;font-weight:700;color:var(--teal);margin-bottom:14px}
-    .learning-group-head h3{font-family:var(--serif);font-size:24px;letter-spacing:-.02em;line-height:1.2;margin:0 0 12px}
-    .learning-group-head p{color:var(--muted);font-size:12px;line-height:1.65;margin:0}
-    .learning-links{display:flex;flex-direction:column}
-    .learning-link{position:relative;display:flex;flex-direction:column;gap:8px;min-height:108px;padding:19px 40px 19px 24px;border-bottom:1px solid var(--line);transition:background .16s}
-    .learning-link:last-child{border-bottom:0}
-    .learning-link:hover,.learning-link:focus-visible{background:#F2F6F3}
-    .learning-name{font-size:14px;font-weight:700;color:var(--ink);line-height:1.35}
-    .learning-description{font-size:12px;line-height:1.65;color:var(--muted)}
-    .learning-link-arrow{position:absolute;top:18px;right:22px;font-size:16px;color:var(--teal)}
-    .learning-bottom{display:flex;justify-content:space-between;align-items:center;gap:18px;flex-wrap:wrap;border-top:1px solid var(--line);margin-top:28px;padding-top:18px;font-size:12px;color:var(--muted)}
-    .learning-bottom a{color:var(--blue);text-decoration:underline;text-underline-offset:4px}
-    @media(max-width:900px){.learning-groups{grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}.learning-group:last-child{grid-column:1/-1}.learning-group-head{min-height:0}.learning-links{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.learning-link:nth-child(odd){border-right:1px solid var(--line)}.learning-link:nth-last-child(2){border-bottom:0}}
-    @media(max-width:680px){.learning-groups{grid-template-columns:1fr}.learning-group:last-child{grid-column:auto}.learning-links{grid-template-columns:1fr}.learning-link:nth-child(odd){border-right:0}.learning-link:nth-last-child(2){border-bottom:1px solid var(--line)}.learning-group-head h3{font-size:22px}.learning-link{min-height:0}}
-
-
-    /* Direct link to the user's own GitHub curated AI Infra star list */
-    .learning-curated-list{display:flex;justify-content:space-between;align-items:center;gap:28px;margin-top:34px;padding:25px 27px;border:1px solid #BBD1CC;background:#F1F7F4;color:var(--ink);text-decoration:none}
-    .learning-curated-list:hover,.learning-curated-list:focus-visible{background:#E8F3EF;border-color:var(--teal)}
-    .learning-curated-copy{display:flex;flex-direction:column;gap:9px;min-width:0}
-    .learning-curated-kicker{font-size:10px;letter-spacing:.12em;font-weight:700;color:var(--teal)}
-    .learning-curated-copy strong{font:700 23px/1.25 var(--serif)}
-    .learning-curated-copy>span:last-child{font-size:12px;line-height:1.65;color:var(--muted)}
-    .learning-curated-arrow{font-size:22px;color:var(--teal);flex-shrink:0}
-    @media(max-width:680px){.learning-curated-list{padding:20px}.learning-curated-copy strong{font-size:20px}}
-    /* Extra learning maps with clear provenance labels */
-    .learning-more-maps{margin-top:44px;border-top:1px solid var(--line);padding-top:34px}
-    .learning-more-head{display:flex;justify-content:space-between;gap:32px;align-items:end;margin-bottom:24px}
-    .learning-more-head>div{flex:1}.learning-more-head h3{font:700 clamp(24px,2.5vw,32px)/1.25 var(--serif);margin:0}
-    .learning-more-head>p{max-width:350px;font-size:12px;line-height:1.75;color:var(--muted);margin:0}
-    .learning-extra-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 24px}
-    .learning-extra-link{display:flex;flex-direction:column;position:relative;gap:7px;padding:17px 30px 18px 0;min-width:0;border-top:1px solid var(--line)}
-    .learning-extra-top{display:flex;align-items:baseline;gap:9px;flex-wrap:wrap}
-    .learning-extra-top strong{font-size:14px;color:var(--ink)}.learning-extra-link:hover strong{color:var(--teal)}
-    .learning-source{border:1px solid #BED8D4;color:var(--teal);padding:2px 6px;font-size:10px}
-    .learning-extra-copy{color:var(--muted);font-size:12px;line-height:1.6}
-    .learning-extra-arrow{position:absolute;right:4px;top:15px;color:var(--teal)}
-    .star-explorer{margin-top:35px;background:#fff;border:1px solid var(--line)}
-    .star-explorer>summary{cursor:pointer;display:flex;align-items:center;gap:15px;padding:20px 24px;font-weight:700;font-size:15px;list-style:none}
-    .star-explorer>summary::-webkit-details-marker{display:none}
-    .star-explorer>summary::after{content:"+";color:var(--teal);margin-left:auto;font-size:20px;font-weight:400}
-    .star-explorer[open]>summary::after{content:"−"}
-    .star-summary-sub{font-size:11px;font-weight:400;color:var(--muted)}
-    .star-explorer-content{padding:0 24px 24px;border-top:1px solid var(--line)}
-    .star-explorer-content>p:first-child{font-size:12px;color:var(--muted);line-height:1.8}
-    .star-controls{display:flex;flex-wrap:wrap;gap:10px}
-    .star-controls input,.star-controls select{font:12px var(--sans);border:1px solid var(--line);padding:10px 12px;background:var(--paper);color:var(--ink)}
-    .star-controls input{flex:1;min-width:200px}
-    .star-status{font-size:11px;color:var(--muted);padding:4px 0}
-    .star-results{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 18px;max-height:490px;overflow:auto}
-    .star-result{position:relative;display:flex;flex-direction:column;gap:6px;padding:14px 24px 15px 0;border-top:1px solid var(--line);min-width:0}
-    .star-result-name{font-size:13px;font-weight:700;color:var(--ink);overflow-wrap:anywhere}
-    .star-result-desc{font-size:11px;line-height:1.6;color:var(--muted)}
-    .star-result-arrow{position:absolute;right:6px;top:14px;color:var(--teal)}
-    .star-actions{display:flex;flex-wrap:wrap;align-items:center;gap:20px;padding-top:18px}
-    .star-actions button{cursor:pointer;font:700 12px var(--sans);padding:10px 15px;background:var(--paper);color:var(--teal);border:1px solid var(--line)}
-    .star-actions button:disabled{opacity:.5}
-    .star-actions a{font-size:12px;color:var(--blue);text-decoration:underline}
-    @media(max-width:900px){.learning-more-head{display:block}.learning-more-head>p{margin-top:15px}}
-    @media(max-width:680px){.learning-extra-grid,.star-results{grid-template-columns:1fr}.star-explorer>summary{padding:18px;flex-wrap:wrap}.star-summary-sub{width:100%}.star-explorer-content{padding:0 18px 20px}}
-
-
-    /* Compact applied medical AI project, clearly secondary to core AI Infra work */
-    .medical-project{padding:75px 0 80px;background:#F5F2EC}
-    .medical-project .medical-section-head{margin-bottom:30px;align-items:end}
-    .medical-project .medical-section-head h2{font-size:clamp(30px,3.8vw,45px)}
-    .medical-project .medical-section-head>p{max-width:390px}
-    .medical-modules{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
-    .medical-modules article{background:rgba(255,255,255,.62);border:1px solid var(--line);padding:23px 23px 25px;min-width:0}
-    .medical-index{display:block;font-size:10px;letter-spacing:.1em;color:var(--teal);font-weight:700;margin-bottom:17px}
-    .medical-modules h3{font:700 21px/1.3 var(--serif);margin:0 0 12px;color:var(--ink)}
-    .medical-modules p{font-size:12px;line-height:1.75;color:var(--muted);margin:0}
-    .medical-boundary{font-size:11px;line-height:1.6;color:var(--muted);margin:17px 0 0}
-    @media(max-width:900px){.medical-modules{grid-template-columns:1fr}.medical-project{padding:65px 0}.medical-modules article{padding:21px}}
-
-
-    .mini-feature{margin-top:37px;padding:27px 29px 24px;border:1px solid var(--line);background:rgba(255,255,255,.58)}
-    .mini-feature-head{display:flex;justify-content:space-between;gap:26px;align-items:end}
-    .mini-feature-label{font-size:10px;color:var(--teal);letter-spacing:.1em;font-weight:700;margin:0 0 10px}
-    .mini-feature-head h3{font-size:clamp(23px,2.5vw,30px);margin:0;line-height:1.25}
-    .mini-feature-link{font-size:12px;font-weight:700;color:var(--blue);text-decoration:underline;text-underline-offset:3px;white-space:nowrap}
-    .mini-feature-intro{font-size:13px;line-height:1.75;color:#46525c;max-width:880px;margin:19px 0 22px}
-    .mini-feature-stages{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px;border-top:1px solid var(--line);padding-top:20px}
-    .mini-feature-stages>div{min-width:0}
-    .mini-feature-stages span{display:block;font-size:10px;letter-spacing:.07em;color:var(--teal);font-weight:700;margin-bottom:9px}
-    .mini-feature-stages p{font-size:12px;line-height:1.72;color:var(--muted);margin:0}
-    .mini-feature-result{display:flex;align-items:baseline;justify-content:space-between;gap:25px;border-top:1px solid var(--line);margin-top:20px;padding-top:19px}
-    .mini-feature-result strong{font-size:16px;white-space:nowrap;color:var(--ink)}
-    .mini-feature-result p{font-size:11px;line-height:1.7;color:var(--muted);margin:0;max-width:645px}
-    @media(max-width:900px){.mini-feature-stages{grid-template-columns:1fr;gap:19px}.mini-feature-head,.mini-feature-result{flex-direction:column;align-items:start;gap:10px}.mini-feature-result strong{white-space:normal}}
-    @media(max-width:680px){.mini-feature{padding:22px 18px}.mini-feature-head h3{font-size:23px}}
-
-
-    /* ThermoPulse: measurement-to-report workflow */
-    .medical-project .medical-section-head{margin-bottom:27px}
-    .medical-project .medical-section-head>p{max-width:410px}
-    .medical-path{border:1px solid var(--line);background:rgba(255,255,255,.5);padding:19px 24px 23px;margin-bottom:22px}
-    .medical-path-label{font-size:10px;letter-spacing:.09em;font-weight:700;color:var(--teal);margin:0 0 15px}
-    .medical-path-steps{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:0}
-    .medical-path-steps>div{display:flex;flex-direction:column;gap:6px;padding:0 15px;border-left:1px solid var(--line);min-width:0}
-    .medical-path-steps>div:first-child{border-left:0;padding-left:0}
-    .medical-path-steps>div:last-child{padding-right:0}
-    .medical-path-steps span{font-size:10px;color:var(--teal);font-weight:700}
-    .medical-path-steps strong{font-size:12px;line-height:1.4;color:var(--ink)}
-    .medical-path-steps small{font-size:10px;line-height:1.5;color:var(--muted)}
-    .medical-project .medical-modules{grid-template-columns:repeat(2,minmax(0,1fr));gap:15px}
-    .medical-project .medical-modules article{padding:23px 24px 24px}
-    .medical-outcome{border-top:1px solid var(--line);margin:22px 0 0;padding-top:17px;font-size:12px;color:var(--muted);line-height:1.75}
-    .medical-outcome strong{color:var(--ink)}
-    @media(max-width:900px){.medical-path-steps{grid-template-columns:repeat(3,minmax(0,1fr));row-gap:20px}.medical-path-steps>div:nth-child(4){border-left:0;padding-left:0}}
-    @media(max-width:680px){.medical-project .medical-modules{grid-template-columns:1fr}.medical-path-steps{grid-template-columns:1fr;gap:13px}.medical-path-steps>div,.medical-path-steps>div:nth-child(4){border-left:0;border-top:1px solid var(--line);padding:12px 0 0}.medical-path-steps>div:first-child{border-top:0;padding-top:0}.medical-path-steps>div:last-child{padding-right:0}.medical-path{padding:20px}}
-
-    .about-grid{display:grid;grid-template-columns:minmax(0,1.12fr) minmax(320px,.88fr);gap:68px;align-items:start}
-    .about-copy p{max-width:760px;margin:0 0 17px;color:#46525c;font-size:14px;line-height:1.85}
-    .about-meta{display:grid;grid-template-columns:minmax(0,.82fr) minmax(0,1.18fr);gap:24px;margin-top:28px;padding-top:20px;border-top:1px solid var(--line)}
-    .about-meta>div{min-width:0}
-    .about-meta>div>span,.about-focus-head{display:block;color:var(--rust);font-size:10px;font-weight:700;letter-spacing:.12em}
-    .about-meta>div>strong{display:block;margin-top:8px;font-size:13px;line-height:1.55}
-    .about-experience-list{display:grid;gap:9px;margin-top:7px}
-    .about-experience-item{padding:8px 0 9px 12px;border-left:2px solid var(--teal);border-bottom:1px solid var(--line)}
-    .about-experience-item:last-child{border-bottom:0}
-    .about-experience-item strong{display:block;font-size:13px;line-height:1.35}
-    .about-experience-item span{display:block;margin-top:4px;color:var(--muted);font-size:11px;line-height:1.5}
-    .about-focus{border-top:2px solid var(--ink)}
-    .about-focus-head{padding:15px 0;border-bottom:1px solid var(--line)}
-    .about-focus article{padding:17px 0;border-bottom:1px solid var(--line)}
-    .about-focus h3{margin:0;font-size:20px;line-height:1.3}
-    .about-focus p{margin:8px 0 0;color:var(--muted);font-size:12px;line-height:1.75}
-    @media(max-width:820px){.about-grid{grid-template-columns:1fr;gap:32px}}
-    @media(max-width:680px){.about-meta{grid-template-columns:1fr;gap:16px}.about-focus h3{font-size:19px}}
-
-  </style>
+  <style>:root{--paper:#fbfaf8;--paper2:#f2f5f4;--ink:#1e2e35;--muted:#596970;--line:#dce3df;--rust:#9b503a;--teal:#20796f;--blue:#286c65;--purple:#65518b;--white:#fff;--sans:Arial,"PingFang SC","Microsoft YaHei",sans-serif;--serif:Georgia,"Times New Roman",serif}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.75 var(--sans);-webkit-font-smoothing:antialiased}a{color:inherit;text-decoration:none}a:hover{color:var(--teal)}button,input,select{font:inherit}code{font-size:.9em;overflow-wrap:anywhere}button,summary{cursor:pointer}img{max-width:100%}.wrap{width:min(1080px,calc(100% - 96px));margin:auto}section,[id]{scroll-margin-top:94px}a:focus-visible,button:focus-visible,summary:focus-visible,input:focus-visible,select:focus-visible,[tabindex]:focus-visible{outline:2px solid var(--teal);outline-offset:5px}h1,h2,h3,p,figure{margin:0}h1,h2{font-family:var(--serif);font-weight:600;letter-spacing:-.035em}h3{font:600 20px/1.4 var(--sans);letter-spacing:-.015em}p{color:var(--muted)}strong{color:var(--ink)}.eyebrow{font:700 13px/1.5 var(--sans);letter-spacing:.09em;text-transform:uppercase;color:var(--teal);margin-bottom:12px}.progress{position:fixed;inset:0 auto auto 0;height:2px;z-index:100;background:var(--teal);width:0}
+.site-header{position:sticky;top:0;z-index:90;background:rgba(251,250,248,.96);border-bottom:1px solid var(--line);backdrop-filter:blur(12px)}header{height:76px;display:flex;align-items:center;gap:40px}.wordmark{font:600 22px var(--serif);letter-spacing:-.02em;margin-right:auto}#site-nav{display:flex;align-items:center;gap:26px;font-size:14px;color:var(--muted)}#site-nav a{padding:10px 0}.github-link{color:var(--ink)}.github-icon{width:15px;height:15px;fill:currentColor;vertical-align:-2px;margin-right:5px}.header-actions{display:flex;gap:12px;align-items:center}.lang-button{border:1px solid var(--line);border-radius:6px;background:transparent;color:var(--ink);padding:5px 12px;min-height:36px;font-size:14px}.menu-button{display:none;border:1px solid var(--line);border-radius:6px;width:40px;height:40px;background:transparent;color:var(--ink);font-size:20px}
+.hero{display:grid;grid-template-columns:minmax(0,1fr) 200px;gap:100px;align-items:center;padding:76px 0 68px;min-height:440px}.hero h1{font-size:clamp(42px,4.6vw,60px);line-height:1.12}.hero h1 em{font-style:normal;color:var(--teal)}.hero .eyebrow{margin-bottom:20px;color:var(--muted);letter-spacing:.07em}.hero-lede{max-width:610px;margin-top:24px;font-size:18px;line-height:1.75}.hero-actions{display:flex;gap:24px;align-items:center;flex-wrap:wrap;margin-top:30px;font-size:14px;font-weight:600}.hero-actions a:first-child{padding:10px 18px;border-radius:6px;background:var(--teal);color:white}.hero-actions a:last-child{text-decoration:underline;text-underline-offset:5px}.portrait img{width:200px;aspect-ratio:1;object-fit:cover;border-radius:12px;display:block}.portrait figcaption{font-size:13px;line-height:1.65;margin-top:14px;color:var(--muted)}
+.home-toc-side{display:none}.home-toc-compact{width:min(1080px,calc(100% - 96px));margin:0 auto;border-top:1px solid var(--line);border-bottom:1px solid var(--line);font-size:14px}.home-toc-compact>summary{display:flex;justify-content:space-between;align-items:center;list-style:none;padding:13px 0;color:var(--muted)}summary::-webkit-details-marker{display:none}.home-toc-compact-indicator{font-size:20px}.home-toc-compact[open] .home-toc-compact-indicator{transform:rotate(45deg)}.home-toc-list{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px 20px;margin:0;padding:4px 0 20px;list-style:none}.home-toc-list a{display:block;line-height:1.5;padding:5px 0;color:var(--muted)}.home-toc-list a.is-active{color:var(--teal);font-weight:700}
+section{padding:64px 0;border-bottom:1px solid var(--line)}.section-head{display:block;max-width:830px;margin-bottom:32px}.section-head h2{font-size:36px;line-height:1.22;margin-bottom:16px}.section-head>p{font-size:16px;line-height:1.8;max-width:780px}.about-section{padding:52px 0 60px;border-bottom:0}.about-section>.wrap{display:grid;grid-template-columns:1fr 1fr;gap:32px 64px}.about-section .section-head{grid-column:1;margin-bottom:0}.about-section .section-head>p{font-size:16px}.about-grid{display:contents}.about-copy{grid-column:2;grid-row:1}.about-copy>p{margin-top:20px}.about-meta{display:grid;grid-template-columns:.9fr 1.1fr;gap:26px;margin-top:0;padding-top:6px}.about-meta>div>span,.about-focus-head{display:block;font-size:12px;font-weight:700;letter-spacing:.07em;color:var(--teal)}.about-meta>div>strong{display:block;font-size:15px;font-weight:600;margin-top:5px}.about-experience-list{display:grid;gap:12px;margin-top:8px}.about-experience-item strong{display:block;font-size:15px;font-weight:600}.about-experience-item span{display:block;font-size:14px;color:var(--muted);line-height:1.6}.about-focus{grid-column:1/-1;grid-row:2;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px 26px;align-content:start;padding-top:0}.about-focus-head{grid-column:1/-1;padding-bottom:12px;border-bottom:1px solid var(--line)}.about-focus h3{font-size:17px;line-height:1.4}.about-focus p{font-size:14px;line-height:1.75;margin-top:8px}
+#opensource,#internship{background:var(--paper2)}#opensource{border-bottom:0;padding-bottom:32px}#internship{padding-top:28px}.open-project{display:grid;grid-template-columns:minmax(0,1fr) 175px;gap:32px;padding:28px 0;border-top:1px solid #cdd9d4}.open-project-index{font-size:12px;font-weight:700;letter-spacing:.06em;color:var(--teal);margin-bottom:12px}.project-title{display:flex;gap:12px;align-items:center}.project-logo{width:30px;height:30px;object-fit:contain;flex-shrink:0}.open-project h3{font-size:21px}.open-project-copy{min-width:0}.open-project-copy>p{margin-top:14px;font-size:16px;line-height:1.85}.open-project-proof{border-left:1px solid #c6d4ce;padding-left:24px;align-self:start;margin-top:32px}.open-project-proof strong{display:block;font:600 23px/1.25 var(--serif);overflow-wrap:anywhere}.open-project-proof strong~strong{margin-top:18px}.open-project-proof span{display:block;font-size:13px;line-height:1.6;color:var(--muted);margin-top:6px}.open-project-proof .inline-link{font:inherit}.work-detail{margin-top:16px}.work-detail summary{font-size:14px;font-weight:600;color:var(--teal);padding:7px 0;list-style:none}.work-detail summary::before{content:'+';display:inline-block;width:20px}.work-detail[open]>summary::before{content:'−'}.detail-body{padding:14px 0 8px}.detail-body p{font-size:15px;line-height:1.9;margin-bottom:16px}.inline-link{color:var(--teal);text-decoration:underline;text-underline-offset:3px;font-size:inherit}.boundary,.scope{font-size:14px;line-height:1.8}.section-detail,.records-detail{border-top:1px solid var(--line);margin-top:20px}.section-detail>summary,.records-detail>summary,.resource-detail>summary{display:flex;align-items:center;justify-content:space-between;gap:16px;list-style:none;padding:18px 0;font-size:15px;font-weight:600;color:var(--teal)}.section-detail>summary::after,.records-detail>summary::after,.resource-detail>summary::after{content:'+';font-size:21px;font-weight:400;flex-shrink:0}.section-detail[open]>summary::after,.records-detail[open]>summary::after,.resource-detail[open]>summary::after{content:'−'}.disclosure-content{padding-bottom:8px}.upstream-summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px;padding:20px 0}.upstream-summary h3{font-size:17px;margin-bottom:12px}.upstream-summary p{font-size:14px;line-height:1.8}.upstream-summary a{color:var(--teal);text-decoration:underline}.group-label,.contribution-group{font-size:12px;color:var(--teal);letter-spacing:.06em}.group-label{margin-top:24px}.evidence-grid{display:grid;grid-template-columns:.8fr 1.2fr;gap:40px;margin-top:24px}.evidence-main h3{margin-bottom:16px}.evidence-main p{font-size:15px}.method{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:20px;font-size:14px}.method span{display:block;color:var(--teal);font-size:12px}.contribution{display:block;border-top:1px solid var(--line);padding:14px 0}.contribution-meta{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;color:var(--muted);font-size:12px}.contribution h3{font-size:16px;line-height:1.5;margin-top:6px}.contribution-group{margin:20px 0 12px}.record-note{font-size:13px;margin-top:16px}
+.table-scroll{overflow:auto;max-width:100%;margin:20px 0}.result-table{border-collapse:collapse;width:100%;text-align:left;font-size:14px;line-height:1.7}.result-table caption{font-size:13px;color:var(--muted);text-align:left;padding:0 0 12px}.result-table th,.result-table td{padding:12px 16px 12px 0;border-bottom:1px solid var(--line);vertical-align:top}.result-table thead th{color:var(--muted);font-size:13px}.phase-compact th:first-child{width:28%}.lab-note{padding:24px 0;border-top:1px solid var(--line)}.note-heading h3{font-size:20px}.note-number{display:none}.lab-note>p{margin-top:12px;font-size:16px;line-height:1.85}.lab-note>.boundary{font-size:14px}.note-grid{display:grid;grid-template-columns:1fr 1fr;gap:36px}.note-grid .lab-note{height:100%}#internship .section-head h2{font-size:30px}
+.experience{background:var(--paper)}.practice-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:28px}.practice-grid article{padding-top:20px;border-top:1px solid var(--line);min-width:0}.practice-grid h3{font-size:19px;margin-bottom:14px}.practice-grid p{font-size:16px;line-height:1.8}.practice-grid p+p{margin-top:14px}.practice-grid .scope{font-size:14px}.mini-feature{margin-top:32px;padding:28px 30px;background:var(--paper2);border:1px solid var(--line);border-radius:10px}.mini-feature-head{display:flex;gap:24px;justify-content:space-between;align-items:end}.mini-feature-label{font-size:12px;font-weight:700;color:var(--teal);letter-spacing:.06em;margin-bottom:9px}.mini-feature-head h3{font-size:24px;line-height:1.35}.mini-feature-link{font-size:14px;text-decoration:underline;text-underline-offset:4px;color:var(--teal);flex-shrink:0}.mini-feature-intro{margin-top:18px;font-size:16px}.mini-feature-result{display:grid;grid-template-columns:250px 1fr;gap:24px;margin-top:20px;padding-top:20px;border-top:1px solid var(--line);align-items:start}.mini-feature-result strong{font-size:18px;color:var(--teal)}.mini-feature-result p{font-size:14px;line-height:1.8}.mini-feature-stages{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px;padding-top:14px}.mini-feature-stages span{display:block;color:var(--teal);font-size:12px;font-weight:700;margin-bottom:10px}.mini-feature-stages p{font-size:15px;line-height:1.8}.mini-feature .section-detail{margin-top:16px}
+.medical-project{padding:48px 0}.medical-project .section-head{margin-bottom:12px}.medical-project .section-head h2{font-size:30px}.medical-path{padding:20px 0;border-bottom:1px solid var(--line);margin-bottom:25px}.medical-path-label{font-size:12px;font-weight:700;letter-spacing:.05em;color:var(--teal);margin-bottom:18px}.medical-path-steps{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:18px}.medical-path-steps>div{display:flex;flex-direction:column;gap:6px}.medical-path-steps span{font-size:12px;color:var(--teal)}.medical-path-steps strong{font-size:15px;line-height:1.5}.medical-path-steps small{font-size:13px;line-height:1.6;color:var(--muted)}.medical-modules{display:grid;grid-template-columns:1fr 1fr;gap:28px}.medical-index{font-size:12px;color:var(--teal)}.medical-modules h3{font-size:19px;margin:10px 0}.medical-modules p{font-size:15px}.medical-outcome{font-size:15px;padding-top:20px;margin-top:24px;border-top:1px solid var(--line)}
+.economics{background:var(--paper2)}.economics .section-head{margin-bottom:20px}.cost-chain{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:26px;padding-top:12px}.cost-step{min-width:0}.step-index{font-size:12px;font-weight:700;color:var(--teal)}.cost-step h3{font-size:20px;margin:14px 0}.cost-step p{font-size:15px;line-height:1.85;margin:12px 0}.formula{font:13px/1.8 monospace;padding:14px;border:1px solid var(--line);background:white;overflow-wrap:anywhere;border-radius:5px}.cost-scope{font-size:15px;line-height:1.85;margin-top:20px}.reference-grid{display:grid;grid-template-columns:1fr 1fr;gap:32px;margin-top:28px;border-top:1px solid var(--line);padding-top:24px}.reference-grid h3{font-size:12px;color:var(--teal);letter-spacing:.04em;margin-bottom:10px}.reference-grid a{font-size:15px;text-decoration:underline;text-underline-offset:3px}.reference-grid p{font-size:14px;margin-top:12px}.practice-subsection{padding:36px 0 0;margin-top:36px;border-top:1px solid var(--line)}.practice-subsection .eyebrow{display:none}.practice-subsection .section-head h3{font-size:24px;margin-bottom:14px}.research-question{font-size:18px;line-height:1.7;max-width:900px;color:var(--ink);margin-top:24px}.research-question em{font-style:normal;color:var(--teal)}.research-steps{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:24px;margin-top:28px}.research-steps span{font-size:12px;color:var(--teal)}.research-steps h3{font-size:17px;margin:10px 0}.research-steps p{font-size:14px;line-height:1.8}.scope-note{font-size:14px;line-height:1.8;margin-top:28px;padding-top:22px;border-top:1px solid var(--line)}
+.learning-groups{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px}.learning-group{border:1px solid var(--line);border-radius:8px;min-width:0;background:white;overflow:hidden}.learning-group-head{padding:22px 22px 16px;min-height:138px}.learning-num{display:none}.learning-group-head h3{font-size:19px;margin-bottom:10px}.learning-group-head p{font-size:14px;line-height:1.75}.resource-detail{margin:0 22px;border-top:1px solid var(--line)}.resource-detail>summary{font-size:14px;padding:12px 0}.learning-links{display:flex;flex-direction:column}.learning-link{position:relative;display:flex;flex-direction:column;gap:8px;padding:16px 0;border-top:1px solid var(--line)}.learning-name{font-size:16px;font-weight:600;line-height:1.4}.learning-description{font-size:14px;line-height:1.75;color:var(--muted)}.learning-link-arrow,.learning-extra-arrow,.learning-curated-arrow{display:none}.learning-more-maps{margin-top:24px}.learning-more-maps .section-detail{margin:0}.learning-more-head{padding:12px 0 24px}.learning-more-head h3{font-size:22px;margin-bottom:12px}.learning-more-head p{font-size:14px}.learning-extra-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 32px}.learning-extra-link{display:flex;flex-direction:column;gap:8px;border-top:1px solid var(--line);padding:16px 0}.learning-extra-top{display:flex;gap:12px;align-items:center;flex-wrap:wrap}.learning-source{font-size:12px;padding:1px 6px;border:1px solid var(--line);color:var(--teal);border-radius:4px}.learning-extra-copy{font-size:14px;line-height:1.75;color:var(--muted)}.learning-curated-list{display:block;margin-top:24px;padding:24px;border:1px solid var(--line);border-radius:8px;background:var(--paper2)}.learning-curated-copy{display:flex;flex-direction:column;gap:8px}.learning-curated-kicker{font-size:12px;color:var(--teal);font-weight:700;letter-spacing:.05em}.learning-curated-copy strong{font-size:21px}.learning-curated-copy>span:last-child{font-size:14px;color:var(--muted)}.star-explorer{margin-top:24px;border-top:1px solid var(--line)}.star-explorer>summary{display:flex;align-items:center;flex-wrap:wrap;gap:10px;padding:18px 0;list-style:none;font-size:15px;font-weight:600;color:var(--teal)}.star-explorer>summary::after{content:'+';margin-left:auto;font-size:20px}.star-explorer[open]>summary::after{content:'−'}.star-summary-sub{font-size:13px;color:var(--muted);font-weight:400}.star-explorer-content{padding:8px 0 24px}.star-explorer-content>p,.star-status{font-size:14px}.star-controls{display:flex;gap:12px;margin-top:18px;flex-wrap:wrap}.star-controls input,.star-controls select{font-size:14px;min-height:44px;padding:10px 12px;border:1px solid var(--line);border-radius:5px;background:white;min-width:0}.star-controls input{flex:1}.star-results{display:grid;grid-template-columns:1fr 1fr;gap:0 24px;max-height:500px;overflow:auto}.star-result{display:flex;flex-direction:column;position:relative;gap:7px;border-top:1px solid var(--line);padding:16px 0}.star-result-name{font-size:15px;overflow-wrap:anywhere}.star-result-desc{font-size:14px;color:var(--muted);line-height:1.7}.star-result-arrow{display:none}.star-actions{display:flex;align-items:center;gap:20px;margin-top:18px;font-size:14px}.star-actions button{border:1px solid var(--line);background:white;border-radius:5px;padding:8px 14px;font-size:14px}.learning-bottom{margin-top:24px;border-top:1px solid var(--line);padding-top:18px;display:flex;justify-content:space-between;gap:18px;flex-wrap:wrap;font-size:13px;color:var(--muted)}.learning-bottom a{color:var(--teal);text-decoration:underline}
+footer{padding:50px 0 28px}.footer-grid{display:flex;align-items:center;justify-content:space-between;gap:24px}footer h2{font-size:30px;line-height:1.3}.footer-links{display:flex;gap:24px;font-size:14px;color:var(--teal)}.copyright{font-size:13px;color:var(--muted);margin-top:32px}.back-top{position:fixed;bottom:24px;right:20px;width:40px;height:40px;display:grid;place-items:center;border:1px solid var(--line);border-radius:6px;background:var(--paper);opacity:0;pointer-events:none}.back-top.visible{opacity:1;pointer-events:auto}
+html[lang="zh-CN"] h1,html[lang="zh-CN"] h2{font-family:var(--sans);font-weight:650;letter-spacing:-.035em}html[lang="zh-CN"] .hero h1{font-size:48px;line-height:1.3}html[lang="zh-CN"] .section-head h2{font-size:32px}html[lang="zh-CN"] #internship .section-head h2,html[lang="zh-CN"] .medical-project .section-head h2{font-size:28px}
+@media(min-width:1500px){.hero{padding-top:86px;padding-bottom:78px}}
+@media(max-width:1000px){.wrap,.home-toc-compact{width:calc(100% - 64px)}.hero{gap:50px;grid-template-columns:minmax(0,1fr) 180px}.portrait img{width:180px}.about-section>.wrap{gap:32px}.about-focus{grid-template-columns:1fr 1fr;column-gap:28px}.practice-grid{grid-template-columns:1fr}.practice-grid article{display:grid;grid-template-columns:210px minmax(0,1fr);gap:0 28px}.practice-grid h3{grid-column:1;grid-row:1/span 2}.practice-grid p{grid-column:2}.research-steps{grid-template-columns:1fr 1fr}.cost-chain{grid-template-columns:1fr}.cost-step{padding-bottom:20px}.learning-groups{gap:16px}.learning-group-head{padding:18px;min-height:192px}.resource-detail{margin:0 18px}.mini-feature-result{grid-template-columns:1fr;gap:12px}}
+@media(max-width:760px){.wrap,.home-toc-compact{width:calc(100% - 40px)}header{height:68px;gap:18px}.wordmark{font-size:21px}.menu-button{display:block}#site-nav{display:none;position:absolute;left:20px;right:20px;top:68px;flex-direction:column;align-items:stretch;gap:0;padding:12px 20px;background:var(--paper);border:1px solid var(--line);border-radius:0 0 8px 8px}#site-nav.open{display:flex}#site-nav a{padding:12px 0;border-bottom:1px solid var(--line)}#site-nav a:last-child{border:0}.hero{padding:44px 0 36px;grid-template-columns:1fr;gap:28px;min-height:0}.hero h1{font-size:44px}.hero .eyebrow{margin-bottom:16px}.hero-lede{font-size:17px;margin-top:20px}.hero-actions{margin-top:24px}.portrait{display:flex;align-items:center;gap:14px}.portrait img{width:64px;height:64px;border-radius:50%}.portrait figcaption{margin:0}.home-toc-list{grid-template-columns:1fr 1fr;gap:6px 16px}.home-toc-compact>summary{padding:12px 0}section{padding:44px 0}.section-head{margin-bottom:26px}.section-head h2{font-size:30px}.about-section{padding:36px 0 44px}.about-section>.wrap{display:block}.about-grid{display:block}.about-copy>p{margin-top:16px}.about-meta{grid-template-columns:1fr 1fr;gap:20px;margin-top:22px;padding-top:0}.about-focus{margin-top:30px;gap:20px}.about-focus-head{padding-bottom:10px}.about-focus h3{font-size:16px}#opensource{padding-bottom:20px}#internship{padding-top:24px}.open-project{grid-template-columns:minmax(0,1fr);gap:20px;padding:24px 0}.open-project h3{font-size:20px}.open-project-copy>p{font-size:16px}.open-project-proof{margin-top:0;border-left:0;border-top:1px solid var(--line);padding:16px 0 0;display:grid;grid-template-columns:130px 1fr;gap:8px 18px}.open-project-proof strong~strong{margin:0}.open-project-proof strong{font-size:21px;grid-column:1}.open-project-proof span{margin:0;font-size:13px;grid-column:2}.note-grid{grid-template-columns:1fr;gap:0}.lab-note{padding:22px 0}.upstream-summary,.evidence-grid{grid-template-columns:1fr;gap:24px}.practice-grid article{display:block}.practice-grid h3{margin-bottom:12px}.practice-grid p{font-size:16px}.mini-feature{padding:22px 20px;margin-top:26px}.mini-feature-head{display:block}.mini-feature-link{display:inline-block;margin-top:14px}.mini-feature-head h3{font-size:22px}.mini-feature-stages{grid-template-columns:1fr;gap:20px}.mini-feature-result strong{font-size:18px}.medical-project{padding:40px 0}.medical-path-steps{grid-template-columns:1fr 1fr;gap:20px}.medical-modules{grid-template-columns:1fr;gap:24px}.reference-grid{grid-template-columns:1fr;gap:24px}.research-steps{gap:22px}.research-steps h3{font-size:16px}.practice-subsection{padding-top:28px;margin-top:28px}.research-question{font-size:17px}.learning-groups{grid-template-columns:1fr;gap:18px}.learning-group-head{padding:20px 20px 14px;min-height:0}.resource-detail{margin:0 20px}.learning-extra-grid,.star-results{grid-template-columns:1fr}.learning-curated-list{padding:20px}.star-summary-sub{width:100%}.star-controls{display:grid;grid-template-columns:1fr}.star-controls input{width:100%}.star-explorer>summary::after{position:absolute;right:0}.star-explorer>summary{position:relative;padding-right:24px}.footer-grid{display:block}footer h2{font-size:27px}.footer-links{margin-top:22px}.back-top{bottom:16px;right:12px;width:36px;height:36px}.table-scroll{margin-top:16px}.result-table{font-size:13px;min-width:480px}.phase-compact{min-width:0}.phase-compact th:first-child{width:33%}.result-table th,.result-table td{padding-right:12px}html[lang="zh-CN"] .hero h1{font-size:36px}html[lang="zh-CN"] .section-head h2{font-size:28px}html[lang="zh-CN"] #internship .section-head h2,html[lang="zh-CN"] .medical-project .section-head h2{font-size:25px}}
+@media(max-width:380px){.wrap,.home-toc-compact{width:calc(100% - 32px)}.hero h1{font-size:38px}.about-meta{grid-template-columns:1fr}.about-focus{grid-template-columns:1fr}.research-steps{grid-template-columns:1fr}html[lang="zh-CN"] .hero h1{font-size:32px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+</style>
 </head>
 <body>
   <div class="progress" aria-hidden="true"></div>
   <div class="site-header"><header class="wrap">
     <a class="wordmark" href="#top">Feihong Guo</a>
     <nav id="site-nav" aria-label="Primary navigation">
-      <a href="#top" data-i18n="nav-home" aria-current="page">Home</a>
       <a href="#about" data-i18n="nav-about">About</a>
-      <a href="/blog/" data-i18n="nav-blog">Blog</a>
-      <a class="github-link" href="https://github.com/Phoenix3334" target="_blank" rel="noreferrer"><svg class="github-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .8a11.2 11.2 0 0 0-3.54 21.83c.56.1.76-.24.76-.54v-2.1c-3.12.68-3.78-1.33-3.78-1.33-.51-1.3-1.25-1.65-1.25-1.65-1.02-.7.08-.69.08-.69 1.13.08 1.72 1.22 1.72 1.22 1 1.71 2.63 1.16 3.27.87.1-.72.4-1.22.71-1.5-2.49-.28-5.11-1.25-5.11-5.55 0-1.23.44-2.23 1.16-3.02-.12-.28-.5-1.42.11-2.97 0 0 .95-.3 3.08 1.15a10.73 10.73 0 0 1 5.6 0c2.13-1.45 3.07-1.15 3.07-1.15.61 1.55.23 2.69.12 2.97.72.79 1.15 1.79 1.15 3.02 0 4.31-2.62 5.27-5.12 5.55.4.35.76 1.03.76 2.08v3.1c0 .3.2.65.77.54A11.2 11.2 0 0 0 12 .8Z"/></svg>GitHub ↗</a>
+      <a href="#opensource" data-i18n="nav-work">Work</a><a href="/blog/" data-i18n="nav-blog">Blog</a>
+      <a class="github-link" href="https://github.com/Phoenix3334" target="_blank" rel="noreferrer"><svg class="github-icon" viewbox="0 0 24 24" aria-hidden="true"><path d="M12 .8a11.2 11.2 0 0 0-3.54 21.83c.56.1.76-.24.76-.54v-2.1c-3.12.68-3.78-1.33-3.78-1.33-.51-1.3-1.25-1.65-1.25-1.65-1.02-.7.08-.69.08-.69 1.13.08 1.72 1.22 1.72 1.22 1 1.71 2.63 1.16 3.27.87.1-.72.4-1.22.71-1.5-2.49-.28-5.11-1.25-5.11-5.55 0-1.23.44-2.23 1.16-3.02-.12-.28-.5-1.42.11-2.97 0 0 .95-.3 3.08 1.15a10.73 10.73 0 0 1 5.6 0c2.13-1.45 3.07-1.15 3.07-1.15.61 1.55.23 2.69.12 2.97.72.79 1.15 1.79 1.15 3.02 0 4.31-2.62 5.27-5.12 5.55.4.35.76 1.03.76 2.08v3.1c0 .3.2.65.77.54A11.2 11.2 0 0 0 12 .8Z"></path></svg>GitHub</a>
     </nav>
     <div class="header-actions"><button class="lang-button" type="button" aria-label="Switch language">中文</button><button class="menu-button" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="site-nav">☰</button></div>
   </header></div>
@@ -282,27 +49,24 @@
       <nav id="home-toc-desktop" aria-label="主页章节导航"></nav>
       <a class="home-toc-top" href="#top" id="home-toc-backtop">↑ Back to top</a>
     </aside>
+    <div class="hero wrap"><div>
+      <p class="eyebrow" data-i18n="hero-kicker">Feihong Guo · 郭飞鸿</p>
+      <h1 data-i18n="hero-title">AI Infrastructure<br><em>&amp; LLM Systems</em></h1>
+      <p class="hero-lede" data-i18n="hero-lede">I build and optimize inference systems, from distributed runtimes to GPU and NPU execution.</p>
+      <div class="hero-actions"><a href="#opensource" data-i18n="hero-action-work">Explore my work</a><a href="/blog/" data-i18n="hero-action-huawei">Read my notes</a></div>
+      </div><figure class="portrait"><img src="https://avatars.githubusercontent.com/u/174691475?v=4" alt="Feihong Guo"><figcaption data-i18n="portrait-caption">Feihong Guo · 郭飞鸿<br>Zhengzhou University</figcaption></figure></div>
     <details class="home-toc-compact" id="home-toc-compact">
       <summary><span id="home-toc-label">On this page / 章节导航</span><span class="home-toc-compact-indicator">+</span></summary>
       <nav id="home-toc-mobile" aria-label="主页章节导航"></nav>
     </details>
-    <div class="hero wrap"><div>
-      <p class="eyebrow" data-i18n="hero-kicker">AI Systems · LLM Serving & Heterogeneous Computing</p>
-      <h1 data-i18n="hero-title">From models to infrastructure,<br><em>measured across the stack.</em></h1>
-      <p class="hero-lede" data-i18n="hero-lede">I work on distributed LLM serving and heterogeneous accelerator systems, spanning runtime scheduling, kernel execution and performance evaluation.</p>
-      <p class="hero-thesis" data-i18n="hero-thesis">Trace the request → isolate the bottleneck → validate correctness → measure the service-level result.<br><em>Performance only counts when workload and latency constraints are explicit.</em></p>
-      <div class="hero-actions"><a href="#opensource" data-i18n="hero-action-work">SGLang runtime work ↓</a><a href="#huawei" data-i18n="hero-action-huawei">Ascend &amp; Kunpeng work ↓</a><a href="#economics" data-i18n="hero-action-tco">Capacity &amp; cost methodology ↓</a></div>
-      <div class="hero-line"><span class="tag">SGLang</span><span class="tag">Distributed LLM Serving</span><span class="tag">GPU / NPU Performance</span><span class="tag">Capacity &amp; TCO</span></div>
-    </div><figure class="portrait"><img src="https://avatars.githubusercontent.com/u/174691475?v=4" alt="Feihong Guo"><figcaption data-i18n="portrait-caption">Feihong Guo · 郭飞鸿<br>AI Infrastructure · LLM Systems</figcaption></figure></div>
     <section id="about" class="about-section">
       <div class="wrap">
         <div class="section-head">
-          <div><p class="eyebrow" data-i18n="about-kicker">ABOUT ME · AI INFRASTRUCTURE</p><h2 data-i18n="about-title">A systems path across<br>runtimes and accelerators.</h2></div>
-          <p data-i18n="about-intro">I study Internet of Things Engineering at Zhengzhou University. My engineering work spans SGLang runtime development and inference optimization across heterogeneous accelerators.</p>
-        </div>
+          <div><p class="eyebrow" data-i18n="about-kicker">PROFILE</p><h2 data-i18n="about-title">About me</h2></div>
+          <p data-i18n="about-copy-1">My work connects runtime correctness, kernel performance and service-level evaluation. I trace bottlenecks across the stack and validate changes with controlled experiments.</p>
+            </div>
         <div class="about-grid">
           <div class="about-copy">
-            <p data-i18n="about-copy-1">I focus on the path from request scheduling and memory movement to kernel execution, and on whether local changes improve end-to-end service behavior.</p>
             <div class="about-meta">
               <div><span data-i18n="about-education-label">EDUCATION</span><strong data-i18n="about-education-value">Zhengzhou University · Internet of Things Engineering</strong></div>
               <div><span data-i18n="about-current-label">ENGINEERING PRACTICE</span><div class="about-experience-list" data-i18n="about-current-value"><div class="about-experience-item"><strong>Baidu AI Cloud</strong><span>AI Infrastructure Intern</span></div><div class="about-experience-item"><strong>Huawei Ascend</strong><span>910B / 910C · Inference &amp; Kernel Optimization</span></div></div></div>
@@ -310,10 +74,10 @@
           </div>
           <div class="about-focus">
             <div class="about-focus-head"><span data-i18n="about-focus-label">RESEARCH INTERESTS</span></div>
-            <article><h3 data-i18n="about-interest-1-title">Distributed LLM Systems</h3><p data-i18n="about-interest-1-copy">Request scheduling, DP/PP/EP/DCP, KV and recurrent-state management, and runtime correctness.</p></article>
-            <article><h3 data-i18n="about-interest-2-title">GPU Kernel Engineering</h3><p data-i18n="about-interest-2-copy">CUDA, Triton and TileLang; IO-aware tiling, kernel fusion, data movement and communication–computation overlap.</p></article>
-            <article><h3 data-i18n="about-interest-3-title">Heterogeneous Computing</h3><p data-i18n="about-interest-3-copy">NVIDIA GPUs, Ascend NPUs and Kunpeng CPUs; execution paths and profiling across platforms.</p></article>
-            <article><h3 data-i18n="about-interest-4-title">Performance Engineering</h3><p data-i18n="about-interest-4-copy">Controlled experiments, trace-based attribution, SLO-qualified throughput, capacity and cost analysis.</p></article>
+            <article><h3 data-i18n="about-interest-1-title">Distributed LLM Systems</h3><p data-i18n="about-interest-1-copy">Scheduling, parallel execution, KV/state management and runtime correctness.</p></article>
+            <article><h3 data-i18n="about-interest-2-title">GPU Kernel Engineering</h3><p data-i18n="about-interest-2-copy">CUDA, Triton and TileLang; fusion, tiling and data movement.</p></article>
+            <article><h3 data-i18n="about-interest-3-title">Heterogeneous Computing</h3><p data-i18n="about-interest-3-copy">NVIDIA GPUs, Ascend NPUs and Kunpeng CPUs.</p></article>
+            <article><h3 data-i18n="about-interest-4-title">Performance Engineering</h3><p data-i18n="about-interest-4-copy">Controlled benchmarks, profiling and SLO-qualified capacity.</p></article>
           </div>
         </div>
       </div>
@@ -322,26 +86,20 @@
     <section id="opensource">
       <div class="wrap">
         <div class="section-head">
-          <div><p class="eyebrow" data-i18n="sglang-kicker">Baidu AI Cloud · SGLang</p><h2 data-i18n="sglang-title">Debugging the runtime,<br>not just tuning a benchmark.</h2></div>
-          <p data-i18n="sglang-intro">Several serving regressions turned out to be control-plane or asynchronous-lifetime bugs rather than slow GPU kernels. I traced requests from routing and scheduling into stream execution, used controlled A/B experiments to establish causality, and submitted fixes with regression coverage. The cases below show the evidence and the boundaries of each result.</p>
-        </div>
-
-        <div class="upstream-summary" aria-label="Selected SGLang contribution roles">
-          <div><h3 data-i18n="summary-authored">Authored · merged</h3><p data-i18n="summary-authored-copy"><a href="https://github.com/sgl-project/sglang/pull/35721" target="_blank" rel="noreferrer">#35721</a> DP health routing<br><a href="https://github.com/sgl-project/sglang/pull/47614" target="_blank" rel="noreferrer">#47614</a> PP stream lifetime<br><a href="https://github.com/sgl-project/sglang/pull/43786" target="_blank" rel="noreferrer">#43786</a> FP8 fusion<br><a href="https://github.com/sgl-project/sglang/pull/48404" target="_blank" rel="noreferrer">#48404</a> EPLB validation</p></div>
-          <div><h3 data-i18n="summary-review">Formal technical reviews</h3><p data-i18n="summary-review-copy"><a href="https://github.com/sgl-project/sglang/pull/32467#pullrequestreview-4896206171" target="_blank" rel="noreferrer">#32467</a> planner-race repair · merged<br><a href="https://github.com/sgl-project/sglang/pull/32183#pullrequestreview-4897392620" target="_blank" rel="noreferrer">#32183</a> verifier window · open</p></div>
-          <div><h3 data-i18n="summary-collab">Collaborative repair · merged</h3><p data-i18n="summary-collab-copy"><a href="https://github.com/sgl-project/sglang/pull/39487" target="_blank" rel="noreferrer">#39487</a> DCP KV recovery<br>My diagnosis, draft fix, and validation; maintainer integration.</p></div>
+          <div><p class="eyebrow" data-i18n="sglang-kicker">BAIDU AI CLOUD · RUNTIME ENGINEERING</p><h2 data-i18n="sglang-title">Reliable LLM serving</h2></div>
+          <p data-i18n="sglang-intro">SGLang runtime work on B300 and GB300: tracing request routing, asynchronous execution and memory ownership, then carrying validated fixes upstream.</p>
         </div>
 
         <article class="open-project" id="project-pp-lifetime">
-          <div class="open-project-index" data-i18n="pp-index">01 · PIPELINE / STREAM LIFETIME</div>
           <div class="open-project-copy">
-            <div class="project-title"><img class="project-logo" src="https://github.com/sgl-project.png?size=88" alt="SGLang"><h3><a href="https://github.com/sgl-project/sglang/pull/47614" target="_blank" rel="noreferrer" data-i18n="pp-title">PP output corruption: repair tensor lifetime across CUDA streams ↗</a></h3></div>
+            <div class="open-project-index" data-i18n="pp-index">ASYNCHRONOUS EXECUTION</div>
+          <div class="project-title"><img class="project-logo" src="https://github.com/sgl-project.png?size=88" alt="SGLang"><h3><a href="https://github.com/sgl-project/sglang/pull/47614" target="_blank" rel="noreferrer" data-i18n="pp-title">PP · Cross-stream tensor lifetime</a></h3></div>
             <p data-i18n="pp-copy">Kimi-K3 produced long token-0 runs when I deepened the asynchronous PP Decode queue. I traced the failure to receive buffers being reused before the forward stream read them. After fixing tensor lifetime, affected requests fell from <strong>51/192 and 98/192 to 0/192</strong> at depths 2 and 3. <strong>PR #47614 merged on 2 November 2026.</strong></p>
             <details class="work-detail" id="pp-debug-case">
-              <summary data-i18n="pp-detail-title">Expand the investigation: reproduction, checksum evidence and the fix</summary>
+              <summary data-i18n="pp-detail-title">Investigation and validation</summary>
               <div class="detail-body">
                 <p data-i18n="pp-detail-copy"><strong>1. Turn an apparent speedup into a correctness test.</strong> Deeper asynchronous PP queues appeared faster, but many Kimi-K3 requests emitted long runs of token 0. On PP2 × TP4, depth 1 produced no affected requests in the tested run. Raising the depth to 2 or 3 made the fault reproducible. Synchronizing after each launch also suppressed it, which directed the investigation to queued work and tensor lifetime.</p>
-                <p data-i18n="pp-checksum"><strong>2. Measure where the data changed.</strong> On the downstream stage, I checked the same proxy tensors just after receive on the communication stream and just before use on the forward stream. Two depth-2 runs had <strong>76/7,498 and 378/7,498 checksum mismatches</strong>. Keeping the previous tensor reference alive until the next receive had allocated its buffers gave <strong>0/7,499 mismatches</strong> with a similar observed queue depth. <a class="inline-link" href="https://github.com/sgl-project/sglang/issues/47613#evidence" target="_blank" rel="noreferrer">Checksum and reference-lifetime controls ↗</a></p>
+                <p data-i18n="pp-checksum"><strong>2. Measure where the data changed.</strong> On the downstream stage, I checked the same proxy tensors just after receive on the communication stream and just before use on the forward stream. Two depth-2 runs had <strong>76/7,498 and 378/7,498 checksum mismatches</strong>. Keeping the previous tensor reference alive until the next receive had allocated its buffers gave <strong>0/7,499 mismatches</strong> with a similar observed queue depth. <a class="inline-link" href="https://github.com/sgl-project/sglang/issues/47613#evidence" target="_blank" rel="noreferrer">Checksum and reference-lifetime controls</a></p>
                 <p data-i18n="pp-lifetime"><strong>3. Extend storage lifetime at the shared launch boundary.</strong> CPU scheduling could drop the old reference while a forward-stream read was still queued. The next receive could reuse the same storage and overwrite that microbatch's activations. In <code>_pp_launch_batch</code>, I used <code>record_stream(self.forward_stream)</code> on each non-CPU proxy tensor before <code>run_batch</code>. This tells the allocator to retain storage until forward-stream use completes. Existing stream dependencies still determine execution order.</p>
                 <div class="table-scroll" tabindex="0" role="region" aria-labelledby="pp-ab-caption">
                   <table class="result-table">
@@ -357,7 +115,7 @@
                   </table>
                 </div>
                 <p data-i18n="pp-boundary" class="boundary">The table reports single-node B300 correctness tests using fake transfer. The PR records the tested patch variants and separate communication-overlap follow-ups. The corrupted-output runs served as failure reproductions.</p>
-                <div data-i18n="pp-issue"><a class="inline-link" href="https://github.com/sgl-project/sglang/issues/47613" target="_blank" rel="noreferrer">Original investigation · #47613 ↗</a> · <a class="inline-link" href="https://github.com/sgl-project/sglang/pull/47614" target="_blank" rel="noreferrer">Merged fix and validation · #47614 ↗</a></div>
+                <div data-i18n="pp-issue"><a class="inline-link" href="https://github.com/sgl-project/sglang/issues/47613" target="_blank" rel="noreferrer">Original investigation · #47613</a> · <a class="inline-link" href="https://github.com/sgl-project/sglang/pull/47614" target="_blank" rel="noreferrer">Merged fix and validation · #47614</a></div>
               </div>
             </details>
           </div>
@@ -365,17 +123,17 @@
         </article>
 
         <article class="open-project" id="project-dp-health">
-          <div class="open-project-index">02 · ROUTING STATE</div>
           <div class="open-project-copy">
-            <div class="project-title"><img class="project-logo" src="https://github.com/sgl-project.png?size=88" alt="SGLang"><h3><a href="https://github.com/sgl-project/sglang/pull/35721" target="_blank" rel="noreferrer">DP Health: tracing an intermittent Prefill regression ↗</a></h3></div>
+            <div class="open-project-index" data-i18n="dp-index">REQUEST ROUTING</div>
+          <div class="project-title"><img class="project-logo" src="https://github.com/sgl-project.png?size=88" alt="SGLang"><h3><a href="https://github.com/sgl-project/sglang/pull/35721" target="_blank" rel="noreferrer" data-i18n="dp-title">DP · Isolating health-check routing state</a></h3></div>
             <p>Repeated DeepSeek-V4-Pro Prefill runs on 8×B300 showed intermittent throughput drops. I traced the trigger to generation-health requests changing shared DPC user-routing state before scheduler admission. After isolating health dispatch, all four patched health-ON runs reached <strong>94.56–94.70k input tok/s</strong>. <strong>PR #35721</strong> shipped in <a href="https://github.com/sgl-project/sglang/releases/tag/v0.5.22" target="_blank" rel="noreferrer">v0.5.22</a>.</p>
             <details class="work-detail" id="dp-debug-case">
-              <summary data-i18n="dp-detail-title">Expand the investigation: hypotheses, traces and 2×2 validation</summary>
+              <summary data-i18n="dp-detail-title">Investigation and controlled experiments</summary>
               <div class="detail-body">
-                <p data-i18n="dp-detail-copy"><strong>1. Separate scheduling from GPU execution.</strong> Identical long-Prefill runs intermittently dropped throughput. I first tested DP Attention, chunk sizing and PrefillDelayer because LOW runs showed rank progress gaps and sustained mixed/delay activity. A Delayer admission-order backport still produced both GOOD and LOW, so I investigated whether a rank received less work or took longer to execute it. <a class="inline-link" href="https://github.com/sgl-project/sglang/issues/35241#issuecomment-5342316838" target="_blank" rel="noreferrer">Backport counterexample ↗</a></p>
-                <p data-i18n="dp-observer"><strong>2. Check whether observation perturbs the run.</strong> A continuous alternating 4 OFF / 4 ON DeviceTimer test gave healthy-state means of 94,563 and 94,569 input tok/s. The sample was too small to settle LOW entry probability. Moving from 5 s to 250 ms metrics sampling separated observed chunk completions, and a benchmark start marker made the fast window cover the onset. <a class="inline-link" href="https://github.com/sgl-project/sglang/issues/35241#issuecomment-5323649556" target="_blank" rel="noreferrer">DeviceTimer A/B ↗</a></p>
-                <p data-i18n="dp-trace"><strong>3. Trace the request across the control plane.</strong> Client POST, tokenizer, DataParallelController and scheduler admission traces exposed a hidden ordering: a generation-health request could advance shared user round-robin or touch load-budget state before a busy scheduler skipped it. The patch isolated health dispatch and preserved explicit-rank and P/D routing. The initial symptom report was filed on 18 August and the patch opened on 20 August. <a class="inline-link" href="https://github.com/sgl-project/sglang/issues/35241#issuecomment-5354692736" target="_blank" rel="noreferrer">Health trigger evidence ↗</a></p>
-                <p data-i18n="dp-ab-copy"><strong>4. Isolate the cause with a 2×2.</strong> On 26 August I held the image, workload, DP Attention, PrefillDelayer and external <code>GET /health</code> polling fixed. Each round started a fresh server and varied only the patch and generation-health request creation. <a class="inline-link" href="https://github.com/sgl-project/sglang/issues/35241#issuecomment-5422094664" target="_blank" rel="noreferrer">Four-arm experiment ↗</a></p>
+                <p data-i18n="dp-detail-copy"><strong>1. Separate scheduling from GPU execution.</strong> Identical long-Prefill runs intermittently dropped throughput. I first tested DP Attention, chunk sizing and PrefillDelayer because LOW runs showed rank progress gaps and sustained mixed/delay activity. A Delayer admission-order backport still produced both GOOD and LOW, so I investigated whether a rank received less work or took longer to execute it. <a class="inline-link" href="https://github.com/sgl-project/sglang/issues/35241#issuecomment-5342316838" target="_blank" rel="noreferrer">Backport counterexample</a></p>
+                <p data-i18n="dp-observer"><strong>2. Check whether observation perturbs the run.</strong> A continuous alternating 4 OFF / 4 ON DeviceTimer test gave healthy-state means of 94,563 and 94,569 input tok/s. The sample was too small to settle LOW entry probability. Moving from 5 s to 250 ms metrics sampling separated observed chunk completions, and a benchmark start marker made the fast window cover the onset. <a class="inline-link" href="https://github.com/sgl-project/sglang/issues/35241#issuecomment-5323649556" target="_blank" rel="noreferrer">DeviceTimer A/B</a></p>
+                <p data-i18n="dp-trace"><strong>3. Trace the request across the control plane.</strong> Client POST, tokenizer, DataParallelController and scheduler admission traces exposed a hidden ordering: a generation-health request could advance shared user round-robin or touch load-budget state before a busy scheduler skipped it. The patch isolated health dispatch and preserved explicit-rank and P/D routing. The initial symptom report was filed on 18 August and the patch opened on 20 August. <a class="inline-link" href="https://github.com/sgl-project/sglang/issues/35241#issuecomment-5354692736" target="_blank" rel="noreferrer">Health trigger evidence</a></p>
+                <p data-i18n="dp-ab-copy"><strong>4. Isolate the cause with a 2×2.</strong> On 26 August I held the image, workload, DP Attention, PrefillDelayer and external <code>GET /health</code> polling fixed. Each round started a fresh server and varied only the patch and generation-health request creation. <a class="inline-link" href="https://github.com/sgl-project/sglang/issues/35241#issuecomment-5422094664" target="_blank" rel="noreferrer">Four-arm experiment</a></p>
                 <div class="table-scroll" tabindex="0" role="region" aria-labelledby="dp-ab-caption">
                   <table class="result-table">
                     <caption data-i18n="dp-ab-scope" id="dp-ab-caption">8×B300 · DeepSeek-V4-Pro · TP8/DP8 · 60k input / 1 output · C16 · 160 requests</caption>
@@ -388,23 +146,23 @@
                     </tbody>
                   </table>
                 </div>
-                <p data-i18n="dp-inventory"><strong>What the follow-up revealed.</strong> In the severe LOW run, the active-window median of summed scheduler running requests was <strong>48 vs 72–80</strong> in the healthy controls. This is request inventory, measured separately from kernel batch dimensions. A milder LOW still had a median of 80. Rank dispatch traces and the four-arm result establish the causal link. Delayer timeouts persisted in healthy patched runs. <a class="inline-link" href="https://github.com/sgl-project/sglang/issues/35241#issuecomment-5488710824" target="_blank" rel="noreferrer">Revised mechanism ↗</a></p>
-                <a class="inline-link" href="https://github.com/sgl-project/sglang/issues/35241" target="_blank" rel="noreferrer" data-i18n="dp-record-link">Full public investigation · #35241 ↗</a>
+                <p data-i18n="dp-inventory"><strong>What the follow-up revealed.</strong> In the severe LOW run, the active-window median of summed scheduler running requests was <strong>48 vs 72–80</strong> in the healthy controls. This is request inventory, measured separately from kernel batch dimensions. A milder LOW still had a median of 80. Rank dispatch traces and the four-arm result establish the causal link. Delayer timeouts persisted in healthy patched runs. <a class="inline-link" href="https://github.com/sgl-project/sglang/issues/35241#issuecomment-5488710824" target="_blank" rel="noreferrer">Revised mechanism</a></p>
+                <a class="inline-link" href="https://github.com/sgl-project/sglang/issues/35241" target="_blank" rel="noreferrer" data-i18n="dp-record-link">Full public investigation · #35241</a>
               </div>
             </details>
           </div><div class="open-project-proof"><strong>30 / 30</strong><span>targeted CPU tests · rebased tree</span><strong>4 / 4</strong><span>B300 patched health-on repeats · tested workload</span></div>
         </article>
 
-        <article class="open-project" id="project-dspark-review">
-          <div class="open-project-index">03 · INVESTIGATION / REVIEW</div>
+        <details class="section-detail"><summary data-i18n="more-runtime">More investigations · DSpark, DCP and NCCL</summary><div class="disclosure-content"><article class="open-project" id="project-dspark-review">
           <div class="open-project-copy">
-            <div class="project-title"><img class="project-logo" src="https://github.com/sgl-project.png?size=88" alt="SGLang"><h3><a href="https://github.com/sgl-project/sglang/issues/31023" target="_blank" rel="noreferrer">DSpark correctness: from first report to final-fix validation ↗</a></h3></div>
+            <div class="open-project-index">03 · INVESTIGATION / REVIEW</div>
+          <div class="project-title"><img class="project-logo" src="https://github.com/sgl-project.png?size=88" alt="SGLang"><h3><a href="https://github.com/sgl-project/sglang/issues/31023" target="_blank" rel="noreferrer">DSpark correctness: from first report to final-fix validation</a></h3></div>
             <p>From July to August, I reported DSpark replay and startup failures, built targeted reproductions, and contributed experiments to the final planner fix. My technical review on <strong>PR #32467</strong> validated the no-init variant with a controlled kernel comparison: <strong>13,111/30,000 out-of-bounds plans → 0/30,000</strong>.</p>
             <details class="work-detail" id="dspark-debug-case">
               <summary data-i18n="dspark-detail-title">Expand the investigation: original reports, isolation and regression coverage</summary>
               <div class="detail-body">
                 <p data-i18n="dspark-detail-copy"><strong>1. Follow the failure across replay and startup.</strong> On 13 July I filed <a class="inline-link" href="https://github.com/sgl-project/sglang/issues/31023" target="_blank" rel="noreferrer">#31023</a> for a TP8 compact target-verify replay failure, then opened diagnostic <a class="inline-link" href="https://github.com/sgl-project/sglang/pull/31455" target="_blank" rel="noreferrer">#31455</a> to bisect synchronization and observe graph metadata. In August I filed <a class="inline-link" href="https://github.com/sgl-project/sglang/issues/33356" target="_blank" rel="noreferrer">#33356</a> for an independent startup-capture reproducer on v0.5.16. The surfacing rank, shape and kernel varied, so I traced the inputs to those kernels back to their producer.</p>
-                <p data-i18n="dspark-isolate"><strong>2. Separate TP agreement, capture ordering and invalid plans.</strong> After <a class="inline-link" href="https://github.com/sgl-project/sglang/pull/31195" target="_blank" rel="noreferrer">#31195</a>, all <strong>120/120</strong> TP8 trials agreed on verify budget, lengths and graph key. A separate four-arm startup experiment compared planner patch #32467 and capture-ordering patch #33795. Full capture succeeded in <strong>0/7</strong> without either, <strong>1/6</strong> with capture ordering alone, and <strong>3/3</strong> with the planner patch alone or both. Each successful planner-patch run captured all 35 shapes. <a class="inline-link" href="https://github.com/sgl-project/sglang/issues/33356#b300tp8-32467-is-the-primary-current-fix" target="_blank" rel="noreferrer">Startup matrix ↗</a></p>
+                <p data-i18n="dspark-isolate"><strong>2. Separate TP agreement, capture ordering and invalid plans.</strong> After <a class="inline-link" href="https://github.com/sgl-project/sglang/pull/31195" target="_blank" rel="noreferrer">#31195</a>, all <strong>120/120</strong> TP8 trials agreed on verify budget, lengths and graph key. A separate four-arm startup experiment compared planner patch #32467 and capture-ordering patch #33795. Full capture succeeded in <strong>0/7</strong> without either, <strong>1/6</strong> with capture ordering alone, and <strong>3/3</strong> with the planner patch alone or both. Each successful planner-patch run captured all 35 shapes. <a class="inline-link" href="https://github.com/sgl-project/sglang/issues/33356#b300tp8-32467-is-the-primary-current-fix" target="_blank" rel="noreferrer">Startup matrix</a></p>
                 <p data-i18n="dspark-producer"><strong>3. Observe the bad index at the producer and test the proposed fix.</strong> A single-GPU reproducer called the real GPU-input planner and checked <code>max(valid ragged_id) &lt; sum(extend_lens)</code>. Redundant initialization of shared warp scratch could overwrite another warp's reduction, misclassifying ragged input as uniform. One bad plan reached index 383 for only 360 valid rows. I tested DarkSharpness’s no-init suggestion in the same session, with isolated JIT caches and 30,000 calls per variant. Under the existing 32-warp launch, each warp writes its slot before the existing post-reduction barrier.</p>
                 <div class="table-scroll" tabindex="0" role="region" aria-labelledby="dspark-abc-caption">
                   <table class="result-table">
@@ -417,9 +175,9 @@
                     </tbody>
                   </table>
                 </div>
-                <p data-i18n="dspark-regression"><strong>4. Check sustained replay and ragged coverage separately.</strong> The disclosed v0.5.16 backport stack completed <strong>18,560/18,560</strong> decode-only requests across C64–C1024 with Graph replay observed. Natural traffic in that sweep produced uniform verify lengths. A separate forced-budget probe observed <strong>39/43 genuinely ragged scheduling blocks</strong>, with no GPU fault or budget violation in that window. The higher-concurrency follow-up up to C2560 measured admission pressure at a fixed MRR of 1024. <a class="inline-link" href="https://github.com/sgl-project/sglang/issues/34297#c8--2026-08-11-b300-decode-only-runtime-regression" target="_blank" rel="noreferrer">Runtime and coverage details ↗</a></p>
+                <p data-i18n="dspark-regression"><strong>4. Check sustained replay and ragged coverage separately.</strong> The disclosed v0.5.16 backport stack completed <strong>18,560/18,560</strong> decode-only requests across C64–C1024 with Graph replay observed. Natural traffic in that sweep produced uniform verify lengths. A separate forced-budget probe observed <strong>39/43 genuinely ragged scheduling blocks</strong>, with no GPU fault or budget violation in that window. The higher-concurrency follow-up up to C2560 measured admission pressure at a fixed MRR of 1024. <a class="inline-link" href="https://github.com/sgl-project/sglang/issues/34297#c8--2026-08-11-b300-decode-only-runtime-regression" target="_blank" rel="noreferrer">Runtime and coverage details</a></p>
                 <p data-i18n="dspark-attribution" class="boundary">I reported and reproduced the failures, contributed the controlled experiments and submitted the formal review. EanWang211123 authored the merged no-init fix in #32467. I tracked separate follow-ups for Breakable CUDA Graph ordering (<a class="inline-link" href="https://github.com/sgl-project/sglang/pull/34286" target="_blank" rel="noreferrer">#34286</a>) and P/D draft-input handoff coverage (<a class="inline-link" href="https://github.com/sgl-project/sglang/pull/34410" target="_blank" rel="noreferrer">#34410</a>).</p>
-                <div data-i18n="dspark-case-links"><a class="inline-link" href="https://github.com/sgl-project/sglang/issues/34297" target="_blank" rel="noreferrer">Investigation roadmap #34297 ↗</a> · <a class="inline-link" href="https://github.com/sgl-project/sglang/pull/32467#discussion_r3749014153" target="_blank" rel="noreferrer">My A/B/C evidence and technical analysis ↗</a> · <a class="inline-link" href="https://github.com/sgl-project/sglang/pull/32467#pullrequestreview-4896206171" target="_blank" rel="noreferrer">My submitted GitHub Review ↗</a> · <a class="inline-link" href="https://github.com/sgl-project/sglang/pull/32467" target="_blank" rel="noreferrer">Merged fix #32467 ↗</a></div>
+                <div data-i18n="dspark-case-links"><a class="inline-link" href="https://github.com/sgl-project/sglang/issues/34297" target="_blank" rel="noreferrer">Investigation roadmap #34297</a> · <a class="inline-link" href="https://github.com/sgl-project/sglang/pull/32467#discussion_r3749014153" target="_blank" rel="noreferrer">My A/B/C evidence and technical analysis</a> · <a class="inline-link" href="https://github.com/sgl-project/sglang/pull/32467#pullrequestreview-4896206171" target="_blank" rel="noreferrer">My submitted GitHub Review</a> · <a class="inline-link" href="https://github.com/sgl-project/sglang/pull/32467" target="_blank" rel="noreferrer">Merged fix #32467</a></div>
               </div>
             </details>
           </div>
@@ -427,19 +185,19 @@
         </article>
 
         <article class="open-project" id="project-dcp-recovery">
-          <div class="open-project-index">04 · KV STATE</div>
           <div class="open-project-copy">
-            <div class="project-title"><img class="project-logo" src="https://github.com/sgl-project.png?size=88" alt="SGLang"><h3><a href="https://github.com/sgl-project/sglang/issues/38645" target="_blank" rel="noreferrer">DCP cache recovery: diagnosis to collaborative upstream fix ↗</a></h3></div>
+            <div class="open-project-index">04 · KV STATE</div>
+          <div class="project-title"><img class="project-logo" src="https://github.com/sgl-project.png?size=88" alt="SGLang"><h3><a href="https://github.com/sgl-project/sglang/issues/38645" target="_blank" rel="noreferrer">DCP cache recovery: diagnosis to collaborative upstream fix</a></h3></div>
             <p>Reported <strong>Issue #38645</strong>, localized the logical-to-physical KV index mismatch in DCP retraction backup/restore, and implemented and validated draft fix <strong>#38790</strong>. Unpatched DCP8 failed at its first retraction; my patched B300 run completed <strong>2,048/2,048 requests with eight retractions</strong>. Maintainer kpham-sgl integrated the fix through a shared DCP layout helper, added compatibility and runtime checks, and merged <strong>#39487</strong>; I closed my superseded draft.</p>
-            <details class="work-detail"><summary data-i18n="dcp-detail-title">My repair and the maintainer’s integration</summary><div class="detail-body"><p data-i18n="dcp-detail-copy">My implementation and six CPU tests covered rank ownership, local-row mapping, and restoration into newly allocated KV locations; four KDA/Mamba GPU regressions checked the separate recurrent-state path. The maintainer reused a shared layout helper, handled already-resolved physical indices and partial-page prefixes, and added B200 forced-retraction and logprob checks. My B300 evidence validates the documented local patch stack.</p><a class="inline-link" href="https://github.com/sgl-project/sglang/pull/38790" target="_blank" rel="noreferrer" data-i18n="dcp-draft-link">My validated draft · #38790 ↗</a> · <a class="inline-link" href="https://github.com/sgl-project/sglang/pull/39487" target="_blank" rel="noreferrer" data-i18n="dcp-merged-link">Maintainer integration · merged #39487 ↗</a></div></details>
+            <details class="work-detail"><summary data-i18n="dcp-detail-title">My repair and the maintainer’s integration</summary><div class="detail-body"><p data-i18n="dcp-detail-copy">My implementation and six CPU tests covered rank ownership, local-row mapping, and restoration into newly allocated KV locations; four KDA/Mamba GPU regressions checked the separate recurrent-state path. The maintainer reused a shared layout helper, handled already-resolved physical indices and partial-page prefixes, and added B200 forced-retraction and logprob checks. My B300 evidence validates the documented local patch stack.</p><a class="inline-link" href="https://github.com/sgl-project/sglang/pull/38790" target="_blank" rel="noreferrer" data-i18n="dcp-draft-link">My validated draft · #38790</a> · <a class="inline-link" href="https://github.com/sgl-project/sglang/pull/39487" target="_blank" rel="noreferrer" data-i18n="dcp-merged-link">Maintainer integration · merged #39487</a></div></details>
           </div>
           <div class="open-project-proof"><strong>2,048 / 2,048</strong><span>v0.5.17 patched requests · 8 real retractions</span><strong>6 / 6</strong><span>CPU correctness tests</span></div>
         </article>
 
         <article class="open-project" id="gb300-dcp">
-          <div class="open-project-index" data-i18n="gb-index">05 · DISTRIBUTED COMMUNICATION</div>
           <div class="open-project-copy">
-            <div class="project-title"><img class="project-logo" src="https://github.com/sgl-project.png?size=88" alt="SGLang"><h3><a href="https://github.com/sgl-project/sglang/issues/45367" target="_blank" rel="noreferrer" data-i18n="gb-title">GB300 DCP: corrupted Decode outputs and the upstream NCCL guard ↗</a></h3></div>
+            <div class="open-project-index" data-i18n="gb-index">05 · DISTRIBUTED COMMUNICATION</div>
+          <div class="project-title"><img class="project-logo" src="https://github.com/sgl-project.png?size=88" alt="SGLang"><h3><a href="https://github.com/sgl-project/sglang/issues/45367" target="_blank" rel="noreferrer" data-i18n="gb-title">GB300 DCP: corrupted Decode outputs and the upstream NCCL guard</a></h3></div>
             <p data-i18n="gb-copy">I reproduced degenerate Kimi-K3 outputs in graph-captured DCP <code>a2a</code> on two-node GB300. Disabling NCCL Graph Registration reduced degenerate outputs from <strong>12/12 to 0/12</strong> in the local probe. Upstream <a class="inline-link" href="https://github.com/sgl-project/sglang/pull/43216" target="_blank" rel="noreferrer">#43216</a>, authored by <strong>zhihengy</strong>, introduced a broader default guard that covers this configuration.</p>
             <details class="work-detail" id="gb300-dcp-closure">
               <summary data-i18n="gb-summary">Expand the investigation: local A/B, upstream guard and closure</summary>
@@ -453,7 +211,13 @@
           <div class="open-project-proof"><strong>12/12 → 0/12</strong><span data-i18n="gb-probe">degenerate outputs · local registration ON vs OFF</span><strong><a class="inline-link" href="https://github.com/sgl-project/sglang/pull/43216" target="_blank" rel="noreferrer">#43216</a></strong><span data-i18n="gb-tests">upstream default guard · merged</span></div>
         </article>
 
-        <details class="records-detail"><summary data-i18n="all-records">Explore the public PR, review, and investigation index</summary>
+        </div></details><details class="records-detail"><summary data-i18n="all-records">Explore the public PR, review, and investigation index</summary>
+        <div class="upstream-summary" aria-label="Selected SGLang contribution roles">
+          <div><h3 data-i18n="summary-authored">Authored · merged</h3><p data-i18n="summary-authored-copy"><a href="https://github.com/sgl-project/sglang/pull/35721" target="_blank" rel="noreferrer">#35721</a> DP health routing<br><a href="https://github.com/sgl-project/sglang/pull/47614" target="_blank" rel="noreferrer">#47614</a> PP stream lifetime<br><a href="https://github.com/sgl-project/sglang/pull/43786" target="_blank" rel="noreferrer">#43786</a> FP8 fusion<br><a href="https://github.com/sgl-project/sglang/pull/48404" target="_blank" rel="noreferrer">#48404</a> EPLB validation</p></div>
+          <div><h3 data-i18n="summary-review">Formal technical reviews</h3><p data-i18n="summary-review-copy"><a href="https://github.com/sgl-project/sglang/pull/32467#pullrequestreview-4896206171" target="_blank" rel="noreferrer">#32467</a> planner-race repair · merged<br><a href="https://github.com/sgl-project/sglang/pull/32183#pullrequestreview-4897392620" target="_blank" rel="noreferrer">#32183</a> verifier window · open</p></div>
+          <div><h3 data-i18n="summary-collab">Collaborative repair · merged</h3><p data-i18n="summary-collab-copy"><a href="https://github.com/sgl-project/sglang/pull/39487" target="_blank" rel="noreferrer">#39487</a> DCP KV recovery<br>My diagnosis, draft fix, and validation; maintainer integration.</p></div>
+        </div>
+
         <p class="group-label">Selected upstream records · contribution and evidence index</p>
         <div class="evidence-grid">
           <div class="evidence-main">
@@ -467,8 +231,8 @@
             <a class="contribution" data-record="pr-35721" href="https://github.com/sgl-project/sglang/pull/35721" target="_blank" rel="noreferrer"><div class="contribution-meta"><span>PR #35721</span><span data-i18n="status-35721" class="status-merged">Authored · merged · v0.5.22</span></div><h3>Separate generation health state from user dispatch</h3></a>
             <a class="contribution" data-record="pr-43786" href="https://github.com/sgl-project/sglang/pull/43786" target="_blank" rel="noreferrer"><div class="contribution-meta"><span>PR #43786</span><span data-i18n="status-43786" class="status-merged">Authored · merged · 4 Nov 2026</span></div><h3 data-i18n="record-43786">Fuse inverse RoPE into CUDA FP8 wo_a quantization</h3></a>
             <a class="contribution" data-record="pr-48404" href="https://github.com/sgl-project/sglang/pull/48404" target="_blank" rel="noreferrer"><div class="contribution-meta"><span>PR #48404</span><span data-i18n="status-48404" class="status-merged">Authored · merged · 7 Nov 2026</span></div><h3 data-i18n="record-48404">Reject incompatible EPLB recorder modes at startup</h3></a>
-            <h4 class="contribution-group" data-i18n="group-reviewed">Technical reviews & collaborative repair</h4>
-            <a class="contribution" data-record="pr-32467" href="https://github.com/sgl-project/sglang/pull/32467#discussion_r3749014153" target="_blank" rel="noreferrer"><div class="contribution-meta"><span>PR #32467</span><span data-i18n="status-32467" class="status-merged">Technical review & causal validation · merged</span></div><h3>My technical review of the final no-init fix ↗</h3></a>
+            <h4 class="contribution-group" data-i18n="group-reviewed">Technical reviews &amp; collaborative repair</h4>
+            <a class="contribution" data-record="pr-32467" href="https://github.com/sgl-project/sglang/pull/32467#discussion_r3749014153" target="_blank" rel="noreferrer"><div class="contribution-meta"><span>PR #32467</span><span data-i18n="status-32467" class="status-merged">Technical review &amp; causal validation · merged</span></div><h3>My technical review of the final no-init fix</h3></a>
             <a class="contribution" data-record="review-32183" href="https://github.com/sgl-project/sglang/pull/32183#pullrequestreview-4897392620" target="_blank" rel="noreferrer"><div class="contribution-meta"><span>Review · PR #32183</span><span data-i18n="status-review-32183">Formal COMMENTED review · PR open</span></div><h3 data-i18n="title-review-32183">Separate verifier-window correctness from other DSpark failures</h3></a>
             <a class="contribution" data-record="pr-39487" href="https://github.com/sgl-project/sglang/pull/39487" target="_blank" rel="noreferrer"><div class="contribution-meta"><span>PR #39487</span><span data-i18n="status-39487" class="status-merged">Collaborative fix · maintainer-authored · merged</span></div><h3>Land the DCP retraction fix following my report and draft</h3></a>
             <h4 class="contribution-group" data-i18n="group-open">Authored engineering work · open</h4>
@@ -476,17 +240,17 @@
             <a class="contribution" data-record="pr-45584" href="https://github.com/sgl-project/sglang/pull/45584" target="_blank" rel="noreferrer"><div class="contribution-meta"><span>PR #45584</span><span data-i18n="status-pr-45584">Authored · open</span></div><h3 data-i18n="title-pr-45584">Serialise multi-tokenizer general warmups</h3></a>
             <a class="contribution" data-record="pr-34410" href="https://github.com/sgl-project/sglang/pull/34410" target="_blank" rel="noreferrer"><div class="contribution-meta"><span>PR #34410</span><span data-i18n="status-34410">Authored tests · open</span></div><h3>Pin the P/D decode draft-input handoff contract</h3></a>
             <a class="contribution" data-record="pr-34286" href="https://github.com/sgl-project/sglang/pull/34286" target="_blank" rel="noreferrer"><div class="contribution-meta"><span>PR #34286</span><span data-i18n="status-34286">Authored patch · open</span></div><h3>Synchronize graph construction after final warmup</h3></a>
-            <h4 class="contribution-group" data-i18n="group-investigation">Investigation, RFCs & supporting records</h4>
+            <h4 class="contribution-group" data-i18n="group-investigation">Investigation, RFCs &amp; supporting records</h4>
             <a class="contribution" data-record="pr-45371" href="https://github.com/sgl-project/sglang/pull/45371" target="_blank" rel="noreferrer"><div class="contribution-meta"><span>PR #45371</span><span data-i18n="status-45371">Authored investigation · closed unmerged</span></div><h3 data-i18n="record-45371">DCP graph-registration guard</h3></a>
             <a class="contribution" data-record="pr-45824" href="https://github.com/sgl-project/sglang/pull/45824" target="_blank" rel="noreferrer"><div class="contribution-meta"><span>PR #45824</span><span data-i18n="status-45824">Authored investigation · closed unmerged</span></div><h3 data-i18n="record-45824">Persistent DCP all-to-all buffers</h3></a>
-            <a class="contribution" data-record="issue-31023" href="https://github.com/sgl-project/sglang/issues/31023" target="_blank" rel="noreferrer"><div class="contribution-meta"><span>Issue #31023</span><span data-i18n="status-issue-31023">Authored report & evidence · closed</span></div><h3>Isolate DSpark target-verify replay failures on TP8</h3></a>
-            <a class="contribution" data-record="issue-33356" href="https://github.com/sgl-project/sglang/issues/33356" target="_blank" rel="noreferrer"><div class="contribution-meta"><span>Issue #33356</span><span data-i18n="status-issue-33356">Authored report & validation · closed</span></div><h3>Separate plan-kernel corruption from graph capture ordering</h3></a>
+            <a class="contribution" data-record="issue-31023" href="https://github.com/sgl-project/sglang/issues/31023" target="_blank" rel="noreferrer"><div class="contribution-meta"><span>Issue #31023</span><span data-i18n="status-issue-31023">Authored report &amp; evidence · closed</span></div><h3>Isolate DSpark target-verify replay failures on TP8</h3></a>
+            <a class="contribution" data-record="issue-33356" href="https://github.com/sgl-project/sglang/issues/33356" target="_blank" rel="noreferrer"><div class="contribution-meta"><span>Issue #33356</span><span data-i18n="status-issue-33356">Authored report &amp; validation · closed</span></div><h3>Separate plan-kernel corruption from graph capture ordering</h3></a>
             <a class="contribution" data-record="issue-34297" href="https://github.com/sgl-project/sglang/issues/34297" target="_blank" rel="noreferrer"><div class="contribution-meta"><span>Roadmap #34297</span><span data-i18n="status-issue-34297">Authored investigation roadmap · closed</span></div><h3>Organize DSpark correctness contracts and validation gates</h3></a>
             <a class="contribution" data-record="issue-32432" href="https://github.com/sgl-project/sglang/issues/32432" target="_blank" rel="noreferrer"><div class="contribution-meta"><span>RFC #32432</span><span data-i18n="status-issue-32432">Authored design proposal · closed</span></div><h3>Propose metadata, workspace, and stream-ownership contracts</h3></a>
-            <a class="contribution" data-record="issue-38645" href="https://github.com/sgl-project/sglang/issues/38645" target="_blank" rel="noreferrer"><div class="contribution-meta"><span>Issue #38645</span><span data-i18n="status-issue-38645">Authored report & root-cause analysis · closed</span></div><h3>Trace the DCP retraction logical-to-local KV index mismatch</h3></a>
+            <a class="contribution" data-record="issue-38645" href="https://github.com/sgl-project/sglang/issues/38645" target="_blank" rel="noreferrer"><div class="contribution-meta"><span>Issue #38645</span><span data-i18n="status-issue-38645">Authored report &amp; root-cause analysis · closed</span></div><h3>Trace the DCP retraction logical-to-local KV index mismatch</h3></a>
             <a class="contribution" data-record="issue-44697" href="https://github.com/sgl-project/sglang/issues/44697" target="_blank" rel="noreferrer"><div class="contribution-meta"><span>SGLang RFC #44697</span><span data-i18n="status-44697">Authored profiling proposal · open</span></div><h3 data-i18n="eplb-rfc-record">Separate routing imbalance from placement and serving costs</h3></a>
             <a class="contribution" data-record="eplb-29" href="https://github.com/deepseek-ai/EPLB/issues/29" target="_blank" rel="noreferrer"><div class="contribution-meta"><span>DeepSeek EPLB #29</span><span data-i18n="status-eplb-29">Authored evaluation discussion · open</span></div><h3 data-i18n="eplb-question-record">Discuss replica costs and the boundary with model routing</h3></a>
-            <p class="record-note" data-i18n="records-date">PR states checked 8 November 2026. <a class="inline-link" href="https://github.com/Phoenix3334/Phoenix3334.github.io/blob/main/SGLANG_CONTRIBUTIONS.md" target="_blank" rel="noreferrer">Full contribution index ↗</a></p>
+            <p class="record-note" data-i18n="records-date">PR states checked 8 November 2026. <a class="inline-link" href="https://github.com/Phoenix3334/Phoenix3334.github.io/blob/main/SGLANG_CONTRIBUTIONS.md" target="_blank" rel="noreferrer">Full contribution index</a></p>
           </div>
         </div>
 
@@ -497,8 +261,8 @@
     <section id="internship">
       <div class="wrap">
         <div class="section-head">
-          <div><p class="eyebrow" data-i18n="internship-eyebrow">BAIDU AI CLOUD · SERVING BENCHMARKS</p><h2 data-i18n="internship-title">Benchmark the workload.<br>Choose the serving configuration.</h2></div>
-          <p data-i18n="internship-intro">I compare Prefill, Decode and end-to-end serving under explicit request lengths and concurrency, rather than treating peak tokens/s as a universal result. Parallel layout, KV/SSM memory budgets, graph replay and communication overhead all change the usable operating point. The goal is to identify configurations that meet latency and correctness constraints.</p>
+          <div><p class="eyebrow" data-i18n="internship-eyebrow">BAIDU AI CLOUD · PERFORMANCE ENGINEERING</p><h2 data-i18n="internship-title">Serving performance &amp; capacity</h2></div>
+          <p data-i18n="internship-intro">Workload-specific Prefill, Decode and end-to-end benchmarks. I connect parallelism, memory budgets and runtime traces to throughput and latency.</p>
         </div>
         <article class="lab-note phase-note" id="long-context-results">
           <div class="note-heading"><span class="note-number">01</span><h3 data-i18n="phase-title">Long-context serving benchmarks</h3></div>
@@ -512,12 +276,12 @@
                   <thead><tr><th data-i18n="phase-model" scope="col">Model</th><th data-i18n="phase-scope" scope="col">Benchmark focus</th></tr></thead>
                   <tbody>
                     <tr><th scope="row">DeepSeek-V4-Pro</th><td data-i18n="phase-v4">Prefill and Decode tuning, comparing batching, cache capacity, and speculative decoding.</td></tr>
-                    <tr><th scope="row">DeepSeek-V4.1-Flash</th><td data-i18n="phase-flash">Prefill and expert balancing under synthetic and real-token loads. <a class="inline-link" href="https://github.com/sgl-project/sglang/issues/44697" target="_blank" rel="noreferrer">RFC #44697 ↗</a></td></tr>
+                    <tr><th scope="row">DeepSeek-V4.1-Flash</th><td data-i18n="phase-flash">Prefill and expert balancing under synthetic and real-token loads. <a class="inline-link" href="https://github.com/sgl-project/sglang/issues/44697" target="_blank" rel="noreferrer">RFC #44697</a></td></tr>
                     <tr><th scope="row">Kimi K3</th><td data-i18n="phase-k3">Prefill: compared tensor/expert parallelism with pipeline parallelism. Decode: evaluated DCP and pipeline trade-offs in throughput, per-token latency, and runtime correctness.</td></tr>
                   </tbody>
                 </table>
               </div>
-              <p data-i18n="phase-k3-source" class="boundary">Related K3 runtime investigations · <a class="inline-link" href="https://github.com/sgl-project/sglang/pull/47614" target="_blank" rel="noreferrer">PR #47614 ↗</a> · <a class="inline-link" href="https://github.com/sgl-project/sglang/issues/45367" target="_blank" rel="noreferrer">Issue #45367 ↗</a></p>
+              <p data-i18n="phase-k3-source" class="boundary">Related K3 runtime investigations · <a class="inline-link" href="https://github.com/sgl-project/sglang/pull/47614" target="_blank" rel="noreferrer">PR #47614</a> · <a class="inline-link" href="https://github.com/sgl-project/sglang/issues/45367" target="_blank" rel="noreferrer">Issue #45367</a></p>
             </div>
           </details>
         </article>
@@ -533,40 +297,44 @@
             <p class="boundary" data-i18n="parallel-boundary">Select hardware and parallel layout against the target workload and SLO. Compare throughput, TTFT/TPOT and resource use at the qualifying operating point.</p>
           </article>
         </div>
-        <article class="lab-note" id="eplb-investigation">
+        <details class="section-detail"><summary data-i18n="more-performance">Profiling, EPLB and reproducible environments</summary><div class="disclosure-content"><article class="lab-note" id="eplb-investigation">
           <div class="note-heading"><span class="note-number">04</span><h3 data-i18n="eplb-title">EPLB: measure balance, then test throughput</h3></div>
           <p data-i18n="eplb-copy">Separated logical expert popularity, physical placement, replica dispatch, padding and kernel time. Earlier V4-Pro B300 work motivated a follow-up on real-token V4.1-Flash 64K/C32 Prefill workloads.</p>
           <p class="boundary" data-i18n="eplb-result">In the reported V4.1-Flash comparison, frozen placement lowered rank-count CV from <strong>0.149 to 0.047</strong> and average MegaMoE duration from <strong>7.512 to 7.180 ms</strong>. Input throughput rose <strong>0.95%</strong>, compared with <strong>1.01%</strong> for the synthetic balanced-routing diagnostic.</p>
-          <details class="work-detail"><summary data-i18n="eplb-summary">Routing diagnostics and recorder validation</summary><div class="detail-body"><p data-i18n="eplb-detail">The uniform-routing arm changes logical expert selection and serves as a performance diagnostic. The RFC records its measurement boundaries. Separately, <a class="inline-link" href="https://github.com/sgl-project/sglang/pull/48404" target="_blank" rel="noreferrer">#48404</a> rejects incompatible recorder modes at startup after an online rebalance crash was reproduced.</p><a class="inline-link" href="https://github.com/sgl-project/sglang/issues/44697" target="_blank" rel="noreferrer" data-i18n="eplb-rfc-link">My SGLang profiling RFC · #44697 ↗</a> · <a class="inline-link" href="https://github.com/deepseek-ai/EPLB/issues/29" target="_blank" rel="noreferrer" data-i18n="eplb-question-link">My DeepSeek EPLB discussion · #29 ↗</a></div></details>
+          <details class="work-detail"><summary data-i18n="eplb-summary">Routing diagnostics and recorder validation</summary><div class="detail-body"><p data-i18n="eplb-detail">The uniform-routing arm changes logical expert selection and serves as a performance diagnostic. The RFC records its measurement boundaries. Separately, <a class="inline-link" href="https://github.com/sgl-project/sglang/pull/48404" target="_blank" rel="noreferrer">#48404</a> rejects incompatible recorder modes at startup after an online rebalance crash was reproduced.</p><a class="inline-link" href="https://github.com/sgl-project/sglang/issues/44697" target="_blank" rel="noreferrer" data-i18n="eplb-rfc-link">My SGLang profiling RFC · #44697</a> · <a class="inline-link" href="https://github.com/deepseek-ai/EPLB/issues/29" target="_blank" rel="noreferrer" data-i18n="eplb-question-link">My DeepSeek EPLB discussion · #29</a></div></details>
         </article>
         <article class="lab-note" id="component-analysis">
           <div class="note-heading"><span class="note-number">05</span><h3 data-i18n="component-title">Microbenchmarks and runtime profiling</h3></div>
           <p data-i18n="component-copy">Used a MegaMoE microbenchmark as a component reference for the serving trace. A 32K-chunk microbenchmark measured about <strong>5.6 ms</strong>. In a separate V4.1-Flash real-input Prefill trace, mean main MegaMoE kernel times were <strong>6.9–7.5 ms</strong> across ranks. Used nsys to follow execution and communication, and ncu to examine selected kernels.</p>
-          <p data-i18n="fusion-copy">Merged <a class="inline-link" href="https://github.com/sgl-project/sglang/pull/43786" target="_blank" rel="noreferrer">#43786 ↗</a> fuses inverse RoPE into CUDA UE8M0 FP8 activation quantization, preserving BF16 rounding and packed scales. Upstream B200 kernel tests passed <strong>7/7</strong>, including numerical equivalence and CUDA Graph replay with updated inputs.</p>
+          <p data-i18n="fusion-copy">Merged <a class="inline-link" href="https://github.com/sgl-project/sglang/pull/43786" target="_blank" rel="noreferrer">#43786</a> fuses inverse RoPE into CUDA UE8M0 FP8 activation quantization, preserving BF16 rounding and packed scales. Upstream B200 kernel tests passed <strong>7/7</strong>, including numerical equivalence and CUDA Graph replay with updated inputs.</p>
           <p class="boundary" data-i18n="component-boundary">The microbenchmark and serving trace have different execution boundaries. The trace includes internal waits, so the gap guides attribution. The historical B300 fusion backport measured +1.61% Prefill throughput. Full-model performance of the final upstream implementation remains unmeasured.</p>
         </article>
         <article class="lab-note" id="benchmark-engineering">
           <div class="note-heading"><span class="note-number">06</span><h3 data-i18n="env-title">Reproducible benchmark environments</h3></div>
           <p data-i18n="env-copy">Maintained SGLang container images and CI/CD workflows for multi-node experiments. Automated dependency setup, service lifecycle and benchmark collection, and recorded topology, cache budgets and validation settings for repeatable regressions.</p>
         </article>
-      </div>
+      </div></details></div>
     </section>
 
     <section class="experience" id="huawei"><div class="wrap">
-      <div class="section-head"><div><p class="eyebrow" data-i18n="huawei-kicker">HUAWEI ASCEND &amp; KUNPENG · HETEROGENEOUS COMPUTING</p><h2 data-i18n="huawei-title">Inference and performance,<br>across NPU and CPU.</h2></div><p data-i18n="huawei-intro">This work examines how models behave on heterogeneous hardware: serving with vLLM-Ascend/xLLM on Ascend 910B, MiniCPM-o full-duplex inference and kernel optimization on Ascend 910C, and CPU/NUMA tuning on Kunpeng 920. The result that matters is the complete workload, not only an isolated fast operator.</p></div>
+      <div class="section-head"><div><p class="eyebrow" data-i18n="huawei-kicker">HUAWEI ASCEND &amp; KUNPENG</p><h2 data-i18n="huawei-title">Inference across accelerators</h2></div><p data-i18n="huawei-intro">Ascend 910B/910C inference, kernel integration and Kunpeng CPU tuning, with results measured on complete workloads.</p></div>
       <div class="practice-grid">
-        <article><h3 data-i18n="huawei-serving-title">Ascend serving engines</h3><p data-i18n="huawei-serving-copy">Worked with <strong>xLLM and vLLM-Ascend on Ascend 910B</strong>: model support, MTP, ACL Graph, cache capacity, and benchmark configuration. Qwen3.5-9B throughput moved <strong>2,301 → 30,451 tok/s at C960</strong> in a combined configuration comparison.</p><p class="scope" data-i18n="huawei-serving-scope">A separate Gemma 4 E2B deployment comparison measured 1,159.53 → 1,274.00 tok/s with Full ACL Graph. The two benchmarks have different baselines.</p></article>
-        <article><h3 data-i18n="huawei-kernel-title">Kernels into a valid runtime path</h3><p data-i18n="huawei-kernel-copy">Used <strong>Ascend C, Triton, and TileLang</strong> to connect tiling and fusion to the Da Vinci data path: aligned transfers, on-chip buffers, compute, and synchronisation. Specialised paths need shape and layout checks, precision validation, and a fallback before serving integration.</p><p class="scope" data-i18n="huawei-kernel-scope">Kernel timing and system throughput are measured separately. A faster local operator needs a reachable engine path and an end-to-end comparison.</p></article>
-        <article><h3 data-i18n="huawei-cpu-title">Kunpeng performance foundations</h3><p data-i18n="huawei-cpu-copy">On <strong>Kunpeng 920</strong>, tuned SVE/NEON, NUMA affinity, MPI/OpenMP and FFT plan reuse. The 256³ FFTW workload moved from <strong>80.97 to 555.00 GFLOP/s</strong>.</p><p class="scope" data-i18n="huawei-cpu-scope">CPU workloads are independent measurements, rather than evidence of an NPU or LLM serving speedup.</p></article>
+        <article><h3 data-i18n="huawei-serving-title">Ascend serving</h3><p data-i18n="huawei-serving-copy">Worked with <strong>xLLM and vLLM-Ascend on Ascend 910B</strong>: model support, MTP, ACL Graph, cache capacity, and benchmark configuration. Qwen3.5-9B throughput moved <strong>2,301 → 30,451 tok/s at C960</strong> in a combined configuration comparison.</p><p class="scope" data-i18n="huawei-serving-scope">A separate Gemma 4 E2B deployment comparison measured 1,159.53 → 1,274.00 tok/s with Full ACL Graph. The two benchmarks have different baselines.</p></article>
+        <article><h3 data-i18n="huawei-kernel-title">Kernel integration</h3><p data-i18n="huawei-kernel-copy">Used <strong>Ascend C, Triton, and TileLang</strong> to connect tiling and fusion to the Da Vinci data path: aligned transfers, on-chip buffers, compute, and synchronisation. Specialised paths need shape and layout checks, precision validation, and a fallback before serving integration.</p><p class="scope" data-i18n="huawei-kernel-scope">Kernel timing and system throughput are measured separately. A faster local operator needs a reachable engine path and an end-to-end comparison.</p></article>
+        <article><h3 data-i18n="huawei-cpu-title">Kunpeng CPU tuning</h3><p data-i18n="huawei-cpu-copy">On <strong>Kunpeng 920</strong>, tuned SVE/NEON, NUMA affinity, MPI/OpenMP and FFT plan reuse. The 256³ FFTW workload moved from <strong>80.97 to 555.00 GFLOP/s</strong>.</p><p class="scope" data-i18n="huawei-cpu-scope">CPU workloads are independent measurements, rather than evidence of an NPU or LLM serving speedup.</p></article>
       </div>
       <div class="mini-feature" id="minicpm">
         <div class="mini-feature-head">
           <div><p class="mini-feature-label" data-i18n="omni-label">ASCEND 910C · CROSS-PLATFORM PROJECT</p>
           <h3 data-i18n="omni-title">MiniCPM-o 4.5 · Full-duplex inference</h3></div>
-          <a href="https://github.com/Phoenix3334/minicpmo45-ascend" target="_blank" rel="noopener noreferrer" class="mini-feature-link" data-i18n="omni-project-link">Project repository ↗</a>
+          <a href="https://github.com/Phoenix3334/minicpmo45-ascend" target="_blank" rel="noopener noreferrer" class="mini-feature-link" data-i18n="omni-project-link">Project repository</a>
         </div>
         <p class="mini-feature-intro" data-i18n="omni-intro">Using the OpenBMB MiniCPM-o model, this project connects DSpark draft training on NVIDIA B300 with llama.cpp-omni deployment and runtime optimization on Huawei Ascend 910C.</p>
-        <div class="mini-feature-stages">
+        <div class="mini-feature-result">
+          <strong data-i18n="omni-result">Core RTF 0.6754 → 0.4829 (−28.5%)</strong>
+          <p data-i18n="omni-result-note">Paired 120 s full-duplex test; 4/4 accuracy checks passed. Standalone speculative speedups were measured separately; the final duplex path ran without speculation.</p>
+        </div>
+      <details class="section-detail"><summary data-i18n="omni-details">Training, deployment and runtime details</summary><div class="disclosure-content"><div class="mini-feature-stages">
           <div><span data-i18n="omni-step1-title">01 · TRAIN / B300</span>
           <p data-i18n="omni-step1-copy">Trained a 5-layer DSpark draft on 8×B300 (DP8) with DeepSpec; fixed-set mean acceptance length increased from 3.49 to 3.86.</p></div>
           <div><span data-i18n="omni-step2-title">02 · DEPLOY / ASCEND</span>
@@ -574,21 +342,17 @@
           <div><span data-i18n="omni-step3-title">03 · OPTIMIZE / RUNTIME</span>
           <p data-i18n="omni-step3-copy">Integrated TileLang AOT and QK-norm + RoPE fusion, used ACL Graph and prefix KV reuse, and improved Flow/Vocoder overlap.</p></div>
         </div>
-        <div class="mini-feature-result">
-          <strong data-i18n="omni-result">Core RTF 0.6754 → 0.4829 (−28.5%)</strong>
-          <p data-i18n="omni-result-note">Paired 120 s full-duplex test; 4/4 accuracy checks passed. Standalone speculative speedups were measured separately; the final duplex path ran without speculation.</p>
-        </div>
-      </div>
+        </div></details></div>
     </div></section>
     <section class="medical-project" id="medical"><div class="wrap">
       <div class="section-head medical-section-head">
         <div>
           <p class="eyebrow" data-i18n="medical-kicker">APPLIED AI · THERMOPULSE</p>
-          <h2 data-i18n="medical-title">ThermoPulse:<br>from thermal sensing to medical reports.</h2>
+          <h2 data-i18n="medical-title">ThermoPulse · Applied AI</h2>
         </div>
-        <p data-i18n="medical-intro">A medical-AI research prototype connecting 640×480 long-wave infrared sensing, anatomical localization, spatial visual representation, GPU execution and medical-language adaptation into a structured reporting workflow.</p>
+        <p data-i18n="medical-intro">A research prototype connecting thermal sensing, visual analysis and medical-language adaptation into structured reporting.</p>
       </div>
-      <div class="medical-path">
+      <details class="section-detail"><summary data-i18n="medical-details">Explore the sensing-to-report pipeline</summary><div class="disclosure-content"><div class="medical-path">
         <p class="medical-path-label" data-i18n="medical-path-label">MEASUREMENT → REPRESENTATION → EXECUTION → REPORT</p>
         <div class="medical-path-steps">
           <div><span>01</span><strong data-i18n="medical-path-1">Thermal sensing</strong><small data-i18n="medical-path-sub-1">LWIR · FPGA acquisition</small></div>
@@ -621,23 +385,21 @@
         </article>
       </div>
       <p class="medical-outcome" data-i18n="medical-outcome"><strong>System output:</strong> Regional thermal findings and visual analysis are organized into structured medical reports and remote-service interfaces for human review.</p>
-    </div></section>
+    </div></details></div></section>
     <section class="economics" id="economics"><div class="wrap">
-      <div class="section-head"><div><p class="eyebrow" data-i18n="economics-kicker">Performance → capacity → economics</p><h2 data-i18n="economics-title">From measured service capacity<br>to deployment estimates.</h2></div><p data-i18n="economics-intro">At Baidu, my completed work established serving-performance and capacity baselines on NVIDIA GPUs, using workload-specific Prefill/Decode throughput, TTFT/TPOT, parallel layouts and memory constraints. The team's subsequent evaluation is intended to extend comparisons to Kunlunxin accelerators and connect qualified capacity with utilization, power, hardware pricing and traffic for TCO analysis. The cross-platform and full financial assessments are follow-on work, not my completed results.</p></div>
-      <div class="cost-chain">
+      <div class="section-head"><div><p class="eyebrow" data-i18n="economics-kicker">Performance → capacity → economics</p><h2 data-i18n="economics-title">From benchmarks to deployment decisions</h2></div><p data-i18n="economics-intro">My completed work establishes NVIDIA serving-performance and capacity baselines. Cross-accelerator comparisons and full TCO analysis are team follow-up work.</p></div>
+      <details class="section-detail"><summary data-i18n="cost-details">Capacity and cost methodology</summary><div class="disclosure-content"><div class="cost-chain">
         <article class="cost-step"><span class="step-index">01 / SLO</span><h3 data-i18n="cost-slo-title">Find the feasible operating point</h3><p data-i18n="cost-slo-copy">Sweep concurrency and configuration on the target request mix. Compare TTFT, TPOT, request throughput, memory pressure, failures, and output correctness. Select an operating point that meets the specified latency, quality, and stability criteria.</p><div class="formula" data-i18n="cost-slo-formula">q_instance = measured requests/s<br>at the qualifying configuration</div><p data-i18n="cost-slo-note">Input tok/s, output tok/s, aggregate input+output tok/s and requests/s are different metrics. State ISL/OSL, cache-hit rules, and whether reused tokens count as newly computed work.</p></article>
         <article class="cost-step"><span class="step-index">02 / CAPACITY</span><h3 data-i18n="cost-capacity-title">Size Prefill and Decode separately</h3><p data-i18n="cost-capacity-copy">Convert Prefill and Decode rates to per-instance requests/s under the same workload and SLO. Size both stages for peak demand, with headroom and redundancy for the deployment.</p><div class="formula">N_P = ceil(λ_peak / q_P)<br>N_D = ceil(λ_peak / q_D)<br>Minimum GPU count = N_P × g_P + N_D × g_D</div><p data-i18n="cost-capacity-note">Validate the resulting P/D ratio with real KV transfers, queueing and end-to-end TTFT/TPOT. Stage-isolated rates are sizing inputs.</p></article>
         <article class="cost-step"><span class="step-index">03 / TCO</span><h3 data-i18n="cost-tco-title">Price delivered service</h3><p data-i18n="cost-tco-copy">Use one accounting period for compute rental or hardware depreciation, power, networking, software, and operations. Divide by the correctly delivered token volume under the chosen service criteria. Treat input and output separately when the accounting requires it.</p><div class="formula" data-i18n="cost-tco-formula">Cost per 1M valid tokens<br>= period cost / valid tokens delivered × 10⁶</div><p data-i18n="cost-tco-note">Use actual service days, busy/idle utilisation, headroom, uptime and retries rather than extrapolating peak TPS to 24×30. Keep compute cost, billable-token pricing and ROI separate.</p></article>
       </div>
-      <p class="cost-scope" data-i18n="cost-evidence"><strong>From performance evidence to hardware economics:</strong> NVIDIA serving baselines (my completed work) → controlled comparison with Kunlunxin and other accelerators (team follow-up) → deployment sizing and TCO with real utilization, power, prices and traffic. Compare like-for-like models, traffic mixes, SLOs and correctness criteria; cache-token accounting and operating windows must also be explicit before claiming a unit-cost advantage.</p>
-      <p class="cost-scope"><strong>Case study / 案例复盘：</strong> <a class="inline-link" href="/blog/2026/11/19/benchmark-capacity-token-cost/">从推理压测到 TCO：一套算力到底值不值得用？↗</a></p>
       <div class="reference-grid">
-        <div><h3 data-i18n="reference-performance">Methodology reference · performance engineering</h3><a href="https://www.databricks.com/blog/llm-inference-performance-engineering-best-practices" target="_blank" rel="noreferrer">Databricks · LLM Inference Performance Engineering: Best Practices ↗</a><p data-i18n="reference-performance-copy">A useful framework for relating Prefill/Decode, batching, memory bandwidth, and parallel execution to measured server behaviour.</p></div>
-        <div><h3 data-i18n="reference-cost">Methodology reference · capacity and cost</h3><a href="https://developer.nvidia.com/blog/llm-inference-benchmarking-how-much-does-your-llm-inference-cost/" target="_blank" rel="noreferrer">NVIDIA · How Much Does Your LLM Inference Cost? ↗</a><p data-i18n="reference-cost-copy">Connects latency-constrained benchmark points to deployment capacity and a cost model. These references guide the method; my results remain tied to my own workloads.</p></div>
+        <div><h3 data-i18n="reference-performance">Methodology reference · performance engineering</h3><a href="https://www.databricks.com/blog/llm-inference-performance-engineering-best-practices" target="_blank" rel="noreferrer">Databricks · LLM Inference Performance Engineering: Best Practices</a><p data-i18n="reference-performance-copy">A useful framework for relating Prefill/Decode, batching, memory bandwidth, and parallel execution to measured server behaviour.</p></div>
+        <div><h3 data-i18n="reference-cost">Methodology reference · capacity and cost</h3><a href="https://developer.nvidia.com/blog/llm-inference-benchmarking-how-much-does-your-llm-inference-cost/" target="_blank" rel="noreferrer">NVIDIA · How Much Does Your LLM Inference Cost?</a><p data-i18n="reference-cost-copy">Connects latency-constrained benchmark points to deployment capacity and a cost model. These references guide the method; my results remain tied to my own workloads.</p></div>
       </div>
-    </div></section>
-    <section class="research" id="practice"><div class="wrap">
-      <div class="section-head"><div><p class="eyebrow" data-i18n="practice-kicker">Inference engineering practice</p><h2 data-i18n="practice-title">How I evaluate<br>an inference optimization.</h2></div><p data-i18n="practice-intro">A faster kernel or a higher benchmark TPS is only one piece of evidence. I keep workload, code revision, resource limits and correctness checks comparable before accepting a change as a service-level improvement.</p></div>
+    </div></details><p class="cost-scope" data-i18n="cost-evidence"><strong>From performance evidence to hardware economics:</strong> NVIDIA serving baselines (my completed work) → controlled comparison with Kunlunxin and other accelerators (team follow-up) → deployment sizing and TCO with real utilization, power, prices and traffic. Compare like-for-like models, traffic mixes, SLOs and correctness criteria; cache-token accounting and operating windows must also be explicit before claiming a unit-cost advantage.</p>
+      <p class="cost-scope"><strong>Case study / 案例复盘：</strong> <a class="inline-link" href="/blog/2026/11/19/benchmark-capacity-token-cost/">从推理压测到 TCO：一套算力到底值不值得用？↗</a></p>
+      <div class="practice-subsection" id="practice"><div class="section-head"><div><p class="eyebrow" data-i18n="practice-kicker">Inference engineering practice</p><h3 data-i18n="practice-title">How I evaluate a change</h3></div><p data-i18n="practice-intro">A faster kernel or a higher benchmark TPS is only one piece of evidence. I keep workload, code revision, resource limits and correctness checks comparable before accepting a change as a service-level improvement.</p></div>
       <p class="research-question" data-i18n="practice-question">How much <em>correct, reliable serving capacity</em> can this configuration deliver within its latency and resource budget?</p>
       <div class="research-steps">
         <div><span>01</span><h3 data-i18n="practice-deploy-title">Deploy &amp; define</h3><p data-i18n="practice-deploy-copy">Pin model and framework versions, topology, request distribution, cache policy, precision, and resource limits. Confirm the intended backend and communication path.</p></div>
@@ -646,12 +408,13 @@
         <div><span>04</span><h3 data-i18n="practice-decide-title">Size &amp; account</h3><p data-i18n="practice-decide-copy">Size from sustained, SLO-qualified service throughput—not SLO-free peaks or microbench numbers—then estimate GPU allocation and cost scenarios. Label measured results, estimates and open assumptions.</p></div>
       </div>
       <div class="scope-note" data-i18n="practice-close"><strong>The common thread is evidence across layers:</strong> connect request behavior to scheduling, cache ownership, communication, kernels and hardware constraints. Use that explanation to choose a fix—or decide that an apparent optimization is not worthwhile.</div>
+    </div>
     </div></section>
     <section class="learning-section" id="learning"><div class="wrap">
       <div class="section-head">
         <div><p class="eyebrow" data-i18n="learning-kicker">CURATED LEARNING RESOURCES</p>
-        <h2 data-i18n="learning-title">Notes and references<br>for learning LLM systems.</h2></div>
-        <p data-i18n="learning-intro">A personal collection of upstream repositories, books and implementation guides. I organize them by what they help answer: how the system is designed, how requests run, and where computation and communication costs arise. My GitHub AI Infra Star List contains the broader collection.</p>
+        <h2 data-i18n="learning-title">Notes &amp; learning resources</h2></div>
+        <p data-i18n="learning-intro">A reading shelf for LLM systems, runtimes and GPU programming. My blog connects these ideas to engineering investigations.</p>
       </div>
       <div class="learning-groups">
         <div class="learning-group">
@@ -659,7 +422,7 @@
             <h3 data-i18n="learning-group-0">Foundations &amp; Roadmaps</h3>
             <p data-i18n="learning-group-sub-0">Architecture, quantitative reasoning and code-first tutorials.</p>
           </div>
-          <div class="learning-links">
+          <details class="resource-detail"><summary data-i18n="learning-group-links">Browse references</summary><div class="disclosure-content"><div class="learning-links">
             <a class="learning-link" href="https://llm-infra-atlas.github.io/" target="_blank" rel="noopener noreferrer">
               <span class="learning-name">LLM Infra Atlas</span>
               <span class="learning-description" data-i18n="learning-desc-0-0">A system-level map linking LLM training, serving, parallelism, memory and hardware.</span>
@@ -686,13 +449,13 @@
               <span class="learning-link-arrow" aria-hidden="true">↗</span>
             </a>
           </div>
-        </div>
+        </div></details></div>
         <div class="learning-group">
           <div class="learning-group-head"><span class="learning-num">02</span>
             <h3 data-i18n="learning-group-1">Serving &amp; Runtime</h3>
             <p data-i18n="learning-group-sub-1">Trace a request through scheduling, caching and execution.</p>
           </div>
-          <div class="learning-links">
+          <details class="resource-detail"><summary data-i18n="learning-group-links">Browse references</summary><div class="disclosure-content"><div class="learning-links">
             <a class="learning-link" href="https://github.com/sgl-project/mini-sglang" target="_blank" rel="noopener noreferrer">
               <span class="learning-name">mini-SGLang</span>
               <span class="learning-description" data-i18n="learning-desc-1-0">A compact codebase for following request admission, scheduling and model execution.</span>
@@ -719,13 +482,13 @@
               <span class="learning-link-arrow" aria-hidden="true">↗</span>
             </a>
           </div>
-        </div>
+        </div></details></div>
         <div class="learning-group">
           <div class="learning-group-head"><span class="learning-num">03</span>
             <h3 data-i18n="learning-group-2">Kernels &amp; Parallelism</h3>
             <p data-i18n="learning-group-sub-2">Understand memory movement, collective communication and fused kernels.</p>
           </div>
-          <div class="learning-links">
+          <details class="resource-detail"><summary data-i18n="learning-group-links">Browse references</summary><div class="disclosure-content"><div class="learning-links">
             <a class="learning-link" href="https://github.com/NVIDIA/nccl" target="_blank" rel="noopener noreferrer">
               <span class="learning-name">NCCL</span>
               <span class="learning-description" data-i18n="learning-desc-2-0">Collective communication primitives, GPU topology and interconnect overhead.</span>
@@ -762,10 +525,10 @@
               <span class="learning-link-arrow" aria-hidden="true">↗</span>
             </a>
           </div>
-        </div>
+        </div></details></div>
       </div>
       <div class="learning-more-maps">
-        <div class="learning-more-head">
+        <details class="section-detail"><summary data-i18n="more-resources">More books, talks and learning maps</summary><div class="disclosure-content"><div class="learning-more-head">
           <div><p class="eyebrow" data-i18n="learning-extra-kicker">MORE LEARNING MAPS</p>
           <h3 data-i18n="learning-extra-title">More books, lectures and hands-on guides</h3></div>
           <p data-i18n="learning-extra-intro">Additional verified forks and public references. These are reading suggestions, not a claim that every link is starred.</p>
@@ -832,7 +595,7 @@
             <span class="learning-extra-arrow" aria-hidden="true">↗</span>
           </a>
         </div>
-      </div>
+      </div></details></div>
       <a class="learning-curated-list" href="https://github.com/stars/Phoenix3334/lists/ai-infra" target="_blank" rel="noopener noreferrer">
         <span class="learning-curated-copy">
           <span class="learning-curated-kicker" data-i18n="learning-star-list-kicker">MY GITHUB STAR LIST</span>
@@ -852,17 +615,17 @@
           <p class="star-status" id="star-status" aria-live="polite"></p>
           <div class="star-results" id="star-results"></div>
           <div class="star-actions"><button id="star-more" type="button" hidden>加载更多 / Load more</button>
-            <a href="https://github.com/Phoenix3334?tab=stars" target="_blank" rel="noopener noreferrer" data-i18n="stars-fallback">Open all Stars on GitHub ↗</a>
+            <a href="https://github.com/Phoenix3334?tab=stars" target="_blank" rel="noopener noreferrer" data-i18n="stars-fallback">Open all Stars on GitHub</a>
           </div>
         </div>
       </details>
       <div class="learning-bottom">
         <span data-i18n="learning-note">Selected upstream references · Verified forks and public reading picks · November 2026</span>
-        <a href="https://github.com/Phoenix3334?tab=stars" target="_blank" rel="noopener noreferrer" data-i18n="learning-more">Browse more starred repositories ↗</a>
+        <a href="https://github.com/Phoenix3334?tab=stars" target="_blank" rel="noopener noreferrer" data-i18n="learning-more">Browse more starred repositories</a>
       </div>
     </div></section>
   </main>
-  <footer><div class="wrap"><div class="footer-grid"><h2 data-i18n="footer-title">Serving performance,<br>with evidence behind every decision.</h2><div class="footer-links"><a href="https://github.com/Phoenix3334" target="_blank" rel="noreferrer"><svg class="github-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .8a11.2 11.2 0 0 0-3.54 21.83c.56.1.76-.24.76-.54v-2.1c-3.12.68-3.78-1.33-3.78-1.33-.51-1.3-1.25-1.65-1.25-1.65-1.02-.7.08-.69.08-.69 1.13.08 1.72 1.22 1.72 1.22 1 1.71 2.63 1.16 3.27.87.1-.72.4-1.22.71-1.5-2.49-.28-5.11-1.25-5.11-5.55 0-1.23.44-2.23 1.16-3.02-.12-.28-.5-1.42.11-2.97 0 0 .95-.3 3.08 1.15a10.73 10.73 0 0 1 5.6 0c2.13-1.45 3.07-1.15 3.07-1.15.61 1.55.23 2.69.12 2.97.72.79 1.15 1.79 1.15 3.02 0 4.31-2.62 5.27-5.12 5.55.4.35.76 1.03.76 2.08v3.1c0 .3.2.65.77.54A11.2 11.2 0 0 0 12 .8Z"/></svg>GitHub ↗</a><a href="mailto:1187883824@qq.com">Email ↗</a></div></div><div class="copyright" data-i18n="copyright">© 2026 Feihong Guo · Updated 22 November 2026</div></div></footer>
+  <footer><div class="wrap"><div class="footer-grid"><h2 data-i18n="footer-title">Let’s talk about inference systems.</h2><div class="footer-links"><a href="https://github.com/Phoenix3334" target="_blank" rel="noreferrer"><svg class="github-icon" viewbox="0 0 24 24" aria-hidden="true"><path d="M12 .8a11.2 11.2 0 0 0-3.54 21.83c.56.1.76-.24.76-.54v-2.1c-3.12.68-3.78-1.33-3.78-1.33-.51-1.3-1.25-1.65-1.25-1.65-1.02-.7.08-.69.08-.69 1.13.08 1.72 1.22 1.72 1.22 1 1.71 2.63 1.16 3.27.87.1-.72.4-1.22.71-1.5-2.49-.28-5.11-1.25-5.11-5.55 0-1.23.44-2.23 1.16-3.02-.12-.28-.5-1.42.11-2.97 0 0 .95-.3 3.08 1.15a10.73 10.73 0 0 1 5.6 0c2.13-1.45 3.07-1.15 3.07-1.15.61 1.55.23 2.69.12 2.97.72.79 1.15 1.79 1.15 3.02 0 4.31-2.62 5.27-5.12 5.55.4.35.76 1.03.76 2.08v3.1c0 .3.2.65.77.54A11.2 11.2 0 0 0 12 .8Z"></path></svg>GitHub</a><a href="mailto:1187883824@qq.com">Email</a></div></div><div class="copyright" data-i18n="copyright">© 2026 Feihong Guo · Updated 22 November 2026</div></div></footer>
   <a class="back-top" href="#top" aria-label="Back to top">↑</a>
 
   <script>
@@ -879,13 +642,13 @@
   "[data-i18n=\"summary-review-copy\"]": "<a href=\"https://github.com/sgl-project/sglang/pull/32467#pullrequestreview-4896206171\" target=\"_blank\" rel=\"noreferrer\">#32467</a> planner 竞态修复 · 已合入<br><a href=\"https://github.com/sgl-project/sglang/pull/32183#pullrequestreview-4897392620\" target=\"_blank\" rel=\"noreferrer\">#32183</a> verifier 窗口 · 开放中",
   "[data-i18n=\"summary-collab\"]": "协作修复 · 已合入",
   "[data-i18n=\"summary-collab-copy\"]": "<a href=\"https://github.com/sgl-project/sglang/pull/39487\" target=\"_blank\" rel=\"noreferrer\">#39487</a> DCP KV 回退恢复<br>本人定位、草稿实现与验证；维护者整合合入。",
-  "[data-i18n=\"pp-index\"]": "01 · 流水线 / STREAM 生命周期",
-  "[data-i18n=\"pp-title\"]": "PP 输出损坏：修复跨 CUDA stream 的 tensor 生命周期 ↗",
+  "[data-i18n=\"pp-index\"]": "异步执行",
+  "[data-i18n=\"pp-title\"]": "PP · 跨 CUDA Stream 的张量生命周期",
   "[data-i18n=\"pp-copy\"]": "Kimi-K3 异步 PP Decode 加深队列后出现连续 token 0。我定位到 Forward Stream 尚未读取接收张量，显存就被下一轮接收提前复用。修复生命周期后，depth 2、3 的异常请求数分别从 <strong>51/192、98/192 降到 0/192</strong>。<strong>PR #47614 已于 2026 年 11 月 2 日合入。</strong>",
-  "[data-i18n=\"pp-detail-title\"]": "展开排障复盘 · 复现、校验与修复",
+  "[data-i18n=\"pp-detail-title\"]": "排障过程与验证证据",
   "[data-i18n=\"pp-detail-copy\"]": "<strong>1. 从可疑的吞吐增长转向正确性检查。</strong> 异步 PP 加深队列后，表面吞吐变高，却有大量 Kimi-K3 请求持续输出 token 0。PP2 × TP4 的测试中，depth 1 未见异常，升到 2 或 3 就能复现。每次 launch 后加同步也能压住问题，排查因此转向排队中的 GPU 工作与张量生命周期。",
   "[data-i18n=\"pp-boundary\"]": "表格是单机 B300、fake transfer 条件下的正确性对照。各轮补丁版本与独立通信 Stream 的后续验证见 PR，输出损坏的轮次用于复现故障。",
-  "[data-i18n=\"pp-issue\"]": "<a class=\"inline-link\" href=\"https://github.com/sgl-project/sglang/issues/47613\" target=\"_blank\" rel=\"noreferrer\">原始排查记录 · #47613 ↗</a> · <a class=\"inline-link\" href=\"https://github.com/sgl-project/sglang/pull/47614\" target=\"_blank\" rel=\"noreferrer\">已合入修复与验证 · #47614 ↗</a>",
+  "[data-i18n=\"pp-issue\"]": "<a class=\"inline-link\" href=\"https://github.com/sgl-project/sglang/issues/47613\" target=\"_blank\" rel=\"noreferrer\">原始排查记录 · #47613</a> · <a class=\"inline-link\" href=\"https://github.com/sgl-project/sglang/pull/47614\" target=\"_blank\" rel=\"noreferrer\">已合入修复与验证 · #47614</a>",
   "[data-i18n=\"pp-merged\"]": "本人编写 · 已合入 · 2026-11-02",
   "[data-i18n=\"pp-probe\"]": "异常请求数 / 192 · PP2 depth 2、3 · 指定 B300 测试栈",
   "[data-i18n=\"status-pr-47614\"]": "本人修复 · 已合入 · 2026-11-02",
@@ -900,31 +663,31 @@
   "[data-i18n=\"group-reviewed\"]": "技术评审与协作修复",
   "[data-i18n=\"group-open\"]": "本人编写的工程工作 · 开放中",
   "[data-i18n=\"group-investigation\"]": "故障调查、RFC 与支持记录",
-  "[data-i18n=\"records-date\"]": "PR 状态核实于 2026 年 11 月 8 日。<a class=\"inline-link\" href=\"https://github.com/Phoenix3334/Phoenix3334.github.io/blob/main/SGLANG_CONTRIBUTIONS.md\" target=\"_blank\" rel=\"noreferrer\">完整贡献索引 ↗</a>",
+  "[data-i18n=\"records-date\"]": "PR 状态核实于 2026 年 11 月 8 日。<a class=\"inline-link\" href=\"https://github.com/Phoenix3334/Phoenix3334.github.io/blob/main/SGLANG_CONTRIBUTIONS.md\" target=\"_blank\" rel=\"noreferrer\">完整贡献索引</a>",
   "[data-i18n=\"eplb-title\"]": "EPLB：先测负载均衡，再验证吞吐收益",
   "[data-i18n=\"eplb-copy\"]": "区分逻辑专家热度、物理放置、副本分发、分块填充与 kernel 耗时。早期 V4-Pro B300 实验之后，进一步用 V4.1-Flash 真实 64K/C32 Prefill 负载复测。",
   "[data-i18n=\"eplb-result\"]": "V4.1-Flash 对照中，冻结布局使卡间 CV 从 <strong>0.149 降至 0.047</strong>，MegaMoE 平均耗时由 <strong>7.512 降至 7.180 ms</strong>。输入吞吐提升 <strong>0.95%</strong>，模拟均衡路由参照为 <strong>1.01%</strong>。",
   "[data-i18n=\"eplb-summary\"]": "路由性能诊断与 recorder 校验",
   "[data-i18n=\"eplb-detail\"]": "均匀路由对照改变逻辑专家选择，用于性能诊断，测量边界见 RFC。另外，复现在线重排触发的 scheduler 崩溃后，通过 <a class=\"inline-link\" href=\"https://github.com/sgl-project/sglang/pull/48404\" target=\"_blank\" rel=\"noreferrer\">#48404</a> 将不兼容 recorder 模式的检查前移到启动阶段。",
-  "[data-i18n=\"eplb-rfc-link\"]": "本人提出的 SGLang profiling RFC · #44697 ↗",
-  "[data-i18n=\"eplb-question-link\"]": "本人发起的 DeepSeek EPLB 讨论 · #29 ↗",
+  "[data-i18n=\"eplb-rfc-link\"]": "本人提出的 SGLang profiling RFC · #44697",
+  "[data-i18n=\"eplb-question-link\"]": "本人发起的 DeepSeek EPLB 讨论 · #29",
   "[data-i18n=\"status-44697\"]": "本人 profiling 提案 · 开放中",
   "[data-i18n=\"status-eplb-29\"]": "本人评估讨论 · 开放中",
   "[data-i18n=\"eplb-rfc-record\"]": "区分路由不均、专家放置与服务执行成本",
   "[data-i18n=\"eplb-question-record\"]": "讨论副本成本与模型路由优化的边界",
-  "[data-i18n=\"dp-detail-title\"]": "展开排障复盘 · 假设、追踪与 2×2 对照",
-  "[data-i18n=\"dp-detail-copy\"]": "<strong>1. 区分调度供给与 GPU 执行。</strong> 相同长 Prefill 配置反复跑出 GOOD 和 LOW。早期因各 rank 进度拉开、Delayer 持续 mixed/delay，先排查 DP Attention、chunk 大小和 Delayer。回移 Delayer 准入顺序补丁后两种状态仍出现，调查转向两个方向：落后 rank 收到的活更少，还是收到同样的活但 GPU 执行更慢。<a class=\"inline-link\" href=\"https://github.com/sgl-project/sglang/issues/35241#issuecomment-5342316838\" target=\"_blank\" rel=\"noreferrer\">回移补丁对照 ↗</a>",
-  "[data-i18n=\"dp-record-link\"]": "完整公开排查记录 · #35241 ↗",
+  "[data-i18n=\"dp-detail-title\"]": "排障过程与受控实验",
+  "[data-i18n=\"dp-detail-copy\"]": "<strong>1. 区分调度供给与 GPU 执行。</strong> 相同长 Prefill 配置反复跑出 GOOD 和 LOW。早期因各 rank 进度拉开、Delayer 持续 mixed/delay，先排查 DP Attention、chunk 大小和 Delayer。回移 Delayer 准入顺序补丁后两种状态仍出现，调查转向两个方向：落后 rank 收到的活更少，还是收到同样的活但 GPU 执行更慢。<a class=\"inline-link\" href=\"https://github.com/sgl-project/sglang/issues/35241#issuecomment-5342316838\" target=\"_blank\" rel=\"noreferrer\">回移补丁对照</a>",
+  "[data-i18n=\"dp-record-link\"]": "完整公开排查记录 · #35241",
   "[data-i18n=\"dcp-detail-title\"]": "我的修复与维护者的最终整合",
   "[data-i18n=\"dcp-detail-copy\"]": "本人实现和 6 项 CPU 测试覆盖 rank 所有权、本地行映射及新分配 KV 位置上的恢复，4 项 KDA/Mamba GPU 回归检查独立循环状态路径。维护者复用共享 layout 工具，处理已解析物理索引和非完整页前缀，并补充 B200 强制回退及 logprob 检查。本人 B300 证据对应披露的本地补丁组合栈。",
-  "[data-i18n=\"dcp-draft-link\"]": "本人已验证草稿 · #38790 ↗",
-  "[data-i18n=\"dcp-merged-link\"]": "维护者整合 · 已合并 #39487 ↗",
+  "[data-i18n=\"dcp-draft-link\"]": "本人已验证草稿 · #38790",
+  "[data-i18n=\"dcp-merged-link\"]": "维护者整合 · 已合并 #39487",
   "[data-i18n=\"dspark-detail-title\"]": "展开排障复盘 · 原始报告、因果隔离与回归覆盖",
   "[data-i18n=\"dspark-detail-copy\"]": "<strong>1. 从运行期回放追到启动期捕获。</strong> 7 月 13 日提交 <a class=\"inline-link\" href=\"https://github.com/sgl-project/sglang/issues/31023\" target=\"_blank\" rel=\"noreferrer\">#31023</a>，报告 TP8 compact target-verify 在运行期 Graph Replay 的故障，随后用诊断 PR <a class=\"inline-link\" href=\"https://github.com/sgl-project/sglang/pull/31455\" target=\"_blank\" rel=\"noreferrer\">#31455</a> 二分同步边界、跟踪 graph 元数据。8 月又提交 <a class=\"inline-link\" href=\"https://github.com/sgl-project/sglang/issues/33356\" target=\"_blank\" rel=\"noreferrer\">#33356</a>，在 v0.5.16 独立复现启动 Capture 故障。报错的 rank、shape 和 kernel 会变，于是继续沿数据流往上游追，找产生错误索引的位置。",
   "[data-i18n=\"status-39487\"]": "协作修复 · 维护者编写 · 已合并",
   "[data-i18n=\"status-32467\"]": "技术评审与因果验证 · 修复已合并",
   ".contribution[data-record=\"pr-39487\"] h3": "从本人的报告与草稿推进 DCP 回退修复落地",
-  ".contribution[data-record=\"pr-32467\"] h3": "本人对最终 no-init 修复的技术评审 ↗",
+  ".contribution[data-record=\"pr-32467\"] h3": "本人对最终 no-init 修复的技术评审",
   "[data-i18n=\"status-issue-31023\"]": "本人问题报告与证据 · 已关闭",
   "[data-i18n=\"status-issue-33356\"]": "本人问题报告与验证 · 已关闭",
   "[data-i18n=\"status-issue-34297\"]": "本人调查路线图 · 已关闭",
@@ -938,9 +701,9 @@
   ".contribution[data-record=\"pr-35721\"] h3": "将 generation-health 状态从用户调度中隔离",
   ".contribution[data-record=\"pr-34410\"] h3": "固定 P/D Decode draft-input 交接契约",
   ".contribution[data-record=\"pr-34286\"] h3": "最后一次 warmup 后、capture 前同步图构建",
-  "[data-i18n=\"internship-eyebrow\"]": "百度智能云 · 推理部署与性能评测",
-  "[data-i18n=\"internship-title\"]": "按真实负载压测，<br>再选择部署配置。",
-  "[data-i18n=\"internship-intro\"]": "先明确输入输出长度、并发和目标 SLO，再分别测试 Prefill、Decode 与端到端服务。对照 TP/PP/EP、DCP、KV/SSM 容量、Graph Replay 和通信开销，找出可稳定运行的配置，而不是只比较最高 tok/s。",
+  "[data-i18n=\"internship-eyebrow\"]": "百度智能云 · 性能工程",
+  "[data-i18n=\"internship-title\"]": "推理评测与容量规划",
+  "[data-i18n=\"internship-intro\"]": "围绕具体负载开展 Prefill、Decode 与端到端压测，结合并行策略、显存容量与运行时追踪分析吞吐和延迟。",
   "[data-i18n=\"capacity-title\"]": "全节点测试前先估算容量",
   "[data-i18n=\"capacity-copy\"]": "扩展基于 InferFlux 的容量模型，由工作负载、计算/带宽上限、缓存显存、并行布局及效率先验缩小测试范围；针对 Kimi K3 分析 DCP、KV/SSM 状态池的容量与回退边界。",
   "[data-i18n=\"capacity-boundary\"]": "输出是容量估计，不是吞吐保证。预测与实测的差距用于确定内存、通信、batching 或运行时调查的优先级。",
@@ -956,14 +719,12 @@
   "#project-dcp-recovery .open-project-proof span:nth-of-type(2)": "CPU 正确性测试",
   "#project-dspark-review .open-project-proof span:nth-of-type(1)": "技术评审 · kernel 修复已合并",
   "#project-dspark-review .open-project-proof span:nth-of-type(2)": "越界计划 · A/B/C 每组 30,000 次调用",
-  "#project-dp-health .open-project-index": "02 · 路由状态",
-  "#project-dp-health h3 a": "DP Health 排障：从间歇性 Prefill 掉速到路由状态污染 ↗",
   "#project-dp-health .open-project-copy > p": "DeepSeek-V4-Pro 八卡 B300 的 Prefill 压测间歇性掉速。我沿请求链路定位到生成式探活在 scheduler 准入前已改写 DPC 共享用户路由状态。隔离探活分发后，保留探活的 4 轮均达到 <strong>94.56–94.70k input tok/s</strong>。<strong>PR #35721</strong> 已随 <a href=\"https://github.com/sgl-project/sglang/releases/tag/v0.5.22\" target=\"_blank\" rel=\"noreferrer\">v0.5.22</a> 发布。",
   "#project-dcp-recovery .open-project-index": "04 · KV 状态",
-  "#project-dcp-recovery h3 a": "DCP 缓存回退：从根因定位到协作合并 ↗",
+  "#project-dcp-recovery h3 a": "DCP 缓存回退：从根因定位到协作合并",
   "#project-dcp-recovery .open-project-copy > p": "报告<strong>Issue #38645</strong>，定位 DCP 回退备份/恢复中的逻辑与物理 KV 索引混用，并实现、验证草稿修复<strong>#38790</strong>。未修复 DCP8 首次回退即崩溃；本人 B300 修复组经<strong>8 次回退完成 2,048/2,048 请求</strong>。维护者 kpham-sgl 通过共享 DCP layout 工具整合方案、补齐兼容性和验证，最终合并<strong>#39487</strong>；本人随后关闭被取代的草稿。",
   "#project-dspark-review .open-project-index": "03 · 故障调查 / 技术评审",
-  "#project-dspark-review h3 a": "DSpark 排障：从原始 Issue 到最终修复验证 ↗",
+  "#project-dspark-review h3 a": "DSpark 排障：从原始 Issue 到最终修复验证",
   "#project-dspark-review .open-project-copy > p": "从 7 月到 8 月，我持续跟踪 DSpark 回放和启动故障，提交原始 Issue、构建针对性复现，并为最终 planner 修复提供对照实验。在 <strong>PR #32467</strong> 的技术评审中，我验证了 no-init 方案：<strong>13,111/30,000 个越界 plan 降至 0/30,000</strong>。",
   ".group-label": "部分上游记录 · 贡献与证据索引",
   ".evidence-main h3": "复现、隔离、验证、上游",
@@ -974,10 +735,10 @@
   ".method div:nth-child(4) strong": "上游",
   "[data-i18n=\"component-title\"]": "组件 microbench 与服务侧 Profiling",
   "[data-i18n=\"component-copy\"]": "用 MegaMoE microbench 建立组件参考。32K chunk 单测约 <strong>5.6 ms</strong>，另一次 V4.1-Flash 真实输入单压 P 中，各 rank 主 MegaMoE kernel 平均耗时约 <strong>6.9–7.5 ms</strong>。用 nsys 看执行与通信时间线，用 ncu 下钻选定 kernel。",
-  "[data-i18n=\"fusion-copy\"]": "已合入的 <a class=\"inline-link\" href=\"https://github.com/sgl-project/sglang/pull/43786\" target=\"_blank\" rel=\"noreferrer\">#43786 ↗</a> 将 inverse RoPE 融入 CUDA UE8M0 FP8 激活量化，保留 BF16 舍入与 packed scale。上游 B200 kernel 测试 <strong>7/7 通过</strong>，覆盖数值等价与更新输入后的 CUDA Graph 回放。",
+  "[data-i18n=\"fusion-copy\"]": "已合入的 <a class=\"inline-link\" href=\"https://github.com/sgl-project/sglang/pull/43786\" target=\"_blank\" rel=\"noreferrer\">#43786</a> 将 inverse RoPE 融入 CUDA UE8M0 FP8 激活量化，保留 BF16 舍入与 packed scale。上游 B200 kernel 测试 <strong>7/7 通过</strong>，覆盖数值等价与更新输入后的 CUDA Graph 回放。",
   "[data-i18n=\"component-boundary\"]": "组件单测与服务 trace 的执行边界不同。trace 含 kernel 内部等待，差值用于指导归因。历史 B300 融合回移版本测得 Prefill 吞吐 +1.61%，最终上游实现的整模型性能尚待复测。",
   "[data-i18n=\"gb-index\"]": "05 · 分布式通信",
-  "[data-i18n=\"gb-title\"]": "GB300 DCP：Decode 输出异常定位与上游 NCCL 通用保护 ↗",
+  "[data-i18n=\"gb-title\"]": "GB300 DCP：Decode 输出异常定位与上游 NCCL 通用保护",
   "[data-i18n=\"gb-copy\"]": "我在双机 GB300 上复现了 Kimi-K3 的 DCP <code>a2a</code> 图回放输出退化。关闭 NCCL Graph Registration 后，本地探针的异常输出从 <strong>12/12 降到 0/12</strong>。上游由 <strong>zhihengy</strong> 编写并合入的 <a class=\"inline-link\" href=\"https://github.com/sgl-project/sglang/pull/43216\" target=\"_blank\" rel=\"noreferrer\">#43216</a> 提供了覆盖该配置的通用默认保护。",
   "[data-i18n=\"gb-summary\"]": "展开结案复盘 · 本地对照、上游保护与验证边界",
   "[data-i18n=\"gb-detail\"]": "<strong>本地定位与两种方案。</strong> 原始 TP8/DCP8 的 2×2 对照中，只有注册开启且使用临时交换缓冲区时出现输出退化。<a class=\"inline-link\" href=\"https://github.com/sgl-project/sglang/pull/45371\" target=\"_blank\" rel=\"noreferrer\">#45371</a> 的启动保护另在本地 C128 压测中完成 <strong>640/640</strong> 请求。持久缓冲区方案 <a class=\"inline-link\" href=\"https://github.com/sgl-project/sglang/pull/45824\" target=\"_blank\" rel=\"noreferrer\">#45824</a> 通过了早期冒烟，但另一组 TP8/Attention-DP2/DCP4 部署在无保护、高负载时只有 <strong>0/10</strong> 条有效答案。我撤回早期提速结论并关闭该提案。",
@@ -992,27 +753,27 @@
   "[data-i18n=\"nav-blog\"]": "博客",
   "[data-i18n=\"nav-home\"]": "主页",
   "[data-i18n=\"nav-about\"]": "关于我",
-  "[data-i18n=\"about-kicker\"]": "关于我 · AI 基础设施",
-  "[data-i18n=\"about-title\"]": "围绕运行时与加速器，<br>开展系统级工程实践。",
-  "[data-i18n=\"about-intro\"]": "我就读于郑州大学物联网工程专业，工程实践涵盖 SGLang Runtime 与异构加速器上的推理优化。",
-  "[data-i18n=\"about-copy-1\"]": "我关注请求调度、数据搬运到 Kernel 执行的完整链路，以及局部优化能否转化为端到端服务收益。",
+  "[data-i18n=\"about-kicker\"]": "个人简介",
+  "[data-i18n=\"about-title\"]": "关于我",
+  "[data-i18n=\"about-intro\"]": "就读于郑州大学物联网工程专业，工程实践涵盖百度智能云与华为昇腾。",
+  "[data-i18n=\"about-copy-1\"]": "围绕运行时正确性、算子性能与服务评测展开工作，沿系统链路定位瓶颈，并通过受控实验验证改动。",
   "[data-i18n=\"about-education-label\"]": "教育背景",
   "[data-i18n=\"about-education-value\"]": "郑州大学 · 物联网工程",
   "[data-i18n=\"about-current-label\"]": "工程实践",
   "[data-i18n=\"about-current-value\"]": "<div class=\"about-experience-item\"><strong>百度智能云</strong><span>AI Infra 工程实习</span></div><div class=\"about-experience-item\"><strong>华为昇腾</strong><span>910B / 910C · 推理与 Kernel 优化实践</span></div>",
   "[data-i18n=\"about-focus-label\"]": "研究兴趣",
   "[data-i18n=\"about-interest-1-title\"]": "分布式大模型系统",
-  "[data-i18n=\"about-interest-1-copy\"]": "请求调度、DP/PP/EP/DCP、KV 与 Recurrent State 管理，以及运行时正确性。",
+  "[data-i18n=\"about-interest-1-copy\"]": "请求调度、并行执行、KV / 状态管理与运行时正确性。",
   "[data-i18n=\"about-interest-2-title\"]": "GPU Kernel 工程",
-  "[data-i18n=\"about-interest-2-copy\"]": "CUDA、Triton 与 TileLang；IO-aware 分块、算子融合、数据搬运与通算重叠。",
+  "[data-i18n=\"about-interest-2-copy\"]": "CUDA、Triton 与 TileLang；算子融合、分块与数据搬运。",
   "[data-i18n=\"about-interest-3-title\"]": "异构计算",
-  "[data-i18n=\"about-interest-3-copy\"]": "NVIDIA GPU、昇腾 NPU 与鲲鹏 CPU；跨平台执行路径与性能分析。",
+  "[data-i18n=\"about-interest-3-copy\"]": "NVIDIA GPU、昇腾 NPU 与鲲鹏 CPU。",
   "[data-i18n=\"about-interest-4-title\"]": "性能工程",
-  "[data-i18n=\"about-interest-4-copy\"]": "受控实验、Trace 归因、满足 SLO 的吞吐、容量规划与成本分析。",
+  "[data-i18n=\"about-interest-4-copy\"]": "受控压测、性能归因与满足 SLO 的服务容量。",
   "[data-i18n=\"learning-desc-0-4\"]": "结合可运行 Notebook 手写 Transformer、MoE、MLA 等核心机制。",
   "[data-i18n=\"medical-kicker\"]": "应用 AI 项目 · THERMOPULSE",
-  "[data-i18n=\"medical-title\"]": "ThermoPulse：<br>从红外测量到医疗报告。",
-  "[data-i18n=\"medical-intro\"]": "围绕 640×480 长波红外成像，构建从采集控制、解剖区域定位、视觉表征、GPU 推理到医疗领域模型适配的系统流程，最终面向结构化报告与人工复核。",
+  "[data-i18n=\"medical-title\"]": "ThermoPulse · 医疗 AI 原型",
+  "[data-i18n=\"medical-intro\"]": "将红外感知、视觉分析与医疗语言模型适配连接为结构化报告流程的研究原型。",
   "[data-i18n=\"medical-path-label\"]": "物理测量 → 视觉表征 → 加速执行 → 结构化报告",
   "[data-i18n=\"medical-path-1\"]": "红外测量",
   "[data-i18n=\"medical-path-sub-1\"]": "LWIR · FPGA 采集",
@@ -1038,8 +799,8 @@
   "[data-i18n=\"medical-llm-copy\"]": "基于约 114 GB 中西医文本开展持续预训练（CPT），并使用约 1.8 万条指令数据进行监督微调（SFT）；训练采用 BF16、PyTorch SDPA 和 DeepSpeed ZeRO-2。",
   "[data-i18n=\"medical-outcome\"]": "<strong>系统输出：</strong>将区域温度信息、视觉分析结果与医疗语言模型串联，形成便于人工复核的结构化报告和远程服务接口。",
   "[data-i18n=\"learning-kicker\"]": "学习资料精选",
-  "[data-i18n=\"learning-title\"]": "LLM Systems<br>学习资料与源码索引。",
-  "[data-i18n=\"learning-intro\"]": "按具体问题整理的学习入口：先建立系统设计视角，再阅读推理框架中的请求路径，最后深入算子、显存与通信。这里是精选索引；更多项目收录在我的 GitHub AI Infra Star List。",
+  "[data-i18n=\"learning-title\"]": "技术笔记与学习资源",
+  "[data-i18n=\"learning-intro\"]": "整理大模型系统、推理运行时与 GPU 编程资料，并在博客中结合工程排障记录学习过程。",
   "[data-i18n=\"learning-group-0\"]": "知识地图与学习路径",
   "[data-i18n=\"learning-group-sub-0\"]": "从整体架构、量化分析到可运行的基础教程。",
   "[data-i18n=\"learning-desc-0-0\"]": "把训练、推理、并行、显存与硬件串成一张系统知识地图。",
@@ -1063,7 +824,7 @@
   "[data-i18n=\"learning-desc-2-2\"]": "阅读投机解码 Draft Model 的训练与评测代码。",
   "[data-i18n=\"learning-desc-2-3\"]": "理解 MoE 专家放置、复制与负载均衡策略。",
   "[data-i18n=\"learning-note\"]": "上游资源精选 · 已核实 Fork 与公开阅读推荐 · 2026 年 11 月整理",
-  "[data-i18n=\"learning-more\"]": "查看更多 GitHub Stars ↗",
+  "[data-i18n=\"learning-more\"]": "查看更多 GitHub Stars",
   "[data-i18n=\"learning-star-list-kicker\"]": "我的 GitHub 收藏清单",
   "[data-i18n=\"learning-star-list-title\"]": "AI Infra · 专题 Star 列表",
   "[data-i18n=\"learning-star-list-description\"]": "我在 GitHub 上维护的 AI Infrastructure 相关仓库与学习资料清单，点击直接查看完整专题收藏。",
@@ -1075,7 +836,7 @@
   "[data-i18n=\"stars-title\"]": "浏览我的全部公开 GitHub Stars",
   "[data-i18n=\"stars-subtitle\"]": "实时读取 · 可搜索 · 按页加载",
   "[data-i18n=\"stars-explainer\"]": "展开后由浏览器读取公开 Stars，无需 Token。学习资源过滤基于关键词，搜索仅覆盖已加载的仓库。",
-  "[data-i18n=\"stars-fallback\"]": "在 GitHub 打开完整 Stars 列表 ↗",
+  "[data-i18n=\"stars-fallback\"]": "在 GitHub 打开完整 Stars 列表",
   "[data-i18n=\"learning-extra-desc-0\"]": "AI Infra 交流、录播与学习资料。",
   "[data-i18n=\"learning-extra-desc-1\"]": "涵盖模型与多模态等方向的中文知识地图。",
   "[data-i18n=\"learning-extra-desc-2\"]": "大模型分布式训练与并行策略的系统教程。",
@@ -1088,23 +849,23 @@
   "[data-i18n=\"learning-extra-desc-9\"]": "生产级 AI Infra 实验和课程体系。",
   "[data-i18n=\"learning-extra-desc-10\"]": "推理系统工具、技术与学习资料的分类地图。",
   "[data-i18n=\"learning-extra-desc-11\"]": "CUDA、Triton 与 NCCL 讲座及实践。",
-  "[data-i18n=\"hero-kicker\"]": "AI SYSTEMS · 大模型推理与异构计算",
-  "[data-i18n=\"hero-title\"]": "从模型到推理基础设施，<br>让<em>系统表现有据可依。</em>",
-  "[data-i18n=\"hero-lede\"]": "我关注分布式大模型推理与异构加速器系统，覆盖运行时调度、Kernel 执行和性能评估。",
+  "[data-i18n=\"hero-kicker\"]": "郭飞鸿 · Feihong Guo",
+  "[data-i18n=\"hero-title\"]": "AI 基础设施<br><em>与大模型推理系统</em>",
+  "[data-i18n=\"hero-lede\"]": "专注大模型推理系统，连接分布式运行时、异构加速器与性能优化。",
   "[data-i18n=\"hero-thesis\"]": "沿请求链路追踪 → 隔离瓶颈 → 验证正确性 → 测量服务级结果。<br><em>只有明确负载与延迟约束，性能数据才有部署意义。</em>",
-  "[data-i18n=\"hero-action-work\"]": "SGLang Runtime 工程 ↓",
-  "[data-i18n=\"hero-action-huawei\"]": "昇腾与鲲鹏实践 ↓",
-  "[data-i18n=\"hero-action-tco\"]": "容量与成本方法 ↓",
-  "[data-i18n=\"portrait-caption\"]": "Feihong Guo · 郭飞鸿<br>AI 基础设施 · 大模型系统",
-  "[data-i18n=\"sglang-kicker\"]": "百度智能云 · SGLang",
-  "[data-i18n=\"sglang-title\"]": "不只调吞吐，<br>更要定位运行时问题。",
-  "[data-i18n=\"sglang-intro\"]": "压测中的异常不一定来自慢算子：有些发生在控制面的请求路由，有些来自异步执行中的张量生命周期。我沿请求链路定位根因，通过受控 A/B 和回归测试验证修复，再将补丁提交上游。下面保留关键证据与适用边界。",
+  "[data-i18n=\"hero-action-work\"]": "查看工程经历",
+  "[data-i18n=\"hero-action-huawei\"]": "阅读技术笔记",
+  "[data-i18n=\"hero-action-tco\"]": "容量与成本方法",
+  "[data-i18n=\"portrait-caption\"]": "郭飞鸿 · Feihong Guo<br>郑州大学",
+  "[data-i18n=\"sglang-kicker\"]": "百度智能云 · 运行时工程",
+  "[data-i18n=\"sglang-title\"]": "可靠的大模型推理",
+  "[data-i18n=\"sglang-intro\"]": "在 B300 / GB300 上沿请求路由、异步执行与显存生命周期定位故障，将经过验证的修复提交到 SGLang 上游。",
   "[data-i18n=\"all-records\"]": "展开公开 PR、Review 与故障调查索引",
-  "[data-i18n=\"huawei-kicker\"]": "华为昇腾与鲲鹏 · 异构计算实践",
-  "[data-i18n=\"huawei-title\"]": "从昇腾推理到鲲鹏计算，<br>验证不同平台的性能路径。",
-  "[data-i18n=\"huawei-intro\"]": "这部分关注模型在异构硬件上的实际执行：昇腾 910B 的推理部署与压测、昇腾 910C 上 MiniCPM-o 的全双工运行时和算子优化，以及鲲鹏 920 的 CPU/NUMA 性能实践。重点是验证局部改动能否改善完整负载。",
+  "[data-i18n=\"huawei-kicker\"]": "华为昇腾与鲲鹏 · 异构计算",
+  "[data-i18n=\"huawei-title\"]": "异构平台上的推理优化",
+  "[data-i18n=\"huawei-intro\"]": "覆盖昇腾 910B / 910C 推理、算子集成及鲲鹏 CPU 调优，以完整工作负载检验优化结果。",
   "[data-i18n=\"omni-label\"]": "昇腾 910C · 跨平台推理项目",
-  "[data-i18n=\"omni-project-link\"]": "查看项目仓库 ↗",
+  "[data-i18n=\"omni-project-link\"]": "查看项目仓库",
   "[data-i18n=\"omni-intro\"]": "基于 OpenBMB MiniCPM-o 4.5，将 NVIDIA B300 上的 DSpark 草稿训练，与华为昇腾 910C 上的 llama.cpp-omni / ggml-CANN 部署及全双工运行时优化串联起来。",
   "[data-i18n=\"omni-step1-title\"]": "01 · B300 / 草稿训练",
   "[data-i18n=\"omni-step1-copy\"]": "使用 DeepSpec 在 8×B300（DP8）训练 5 层 DSpark 草稿；固定集平均接收长度 3.49 → 3.86。",
@@ -1117,16 +878,16 @@
   "[data-i18n=\"huawei-serving-title\"]": "昇腾推理引擎",
   "[data-i18n=\"huawei-serving-copy\"]": "在<strong>昇腾 910B 上使用 xLLM 与 vLLM-Ascend</strong>，围绕模型适配、MTP、ACL Graph、缓存容量和压测配置推进优化。Qwen3.5-9B 在 C960 下从<strong>2,301 提升至 30,451 tok/s</strong>，属于组合配置对照。",
   "[data-i18n=\"huawei-serving-scope\"]": "独立的 Gemma 4 E2B 部署对照中，Full ACL Graph 对应吞吐 1,159.53 → 1,274.00 tok/s；与 Qwen 使用不同基线。",
-  "[data-i18n=\"huawei-kernel-title\"]": "让算子进入有效运行路径",
+  "[data-i18n=\"huawei-kernel-title\"]": "算子开发与集成",
   "[data-i18n=\"huawei-kernel-copy\"]": "通过 <strong>Ascend C、Triton 与 TileLang</strong>，把分块和融合落实到达芬奇数据通路：对齐搬运、片上缓冲、计算与同步。专用路径需要 shape/layout 检查、精度验证和回退机制，再集成到 serving。",
   "[data-i18n=\"huawei-kernel-scope\"]": "单算子耗时与系统吞吐分别测量；局部算子更快，还需要确认引擎实际走到该路径，并完成端到端对照。",
-  "[data-i18n=\"huawei-cpu-title\"]": "鲲鹏性能工程基础",
+  "[data-i18n=\"huawei-cpu-title\"]": "鲲鹏 CPU 性能调优",
   "[data-i18n=\"huawei-cpu-copy\"]": "在<strong>鲲鹏 920</strong>上调优 SVE/NEON、NUMA 亲和性、MPI/OpenMP 与 FFT 执行计划复用。256³ FFTW 工作负载从 <strong>80.97 提升至 555.00 GFLOP/s</strong>。",
   "[data-i18n=\"huawei-cpu-scope\"]": "CPU 工作负载独立评测，不作为 NPU 或 LLM serving 加速的证据。",
   "[data-i18n=\"omni-title\"]": "MiniCPM-o 4.5 · 全双工推理优化",
   "[data-i18n=\"economics-kicker\"]": "性能 → 容量 → 成本",
-  "[data-i18n=\"economics-title\"]": "从实测服务能力，<br>到部署容量估算。",
-  "[data-i18n=\"economics-intro\"]": "在百度，我完成的主要是 NVIDIA GPU 上的推理性能与容量基线评估：结合业务负载、Prefill/Decode 吞吐、TTFT/TPOT、并行配置及显存约束，判断可承接的服务容量。团队后续计划扩展到昆仑芯等平台，并结合利用率、功耗、硬件价格和真实业务流量推进 TCO 核算。跨平台对照与完整财务测算属于后续工作，而非我已完成的成果。",
+  "[data-i18n=\"economics-title\"]": "从压测到部署决策",
+  "[data-i18n=\"economics-intro\"]": "已完成的工作是 NVIDIA 推理性能与容量基线；跨加速器对比和完整 TCO 核算属于团队后续工作。",
   "[data-i18n=\"cost-slo-title\"]": "找到满足目标的工作点",
   "[data-i18n=\"cost-slo-copy\"]": "针对目标请求分布，扫描并发与配置。共同检查 TTFT、TPOT、请求吞吐、显存压力、失败率和输出正确性，选择满足延迟、质量与稳定性要求的工作点。",
   "[data-i18n=\"cost-slo-formula\"]": "q_instance = 满足准出要求的配置下<br>实测单实例 requests/s",
@@ -1144,7 +905,7 @@
   "[data-i18n=\"reference-cost\"]": "方法参考 · 容量与成本",
   "[data-i18n=\"reference-cost-copy\"]": "把延迟约束下的压测工作点，转成部署容量与成本模型。参考方法与本人具体负载下的实验结果分别呈现。",
   "[data-i18n=\"practice-kicker\"]": "推理工程实践",
-  "[data-i18n=\"practice-title\"]": "怎样判断一次优化<br>是否真的有效。",
+  "[data-i18n=\"practice-title\"]": "如何验证一次改动",
   "[data-i18n=\"practice-intro\"]": "算子更快、基准吞吐更高，不等于服务整体受益。我会固定负载、版本、资源边界和正确性检查，再判断改动是否真正改善端到端服务。",
   "[data-i18n=\"practice-question\"]": "这组配置在延迟与资源预算内，能交付多少<em>正确、可靠的服务能力</em>？",
   "[data-i18n=\"practice-deploy-title\"]": "部署与定义",
@@ -1156,7 +917,7 @@
   "[data-i18n=\"practice-decide-title\"]": "规划与核算",
   "[data-i18n=\"practice-decide-copy\"]": "以持续且满足 SLO 的服务吞吐估算实例数和 GPU 资源，不把无时延约束的峰值或组件 Microbenchmark 当作可交付产能；成本场景需区分实测、推算与未验证假设。",
   "[data-i18n=\"practice-close\"]": "<strong>这些工作的共同点是跨层证据：</strong>把请求表现和调度、缓存、通信、算子及硬件约束对应起来。先解释现象，再决定该修哪里，以及一次优化是否值得保留。",
-  "[data-i18n=\"footer-title\"]": "推理服务性能，<br>以及每个决策背后的证据。",
+  "[data-i18n=\"footer-title\"]": "聊聊推理系统。",
   "[data-i18n=\"copyright\"]": "© 2026 郭飞鸿 · Feihong Guo · 更新于 2026 年 11 月 22 日",
   "[data-i18n=\"status-43786\"]": "本人实现 · 2026-11-04 合入",
   "[data-i18n=\"record-43786\"]": "将 inverse RoPE 融入 CUDA FP8 wo_a 量化",
@@ -1168,9 +929,9 @@
   "[data-i18n=\"record-45824\"]": "DCP all-to-all 持久化缓冲区",
   "[data-i18n=\"env-title\"]": "压测环境与工程复现",
   "[data-i18n=\"env-copy\"]": "维护 SGLang 容器镜像与 CI/CD 流程，搭建多机推理环境。自动化依赖预装、服务启停与压测结果收集，并记录拓扑、缓存预算和验证配置以支持回归复现。",
-  "[data-i18n=\"dp-observer\"]": "<strong>2. 先验证观测会不会扰动压测。</strong> DeviceTimer 交替做 4 OFF / 4 ON，健康档平均输入吞吐为 94,563 和 94,569 tok/s。样本不足以判断插桩对 LOW 出现概率的影响。指标采样从 5 s 缩短到 250 ms，分辨单次 chunk 完成，再用发压端的开始标记把采样窗口提前，覆盖异常起点。<a class=\"inline-link\" href=\"https://github.com/sgl-project/sglang/issues/35241#issuecomment-5323649556\" target=\"_blank\" rel=\"noreferrer\">DeviceTimer 对照 ↗</a>",
-  "[data-i18n=\"dp-trace\"]": "<strong>3. 沿控制面追踪请求。</strong> 串联客户端 POST、Tokenizer、DataParallelController 与 scheduler 准入，发现生成式探活先经过 DPC，推进共享用户轮转或影响负载预算，之后才可能被忙碌的 scheduler 跳过。补丁隔离探活分发状态，保留显式 rank 与 P/D 路由。8 月 18 日先提交症状报告，8 月 20 日定位触发条件并提交补丁。<a class=\"inline-link\" href=\"https://github.com/sgl-project/sglang/issues/35241#issuecomment-5354692736\" target=\"_blank\" rel=\"noreferrer\">探活触发证据 ↗</a>",
-  "[data-i18n=\"dp-ab-copy\"]": "<strong>4. 用 2×2 消融验证根因。</strong> 8 月 26 日固定镜像、负载、DP Attention、PrefillDelayer 与外部 <code>GET /health</code> 轮询，每轮重启服务，只切换补丁和生成式探活请求的创建。<a class=\"inline-link\" href=\"https://github.com/sgl-project/sglang/issues/35241#issuecomment-5422094664\" target=\"_blank\" rel=\"noreferrer\">四臂实验 ↗</a>",
+  "[data-i18n=\"dp-observer\"]": "<strong>2. 先验证观测会不会扰动压测。</strong> DeviceTimer 交替做 4 OFF / 4 ON，健康档平均输入吞吐为 94,563 和 94,569 tok/s。样本不足以判断插桩对 LOW 出现概率的影响。指标采样从 5 s 缩短到 250 ms，分辨单次 chunk 完成，再用发压端的开始标记把采样窗口提前，覆盖异常起点。<a class=\"inline-link\" href=\"https://github.com/sgl-project/sglang/issues/35241#issuecomment-5323649556\" target=\"_blank\" rel=\"noreferrer\">DeviceTimer 对照</a>",
+  "[data-i18n=\"dp-trace\"]": "<strong>3. 沿控制面追踪请求。</strong> 串联客户端 POST、Tokenizer、DataParallelController 与 scheduler 准入，发现生成式探活先经过 DPC，推进共享用户轮转或影响负载预算，之后才可能被忙碌的 scheduler 跳过。补丁隔离探活分发状态，保留显式 rank 与 P/D 路由。8 月 18 日先提交症状报告，8 月 20 日定位触发条件并提交补丁。<a class=\"inline-link\" href=\"https://github.com/sgl-project/sglang/issues/35241#issuecomment-5354692736\" target=\"_blank\" rel=\"noreferrer\">探活触发证据</a>",
+  "[data-i18n=\"dp-ab-copy\"]": "<strong>4. 用 2×2 消融验证根因。</strong> 8 月 26 日固定镜像、负载、DP Attention、PrefillDelayer 与外部 <code>GET /health</code> 轮询，每轮重启服务，只切换补丁和生成式探活请求的创建。<a class=\"inline-link\" href=\"https://github.com/sgl-project/sglang/issues/35241#issuecomment-5422094664\" target=\"_blank\" rel=\"noreferrer\">四臂实验</a>",
   "[data-i18n=\"dp-ab-scope\"]": "8×B300 · DeepSeek-V4-Pro · TP8/DP8 · 60k 输入 / 1 输出 · C16 · 160 请求",
   "[data-i18n=\"dp-ab-arm\"]": "配置",
   "[data-i18n=\"dp-ab-result\"]": "轮次结果",
@@ -1180,15 +941,15 @@
   "[data-i18n=\"dp-ab-a2\"]": "原始代码 + 生成式探活关",
   "[data-i18n=\"dp-ab-b1\"]": "修复后 + 生成式探活开",
   "[data-i18n=\"dp-ab-b2\"]": "修复后 + 生成式探活关",
-  "[data-i18n=\"dp-inventory\"]": "<strong>复盘时才补齐的定位线索。</strong> 严重 LOW 的活跃窗口内，跨 rank 的 scheduler running 请求总数中位数为 <strong>48</strong>，健康对照为 <strong>72–80</strong>。这里统计调度器在途请求数，和 kernel batch 维度分别计算。较轻的 LOW 仍可达到 80，因此用逐 rank dispatch 与四臂消融确认因果。修复后的健康轮次仍会出现 Delayer timeout。<a class=\"inline-link\" href=\"https://github.com/sgl-project/sglang/issues/35241#issuecomment-5488710824\" target=\"_blank\" rel=\"noreferrer\">修订后的机制 ↗</a>",
-  "[data-i18n=\"pp-checksum\"]": "<strong>2. 对照接收后与计算前的数据。</strong> 在下游 Stage 分别于通信 Stream 接收完成后、Forward Stream 读取前对同一批 proxy tensor 计算 checksum。两轮 depth 2 复现分别有 <strong>76/7,498 和 378/7,498</strong> 次校验不一致。将旧引用保留到下一轮接收完成分配后，在相近的队列深度下校验不一致降至 <strong>0/7,499</strong>。<a class=\"inline-link\" href=\"https://github.com/sgl-project/sglang/issues/47613#evidence\" target=\"_blank\" rel=\"noreferrer\">校验与引用保留对照 ↗</a>",
+  "[data-i18n=\"dp-inventory\"]": "<strong>复盘时才补齐的定位线索。</strong> 严重 LOW 的活跃窗口内，跨 rank 的 scheduler running 请求总数中位数为 <strong>48</strong>，健康对照为 <strong>72–80</strong>。这里统计调度器在途请求数，和 kernel batch 维度分别计算。较轻的 LOW 仍可达到 80，因此用逐 rank dispatch 与四臂消融确认因果。修复后的健康轮次仍会出现 Delayer timeout。<a class=\"inline-link\" href=\"https://github.com/sgl-project/sglang/issues/35241#issuecomment-5488710824\" target=\"_blank\" rel=\"noreferrer\">修订后的机制</a>",
+  "[data-i18n=\"pp-checksum\"]": "<strong>2. 对照接收后与计算前的数据。</strong> 在下游 Stage 分别于通信 Stream 接收完成后、Forward Stream 读取前对同一批 proxy tensor 计算 checksum。两轮 depth 2 复现分别有 <strong>76/7,498 和 378/7,498</strong> 次校验不一致。将旧引用保留到下一轮接收完成分配后，在相近的队列深度下校验不一致降至 <strong>0/7,499</strong>。<a class=\"inline-link\" href=\"https://github.com/sgl-project/sglang/issues/47613#evidence\" target=\"_blank\" rel=\"noreferrer\">校验与引用保留对照</a>",
   "[data-i18n=\"pp-lifetime\"]": "<strong>3. 在公共 launch 入口修复显存生命周期。</strong> CPU 调度清掉旧引用时，Forward Stream 可能还没读到激活。下一轮接收随即复用同一块显存，覆盖上一 microbatch 的输入。我在 <code>_pp_launch_batch</code> 中、<code>run_batch</code> 之前给每个非 CPU proxy tensor 调用 <code>record_stream(self.forward_stream)</code>，让 allocator 在 Forward Stream 使用结束后才复用显存。执行顺序仍由原有 Stream 依赖保证。",
   "[data-i18n=\"pp-ab-caption\"]": "Kimi-K3 · 8×B300 · v0.5.22 · fake P/D · C64 · 连续输出至少 20 个 token 0 的请求",
   "[data-i18n=\"pp-ab-shape\"]": "并行配置",
   "[data-i18n=\"pp-ab-depth\"]": "异步深度",
   "[data-i18n=\"pp-ab-before\"]": "修复前",
   "[data-i18n=\"pp-ab-after\"]": "修复后",
-  "[data-i18n=\"dspark-isolate\"]": "<strong>2. 分离 TP 一致性、捕获顺序和 plan 越界。</strong> 应用 <a class=\"inline-link\" href=\"https://github.com/sgl-project/sglang/pull/31195\" target=\"_blank\" rel=\"noreferrer\">#31195</a> 后，<strong>120/120</strong> 轮 TP8 对照中，各 rank 的 verify budget、长度和 graph key 均一致。随后用四臂启动实验分离 planner 补丁 #32467 与 capture 顺序补丁 #33795。两者都关为 <strong>0/7</strong>，只修捕获顺序为 <strong>1/6</strong>，只修 planner 和两者都修各为 <strong>3/3</strong>，后两组每轮均捕获全部 35 个 shape。<a class=\"inline-link\" href=\"https://github.com/sgl-project/sglang/issues/33356\" target=\"_blank\" rel=\"noreferrer\">四臂实验 ↗</a>",
+  "[data-i18n=\"dspark-isolate\"]": "<strong>2. 分离 TP 一致性、捕获顺序和 plan 越界。</strong> 应用 <a class=\"inline-link\" href=\"https://github.com/sgl-project/sglang/pull/31195\" target=\"_blank\" rel=\"noreferrer\">#31195</a> 后，<strong>120/120</strong> 轮 TP8 对照中，各 rank 的 verify budget、长度和 graph key 均一致。随后用四臂启动实验分离 planner 补丁 #32467 与 capture 顺序补丁 #33795。两者都关为 <strong>0/7</strong>，只修捕获顺序为 <strong>1/6</strong>，只修 planner 和两者都修各为 <strong>3/3</strong>，后两组每轮均捕获全部 35 个 shape。<a class=\"inline-link\" href=\"https://github.com/sgl-project/sglang/issues/33356\" target=\"_blank\" rel=\"noreferrer\">四臂实验</a>",
   "[data-i18n=\"dspark-producer\"]": "<strong>3. 在生产端捕获越界索引，并给最终方案做对照。</strong> 单卡复现直接调用 GPU-input planner，用 <code>max(valid ragged_id) &lt; sum(extend_lens)</code> 检查输出。冗余的 warp scratch 初始化可能覆盖其他 warp 已写好的归约结果，让变长输入误走等长路径。实际只有 360 行，坏 plan 却生成索引 383。我把 DarkSharpness 提议的 no-init 版本和原始版、加 barrier 版放在同一 session 比较，隔离 JIT 缓存，每组 30,000 次。当前固定 32 warp 的 launch 下，每个 warp 都会在原有归约后 barrier 前写好自己的槽。",
   "[data-i18n=\"dspark-abc-scope\"]": "单卡 planner 回归 · 同一 B30Z session · 一组等长、两组变长输入",
   "[data-i18n=\"dspark-abc-variant\"]": "方案",
@@ -1196,11 +957,11 @@
   "[data-i18n=\"dspark-abc-a\"]": "A · 原始初始化",
   "[data-i18n=\"dspark-abc-b\"]": "B · 保留初始化并加 barrier",
   "[data-i18n=\"dspark-abc-c\"]": "C · 去掉冗余初始化",
-  "[data-i18n=\"dspark-regression\"]": "<strong>4. 分开验证持续回放和真实 ragged 覆盖。</strong> 披露的 v0.5.16 回移栈在 C64–C1024 单压 Decode 中完成 <strong>18,560/18,560</strong> 请求，确认有 Graph Replay。这组自然负载的 verify 长度是等长的，因此另用强制预算探针，观测到 <strong>39/43 个真正 ragged 的调度块</strong>，该窗口未见 GPU fault 或预算违规。之后把外部并发提到 C2560，测试的是 MRR 固定为 1024 时的准入压力。<a class=\"inline-link\" href=\"https://github.com/sgl-project/sglang/issues/34297\" target=\"_blank\" rel=\"noreferrer\">持续回放与覆盖记录 ↗</a>",
+  "[data-i18n=\"dspark-regression\"]": "<strong>4. 分开验证持续回放和真实 ragged 覆盖。</strong> 披露的 v0.5.16 回移栈在 C64–C1024 单压 Decode 中完成 <strong>18,560/18,560</strong> 请求，确认有 Graph Replay。这组自然负载的 verify 长度是等长的，因此另用强制预算探针，观测到 <strong>39/43 个真正 ragged 的调度块</strong>，该窗口未见 GPU fault 或预算违规。之后把外部并发提到 C2560，测试的是 MRR 固定为 1024 时的准入压力。<a class=\"inline-link\" href=\"https://github.com/sgl-project/sglang/issues/34297\" target=\"_blank\" rel=\"noreferrer\">持续回放与覆盖记录</a>",
   "[data-i18n=\"dspark-attribution\"]": "我提交故障报告、构建复现、完成对照实验并提交正式 Review。#32467 的最终 no-init 代码由 EanWang211123 编写并合入。我另外跟进了 Breakable CUDA Graph 捕获顺序（<a class=\"inline-link\" href=\"https://github.com/sgl-project/sglang/pull/34286\" target=\"_blank\" rel=\"noreferrer\">#34286</a>）和 P/D draft-input 交接回归（<a class=\"inline-link\" href=\"https://github.com/sgl-project/sglang/pull/34410\" target=\"_blank\" rel=\"noreferrer\">#34410</a>）。",
-  "[data-i18n=\"dspark-case-links\"]": "<a class=\"inline-link\" href=\"https://github.com/sgl-project/sglang/issues/34297\" target=\"_blank\" rel=\"noreferrer\">排障路线图 #34297 ↗</a> · <a class=\"inline-link\" href=\"https://github.com/sgl-project/sglang/pull/32467#discussion_r3749014153\" target=\"_blank\" rel=\"noreferrer\">我的 A/B/C 实验与技术分析 ↗</a> · <a class=\"inline-link\" href=\"https://github.com/sgl-project/sglang/pull/32467#pullrequestreview-4896206171\" target=\"_blank\" rel=\"noreferrer\">我提交的 GitHub Review ↗</a> · <a class=\"inline-link\" href=\"https://github.com/sgl-project/sglang/pull/32467\" target=\"_blank\" rel=\"noreferrer\">合入的修复 #32467 ↗</a>",
+  "[data-i18n=\"dspark-case-links\"]": "<a class=\"inline-link\" href=\"https://github.com/sgl-project/sglang/issues/34297\" target=\"_blank\" rel=\"noreferrer\">排障路线图 #34297</a> · <a class=\"inline-link\" href=\"https://github.com/sgl-project/sglang/pull/32467#discussion_r3749014153\" target=\"_blank\" rel=\"noreferrer\">我的 A/B/C 实验与技术分析</a> · <a class=\"inline-link\" href=\"https://github.com/sgl-project/sglang/pull/32467#pullrequestreview-4896206171\" target=\"_blank\" rel=\"noreferrer\">我提交的 GitHub Review</a> · <a class=\"inline-link\" href=\"https://github.com/sgl-project/sglang/pull/32467\" target=\"_blank\" rel=\"noreferrer\">合入的修复 #32467</a>",
   "[data-i18n=\"gb-upstream\"]": "<strong>上游通用保护。</strong> <a class=\"inline-link\" href=\"https://github.com/sgl-project/sglang/pull/43216\" target=\"_blank\" rel=\"noreferrer\">#43216</a> 于 2026 年 10 月 22 日合入。当 TP、EP 或 DP 涉及多 rank 且任一 CUDA Graph 阶段启用时，默认设置 <code>NCCL_GRAPH_REGISTER=0</code>，并保留显式覆盖。原 GB300 DCP <code>a2a</code> 配置满足该条件，因此我关闭了范围更窄的 <a class=\"inline-link\" href=\"https://github.com/sgl-project/sglang/pull/45371\" target=\"_blank\" rel=\"noreferrer\">#45371</a>（未合入），并将 <a class=\"inline-link\" href=\"https://github.com/sgl-project/sglang/issues/45367#issuecomment-6704556147\" target=\"_blank\" rel=\"noreferrer\">Issue #45367</a> 标为已完成。",
-  "[data-i18n=\"phase-k3-scope\"]": "K3 使用同负载随机长度测试，64k 输入与 1k 输出是长度上限。PP 的独立对照与 GB300 DCP 压力验证见公开记录。 <a class=\"inline-link\" href=\"https://github.com/sgl-project/sglang/pull/47614#speed-tests-and-profiling\" target=\"_blank\" rel=\"noreferrer\">PR #47614 ↗</a> · <a class=\"inline-link\" href=\"https://github.com/sgl-project/sglang/issues/45367#high-concurrency-stability\" target=\"_blank\" rel=\"noreferrer\">Issue #45367 ↗</a>",
+  "[data-i18n=\"phase-k3-scope\"]": "K3 使用同负载随机长度测试，64k 输入与 1k 输出是长度上限。PP 的独立对照与 GB300 DCP 压力验证见公开记录。 <a class=\"inline-link\" href=\"https://github.com/sgl-project/sglang/pull/47614#speed-tests-and-profiling\" target=\"_blank\" rel=\"noreferrer\">PR #47614</a> · <a class=\"inline-link\" href=\"https://github.com/sgl-project/sglang/issues/45367#high-concurrency-stability\" target=\"_blank\" rel=\"noreferrer\">Issue #45367</a>",
   "[data-i18n=\"phase-title\"]": "长上下文推理评测",
   "[data-i18n=\"phase-intro\"]": "在 B300、GB300 上开展长上下文单压 P / D，结合吞吐与延迟评估并行策略和部署选型。",
   "[data-i18n=\"phase-summary\"]": "展开查看代表性评测",
@@ -1208,9 +969,19 @@
   "[data-i18n=\"phase-model\"]": "模型",
   "[data-i18n=\"phase-scope\"]": "评测重点",
   "[data-i18n=\"phase-v4\"]": "分阶段压测 Prefill 和 Decode，对比分块、缓存容量及投机解码配置。",
-  "[data-i18n=\"phase-flash\"]": "对比随机输入与真实样本下的 Prefill 表现，分析专家均衡及其吞吐收益。 <a class=\"inline-link\" href=\"https://github.com/sgl-project/sglang/issues/44697\" target=\"_blank\" rel=\"noreferrer\">RFC #44697 ↗</a>",
+  "[data-i18n=\"phase-flash\"]": "对比随机输入与真实样本下的 Prefill 表现，分析专家均衡及其吞吐收益。 <a class=\"inline-link\" href=\"https://github.com/sgl-project/sglang/issues/44697\" target=\"_blank\" rel=\"noreferrer\">RFC #44697</a>",
   "[data-i18n=\"phase-k3\"]": "单压 P 对比 TP/EP 与流水线并行，单压 D 评估 DCP、PP 对吞吐、逐 token 时延和运行时正确性的影响。",
-  "[data-i18n=\"phase-k3-source\"]": "K3 运行时排查 · <a class=\"inline-link\" href=\"https://github.com/sgl-project/sglang/pull/47614\" target=\"_blank\" rel=\"noreferrer\">PR #47614 ↗</a> · <a class=\"inline-link\" href=\"https://github.com/sgl-project/sglang/issues/45367\" target=\"_blank\" rel=\"noreferrer\">Issue #45367 ↗</a>"
+  "[data-i18n=\"phase-k3-source\"]": "K3 运行时排查 · <a class=\"inline-link\" href=\"https://github.com/sgl-project/sglang/pull/47614\" target=\"_blank\" rel=\"noreferrer\">PR #47614</a> · <a class=\"inline-link\" href=\"https://github.com/sgl-project/sglang/issues/45367\" target=\"_blank\" rel=\"noreferrer\">Issue #45367</a>",
+  "[data-i18n=\"dp-title\"]": "DP · 隔离健康检查的路由状态",
+  "[data-i18n=\"dp-index\"]": "请求路由",
+  "[data-i18n=\"more-runtime\"]": "更多排障案例 · DSpark、DCP 与 NCCL",
+  "[data-i18n=\"more-performance\"]": "算子归因、EPLB 与压测复现",
+  "[data-i18n=\"omni-details\"]": "训练、部署与运行时优化细节",
+  "[data-i18n=\"medical-details\"]": "展开感知到报告的完整流程",
+  "[data-i18n=\"cost-details\"]": "展开容量规划与成本核算方法",
+  "[data-i18n=\"more-resources\"]": "更多书籍、分享与学习路线",
+  "[data-i18n=\"learning-group-links\"]": "展开资料列表",
+  "[data-i18n=\"nav-work\"]": "工程经历"
 };
     const bilingual=Object.entries(zh).flatMap(([selector,value])=>
       [...document.querySelectorAll(selector)].map(element=>({
@@ -1224,7 +995,8 @@
     function updateHomeToc(language){
       const entries=sections.map(section=>{
         const h2=section.querySelector('.section-head h2')||section.querySelector('h2');
-        return {id:section.id,label:h2?h2.innerText.replace(/\s+/g,' ').trim():section.id};
+        const labels={en:{about:'About',opensource:'Runtime engineering',internship:'Performance',huawei:'Ascend & Kunpeng',medical:'ThermoPulse',economics:'Methodology',learning:'Learning'},zh:{about:'关于我',opensource:'运行时工程',internship:'推理评测',huawei:'昇腾与鲲鹏',medical:'ThermoPulse',economics:'工程方法',learning:'学习资源'}};
+        return {id:section.id,label:labels[language][section.id]||(h2?h2.innerText.replace(/\s+/g,' ').trim():section.id)};
       });
       for(const navTarget of [tocDesktop,tocMobile]){
         const list=document.createElement('ol');
@@ -1239,7 +1011,7 @@
         }
         navTarget.replaceChildren(list);
       }
-      document.querySelector('.home-toc-count').textContent=entries.length+' sections';
+      document.querySelector('.home-toc-count').textContent=entries.length+(language==='zh'?' 个章节':' sections');
       document.getElementById('home-toc-label').textContent=language==='zh'?'章节导航 / On this page':'On this page / 章节导航';
       document.getElementById('home-toc-backtop').textContent=language==='zh'?'↑ 回到顶部':'↑ Back to top';
     }
@@ -1278,7 +1050,18 @@
     addEventListener('resize',updateScroll);
     langButton.addEventListener('click',updateScroll);updateScroll();
   
-  </script>
+  
+    const revealTarget=()=>{
+      const id=decodeURIComponent(location.hash.slice(1));
+      const target=document.getElementById(id);
+      if(!target)return;
+      let parent=target, changed=false;
+      while(parent){if(parent.tagName==='DETAILS'&&!parent.open){parent.open=true;changed=true}parent=parent.parentElement}
+      if(changed)requestAnimationFrame(()=>target.scrollIntoView());
+    };
+    addEventListener('hashchange',revealTarget);
+    revealTarget();
+</script>
 <script src="/assets/learning-stars.js" defer></script>
 </body>
 </html>
