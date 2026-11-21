@@ -243,6 +243,19 @@
     @media(max-width:900px){.medical-path-steps{grid-template-columns:repeat(3,minmax(0,1fr));row-gap:20px}.medical-path-steps>div:nth-child(4){border-left:0;padding-left:0}}
     @media(max-width:680px){.medical-project .medical-modules{grid-template-columns:1fr}.medical-path-steps{grid-template-columns:1fr;gap:13px}.medical-path-steps>div,.medical-path-steps>div:nth-child(4){border-left:0;border-top:1px solid var(--line);padding:12px 0 0}.medical-path-steps>div:first-child{border-top:0;padding-top:0}.medical-path-steps>div:last-child{padding-right:0}.medical-path{padding:20px}}
 
+    .about-grid{display:grid;grid-template-columns:minmax(0,1.12fr) minmax(320px,.88fr);gap:68px;align-items:start}
+    .about-copy p{max-width:760px;margin:0 0 17px;color:#46525c;font-size:14px;line-height:1.85}
+    .about-meta{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;margin-top:28px;padding-top:20px;border-top:1px solid var(--line)}
+    .about-meta span,.about-focus-head{display:block;color:var(--rust);font-size:10px;font-weight:700;letter-spacing:.12em}
+    .about-meta strong{display:block;margin-top:8px;font-size:13px;line-height:1.55}
+    .about-focus{border-top:2px solid var(--ink)}
+    .about-focus-head{padding:15px 0;border-bottom:1px solid var(--line)}
+    .about-focus article{padding:17px 0;border-bottom:1px solid var(--line)}
+    .about-focus h3{margin:0;font-size:20px;line-height:1.3}
+    .about-focus p{margin:8px 0 0;color:var(--muted);font-size:12px;line-height:1.75}
+    @media(max-width:900px){.about-grid{grid-template-columns:1fr;gap:36px}}
+    @media(max-width:680px){.about-meta{grid-template-columns:1fr;gap:16px}.about-focus h3{font-size:19px}}
+
   </style>
 </head>
 <body>
@@ -251,6 +264,7 @@
     <a class="wordmark" href="#top">Feihong Guo</a>
     <nav id="site-nav" aria-label="Primary navigation">
       <a href="#top" data-i18n="nav-home" aria-current="page">Home</a>
+      <a href="#about" data-i18n="nav-about">About</a>
       <a href="/blog/" data-i18n="nav-blog">Blog</a>
       <a class="github-link" href="https://github.com/Phoenix3334" target="_blank" rel="noreferrer"><svg class="github-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .8a11.2 11.2 0 0 0-3.54 21.83c.56.1.76-.24.76-.54v-2.1c-3.12.68-3.78-1.33-3.78-1.33-.51-1.3-1.25-1.65-1.25-1.65-1.02-.7.08-.69.08-.69 1.13.08 1.72 1.22 1.72 1.22 1 1.71 2.63 1.16 3.27.87.1-.72.4-1.22.71-1.5-2.49-.28-5.11-1.25-5.11-5.55 0-1.23.44-2.23 1.16-3.02-.12-.28-.5-1.42.11-2.97 0 0 .95-.3 3.08 1.15a10.73 10.73 0 0 1 5.6 0c2.13-1.45 3.07-1.15 3.07-1.15.61 1.55.23 2.69.12 2.97.72.79 1.15 1.79 1.15 3.02 0 4.31-2.62 5.27-5.12 5.55.4.35.76 1.03.76 2.08v3.1c0 .3.2.65.77.54A11.2 11.2 0 0 0 12 .8Z"/></svg>GitHub ↗</a>
     </nav>
@@ -275,6 +289,33 @@
       <div class="hero-actions"><a href="#opensource" data-i18n="hero-action-work">SGLang engineering work ↓</a><a href="#economics" data-i18n="hero-action-tco">Capacity and cost methodology ↓</a></div>
       <div class="hero-line"><span class="tag">SGLang</span><span class="tag">Distributed LLM Serving</span><span class="tag">GPU / NPU Performance</span><span class="tag">Capacity &amp; TCO</span></div>
     </div><figure class="portrait"><img src="https://avatars.githubusercontent.com/u/174691475?v=4" alt="Feihong Guo"><figcaption data-i18n="portrait-caption">Feihong Guo · 郭飞鸿<br>Zhengzhou University · AI Infrastructure</figcaption></figure></div>
+    <section id="about" class="about-section">
+      <div class="wrap">
+        <div class="section-head">
+          <div><p class="eyebrow" data-i18n="about-kicker">ABOUT ME · AI INFRASTRUCTURE</p><h2 data-i18n="about-title">Building reliable<br>LLM systems.</h2></div>
+          <p data-i18n="about-intro">I am an undergraduate student in Internet of Things Engineering at Zhengzhou University, working on AI infrastructure and large language model inference. I focus on the systems path from model computation to production serving: runtime behavior, distributed execution, accelerator kernels, and measurable service performance.</p>
+        </div>
+        <div class="about-grid">
+          <div class="about-copy">
+            <p data-i18n="about-copy-1">My current work is centered on distributed LLM inference with SGLang. At Baidu AI Cloud, I work on B300/GB300 serving, tracing issues across request routing, scheduling, CUDA streams, tensor lifetimes, inter-GPU communication and kernels. I use controlled experiments and upstream code contributions to distinguish a local kernel improvement from a real service-level gain.</p>
+            <p data-i18n="about-copy-2">I have also worked across heterogeneous platforms: inference deployment and kernel optimization on Ascend 910B/910C, and CPU/HPC performance tuning on Kunpeng 920. ThermoPulse, a medical-AI prototype, connected thermal sensing, computer vision, GPU inference and medical-language adaptation into an end-to-end workflow.</p>
+            <p data-i18n="about-copy-3">I am interested in building efficient and dependable AI systems across hardware generations and execution environments—where model architecture, memory movement, communication, scheduling and correctness must be designed and evaluated together.</p>
+            <div class="about-meta">
+              <div><span data-i18n="about-education-label">EDUCATION</span><strong data-i18n="about-education-value">Zhengzhou University · Internet of Things Engineering</strong></div>
+              <div><span data-i18n="about-current-label">CURRENT EXPERIENCE</span><strong data-i18n="about-current-value">AI Infrastructure Engineering Intern · Baidu AI Cloud</strong></div>
+            </div>
+          </div>
+          <div class="about-focus">
+            <div class="about-focus-head"><span data-i18n="about-focus-label">RESEARCH INTERESTS</span></div>
+            <article><h3 data-i18n="about-interest-1-title">Distributed LLM Systems</h3><p data-i18n="about-interest-1-copy">Request scheduling, DP/PP/EP/DCP, KV and recurrent-state management, and runtime correctness.</p></article>
+            <article><h3 data-i18n="about-interest-2-title">GPU Kernel Engineering</h3><p data-i18n="about-interest-2-copy">CUDA, Triton and TileLang; IO-aware tiling, kernel fusion, data movement and communication–computation overlap.</p></article>
+            <article><h3 data-i18n="about-interest-3-title">Heterogeneous Computing</h3><p data-i18n="about-interest-3-copy">NVIDIA GPUs, Ascend NPUs and Kunpeng CPUs; execution paths and profiling across platforms.</p></article>
+            <article><h3 data-i18n="about-interest-4-title">Performance Engineering</h3><p data-i18n="about-interest-4-copy">Controlled experiments, trace-based attribution, SLO-qualified throughput, capacity and cost analysis.</p></article>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <section id="opensource">
       <div class="wrap">
         <div class="section-head">
@@ -687,9 +728,19 @@
               <span class="learning-description" data-i18n="learning-desc-2-0">Collective communication primitives, GPU topology and interconnect overhead.</span>
               <span class="learning-link-arrow" aria-hidden="true">↗</span>
             </a>
+            <a class="learning-link" href="https://github.com/Dao-AILab/flash-attention" target="_blank" rel="noopener noreferrer">
+              <span class="learning-name">FlashAttention</span>
+              <span class="learning-description" data-i18n="learning-desc-2-5">IO-aware exact attention: tiling, online softmax and reduced HBM traffic.</span>
+              <span class="learning-link-arrow" aria-hidden="true">↗</span>
+            </a>
             <a class="learning-link" href="https://github.com/deepseek-ai/FlashMLA" target="_blank" rel="noopener noreferrer">
               <span class="learning-name">FlashMLA</span>
-              <span class="learning-description" data-i18n="learning-desc-2-1">MLA attention kernels: tensor layout, memory traffic and execution efficiency.</span>
+              <span class="learning-description" data-i18n="learning-desc-2-1">Specialized MLA/DSA kernels, sparse KV access and hardware-specific layouts.</span>
+              <span class="learning-link-arrow" aria-hidden="true">↗</span>
+            </a>
+            <a class="learning-link" href="https://github.com/MoonshotAI/FlashKDA" target="_blank" rel="noopener noreferrer">
+              <span class="learning-name">FlashKDA</span>
+              <span class="learning-description" data-i18n="learning-desc-2-6">CUTLASS-based KDA kernels: chunked recurrence, fusion and state-update scheduling.</span>
               <span class="learning-link-arrow" aria-hidden="true">↗</span>
             </a>
             <a class="learning-link" href="https://github.com/deepseek-ai/DeepGEMM" target="_blank" rel="noopener noreferrer">
@@ -808,7 +859,7 @@
       </div>
     </div></section>
   </main>
-  <footer><div class="wrap"><div class="footer-grid"><h2 data-i18n="footer-title">Serving performance,<br>with evidence behind every decision.</h2><div class="footer-links"><a href="https://github.com/Phoenix3334" target="_blank" rel="noreferrer"><svg class="github-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .8a11.2 11.2 0 0 0-3.54 21.83c.56.1.76-.24.76-.54v-2.1c-3.12.68-3.78-1.33-3.78-1.33-.51-1.3-1.25-1.65-1.25-1.65-1.02-.7.08-.69.08-.69 1.13.08 1.72 1.22 1.72 1.22 1 1.71 2.63 1.16 3.27.87.1-.72.4-1.22.71-1.5-2.49-.28-5.11-1.25-5.11-5.55 0-1.23.44-2.23 1.16-3.02-.12-.28-.5-1.42.11-2.97 0 0 .95-.3 3.08 1.15a10.73 10.73 0 0 1 5.6 0c2.13-1.45 3.07-1.15 3.07-1.15.61 1.55.23 2.69.12 2.97.72.79 1.15 1.79 1.15 3.02 0 4.31-2.62 5.27-5.12 5.55.4.35.76 1.03.76 2.08v3.1c0 .3.2.65.77.54A11.2 11.2 0 0 0 12 .8Z"/></svg>GitHub ↗</a><a href="mailto:1187883824@qq.com">Email ↗</a></div></div><div class="copyright" data-i18n="copyright">© 2026 Feihong Guo · Updated 18 November 2026</div></div></footer>
+  <footer><div class="wrap"><div class="footer-grid"><h2 data-i18n="footer-title">Serving performance,<br>with evidence behind every decision.</h2><div class="footer-links"><a href="https://github.com/Phoenix3334" target="_blank" rel="noreferrer"><svg class="github-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .8a11.2 11.2 0 0 0-3.54 21.83c.56.1.76-.24.76-.54v-2.1c-3.12.68-3.78-1.33-3.78-1.33-.51-1.3-1.25-1.65-1.25-1.65-1.02-.7.08-.69.08-.69 1.13.08 1.72 1.22 1.72 1.22 1 1.71 2.63 1.16 3.27.87.1-.72.4-1.22.71-1.5-2.49-.28-5.11-1.25-5.11-5.55 0-1.23.44-2.23 1.16-3.02-.12-.28-.5-1.42.11-2.97 0 0 .95-.3 3.08 1.15a10.73 10.73 0 0 1 5.6 0c2.13-1.45 3.07-1.15 3.07-1.15.61 1.55.23 2.69.12 2.97.72.79 1.15 1.79 1.15 3.02 0 4.31-2.62 5.27-5.12 5.55.4.35.76 1.03.76 2.08v3.1c0 .3.2.65.77.54A11.2 11.2 0 0 0 12 .8Z"/></svg>GitHub ↗</a><a href="mailto:1187883824@qq.com">Email ↗</a></div></div><div class="copyright" data-i18n="copyright">© 2026 Feihong Guo · Updated 22 November 2026</div></div></footer>
   <a class="back-top" href="#top" aria-label="Back to top">↑</a>
 
   <script>
@@ -938,6 +989,26 @@
   "[data-i18n=\"nav-practice\"]": "工程方法",
   "[data-i18n=\"nav-blog\"]": "博客",
   "[data-i18n=\"nav-home\"]": "主页",
+  "[data-i18n=\"nav-about\"]": "关于我",
+  "[data-i18n=\"about-kicker\"]": "关于我 · AI 基础设施",
+  "[data-i18n=\"about-title\"]": "构建高效、可靠的<br>大模型系统。",
+  "[data-i18n=\"about-intro\"]": "我目前就读于郑州大学物联网工程专业，关注 AI 基础设施与大语言模型推理。我的工作聚焦从模型计算到生产服务的系统链路：运行时行为、分布式执行、加速器算子，以及可验证的服务性能。",
+  "[data-i18n=\"about-copy-1\"]": "我目前主要参与基于 SGLang 的分布式大模型推理工程。在百度智能云，我围绕 B300/GB300 服务栈分析请求路由、调度、CUDA Stream、张量生命周期、跨 GPU 通信与 Kernel 等问题，并通过受控实验和上游代码贡献，区分局部算子提速与真正的服务级收益。",
+  "[data-i18n=\"about-copy-2\"]": "我也在不同异构平台上开展过实践：在昇腾 910B/910C 上进行推理部署与 Kernel 优化，在鲲鹏 920 上进行 CPU/HPC 性能调优。ThermoPulse 医疗 AI 原型则串联了红外测量、计算机视觉、GPU 推理与医疗语言模型适配，帮助我理解端到端系统的工程边界。",
+  "[data-i18n=\"about-copy-3\"]": "我希望继续探索跨硬件代际与执行环境的高效、可靠 AI 系统，尤其关注模型结构、内存搬运、通信、调度和正确性如何共同决定端到端表现。",
+  "[data-i18n=\"about-education-label\"]": "教育背景",
+  "[data-i18n=\"about-education-value\"]": "郑州大学 · 物联网工程",
+  "[data-i18n=\"about-current-label\"]": "当前经历",
+  "[data-i18n=\"about-current-value\"]": "百度智能云 · AI Infra 工程实习",
+  "[data-i18n=\"about-focus-label\"]": "研究兴趣",
+  "[data-i18n=\"about-interest-1-title\"]": "分布式大模型系统",
+  "[data-i18n=\"about-interest-1-copy\"]": "请求调度、DP/PP/EP/DCP、KV 与 Recurrent State 管理，以及运行时正确性。",
+  "[data-i18n=\"about-interest-2-title\"]": "GPU Kernel 工程",
+  "[data-i18n=\"about-interest-2-copy\"]": "CUDA、Triton 与 TileLang；IO-aware 分块、算子融合、数据搬运与通算重叠。",
+  "[data-i18n=\"about-interest-3-title\"]": "异构计算",
+  "[data-i18n=\"about-interest-3-copy\"]": "NVIDIA GPU、昇腾 NPU 与鲲鹏 CPU；跨平台执行路径与性能分析。",
+  "[data-i18n=\"about-interest-4-title\"]": "性能工程",
+  "[data-i18n=\"about-interest-4-copy\"]": "受控实验、Trace 归因、满足 SLO 的吞吐、容量规划与成本分析。",
   "[data-i18n=\"learning-desc-0-4\"]": "结合可运行 Notebook 手写 Transformer、MoE、MLA 等核心机制。",
   "[data-i18n=\"medical-kicker\"]": "应用 AI 项目 · THERMOPULSE",
   "[data-i18n=\"medical-title\"]": "ThermoPulse：<br>从红外测量到医疗报告。",
@@ -986,7 +1057,9 @@
   "[data-i18n=\"learning-group-2\"]": "算子、通信与并行",
   "[data-i18n=\"learning-group-sub-2\"]": "关注数据搬运、集体通信与计算融合的实际代价。",
   "[data-i18n=\"learning-desc-2-0\"]": "从集体通信原语到 GPU 拓扑，分析通信开销的来源。",
-  "[data-i18n=\"learning-desc-2-1\"]": "关注 MLA Kernel 的数据布局、访存量与执行效率。",
+  "[data-i18n=\"learning-desc-2-1\"]": "关注 MLA/DSA 专用 Kernel、稀疏 KV 读取与硬件相关的数据布局。",
+  "[data-i18n=\"learning-desc-2-5\"]": "通过分块与 Online Softmax，减少 Attention 中间矩阵的 HBM 读写。",
+  "[data-i18n=\"learning-desc-2-6\"]": "基于 CUTLASS 的 KDA Kernel，关注分块递推、融合与状态更新调度。",
   "[data-i18n=\"learning-desc-2-2\"]": "阅读投机解码 Draft Model 的训练与评测代码。",
   "[data-i18n=\"learning-desc-2-3\"]": "理解 MoE 专家放置、复制与负载均衡策略。",
   "[data-i18n=\"learning-note\"]": "上游资源精选 · 已核实 Fork 与公开阅读推荐 · 2026 年 11 月整理",
@@ -1083,7 +1156,7 @@
   "[data-i18n=\"practice-decide-copy\"]": "以持续且满足 SLO 的服务吞吐估算实例数和 GPU 资源，不把无时延约束的峰值或组件 Microbenchmark 当作可交付产能；成本场景需区分实测、推算与未验证假设。",
   "[data-i18n=\"practice-close\"]": "<strong>这些工作的共同点是跨层证据：</strong>把请求表现和调度、缓存、通信、算子及硬件约束对应起来。先解释现象，再决定该修哪里，以及一次优化是否值得保留。",
   "[data-i18n=\"footer-title\"]": "推理服务性能，<br>以及每个决策背后的证据。",
-  "[data-i18n=\"copyright\"]": "© 2026 郭飞鸿 · Feihong Guo · 更新于 2026 年 11 月 18 日",
+  "[data-i18n=\"copyright\"]": "© 2026 郭飞鸿 · Feihong Guo · 更新于 2026 年 11 月 22 日",
   "[data-i18n=\"status-43786\"]": "本人实现 · 2026-11-04 合入",
   "[data-i18n=\"record-43786\"]": "将 inverse RoPE 融入 CUDA FP8 wo_a 量化",
   "[data-i18n=\"status-48404\"]": "本人修复 · 2026-11-07 合入",
