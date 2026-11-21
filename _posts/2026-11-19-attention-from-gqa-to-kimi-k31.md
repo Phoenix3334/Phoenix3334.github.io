@@ -658,6 +658,8 @@ output = u_new / l_new
 
 每次都把历史累加结果缩放到新的最大值基准下，因此不需要一次性看到全部 Key，也能得到与全量 Softmax Attention 数学等价的结果。这里的 `P` 只对应当前 Tile，而不是整条序列的概率矩阵。
 
+从实现路线看，**FlashAttention-2** 重点改进并行划分与工作分配；**FlashAttention-3** 面向 Hopper GPU 的异步执行特性；**FlashAttention-4** 则使用 CuTeDSL，面向 Hopper 与 Blackwell。它们不是新的模型架构，而是同一 Attention 语义在不同 GPU 特性上的 Kernel 设计。具体架构支持仍需按各版本 README 核对，不能把 FA3/FA4 当作所有 GPU 都通用的实现。
+
 ### 9.2 Tile、循环顺序与 SRAM：为什么不是越大越快？
 
 分块大小不是一个孤立的超参数，它同时决定数据复用、矩阵乘法效率、循环次数和片上资源占用。以 `BLOCK_M` 个 Query、`BLOCK_N` 个 Key/Value 为例：
