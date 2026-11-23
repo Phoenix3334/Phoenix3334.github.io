@@ -206,6 +206,27 @@ html[lang="zh-CN"] h1,html[lang="zh-CN"] h2{font-weight:650;letter-spacing:-.035
 .medical-reference-docs a{white-space:nowrap}
 @media(max-width:980px){.medical-evaluation-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}}
 @media(max-width:600px){.medical-evaluation-grid{grid-template-columns:1fr;gap:16px}.medical-study-detail .medical-validation{margin-top:21px}}
+
+/* ThermoPulse architecture figure: one responsive diagram, no external image dependency. */
+.medical-architecture{margin:17px 0 23px;padding:22px 24px 20px;background:rgba(255,255,255,.45);border:1px solid var(--line);border-radius:6px}
+.medical-architecture>figcaption{margin-bottom:19px;color:var(--ink);font-size:15px;line-height:1.5;font-weight:650}
+.medical-architecture-track{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:20px}
+.medical-architecture-node{min-width:0;position:relative;padding:13px 14px 15px;background:var(--paper);border:1px solid var(--line);border-radius:5px}
+.medical-architecture-node:not(:last-child)::after{content:'→';position:absolute;top:50%;right:-17px;transform:translateY(-50%);color:var(--teal);font-size:19px;font-weight:500;line-height:1}
+.medical-architecture-node small{display:block;color:var(--muted);font-size:10px;font-weight:700;line-height:1.4;letter-spacing:.055em}
+.medical-architecture-node strong{display:block;margin:8px 0 5px;color:var(--ink);font-size:19px;font-weight:650;line-height:1.3;letter-spacing:-.02em}
+.medical-architecture-node span{display:block;color:var(--muted);font-size:12px;line-height:1.65}
+.medical-architecture-trained{border-top:3px solid var(--teal);padding-top:11px}
+.medical-architecture-trained small{color:var(--teal)}
+.medical-architecture-report{background:rgba(32,107,107,.055)}
+.medical-architecture-extension{display:grid;grid-template-columns:minmax(250px,1.05fr) minmax(260px,1fr);gap:21px;align-items:center;margin-top:15px}
+.medical-architecture-planned{display:grid;grid-template-columns:auto 1fr;align-items:baseline;column-gap:12px;row-gap:5px;border:1px dashed var(--rust);border-radius:5px;padding:12px 14px}
+.medical-architecture-badge{grid-column:1/-1;color:var(--rust);font-size:10px;font-weight:700;letter-spacing:.05em}
+.medical-architecture-planned strong{font-size:15px;line-height:1.5;color:var(--ink);white-space:nowrap}
+.medical-architecture-planned>span:last-child{font-size:12px;line-height:1.6;color:var(--muted)}
+.medical-architecture-extension>p{font-size:12px;line-height:1.75;color:var(--muted);margin:0}
+@media(max-width:850px){.medical-architecture{padding:19px 16px}.medical-architecture-track{grid-template-columns:repeat(2,minmax(0,1fr));row-gap:24px}.medical-architecture-node:nth-child(2)::after{content:'↙';top:auto;bottom:-24px;right:0;transform:none}.medical-architecture-node:nth-child(3)::after{content:'→'}.medical-architecture-extension{grid-template-columns:1fr;gap:11px}.medical-architecture-planned{grid-template-columns:1fr;gap:5px}}
+@media(max-width:520px){.medical-architecture-track{grid-template-columns:1fr;gap:24px}.medical-architecture-node:not(:last-child)::after,.medical-architecture-node:nth-child(2)::after{content:'↓';top:auto;bottom:-23px;left:50%;right:auto;transform:translateX(-50%)}.medical-architecture-node strong{font-size:18px}.medical-architecture>figcaption{font-size:14px}}
 </style>
 </head>
 <body>
@@ -534,6 +555,40 @@ html[lang="zh-CN"] h1,html[lang="zh-CN"] h2{font-weight:650;letter-spacing:-.035
         <div><small data-i18n="medical-stat-sft">SFT DATA</small><strong>~18k</strong><span data-i18n="medical-stat-sft-sub">Instruction–response records</span></div>
         <div><small data-i18n="medical-stat-hardware">TRAINING</small><strong>4 × H200</strong><span data-i18n="medical-stat-hardware-sub">BF16 · DeepSpeed ZeRO-2</span></div>
       </div>
+
+      <figure class="medical-architecture" aria-labelledby="medical-architecture-title">
+        <figcaption id="medical-architecture-title" data-i18n="medical-architecture-title">Model adaptation to evidence-grounded reporting</figcaption>
+        <div class="medical-architecture-track">
+          <div class="medical-architecture-node">
+            <small data-i18n="medical-flow-base-tag">BASE MODEL</small>
+            <strong>Qwen3-8B</strong>
+            <span data-i18n="medical-flow-base-desc">Initial checkpoint</span>
+          </div>
+          <div class="medical-architecture-node medical-architecture-trained">
+            <small data-i18n="medical-flow-cpt-tag">COMPLETED · CPT</small>
+            <strong>CPT</strong>
+            <span data-i18n="medical-flow-cpt-desc">114 GB medical text</span>
+          </div>
+          <div class="medical-architecture-node medical-architecture-trained">
+            <small data-i18n="medical-flow-sft-tag">COMPLETED · SFT</small>
+            <strong>SFT</strong>
+            <span data-i18n="medical-flow-sft-desc">~18k ChatML examples</span>
+          </div>
+          <div class="medical-architecture-node medical-architecture-report">
+            <small data-i18n="medical-flow-report-tag">APPLICATION</small>
+            <strong data-i18n="medical-flow-report-title">Structured report</strong>
+            <span data-i18n="medical-flow-report-desc">Thermal + visual findings</span>
+          </div>
+        </div>
+        <div class="medical-architecture-extension">
+          <div class="medical-architecture-planned">
+            <span class="medical-architecture-badge" data-i18n="medical-flow-plan-tag">DESIGN · NOT YET VERIFIED</span>
+            <strong data-i18n="medical-flow-plan-title">GRPO extension</strong>
+            <span data-i18n="medical-flow-plan-desc">Grouped report sampling → evidence-based reward → policy update</span>
+          </div>
+          <p data-i18n="medical-flow-note">Training evidence covers CPT/SFT. GRPO and stage-wise held-out evaluations are planned; no reference-project performance numbers are attributed to ThermoPulse.</p>
+        </div>
+      </figure>
       <p class="medical-stage-note" data-i18n="medical-stage-note">Recorded: CPT/SFT training and loss metrics. GRPO rewards and held-out case evaluation remain a proposed study, not claimed performance gains.</p>
       <details class="section-detail medical-detail"><summary data-i18n="medical-details">01 / Sensing &amp; inference pipeline</summary><div class="disclosure-content"><div class="medical-path">
         <p class="medical-path-label" data-i18n="medical-path-label">MEASUREMENT → REPRESENTATION → EXECUTION → REPORT</p>
@@ -1295,7 +1350,21 @@ html[lang="zh-CN"] h1,html[lang="zh-CN"] h2{font-weight:650;letter-spacing:-.035
   "[data-i18n=\"medical-axis-report-title\"]": "证据约束的报告质量",
   "[data-i18n=\"medical-axis-report\"]": "比较字段覆盖、无依据结论、病例证据一致性与人工审核结果。",
   "[data-i18n=\"medical-evaluation-status\"]": "已记录的证据是 CPT 训练 Loss 与 SFT 验证 Loss；独立 PPL、医学选择题、生成及报告质量对照仍属于拟实施评测，不宣称已测得改进。",
-  "[data-i18n=\"medical-study-docs-label\"]": "参考仓库分阶段教程"
+  "[data-i18n=\"medical-study-docs-label\"]": "参考仓库分阶段教程",
+  "[data-i18n=\"medical-architecture-title\"]": "从医疗领域适配到证据约束的报告生成",
+  "[data-i18n=\"medical-flow-base-tag\"]": "基础模型",
+  "[data-i18n=\"medical-flow-base-desc\"]": "初始模型检查点",
+  "[data-i18n=\"medical-flow-cpt-tag\"]": "已完成 · CPT",
+  "[data-i18n=\"medical-flow-cpt-desc\"]": "114 GB 中西医文本",
+  "[data-i18n=\"medical-flow-sft-tag\"]": "已完成 · SFT",
+  "[data-i18n=\"medical-flow-sft-desc\"]": "约 1.8 万条 ChatML",
+  "[data-i18n=\"medical-flow-report-tag\"]": "应用环节",
+  "[data-i18n=\"medical-flow-report-title\"]": "结构化医疗报告",
+  "[data-i18n=\"medical-flow-report-desc\"]": "区域温度 + 视觉分析",
+  "[data-i18n=\"medical-flow-plan-tag\"]": "设计方案 · 尚待验证",
+  "[data-i18n=\"medical-flow-plan-title\"]": "GRPO 后训练",
+  "[data-i18n=\"medical-flow-plan-desc\"]": "组内报告采样 → 病例证据奖励 → 策略更新",
+  "[data-i18n=\"medical-flow-note\"]": "已有训练记录支持 CPT 与 SFT；GRPO 和各阶段独立评测尚属规划，不引用参考项目的性能数据作为本人结果。"
 };
     const bilingual=Object.entries(zh).flatMap(([selector,value])=>
       [...document.querySelectorAll(selector)].map(element=>({
