@@ -181,6 +181,31 @@ html[lang="zh-CN"] h1,html[lang="zh-CN"] h2{font-weight:650;letter-spacing:-.035
 .medical-reference-boundary,.medical-reference-note{font-size:13px;line-height:1.8;color:var(--muted);margin:12px 0 0}
 .medical-reference-code{display:flex;flex-wrap:wrap;gap:7px 18px;margin-top:16px;font-size:13px;line-height:1.75}
 @media(max-width:760px){.medical-snapshot{grid-template-columns:repeat(2,minmax(0,1fr));margin-top:21px}.medical-snapshot>div{padding:15px 10px 15px 0}.medical-snapshot>div+div{padding-left:0;border-left:0}.medical-snapshot>div:nth-child(even){border-left:1px solid var(--line);padding-left:13px}.medical-snapshot>div:nth-child(n+3){border-top:1px solid var(--line)}.medical-snapshot strong{font-size:20px}.medical-reference-grid{grid-template-columns:1fr;gap:16px}}
+
+/* ThermoPulse case-study navigation; inherits the existing cream / teal design. */
+.medical-project .medical-detail{margin-top:8px}
+.medical-project .medical-detail+.medical-detail{margin-top:0}
+.medical-project .medical-detail>summary{padding:19px 2px;cursor:pointer}
+.medical-project .medical-detail>summary:focus-visible,.medical-project .medical-reference>summary:focus-visible{outline:2px solid var(--teal);outline-offset:3px}
+.medical-study-detail .medical-method-lede{font-size:14px;line-height:1.85;color:var(--muted);margin:8px 0 23px;max-width:920px}
+.medical-study-modules{display:block}
+.medical-study-detail .medical-grpo{padding-top:0;border-top:0}
+.medical-study-detail .medical-validation{border-top:1px solid var(--line);margin-top:25px;padding-top:22px}
+.medical-study-detail .medical-validation-grid{margin-bottom:5px}
+.medical-evaluation{margin-top:27px;border-top:1px solid var(--line);padding-top:23px}
+.medical-evaluation-head h4{font-size:18px;font-weight:650;margin:0 0 6px;color:var(--ink)}
+.medical-evaluation-head p{font-size:14px;line-height:1.75;color:var(--muted);margin:0}
+.medical-evaluation-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:20px;margin:22px 0 12px}
+.medical-evaluation-grid>div{min-width:0;border-left:2px solid var(--line);padding-left:13px}
+.medical-evaluation-grid span{font-size:11px;font-weight:700;letter-spacing:.07em;color:var(--teal)}
+.medical-evaluation-grid strong{display:block;font-size:15px;line-height:1.5;margin:9px 0 7px;color:var(--ink)}
+.medical-evaluation-grid p{font-size:13px;line-height:1.75;color:var(--muted);margin:0}
+.medical-evaluation-status{font-size:13px;line-height:1.8;color:var(--muted);border-top:1px dashed var(--line);padding-top:12px;margin:18px 0 0}
+.medical-reference-docs{display:flex;flex-wrap:wrap;align-items:baseline;gap:8px 17px;margin-top:17px;padding-top:13px;border-top:1px solid var(--line);font-size:13px;line-height:1.8}
+.medical-reference-docs span{color:var(--muted);font-weight:650}
+.medical-reference-docs a{white-space:nowrap}
+@media(max-width:980px){.medical-evaluation-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}}
+@media(max-width:600px){.medical-evaluation-grid{grid-template-columns:1fr;gap:16px}.medical-study-detail .medical-validation{margin-top:21px}}
 </style>
 </head>
 <body>
@@ -509,8 +534,8 @@ html[lang="zh-CN"] h1,html[lang="zh-CN"] h2{font-weight:650;letter-spacing:-.035
         <div><small data-i18n="medical-stat-sft">SFT DATA</small><strong>~18k</strong><span data-i18n="medical-stat-sft-sub">Instruction–response records</span></div>
         <div><small data-i18n="medical-stat-hardware">TRAINING</small><strong>4 × H200</strong><span data-i18n="medical-stat-hardware-sub">BF16 · DeepSpeed ZeRO-2</span></div>
       </div>
-      <p class="medical-stage-note" data-i18n="medical-stage-note">CPT and SFT are recorded training work. Evidence-grounded GRPO rewards and held-out report evaluation are described as a design, not as measured training gains.</p>
-      <details class="section-detail"><summary data-i18n="medical-details">Explore the sensing-to-report pipeline &amp; training evidence</summary><div class="disclosure-content"><div class="medical-path">
+      <p class="medical-stage-note" data-i18n="medical-stage-note">Recorded: CPT/SFT training and loss metrics. GRPO rewards and held-out case evaluation remain a proposed study, not claimed performance gains.</p>
+      <details class="section-detail medical-detail"><summary data-i18n="medical-details">01 / Sensing &amp; inference pipeline</summary><div class="disclosure-content"><div class="medical-path">
         <p class="medical-path-label" data-i18n="medical-path-label">MEASUREMENT → REPRESENTATION → EXECUTION → REPORT</p>
         <div class="medical-path-steps">
           <div><span>01</span><strong data-i18n="medical-path-1">Thermal sensing</strong><small data-i18n="medical-path-sub-1">LWIR · FPGA acquisition</small></div>
@@ -541,6 +566,12 @@ html[lang="zh-CN"] h1,html[lang="zh-CN"] h2{font-weight:650;letter-spacing:-.035
           <h3 data-i18n="medical-llm-title">Qwen3-8B · CPT → SFT</h3>
           <p data-i18n="medical-llm-copy">Continued pretraining on approximately 114 GB of Chinese and Western medical text, followed by supervised fine-tuning with approximately 18k ChatML instruction–response records. Used BF16, PyTorch SDPA and DeepSpeed ZeRO-2 on four H200 GPUs.</p>
         </article>
+      </div>
+      <p class="medical-outcome" data-i18n="medical-outcome"><strong>System output:</strong> Regional thermal findings and visual analysis are organized into structured medical reports and remote-service interfaces for human review.</p>
+    </div></details>
+    <details class="section-detail medical-detail medical-study-detail"><summary data-i18n="medical-study-details">02 / Medical model training &amp; evaluation</summary><div class="disclosure-content">
+      <p class="medical-method-lede" data-i18n="medical-method-lede">CPT models domain language; SFT learns the response format; GRPO reward design targets evidence-grounded report generation. Training loss, reward and downstream quality are evaluated separately.</p>
+      <div class="medical-modules medical-study-modules">
         <article class="medical-grpo" id="medical-grpo" aria-labelledby="medical-grpo-title">
           <h3 id="medical-grpo-title" data-i18n="medical-grpo-title">GRPO reward design for structured reporting</h3>
           <div class="medical-grpo-steps">
@@ -578,8 +609,21 @@ html[lang="zh-CN"] h1,html[lang="zh-CN"] h2{font-weight:650;letter-spacing:-.035
               <p data-i18n="medical-eval-copy">Proposed evaluation uses held-out cases to check evidence-grounded findings, unsupported conclusions, required report fields and human-review outcomes; GRPO gains need separate experimental verification.</p>
             </div>
           </div>
+          <div class="medical-evaluation" aria-labelledby="medical-evaluation-title">
+            <div class="medical-evaluation-head">
+              <h4 id="medical-evaluation-title" data-i18n="medical-evaluation-title">Evaluation protocol · Different metrics, different questions</h4>
+              <p data-i18n="medical-evaluation-intro">Proposed comparisons use fixed held-out data and consistent prompts and decoding settings. Training loss alone is not task accuracy.</p>
+            </div>
+            <div class="medical-evaluation-grid">
+              <div><span>01 / CPT</span><strong data-i18n="medical-axis-ppl-title">Domain perplexity</strong><p data-i18n="medical-axis-ppl">Token-level NLL on held-out medical text; distinct from recorded training loss.</p></div>
+              <div><span>02 / KNOWLEDGE</span><strong data-i18n="medical-axis-knowledge-title">Medical knowledge</strong><p data-i18n="medical-axis-knowledge">Held-out MCQ likelihood or answer accuracy, with one consistent scoring protocol.</p></div>
+              <div><span>03 / GENERATION</span><strong data-i18n="medical-axis-generation-title">Generative accuracy</strong><p data-i18n="medical-axis-generation">Generate responses with fixed decoding and score extracted final answers.</p></div>
+              <div><span>04 / REPORT</span><strong data-i18n="medical-axis-report-title">Evidence-grounded reporting</strong><p data-i18n="medical-axis-report">Check field coverage, unsupported claims, evidence alignment and human review.</p></div>
+            </div>
+            <p class="medical-evaluation-status" data-i18n="medical-evaluation-status">Current evidence: CPT training loss and SFT validation loss are recorded. Independent PPL, MCQ, generative and report-quality comparisons are evaluation targets, not published ThermoPulse gains.</p>
+          </div>
           <details class="medical-reference">
-            <summary data-i18n="medical-reference-summary">Public datasets &amp; implementation references</summary>
+            <summary data-i18n="medical-reference-summary">Open datasets, implementation &amp; study references</summary>
             <div class="medical-reference-grid">
               <div>
                 <h4 data-i18n="medical-reference-cpt">CPT · Domain corpora</h4>
@@ -601,10 +645,16 @@ html[lang="zh-CN"] h1,html[lang="zh-CN"] h2{font-weight:650;letter-spacing:-.035
               <a href="https://github.com/jiaqianjing/cpt-sft-grpo-med-zh/blob/main/med_pipeline/tools/reward.py" target="_blank" rel="noreferrer">Reward functions</a>
               <a href="https://github.com/jiaqianjing/cpt-sft-grpo-med-zh/blob/main/REPORT.md" target="_blank" rel="noreferrer">Ablation report</a>
             </div>
-            <p class="medical-reference-note" data-i18n="medical-reference-note">The public datasets above illustrate reproducible sources for each stage. Dataset names do not establish which files and splits entered the recorded ThermoPulse training runs; attribution requires the original preparation logs.</p>
+            <div class="medical-reference-docs">
+              <span data-i18n="medical-study-docs-label">Read the source study</span>
+              <a href="https://github.com/jiaqianjing/cpt-sft-grpo-med-zh/blob/main/docs/01_cpt.md" target="_blank" rel="noreferrer">01 · CPT</a>
+              <a href="https://github.com/jiaqianjing/cpt-sft-grpo-med-zh/blob/main/docs/02_sft.md" target="_blank" rel="noreferrer">02 · SFT</a>
+              <a href="https://github.com/jiaqianjing/cpt-sft-grpo-med-zh/blob/main/docs/03_grpo.md" target="_blank" rel="noreferrer">03 · GRPO</a>
+              <a href="https://github.com/jiaqianjing/cpt-sft-grpo-med-zh/blob/main/docs/04_eval_metrics.md" target="_blank" rel="noreferrer">04 · Evaluation</a>
+            </div>
+            <p class="medical-reference-note" data-i18n="medical-reference-note">These open sources are methodological references, not verified provenance for ThermoPulse training data. Some tutorial results use the earlier teacher experiment; consult the updated REPORT.md for the reference project's results, and original logs for ThermoPulse.</p>
           </details>
         </article>
-      <p class="medical-outcome" data-i18n="medical-outcome"><strong>System output:</strong> Regional thermal findings and visual analysis are organized into structured medical reports and remote-service interfaces for human review.</p>
     </div></details></div></section>
     <section class="economics" id="economics"><div class="wrap">
       <div class="section-head"><div><p class="eyebrow" data-i18n="economics-kicker">Performance → capacity → economics</p><h2 data-i18n="economics-title">From benchmarks to deployment decisions</h2></div><p data-i18n="economics-intro">My completed work establishes NVIDIA serving-performance and capacity baselines. Cross-accelerator comparisons and full TCO analysis are team follow-up work.</p></div>
@@ -1204,7 +1254,7 @@ html[lang="zh-CN"] h1,html[lang="zh-CN"] h2{font-weight:650;letter-spacing:-.035
   "[data-i18n=\"more-runtime\"]": "更多排障案例 · DSpark、DCP 与 NCCL",
   "[data-i18n=\"more-performance\"]": "算子归因、EPLB 与压测复现",
   "[data-i18n=\"omni-details\"]": "训练、部署与运行时优化细节",
-  "[data-i18n=\"medical-details\"]": "展开完整的感知、训练与报告流程",
+  "[data-i18n=\"medical-details\"]": "01 / 感知与推理部署",
   "[data-i18n=\"cost-details\"]": "展开容量规划与成本核算方法",
   "[data-i18n=\"more-resources\"]": "更多书籍、分享与学习路线",
   "[data-i18n=\"learning-group-links\"]": "展开资料列表",
@@ -1225,13 +1275,27 @@ html[lang="zh-CN"] h1,html[lang="zh-CN"] h2{font-weight:650;letter-spacing:-.035
   "[data-i18n=\"medical-stat-sft-sub\"]": "指令—回答样本",
   "[data-i18n=\"medical-stat-hardware\"]": "训练硬件",
   "[data-i18n=\"medical-stat-hardware-sub\"]": "BF16 · DeepSpeed ZeRO-2",
-  "[data-i18n=\"medical-stage-note\"]": "已完成的训练记录：CPT 与 SFT；病例证据奖励和 GRPO 留出集评测目前按方案展示，不将参考实现或待验证的效果写为已完成结果。",
-  "[data-i18n=\"medical-reference-summary\"]": "公开数据来源与实现参考",
+  "[data-i18n=\"medical-stage-note\"]": "已记录：CPT 与 SFT 训练及损失指标。GRPO 奖励和独立病例评测为后续方案，不将参考项目的增益视为本人实验结果。",
+  "[data-i18n=\"medical-reference-summary\"]": "公开数据、实现和分阶段教程",
   "[data-i18n=\"medical-reference-cpt\"]": "CPT · 领域语料示例",
   "[data-i18n=\"medical-reference-sft\"]": "SFT · 指令数据示例",
   "[data-i18n=\"medical-reference-grpo\"]": "GRPO · 可验证医学问答",
   "[data-i18n=\"medical-reference-boundary\"]": "参考项目使用 SGLang 部署 SFT 教师模型、生成蒸馏数据；其 GRPO 训练则使用 TRL 与 colocated vLLM。这里展示的是可借鉴的实现路径，并不代表 ThermoPulse 已采用相同训练栈。",
-  "[data-i18n=\"medical-reference-note\"]": "上述数据集是不同阶段可复现的公开来源。具体哪些版本、split 和样本进入过 ThermoPulse 训练，应以原始数据准备清单及训练记录为准。"
+  "[data-i18n=\"medical-reference-note\"]": "上述公开数据集与教程仅用于方法参考，不能据此认定其全部进入了 ThermoPulse 训练。参考仓库 docs 中仍有旧版教师模型的实验描述，具体结果应以更新后的 REPORT.md 为准；实际训练数据与评测结果需由原始实验记录验证。",
+  "[data-i18n=\"medical-study-details\"]": "02 / 医疗模型训练与评测",
+  "[data-i18n=\"medical-method-lede\"]": "CPT 学习医学文本分布，SFT 学习结构化回答，GRPO 方案探索基于病例证据的报告奖励。训练损失、训练奖励和下游效果应分别评估。",
+  "[data-i18n=\"medical-evaluation-title\"]": "评测口径 · 分开回答不同问题",
+  "[data-i18n=\"medical-evaluation-intro\"]": "评测方案：使用独立数据集、固定提示词与一致解码配置对比各检查点。训练 Loss 不等于任务准确率。",
+  "[data-i18n=\"medical-axis-ppl-title\"]": "领域困惑度",
+  "[data-i18n=\"medical-axis-ppl\"]": "在未参与训练的医学文本上计算 token-level NLL / PPL，与已有训练 Loss 区分。",
+  "[data-i18n=\"medical-axis-knowledge-title\"]": "医学知识能力",
+  "[data-i18n=\"medical-axis-knowledge\"]": "固定医学选择题测试集，统一选项概率或答案准确率的计算口径。",
+  "[data-i18n=\"medical-axis-generation-title\"]": "真实生成准确率",
+  "[data-i18n=\"medical-axis-generation\"]": "固定解码配置生成回答，抽取最终答案后计算准确率。",
+  "[data-i18n=\"medical-axis-report-title\"]": "证据约束的报告质量",
+  "[data-i18n=\"medical-axis-report\"]": "比较字段覆盖、无依据结论、病例证据一致性与人工审核结果。",
+  "[data-i18n=\"medical-evaluation-status\"]": "已记录的证据是 CPT 训练 Loss 与 SFT 验证 Loss；独立 PPL、医学选择题、生成及报告质量对照仍属于拟实施评测，不宣称已测得改进。",
+  "[data-i18n=\"medical-study-docs-label\"]": "参考仓库分阶段教程"
 };
     const bilingual=Object.entries(zh).flatMap(([selector,value])=>
       [...document.querySelectorAll(selector)].map(element=>({
