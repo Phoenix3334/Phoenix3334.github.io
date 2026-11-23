@@ -517,7 +517,7 @@ html[lang="zh-CN"] h1,html[lang="zh-CN"] h2{font-weight:650;letter-spacing:-.035
               </div>
               <div>
                 <h4 data-i18n="medical-grpo-rollout-title">Grouped rollout</h4>
-                <p data-i18n="medical-grpo-rollout">slime coordinates training and uses SGLang to sample several candidate reports for the same case prompt.</p>
+                <p data-i18n="medical-grpo-rollout">During rollout, Qwen3-8B samples several candidate reports for the same case prompt.</p>
               </div>
               <div>
                 <h4 data-i18n="medical-grpo-reward-title">Reward and update</h4>
@@ -943,7 +943,7 @@ html[lang="zh-CN"] h1,html[lang="zh-CN"] h2{font-weight:650;letter-spacing:-.035
   "[data-i18n=\"medical-grpo-input-title\"]": "病例输入",
   "[data-i18n=\"medical-grpo-input\"]": "将报告指令、区域温度和双流视觉分析结果整理成结构化文本，作为 Qwen3-8B 的输入。",
   "[data-i18n=\"medical-grpo-rollout-title\"]": "组内采样",
-  "[data-i18n=\"medical-grpo-rollout\"]": "slime 编排训练，由 SGLang 对同一条病例输入采样多份候选报告。",
+  "[data-i18n=\"medical-grpo-rollout\"]": "在 rollout 阶段，Qwen3-8B 对同一条病例输入采样多份候选报告。",
   "[data-i18n=\"medical-grpo-reward-title\"]": "评分与更新",
   "[data-i18n=\"medical-grpo-reward\"]": "按病例证据的一致性和报告字段的完整性为候选报告打分。GRPO 根据组内相对得分更新策略。可按结构化字段核对输出时，完整参考报告可选。",
   "[data-i18n=\"medical-outcome\"]": "<strong>系统输出：</strong>将区域温度信息、视觉分析结果与医疗语言模型串联，形成便于人工复核的结构化报告和远程服务接口。",
