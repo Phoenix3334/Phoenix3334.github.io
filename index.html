@@ -163,6 +163,24 @@ html[lang="zh-CN"] h1,html[lang="zh-CN"] h2{font-weight:650;letter-spacing:-.035
 .medical-dataset-note{font-size:13px;line-height:1.8;color:var(--muted);margin-top:23px;padding-top:15px;border-top:1px solid var(--line)}
 .medical-dataset-note a{color:var(--blue);text-decoration:underline;text-underline-offset:3px}
 @media(max-width:760px){.medical-validation-grid{grid-template-columns:1fr;gap:17px}}
+/* ThermoPulse: visible training facts and concise source references */
+.medical-snapshot{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0;margin:26px 0 12px;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.medical-snapshot>div{min-width:0;padding:17px 18px 17px 0}
+.medical-snapshot>div+div{border-left:1px solid var(--line);padding-left:19px}
+.medical-snapshot small{display:block;font-size:11px;font-weight:700;color:var(--teal);letter-spacing:.075em;line-height:1.4}
+.medical-snapshot strong{display:block;font-size:24px;line-height:1.3;font-weight:650;margin:8px 0 5px;letter-spacing:-.035em}
+.medical-snapshot span{display:block;color:var(--muted);font-size:12px;line-height:1.6}
+.medical-stage-note{font-size:13px;line-height:1.75;color:var(--muted);margin:0 0 17px}
+.medical-reference{border-top:1px solid var(--line);margin-top:22px;padding-top:15px}
+.medical-reference summary{cursor:pointer;color:var(--teal);font-weight:650;font-size:14px;line-height:1.7}
+.medical-reference-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px;margin:19px 0 18px}
+.medical-reference-grid>div{min-width:0}
+.medical-reference-grid h4{font-size:14px;margin:0 0 8px;font-weight:650}
+.medical-reference-grid p{font-size:13px;color:var(--muted);line-height:1.9;margin:0}
+.medical-reference a{color:var(--blue);text-decoration:underline;text-underline-offset:3px;overflow-wrap:anywhere}
+.medical-reference-boundary,.medical-reference-note{font-size:13px;line-height:1.8;color:var(--muted);margin:12px 0 0}
+.medical-reference-code{display:flex;flex-wrap:wrap;gap:7px 18px;margin-top:16px;font-size:13px;line-height:1.75}
+@media(max-width:760px){.medical-snapshot{grid-template-columns:repeat(2,minmax(0,1fr));margin-top:21px}.medical-snapshot>div{padding:15px 10px 15px 0}.medical-snapshot>div+div{padding-left:0;border-left:0}.medical-snapshot>div:nth-child(even){border-left:1px solid var(--line);padding-left:13px}.medical-snapshot>div:nth-child(n+3){border-top:1px solid var(--line)}.medical-snapshot strong{font-size:20px}.medical-reference-grid{grid-template-columns:1fr;gap:16px}}
 </style>
 </head>
 <body>
@@ -485,7 +503,14 @@ html[lang="zh-CN"] h1,html[lang="zh-CN"] h2{font-weight:650;letter-spacing:-.035
         </div>
         <p data-i18n="medical-intro">An applied-AI prototype connecting thermal measurements and visual findings with Qwen3-8B medical adaptation (CPT and SFT), with GRPO reward design for evidence-grounded reports.</p>
       </div>
-      <details class="section-detail"><summary data-i18n="medical-details">Explore the sensing-to-report pipeline</summary><div class="disclosure-content"><div class="medical-path">
+      <div class="medical-snapshot" aria-label="Model training summary">
+        <div><small data-i18n="medical-stat-model">BASE MODEL</small><strong>Qwen3-8B</strong><span data-i18n="medical-stat-model-sub">Medical domain adaptation</span></div>
+        <div><small data-i18n="medical-stat-cpt">CPT CORPUS</small><strong>114 GB</strong><span data-i18n="medical-stat-cpt-sub">Chinese &amp; Western medical text</span></div>
+        <div><small data-i18n="medical-stat-sft">SFT DATA</small><strong>~18k</strong><span data-i18n="medical-stat-sft-sub">Instruction–response records</span></div>
+        <div><small data-i18n="medical-stat-hardware">TRAINING</small><strong>4 × H200</strong><span data-i18n="medical-stat-hardware-sub">BF16 · DeepSpeed ZeRO-2</span></div>
+      </div>
+      <p class="medical-stage-note" data-i18n="medical-stage-note">CPT and SFT are recorded training work. Evidence-grounded GRPO rewards and held-out report evaluation are described as a design, not as measured training gains.</p>
+      <details class="section-detail"><summary data-i18n="medical-details">Explore the sensing-to-report pipeline &amp; training evidence</summary><div class="disclosure-content"><div class="medical-path">
         <p class="medical-path-label" data-i18n="medical-path-label">MEASUREMENT → REPRESENTATION → EXECUTION → REPORT</p>
         <div class="medical-path-steps">
           <div><span>01</span><strong data-i18n="medical-path-1">Thermal sensing</strong><small data-i18n="medical-path-sub-1">LWIR · FPGA acquisition</small></div>
@@ -535,7 +560,7 @@ html[lang="zh-CN"] h1,html[lang="zh-CN"] h2{font-weight:650;letter-spacing:-.035
         </article>
       </div>
         <article class="medical-grpo medical-validation" id="medical-validation">
-          <h3 data-i18n="medical-validation-title">Training evidence and evaluation design</h3>
+          <h3 data-i18n="medical-validation-title">Training evidence &amp; GRPO evaluation plan</h3>
           <div class="medical-validation-grid">
             <div>
               <span class="medical-validation-number">01 / CPT</span>
@@ -550,10 +575,34 @@ html[lang="zh-CN"] h1,html[lang="zh-CN"] h2{font-weight:650;letter-spacing:-.035
             <div>
               <span class="medical-validation-number">03 / GRPO &amp; EVAL</span>
               <h4 data-i18n="medical-eval-title">Reward and held-out evaluation</h4>
-              <p data-i18n="medical-eval-copy">Evaluation design: held-out case evidence, factual consistency, report-field completeness and human review. No unverified GRPO training gain or medical-accuracy result is claimed.</p>
+              <p data-i18n="medical-eval-copy">Proposed evaluation uses held-out cases to check evidence-grounded findings, unsupported conclusions, required report fields and human-review outcomes; GRPO gains need separate experimental verification.</p>
             </div>
           </div>
-          <p class="medical-dataset-note" data-i18n="medical-datasets">Related public dataset references: <a href="https://huggingface.co/datasets/shibing624/medical" target="_blank" rel="noreferrer">shibing624/medical</a> (CPT); <a href="https://huggingface.co/datasets/FreedomIntelligence/medical-o1-reasoning-SFT" target="_blank" rel="noreferrer">medical-o1-reasoning-SFT</a> (SFT); <a href="https://huggingface.co/datasets/bigbio/med_qa" target="_blank" rel="noreferrer">MedQA-zh</a> and <a href="https://huggingface.co/datasets/fzkuji/CMExam" target="_blank" rel="noreferrer">CMExam</a> (verifiable GRPO examples). These are reference datasets; their names do not imply that each entered the recorded ThermoPulse training runs. <a href="https://github.com/jiaqianjing/cpt-sft-grpo-med-zh" target="_blank" rel="noreferrer">Reference implementation</a>.</p>
+          <details class="medical-reference">
+            <summary data-i18n="medical-reference-summary">Public datasets &amp; implementation references</summary>
+            <div class="medical-reference-grid">
+              <div>
+                <h4 data-i18n="medical-reference-cpt">CPT · Domain corpora</h4>
+                <p><a href="https://huggingface.co/datasets/shibing624/medical" target="_blank" rel="noreferrer">shibing624/medical</a> · <a href="https://huggingface.co/datasets/SylvanL/Traditional-Chinese-Medicine-Dataset-Pretrain" target="_blank" rel="noreferrer">TCM pretraining</a> · <a href="https://huggingface.co/datasets/FreedomIntelligence/TCM-Pretrain-Data-ShizhenGPT" target="_blank" rel="noreferrer">ShizhenGPT</a></p>
+              </div>
+              <div>
+                <h4 data-i18n="medical-reference-sft">SFT · Instruction data</h4>
+                <p><a href="https://huggingface.co/datasets/FreedomIntelligence/medical-o1-reasoning-SFT" target="_blank" rel="noreferrer">medical-o1-reasoning-SFT</a> · <a href="https://huggingface.co/datasets/FreedomIntelligence/Huatuo26M-Lite" target="_blank" rel="noreferrer">Huatuo26M-Lite</a> · <a href="https://huggingface.co/datasets/michaelwzhu/ShenNong_TCM_Dataset" target="_blank" rel="noreferrer">ShenNong TCM</a></p>
+              </div>
+              <div>
+                <h4 data-i18n="medical-reference-grpo">GRPO · Verifiable QA</h4>
+                <p><a href="https://huggingface.co/datasets/bigbio/med_qa" target="_blank" rel="noreferrer">MedQA-zh</a> · <a href="https://huggingface.co/datasets/fzkuji/CMExam" target="_blank" rel="noreferrer">CMExam</a> · <a href="https://huggingface.co/datasets/haonan-li/cmmlu" target="_blank" rel="noreferrer">CMMLU</a></p>
+              </div>
+            </div>
+            <p class="medical-reference-boundary" data-i18n="medical-reference-boundary">The reference project uses SGLang to serve a teacher model for SFT data distillation, while GRPO runs on TRL + colocated vLLM. These are implementation references, not claimed as ThermoPulse's deployed training stack.</p>
+            <div class="medical-reference-code">
+              <a href="https://github.com/jiaqianjing/cpt-sft-grpo-med-zh/blob/main/scripts/run_qwen_distill_sglang.sh" target="_blank" rel="noreferrer">SGLang teacher server</a>
+              <a href="https://github.com/jiaqianjing/cpt-sft-grpo-med-zh/blob/main/med_pipeline/train/run_grpo.py" target="_blank" rel="noreferrer">GRPO trainer</a>
+              <a href="https://github.com/jiaqianjing/cpt-sft-grpo-med-zh/blob/main/med_pipeline/tools/reward.py" target="_blank" rel="noreferrer">Reward functions</a>
+              <a href="https://github.com/jiaqianjing/cpt-sft-grpo-med-zh/blob/main/REPORT.md" target="_blank" rel="noreferrer">Ablation report</a>
+            </div>
+            <p class="medical-reference-note" data-i18n="medical-reference-note">The public datasets above illustrate reproducible sources for each stage. Dataset names do not establish which files and splits entered the recorded ThermoPulse training runs; attribution requires the original preparation logs.</p>
+          </details>
         </article>
       <p class="medical-outcome" data-i18n="medical-outcome"><strong>System output:</strong> Regional thermal findings and visual analysis are organized into structured medical reports and remote-service interfaces for human review.</p>
     </div></details></div></section>
@@ -1155,19 +1204,34 @@ html[lang="zh-CN"] h1,html[lang="zh-CN"] h2{font-weight:650;letter-spacing:-.035
   "[data-i18n=\"more-runtime\"]": "更多排障案例 · DSpark、DCP 与 NCCL",
   "[data-i18n=\"more-performance\"]": "算子归因、EPLB 与压测复现",
   "[data-i18n=\"omni-details\"]": "训练、部署与运行时优化细节",
-  "[data-i18n=\"medical-details\"]": "展开感知到报告的完整流程",
+  "[data-i18n=\"medical-details\"]": "展开完整的感知、训练与报告流程",
   "[data-i18n=\"cost-details\"]": "展开容量规划与成本核算方法",
   "[data-i18n=\"more-resources\"]": "更多书籍、分享与学习路线",
   "[data-i18n=\"learning-group-links\"]": "展开资料列表",
   "[data-i18n=\"nav-work\"]": "工程经历",
-  "[data-i18n=\"medical-validation-title\"]": "训练记录与评测设计",
+  "[data-i18n=\"medical-validation-title\"]": "训练记录与 GRPO 评测方案",
   "[data-i18n=\"medical-cpt-title\"]": "医疗领域语言建模",
   "[data-i18n=\"medical-cpt-copy\"]": "约 114 GB 医疗文本；4 卡完成 26,656 steps、204.8 小时 CPT，最终训练 loss 为 1.186。训练损失不等于医疗任务准确率。",
   "[data-i18n=\"medical-sft-title\"]": "指令与报告格式对齐",
   "[data-i18n=\"medical-sft-copy\"]": "从 CPT checkpoint 出发，使用约 1.8 万条 ChatML 数据，2048-token packing、BF16 与 ZeRO-2；已有记录显示验证 loss 由 1.260 降至 1.144。",
   "[data-i18n=\"medical-eval-title\"]": "奖励设计与留出集评测",
-  "[data-i18n=\"medical-eval-copy\"]": "评测设计包括独立病例的证据一致性、事实错误、关键字段完整性与人工复核；不将尚未核实的 GRPO 增益或医疗准确率写作结果。",
-  "[data-i18n=\"medical-datasets\"]": "相关公开数据集参考：<a href=\"https://huggingface.co/datasets/shibing624/medical\" target=\"_blank\" rel=\"noreferrer\">shibing624/medical</a>（CPT）；<a href=\"https://huggingface.co/datasets/FreedomIntelligence/medical-o1-reasoning-SFT\" target=\"_blank\" rel=\"noreferrer\">medical-o1-reasoning-SFT</a>（SFT）；<a href=\"https://huggingface.co/datasets/bigbio/med_qa\" target=\"_blank\" rel=\"noreferrer\">MedQA-zh</a>、<a href=\"https://huggingface.co/datasets/fzkuji/CMExam\" target=\"_blank\" rel=\"noreferrer\">CMExam</a>（可验证 GRPO）。列出的是可对照的公开数据来源，不代表每个数据集都已进入 ThermoPulse 的实际训练记录。<a href=\"https://github.com/jiaqianjing/cpt-sft-grpo-med-zh\" target=\"_blank\" rel=\"noreferrer\">参考项目</a>。",
+  "[data-i18n=\"medical-eval-copy\"]": "拟使用独立病例测试证据一致性、无依据结论、报告字段完整性及人工复核结果；GRPO 收益需另行实验验证。",
+  "[data-i18n=\"medical-datasets\"]": "相关公开数据集参考：<a href=\"https://huggingface.co/datasets/shibing624/medical\" target=\"_blank\" rel=\"noreferrer\">shibing624/medical</a>（CPT）；<a href=\"https://huggingface.co/datasets/FreedomIntelligence/medical-o1-reasoning-SFT\" target=\"_blank\" rel=\"noreferrer\">medical-o1-reasoning-SFT</a>（SFT）；<a href=\"https://huggingface.co/datasets/bigbio/med_qa\" target=\"_blank\" rel=\"noreferrer\">MedQA-zh</a>、<a href=\"https://huggingface.co/datasets/fzkuji/CMExam\" target=\"_blank\" rel=\"noreferrer\">CMExam</a>（可验证 GRPO）。列出的是可对照的公开数据来源，不代表每个数据集都已进入 ThermoPulse 的实际训练记录。<a href=\"https://github.com/jiaqianjing/cpt-sft-grpo-med-zh\" target=\"_blank\" rel=\"noreferrer\">参考项目</a>。",,
+  "[data-i18n=\"medical-stat-model\"]": "基础模型",
+  "[data-i18n=\"medical-stat-model-sub\"]": "医疗领域模型适配",
+  "[data-i18n=\"medical-stat-cpt\"]": "CPT 语料",
+  "[data-i18n=\"medical-stat-cpt-sub\"]": "中西医文本",
+  "[data-i18n=\"medical-stat-sft\"]": "SFT 数据",
+  "[data-i18n=\"medical-stat-sft-sub\"]": "指令—回答样本",
+  "[data-i18n=\"medical-stat-hardware\"]": "训练硬件",
+  "[data-i18n=\"medical-stat-hardware-sub\"]": "BF16 · DeepSpeed ZeRO-2",
+  "[data-i18n=\"medical-stage-note\"]": "已完成的训练记录：CPT 与 SFT；病例证据奖励和 GRPO 留出集评测目前按方案展示，不将参考实现或待验证的效果写为已完成结果。",
+  "[data-i18n=\"medical-reference-summary\"]": "公开数据来源与实现参考",
+  "[data-i18n=\"medical-reference-cpt\"]": "CPT · 领域语料示例",
+  "[data-i18n=\"medical-reference-sft\"]": "SFT · 指令数据示例",
+  "[data-i18n=\"medical-reference-grpo\"]": "GRPO · 可验证医学问答",
+  "[data-i18n=\"medical-reference-boundary\"]": "参考项目使用 SGLang 部署 SFT 教师模型、生成蒸馏数据；其 GRPO 训练则使用 TRL 与 colocated vLLM。这里展示的是可借鉴的实现路径，并不代表 ThermoPulse 已采用相同训练栈。",
+  "[data-i18n=\"medical-reference-note\"]": "上述数据集是不同阶段可复现的公开来源。具体哪些版本、split 和样本进入过 ThermoPulse 训练，应以原始数据准备清单及训练记录为准。"
 };
     const bilingual=Object.entries(zh).flatMap(([selector,value])=>
       [...document.querySelectorAll(selector)].map(element=>({
