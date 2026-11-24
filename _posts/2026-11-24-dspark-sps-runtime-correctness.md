@@ -15,9 +15,53 @@ tags: [SGLang, DSpark, CUDA, CUDA-Graph, Runtime-Correctness]
 
 *图 1 · 从模型策略、调度决策到 Kernel 执行契约。*
 
-## 1. 为什么 DSpark 不只是多猜几个 Token？
+## 1. 投机解码：为什么一次 Forward 可以生成多个 Token？
 
-普通自回归 Draft 需要多次执行模型；全并行 Draft 可以一次 Forward 预测多个位置，却缺乏块内已经采样的 Token 之间的条件依赖。
+普通 AR Decode 每轮读取模型权重、访问历史 KV，再生成一个新 Token。低 batch 时，大模型往往受显存带宽而非算力限制；如果一次 Target Forward 能同时处理多个候选位置，就有机会摊薄权重读取和固定开销。NVIDIA 的 [TensorRT-LLM 投机解码技术博客](https://developer.nvidia.com/blog/?p=92847) 从这一思路出发介绍了 Draft 与 Target 的分工。
+
+假设 Draft 提出三个候选 x1、x2、x3，Target 在一次 Forward 中并行计算各个验证位置的分布。在 greedy decoding 的示例中，前两个候选一致，第三个不一致：
+
+~~~text
+已有上下文 → Draft:    x1    x2    x3
+                        ↓     ↓     ↓
+             Target:    x1    x2    y3
+                        ✓     ✓     ×
+             Commit:    x1    x2    y3
+~~~
+
+前缀接受，第一处拒绝后用 Target 的结果继续；若全部接受，还可以产生额外的 bonus token。随机采样时需要相应的接受/拒绝与残差分布采样机制来保持 Target 的输出分布，而非简单比较 argmax。
+
+看实际收益，要同时考虑每轮平均输出 Token 数和每轮成本：
+
+~~~text
+AL         = 1 + accepted_draft_tokens / verification_rounds
+AR         = accepted_draft_tokens / proposed_draft_tokens
+Throughput ≈ total_committed_tokens / total_elapsed_time
+~~~
+
+AL（Acceptance Length）衡量一轮生成多少；AR（Acceptance Rate）衡量候选命中比例，两者不能替代端到端吞吐。实际服务还要关注 TPOT、并发、Draft KV 的额外显存以及队列等待。
+
+[SpecDecode-Bench](https://specdecode-bench.github.io/) 在 H100、生产级 vLLM 与多种 workload 上测试发现，随 batch 增大，投机解码收益通常收窄；其分解实验中 verification 占总执行时间约 42%–95%。这不是说高并发一定不适合投机解码，而是说明接受更多 Token 不必然更快。
+
+### 从 EAGLE、MTP 到 DFlash、DSpark
+
+参考 [vLLM 的并行 Draft 技术综述](https://vllm.ai/blog/2026-07-28-speculators-parallel-drafting) 和 [SGLang 的 DFlash / Spec V2 博客](https://www.lmsys.org/blog/2026-06-15-next-generation-speculative-decoding-dflash-v2/)，可以按两个问题组织这条技术路线：候选从哪里来？候选怎样生成？
+
+| 方法 | Draft 的特点 | 主要工程取舍 |
+| --- | --- | --- |
+| N-gram | 复用上下文中出现过的序列 | 几乎不增加模型计算，但依赖重复模式 |
+| 独立 Draft Model | 小模型递归生成候选 | 增加独立权重、KV 与多次 forward |
+| EAGLE / EAGLE-3 | 利用 Target hidden features，递归预测 | 提高候选质量，但仍有顺序生成成本 |
+| MTP | 利用模型的多 Token 预测模块 | 原生集成便利，具体实现和预测深度依模型而异 |
+| P-EAGLE | 在 Target 特征条件下并行预测候选 | 减少 Draft forward 次数 |
+| DFlash | Block diffusion 与 Target 特征的 KV injection | 并行生成整个候选块 |
+| DSpark | 并行 Backbone、轻量顺序修正及 confidence 调度 | 同时优化生成成本、候选质量与验证预算 |
+
+这些不是严格的互斥分类，也不是后一种方法必然优于前一种；它们是不同的 Draft 与 Verification 设计选择。
+
+### DSpark：为什么还要引入半自回归？
+
+普通自回归 Draft 需要多次执行模型；全并行 Draft 可以一次 Forward 预测多个位置，却缺乏对块内已采样 Token 的显式顺序条件依赖。
 
 [DSpark 论文](https://arxiv.org/html/2607.05147v1) 第 3 节引入半自回归（Semi-Autoregressive）结构：重型 Backbone 并行计算基础 Logits，轻量 Markov Head 按前一个采样 Token 修正当前 Logits。这样把昂贵的 Transformer 计算与轻量顺序依赖拆开。
 
@@ -30,6 +74,24 @@ tags: [SGLang, DSpark, CUDA, CUDA-Graph, Runtime-Correctness]
 - SPS(B)：该验证规模下实测的 Target step rate（steps/s）。
 
 论文的目标是最大化 tau × SPS(B)。线上硬件曲线未必平滑，且异步调度和 CUDA Graph 带来额外限制；第 5.2 节讨论了这些部署约束。实际压测吞吐还包括 Draft、调度及其他开销，不能直接把这个简化目标当作端到端实测结果。
+
+### 从论文的 SPS 到 SGLang 的实测成本表
+
+论文用 SPS(B) 表示硬件 step rate。实际 [SGLang DSpark 官方博客](https://www.lmsys.org/blog/2026-07-06-dspark-sglang/) 给出了可复现实验：在其公开版本中，扫描 running batch 与 verify fraction，通过实测 step time 拟合加性成本模型，供调度器查表。核心是让预算选择依赖当前硬件和服务配置，而不是固定接受阈值。
+
+~~~bash
+# Profiling: 按官方博客对应版本启动 DSpark 服务
+export SGLANG_RAGGED_VERIFY_MODE=compact
+export SGLANG_DSPARK_ENABLE_SPS_RECORD=1
+export SGLANG_SIMULATE_ACC_LEN=1.0
+
+# 在服务可用后运行
+python3 -m sglang.benchmark.dspark_sps_profiler all
+~~~
+
+部署正常服务时，以 `--speculative-dspark-sps-table-path sps_table.json` 加载生成的表。这里是官方示例的核心参数，不是我的历史 B300 全量启动命令；具体 CLI 与 profiling 输出路径以对应版本为准。SPS 表也不能不经验证就跨模型、硬件、并行策略或 backend 复用。
+
+从性能归因看，建议将 Static、Compact 无 SPS（全窗口）和 Compact 有 SPS 三组拆开；另设 Cap-Accept 对照，仅限制可接受窗口而不缩小实际验证计算，用于区分裁剪带来的收益和可能的接受长度损失。
 
 ## 2. 从 Static 到 Compact：改变的是执行布局
 
@@ -159,6 +221,16 @@ planner 修复组每次完成全部 35 个捕获档位。此结果支持 #32467 
 面试中我会这样概括：我在 DSpark SPS/Compact 压测中发现并报告 TP8 的 CUDA Graph 故障，进一步把控制面预算不一致、捕获顺序与底层 Kernel 竞态分开。通过最小 Kernel 复现和四臂启动矩阵，我验证了 reviewer 提议的最终 no-init 修复，使测试中的越界 plan 从 13,111/30,000 降至 0/30,000。**这是 Runtime Correctness 的案例，不是投机解码算法本身的错误。**
 
 ## 参考与可复现证据
+
+### 技术背景与生产实现
+
+- [NVIDIA：TensorRT-LLM Speculative Decoding](https://developer.nvidia.com/blog/?p=92847) — 基础执行原理。
+- [vLLM：Parallel All the Way Down](https://vllm.ai/blog/2026-07-28-speculators-parallel-drafting) — 并行 Draft 架构演进。
+- [SGLang：DFlash and Spec V2](https://www.lmsys.org/blog/2026-06-15-next-generation-speculative-decoding-dflash-v2/) — KV injection 与 overlap 调度。
+- [SGLang：DSpark 官方工程博客](https://www.lmsys.org/blog/2026-07-06-dspark-sglang/) — SPS profiling 与变长验证。
+- [SpecDecode-Bench](https://specdecode-bench.github.io/) — 实际负载、batch 与吞吐评估。
+
+### 原始论文与公开排障记录
 
 - [DSpark 论文，§3.1、§3.2、§5.2](https://arxiv.org/html/2607.05147v1)
 - [Issue #31023：原始 TP8 investigation](https://github.com/sgl-project/sglang/issues/31023)
