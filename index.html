@@ -350,11 +350,12 @@ html[lang="zh-CN"] h1,html[lang="zh-CN"] h2{font-weight:650;letter-spacing:-.035
           </div><div class="open-project-proof"><strong>30 / 30</strong><span>targeted CPU tests · rebased tree</span><strong>4 / 4</strong><span>B300 patched health-on repeats · tested workload</span></div>
         </article>
 
-        <details class="section-detail"><summary data-i18n="more-runtime">More investigations · DSpark, DCP and NCCL</summary><div class="disclosure-content"><article class="open-project" id="project-dspark-review">
+        <article class="open-project" id="project-dspark-review">
           <div class="open-project-copy">
             <div class="open-project-index">03 · INVESTIGATION / REVIEW</div>
-          <div class="project-title"><img class="project-logo" src="https://github.com/sgl-project.png?size=88" alt="SGLang"><h3><a href="https://github.com/sgl-project/sglang/issues/31023" target="_blank" rel="noreferrer">DSpark correctness: from first report to final-fix validation</a></h3></div>
-            <p>From July to August, I reported DSpark replay and startup failures, built targeted reproductions, and contributed experiments to the final planner fix. My technical review on <strong>PR #32467</strong> validated the no-init variant with a controlled kernel comparison: <strong>13,111/30,000 out-of-bounds plans → 0/30,000</strong>.</p>
+          <div class="project-title"><img class="project-logo" src="https://github.com/sgl-project.png?size=88" alt="SGLang"><h3><a href="https://github.com/sgl-project/sglang/issues/31023" target="_blank" rel="noreferrer">DSpark · Ragged verification and CUDA kernel correctness</a></h3></div>
+            <p>During DSpark SPS/compact verification testing on B300/TP8, I reported timing-sensitive CUDA Graph failures and separated cross-rank planning, capture ordering and a GPU planner race. Ragged inputs exposed a general shared-memory correctness bug, not a speculative decoding algorithm error. My technical review of <strong>PR #32467</strong> validated the final no-init variant: <strong>13,111/30,000 out-of-bounds plans → 0/30,000</strong>.</p>
+            <div style="margin-top:12px;font-size:14px"><a class="inline-link" href="/blog/2026/11/24/dspark-sps-runtime-correctness/" data-i18n="dspark-blog-link">Technical article · From SPS scheduling to CUDA kernel correctness ↗</a></div>
             <details class="work-detail" id="dspark-debug-case">
               <summary data-i18n="dspark-detail-title">Expand the investigation: original reports, isolation and regression coverage</summary>
               <div class="detail-body">
@@ -381,7 +382,7 @@ html[lang="zh-CN"] h1,html[lang="zh-CN"] h2{font-weight:650;letter-spacing:-.035
           <div class="open-project-proof"><strong>PR #32467</strong><span>technical review · merged kernel fix</span><strong>13,111 → 0</strong><span>OOB plans · 30,000 calls per A/B/C variant</span></div>
         </article>
 
-        <article class="open-project" id="project-dcp-recovery">
+        <details class="section-detail"><summary data-i18n="more-runtime">More investigations · DCP and NCCL</summary><div class="disclosure-content"><article class="open-project" id="project-dcp-recovery">
           <div class="open-project-copy">
             <div class="open-project-index">04 · KV STATE</div>
           <div class="project-title"><img class="project-logo" src="https://github.com/sgl-project.png?size=88" alt="SGLang"><h3><a href="https://github.com/sgl-project/sglang/issues/38645" target="_blank" rel="noreferrer">DCP cache recovery: diagnosis to collaborative upstream fix</a></h3></div>
@@ -1049,8 +1050,9 @@ html[lang="zh-CN"] h1,html[lang="zh-CN"] h2{font-weight:650;letter-spacing:-.035
   "#project-dcp-recovery h3 a": "DCP 缓存回退：从根因定位到协作合并",
   "#project-dcp-recovery .open-project-copy > p": "报告<strong>Issue #38645</strong>，定位 DCP 回退备份/恢复中的逻辑与物理 KV 索引混用，并实现、验证草稿修复<strong>#38790</strong>。未修复 DCP8 首次回退即崩溃；本人 B300 修复组经<strong>8 次回退完成 2,048/2,048 请求</strong>。维护者 kpham-sgl 通过共享 DCP layout 工具整合方案、补齐兼容性和验证，最终合并<strong>#39487</strong>；本人随后关闭被取代的草稿。",
   "#project-dspark-review .open-project-index": "03 · 故障调查 / 技术评审",
-  "#project-dspark-review h3 a": "DSpark 排障：从原始 Issue 到最终修复验证",
-  "#project-dspark-review .open-project-copy > p": "从 7 月到 8 月，我持续跟踪 DSpark 回放和启动故障，提交原始 Issue、构建针对性复现，并为最终 planner 修复提供对照实验。在 <strong>PR #32467</strong> 的技术评审中，我验证了 no-init 方案：<strong>13,111/30,000 个越界 plan 降至 0/30,000</strong>。",
+  "#project-dspark-review h3 a": "DSpark · Ragged 验证与 CUDA Kernel 正确性",
+  "[data-i18n=\"dspark-blog-link\"]": "专题博客 · 从 SPS 调度到 CUDA Kernel 正确性 ↗",
+  "#project-dspark-review .open-project-copy > p": "在 B300/TP8 的 DSpark SPS/Compact 压测中，我报告了时序敏感的 CUDA Graph 故障，分离跨 Rank 计划一致性、Capture 初始化顺序与 GPU planner 竞态。Ragged 输入暴露的是通用共享内存正确性缺陷，而非投机解码算法错误。在 <strong>PR #32467</strong> 的技术评审中，我验证了最终 no-init 方案：<strong>13,111/30,000 个越界 plan 降至 0/30,000</strong>。",
   ".group-label": "部分上游记录 · 贡献与证据索引",
   ".evidence-main h3": "复现、隔离、验证、上游",
   ".evidence-main p": "框架会变，但研究方法不应变。公开 issue、PR、回归与 RFC 构成可复现证据链，用来区分症状、因果机制、修复和验证。",
@@ -1306,7 +1308,7 @@ html[lang="zh-CN"] h1,html[lang="zh-CN"] h2{font-weight:650;letter-spacing:-.035
   "[data-i18n=\"phase-k3-source\"]": "K3 运行时排查 · <a class=\"inline-link\" href=\"https://github.com/sgl-project/sglang/pull/47614\" target=\"_blank\" rel=\"noreferrer\">PR #47614</a> · <a class=\"inline-link\" href=\"https://github.com/sgl-project/sglang/issues/45367\" target=\"_blank\" rel=\"noreferrer\">Issue #45367</a>",
   "[data-i18n=\"dp-title\"]": "DP · 隔离健康检查的路由状态",
   "[data-i18n=\"dp-index\"]": "请求路由",
-  "[data-i18n=\"more-runtime\"]": "更多排障案例 · DSpark、DCP 与 NCCL",
+  "[data-i18n=\"more-runtime\"]": "更多排障案例 · DCP 与 NCCL",
   "[data-i18n=\"more-performance\"]": "算子归因、EPLB 与压测复现",
   "[data-i18n=\"omni-details\"]": "训练、部署与运行时优化细节",
   "[data-i18n=\"medical-details\"]": "01 / 感知与推理部署",
