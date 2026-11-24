@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 520" role="img" aria-labelledby="title desc">
+<title id="title">DSpark 从算法到 Runtime Correctness</title><desc id="desc">半自回归 draft 产生候选和置信度，SPS 分配预算，compact ragged layout 进入 CUDA Graph 与 c128 planner。不同步的共享内存写入导致错误路径选择和越界索引。</desc>
+<defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8Z" fill="#687783"/></marker></defs>
+<rect width="920" height="520" rx="14" fill="#fbfaf7" stroke="#d8d5cf"/>
+<g font-family="Arial, 'Noto Sans CJK SC', sans-serif" fill="#18232d">
+<text x="28" y="36" font-size="20" font-weight="bold">DSpark: algorithm → scheduling → runtime correctness</text>
+<g stroke="#b7c3d5" fill="#eef3fb"><rect x="28" y="65" width="266" height="100" rx="9"/><rect x="326" y="65" width="266" height="100" rx="9"/><rect x="624" y="65" width="268" height="100" rx="9"/></g>
+<g font-size="17" font-weight="bold"><text x="44" y="93">01 · Semi-autoregressive</text><text x="342" y="93">02 · SPS Scheduler</text><text x="640" y="93">03 · Ragged Layout</text></g>
+<g font-size="14"><text x="44" y="120">Parallel backbone + Markov head</text><text x="44" y="143">Draft tokens + confidence</text><text x="342" y="120">Prefix survival × SPS(B)</text><text x="342" y="143">Per-request verify budget</text><text x="640" y="120">verify_lens + offsets</text><text x="640" y="143">Graph tier / TP agreement</text></g>
+<g stroke="#687783" stroke-width="2" fill="none" marker-end="url(#arrow)"><path d="M294 115 H322"/><path d="M592 115 H620"/><path d="M758 165 V186 H460 V210"/></g>
+<rect x="28" y="213" width="864" height="103" rx="9" fill="#eaf4f1" stroke="#8ebcb2"/><text x="44" y="241" font-size="17" font-weight="bold">04 · CUDA Graph / c128 prefill planner</text><text x="44" y="270" font-size="15">Ragged example: 72 × 4 + 24 × 3 = 360 rows</text><text x="44" y="294" font-size="14">Warp scratch initialization races with per-warp reduction → min/max may falsely agree.</text>
+<path d="M460 316 V343" stroke="#687783" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="28" y="347" width="420" height="105" rx="9" fill="#f8e9e5" stroke="#c78170"/><rect x="472" y="347" width="420" height="105" rx="9" fill="#eaf4f1" stroke="#8ebcb2"/>
+<text x="44" y="375" font-size="17" font-weight="bold" fill="#9b3e29">Incorrect uniform fast path</text><text x="44" y="400" font-size="14">96 × 4 = 384 implied rows; max id = 383</text><text x="44" y="425" font-size="14">OOB plan → downstream illegal memory access</text>
+<text x="488" y="375" font-size="17" font-weight="bold" fill="#197f79">Correct general path / repaired planner</text><text x="488" y="400" font-size="14">360 actual rows; valid id &lt; 360</text><text x="488" y="425" font-size="14">Remove redundant init under fixed launch geometry</text>
+<text x="28" y="488" font-size="15" font-weight="bold">Issue #31023 · PR #32467 · Producer-level evidence: 13,111 / 30,000 → 0 / 30,000</text>
+</g></svg>
