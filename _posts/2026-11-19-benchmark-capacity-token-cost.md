@@ -60,6 +60,26 @@ tags: [LLM-Inference, Benchmarking, Capacity-Planning, TCO, Performance-Engineer
 
 因此，评价服务能力时，不能只保留一个 TPS。至少要知道请求的 ISL/OSL、Input TPS、Output TPS、请求完成速率，以及 TTFT/TPOT 的分位数。Databricks 的性能工程讨论与 NVIDIA 的 [Benchmark 指标介绍](https://developer.nvidia.com/blog/llm-benchmarking-fundamental-concepts/) 都指向同一个问题：**性能数字只有和工作负载放在一起，才有可比较的含义。**
 
+### 从 TTFT、TPOT 到端到端延迟预算
+
+生产上常说的 SLA（服务等级协议）是对外约定；SLO 是服务要达到的目标，SLI 则是用来衡量目标的实际指标。比如 TTFT P99 是 SLI，而规定它不超过某个阈值是 SLO。P90、P99 和可用性应当按业务约定分别统计，不能互相替代。
+
+~~~text
+请求到达 → 排队 / 调度 → Prefill → 首 Token → Decode → 最后一个 Token
+|<---------------- TTFT ------------->|
+                                      |<--- 后续 Token 间隔 --->|
+|<-------------------------- E2E ----------------------------->|
+~~~
+
+按 [vLLM 的延迟指标定义](https://docs.vllm.ai/en/latest/design/metrics/)，对输出长度为 L_out ≥ 2 的单个请求，在一致的测量边界内：
+
+~~~text
+TPOT = (E2E - TTFT) / (L_out - 1)
+E2E  = TTFT + (L_out - 1) × TPOT
+~~~
+
+ITL（Inter-Token Latency）观察相邻输出事件间的停顿，TPOT 则是请求级平均值。投机解码或流式缓冲可能使多个 Token 同时返回，需要记录相应的计量口径。TTFT 也不只是 Prefill：排队、调度、KV 传输及首 Token 返回链路都可能贡献延迟。尤其要注意，**逐请求成立的等式，不意味着各项 P99 可以直接相加**；端到端 P99 应从实际请求的 E2E 样本计算。
+
 读懂统计口径只是第一步。下一步才是：这样的速度能不能稳定用于生产？
 
 ## 2. 从“每秒多少 Token”到“每天能交付多少产能”
@@ -89,6 +109,72 @@ tags: [LLM-Inference, Benchmarking, Capacity-Planning, TCO, Performance-Engineer
 这里可以把 **Goodput** 引进来。普通吞吐说的是服务每秒处理多少工作，而 Goodput 关心的是**在约定 TTFT、TPOT 和成功率下真正完成了多少合格请求**。[DistServe（OSDI 2024）](https://www.usenix.org/conference/osdi24/presentation/zhong-yinmin)正是用 TTFT/TPOT 共同约束下的单位 GPU 最大请求率来评价分离式部署：在论文实验条件下，相对对照系统最多可服务 **7.4 倍请求量**，或在相同请求规模下满足更加严格的 SLO。这个结果不能直接理解成现实运营成本下降 7.4 倍，但它解释了为什么 **Goodput 比无约束峰值更适合作为容量规划的分母**。
 
 另一个很直观的例子是 [Sarathi-Serve（OSDI 2024）](https://www.usenix.org/conference/osdi24/presentation/agrawal)：通过 Chunked Prefill 和减少 Decode 被 Prefill 打断的问题，在其 Mistral-7B、单卡 A100 的对比中，满足尾延迟限制时的服务容量相对 vLLM 最高提高 **2.6 倍**。它和 vLLM 的 KV 管理、DistServe 的 P/D 分离一样，都是通过**系统级调度或资源组织**改变 SLO 下能交付的请求量，而不仅是加速某个算子。
+
+### 并发上限为什么不等于显存上限？
+
+显存能容纳多少请求，与这些请求能不能按时完成，是两件事。先用标准 GQA 的 KV Cache 说明物理边界（不考虑额外对齐、元数据与共享块）：
+
+~~~text
+每 Token 的 KV 字节数 = 2 × 层数 × KV Head 数 × Head Dim × 元素字节数
+可用 KV 容量 = 静态显存预算 - 权重 - 其他常驻与运行时开销
+固定长度的粗略并发上限 = floor(可用 KV 容量 / 单请求 KV 字节数)
+~~~
+
+实际运行时请求的 KV 随上下文增长，Prefix Cache 会产生共享，PagedAttention 还有块粒度约束。MLA、滑动窗口、稀疏注意力、DCP、量化、混合状态池和投机解码都可能改变这个关系，所以部署时更应该看实际分配的 KV/State Pool 和各 rank 的可用容量，而不是把模型最大上下文长度当作每条请求始终占用的空间。
+
+然后看 Decode 的延迟边界。为了理解趋势，假定是单设备、固定上下文、无投机解码、权重和 KV 读取主导耗时，且一个 step 给每个活跃请求生成一个 Token：
+
+~~~text
+T_step(B) ≈ (W + B × q) / BW_eff
+Q_out(B)  ≈ B / T_step(B)
+
+B      : 实际活跃 Decode Batch
+W      : 每步读取的权重字节量
+q      : 每条请求每步实际读取的 KV 字节量
+BW_eff : 有效访存带宽（字节/s）
+~~~
+
+Batch 增大时，权重读取被更多请求摊销，系统吞吐上升，但每个请求的单步延迟也可能变长。这个简化模型的吞吐逐渐接近 BW_eff / q，说明为什么吞吐的边际收益会递减。它不是实测性能预测器：较大 Batch 可能转向计算受限，MoE 的专家分布和通信、DCP 的同步以及通算重叠都会改变关键路径。
+
+如果业务约束从单步 TPOT 换成 E2E，输出长度就直接影响剩余延迟预算。设端到端目标为 S_E，首 Token 预算为 T_first，所有时间统一为秒：
+
+~~~text
+允许的平均 TPOT ≤ (S_E - T_first) / (L_out - 1)
+
+在上述带宽模型下：
+B_latency = floor((BW_eff × (S_E - T_first)/(L_out - 1) - W) / q)
+B_allowed = min(B_memory, B_latency, B_config)
+~~~
+
+这里要求 L_out ≥ 2、剩余预算为正，且 B_allowed 至少为 1 才有可行解。输出越长，单步预算越紧；即使显存还有空间，也不一定应该提高并发。这个式子只适用于所述假设下的固定长度工作点，不能用平均带宽或任意预留比例宣称保证 P99。真实负载应按长度分布、缓存状态和到达模式测量，必要时按工作负载分级配置或路由。
+
+### 并发、QPS 与排队：为什么还需要扫到达率？
+
+在 SGLang 的部署和压测中，我会把下面几个量分开：
+
+| 控制或观测量 | 对容量的意义 |
+| --- | --- |
+| 客户端 max-concurrency | 限制在途请求数，不等于服务端实际 Batch |
+| 客户端 request-rate | 控制请求到达速率，用于观察排队和过载边界 |
+| 服务端 max-running-requests（MRR） | 限制活跃请求数量，实际作用范围需核对并行配置与版本 |
+| max-total-tokens、KV/State Pool | 约束可驻留状态的容量 |
+| Waiting Queue、各 rank Active Batch | 反映调度压力及资源是否真正被用起来 |
+
+vLLM 的 max-num-seqs 与 SGLang 的 MRR 都是调度并发的限制项，但配置上限不代表实际 Batch，也不能与客户端并发直接画等号。[SGLang 的 Bench Serving 文档](https://github.com/sgl-project/sglang/blob/main/docs/docs/developer_guide/bench_serving.mdx)分别提供到达率和客户端并发等控制项。
+
+用 Little's Law 可以建立直观联系：稳定系统中，在一致的请求统计边界下，平均在途请求数 N = 完成速率 λ × 平均驻留时间 E[T]。对于等待队列，也有平均等待请求数 N_wait = λ × E[T_wait]。它只描述长期平均量，不是 P99 公式，也不意味着 Continuous Batching 可以直接套用单服务台排队模型。
+
+因此降低 MRR 可能让 Decode 更快，却也可能降低总服务率，使更多请求在 Prefill 前排队；升高 MRR 则可能让 TPOT 和 E2E 变差。扫并发是为了找吞吐—延迟工作点，扫到达率是为了看持续负载下的队列、拒绝率和尾延迟何时失稳。**可持续 QPS 应当从端到端压测中确定，而不是把满载 Output TPS 除以平均输出长度就当作生产容量。**
+
+在同一个测量窗口内，可把 Goodput 写成：
+
+~~~text
+请求 Goodput = 成功且满足所有延迟目标的请求数 / 测量时间
+输出 Token Goodput = 上述合格请求的输出 Token 总数 / 测量时间
+SLO 达标率 = 合格请求数 / 应纳入考核的请求数
+~~~
+
+先固定失败、拒绝、超时和正确性校验的计量规则，再在规定的 SLO 达标率下选择最高的稳定到达率。请求 Goodput 与 Token Goodput 是不同单位，也不能用全体请求的平均输出长度随意互换。
 
 所以从压测数据到部署规模，中间至少隔着两个问题：**这条吞吐曲线的哪些点真正满足服务要求？这些达标工作点在完整 P/D 系统里还成立吗？**
 
@@ -218,6 +304,16 @@ s：这部分自身的加速倍数
 
 但千万别把折损算两次：**如果 `Q` 已经是包含排队、低利用率、错误重试后按整段计费时间统计的实际平均 Goodput，冗余系数就应取 1。** 只有分母拿的是理论满载或理想达标点时，才需要另外折算空转和冗余。Goodput 既可以用请求/s，也可以按同一个请求长度分布换算成有效 Token/s；混用两种口径也会把成本算错。
 
+这里还要区分扩容与降成本。设有 n 个同质实例、每实例小时费用 R_unit，达标满载吞吐 Q_unit，平均有效产能利用系数 u：
+
+~~~text
+小时费用 R = n × R_unit
+平均有效吞吐 Q = n × Q_unit × u
+每百万有效 Token 成本 = R_unit × 1,000,000 / (3,600 × Q_unit × u)
+~~~
+
+只有在单实例效率和有效产能利用系数都保持不变时，副本数才会从分子、分母中抵消；固定流量下多买副本可能降低 u，从而提高单位成本，但也可能减少排队、拒绝和超时，恢复有效交付。u 衡量的是实际有效产能占参考达标产能的比例，并非 GPU Utilization。如果另外按 N+1 冗余折算成本，必须确认这部分空闲资源尚未被 u 或实际 Goodput 计入。
+
 就用前面的中国移动数字复算一次，不额外构造一组硬件 Benchmark。GLM5.2 在 **7K/2K** 条件下，单卡总吞吐 **1,882.57 TPS**；按 8 卡服务器算，约为 **15,060.56 Total TPS**。报告中每台服务器的月投资建设成本摊销约 **6.36 万元**。若假定这一个测试点能够在每月 **30 天 × 24 小时**持续维持，则：
 
 ~~~text
@@ -249,6 +345,16 @@ s：这部分自身的加速倍数
 ~~~
 
 这个视角也有助于理解为什么某次独立 P/D 压测很漂亮，生产部署仍不一定更便宜：两个资源池的有效负载能否同时饱和，以及多出来的资源和链路开销有多大，都必须进账。
+
+如果 q_P、q_D 分别表示同一业务负载下单个 P、D 实例在各自预算内可承接的请求/s，λ_peak 是待承接的峰值请求到达率，g_P、g_D 是各实例卡数，可以先做一轮资源粗配：
+
+~~~text
+N_P = ceil(λ_peak / q_P)
+N_D = ceil(λ_peak / q_D)
+GPU 数量 = N_P × g_P + N_D × g_D
+~~~
+
+这只是初始配置，不包含额外故障冗余，也不保证端到端 SLO；KV 传输与排队会改变两阶段的实际服务率。上线后的扩容判据应结合 Waiting Queue 的持续增长、TTFT/TPOT/E2E 的尾延迟、拒绝或失败率、KV/State Pool 水位及重算情况，通过压测标定，而不是单看 GPU busy 百分比。扩容还需要考虑启动时间、故障域和缓存局部性。
 
 接下来，报告问了一个经营问题：如果把整台服务器作为裸金属出租，月租应该卖多少？
 
@@ -350,7 +456,7 @@ PPT 正文写的是每月按 **26 个工作日**测算。我检查内嵌的经�
 
 1. **定义业务**：固定模型、精度、ISL/OSL 与 Cache 分布，明确 TTFT/TPOT、错误率和请求到达模式。
 2. **测量服务**：在不同并发、QPS 和并行配置下得到吞吐—延迟曲线，留下版本、Profiler 和重复测试证据。
-3. **规划容量**：只使用满足 SLO 的稳定工作点，估算 P/D 实例数，再以完整服务验证网络、KV 传输、冗余与排队。
+3. **规划容量**：同时检查 KV/State Pool 物理边界与延迟预算，扫到达率确定可持续 QPS，只使用满足 SLO 的稳定工作点估算 P/D 实例数，再以完整服务验证网络、KV 传输、冗余与排队。
 4. **核算经济性**：将设备或租金、IDC、供电、维护等放进同一周期，用有效交付 Token 而非名义峰值计算单位成本；要经营 API 时，再单独算价格、售出率与 ROI。
 
 这种方法并不绑定某一家芯片厂商。跨 NVIDIA GPU、昇腾 NPU 或其他加速平台时，真正要统一的是**负载、服务目标、数据口径和成本边界**，而不是强行让不同硬件拥有一样的峰值 FLOPS。
@@ -363,6 +469,8 @@ PPT 正文写的是每月按 **26 个工作日**测算。我检查内嵌的经�
 
 ## 参考资料
 
+- [vLLM · Metrics：TTFT、ITL 与请求级 TPOT](https://docs.vllm.ai/en/latest/design/metrics/)
+- [SGLang · Bench Serving：到达率、并发与性能指标](https://github.com/sgl-project/sglang/blob/main/docs/docs/developer_guide/bench_serving.mdx)
 - [Sarathi-Serve · Taming Throughput–Latency Tradeoff in LLM Inference（OSDI 2024）](https://www.usenix.org/conference/osdi24/presentation/agrawal)
 - [vLLM · Efficient Memory Management for Large Language Model Serving with PagedAttention（SOSP 2023）](https://arxiv.org/abs/2309.06180)
 - [Splitwise · Efficient Generative LLM Inference Using Phase Splitting（ISCA 2024）](https://www.microsoft.com/en-us/research/publication/splitwise-efficient-generative-llm-inference-using-phase-splitting/)
